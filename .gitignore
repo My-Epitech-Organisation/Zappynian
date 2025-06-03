@@ -3,6 +3,9 @@ zappy_server
 zappy_gui
 zappy_ai
 
+# Graphical
+gui/build/
+
 #vscode
 .vscode
 
