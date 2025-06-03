@@ -1,6 +1,6 @@
 name: "🎯 Goal"
 description: "A high-level objective that will be split into multiple Tasks"
-title: "🎯 :<concise outcome, e.g. ‘Minimal playable server’>"
+title: "🎯 :<concise outcome, e.g. 'Minimal playable server'>"
 body:
   - type: markdown
     attributes:
