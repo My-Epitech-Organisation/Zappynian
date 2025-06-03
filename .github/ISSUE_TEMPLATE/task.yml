@@ -36,20 +36,6 @@ body:
     validations:
       required: false
 
-  - type: dropdown
-    id: component
-    attributes:
-      label: Affected Component
-      options:
-        - Server (C)
-        - GUI (C++)
-        - AI Client
-        - CI / Tooling
-        - Docs
-        - Other
-    validations:
-      required: true
-
   - type: textarea
     id: definition_of_done
     attributes:
@@ -61,14 +47,6 @@ body:
         * No busy-wait detected by `strace` on idle server.
     validations:
       required: true
-
-  - type: input
-    id: estimate
-    attributes:
-      label: Estimated effort (ideal hours or story points)
-      placeholder: "e.g. 4h or 3 SP"
-    validations:
-      required: false
 
   - type: textarea
     id: notes
