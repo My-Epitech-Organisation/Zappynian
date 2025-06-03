@@ -253,22 +253,17 @@ int main() {
       0, driver->getTexture(mediaPath +
                             "archer_texture/RedTeam_Archer_Belt_Brown.png"));
 
-  irr::scene::IAnimatedMeshSceneNode *Rnode = smgr->addAnimatedMeshSceneNode(smgr->getMesh(mediaPath + "ruby8.b3d"),
+  irr::scene::IAnimatedMeshSceneNode *Rnode = smgr->addAnimatedMeshSceneNode(smgr->getMesh(mediaPath + "ruby.b3d"),
 						0, 1 | 2);
 	Rnode->setScale(irr::core::vector3df(0.01f, 0.01f, 0.01f));
 	Rnode->setPosition(irr::core::vector3df(0,5,-60));
 	Rnode->setRotation(irr::core::vector3df(0,90,0));
 	Rnode->setAnimationSpeed(10.0f);
   for (int i = 0; i < Rnode->getMaterialCount(); ++i) {
-    // Rnode->getMaterial(i).setFlag(irr::video::EMF_LIGHTING, false);
-    // Rnode->getMaterial(i).setFlag(irr::video::EMF_ZBUFFER, true);
-    // Rnode->getMaterial(i).setFlag(irr::video::EMF_ZWRITE_ENABLE, true);
-    // Rnode->getMaterial(i).setFlag(irr::video::EMF_BACK_FACE_CULLING, false);
     Rnode->getMaterial(i).Lighting = true;
     Rnode->getMaterial(i).NormalizeNormals = true;
   }
   Rnode->getMaterial(0).setTexture(0, driver->getTexture(mediaPath + "archer_texture/RedTeam_Archer_Armor_Red.png"));
-  // Rnode->getMaterial(1).setTexture(0, driver->getTexture(mediaPath + "archer_texture/RedTeam_Archer_Armor_Red.png"));
 
   irr::u32 frames = 0;
   irr::u32 frames_cube = 0;
