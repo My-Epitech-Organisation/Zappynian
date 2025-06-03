@@ -1,0 +1,73 @@
+name: "🎯 Goal"
+description: "A high-level objective that will be split into multiple Tasks"
+title: "🎯 :<concise outcome, e.g. ‘Minimal playable server’>"
+labels: ["GOAL"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **Purpose:** Define an outcome required by the core subject (spec) and
+        list the Task issues that will implement it.
+
+  - type: textarea
+    id: objective
+    attributes:
+      label: Objective
+      description: What do we want to achieve? One or two sentences only.
+      placeholder: |
+        Provide a functional `zappy_server` that handles connections,
+        command queueing and time-unit scheduling with `poll()`.
+    validations:
+      required: true
+
+  - type: textarea
+    id: success
+    attributes:
+      label: Definition of Success
+      description: Concrete criteria or KPIs that mark this goal as complete.
+      placeholder: |
+        * All mandatory server commands compile and return “ko/ok”.
+        * Integration test suite passes on Ubuntu & macOS runners.
+        * CI build < 5 min on default matrix.
+    validations:
+      required: true
+
+  - type: textarea
+    id: tasks
+    attributes:
+      label: Linked Tasks
+      description: Use GitHub-flavoured checkboxes and link Task issues (`- [ ] #42`).
+      placeholder: |
+        - [ ] #12 Implement base networking loop
+        - [ ] #18 Add command buffer & rate limiter
+        - [ ] #27 Write integration tests for “Forward” & “Left/Right”
+    validations:
+      required: false
+
+  - type: input
+    id: target
+    attributes:
+      label: Target Due Date
+      description: Optional deadline for the goal (e.g., 2024-07-01).
+      placeholder: 2024-07-01
+    validations:
+      required: false
+
+  - type: textarea
+    id: stakeholders
+    attributes:
+      label: Stakeholders / Reviewers
+      description: GitHub handles (@user or @team) that should follow this goal.
+      placeholder: |
+        @backend-leads @qa-team
+    validations:
+      required: false
+
+  - type: textarea
+    id: notes
+    attributes:
+      label: Additional Notes
+      placeholder: |
+        Link to spec section, diagrams, or external documents here.
+    validations:
+      required: false
