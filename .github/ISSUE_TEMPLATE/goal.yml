@@ -1,6 +1,6 @@
 name: "🎯 Goal"
 description: "A high-level objective that will be split into multiple Tasks"
-title: "🎯 :<concise outcome, e.g. `Minimal playable server`>"
+title: "🎯: <concise outcome>"
 body:
   - type: markdown
     attributes:
@@ -43,14 +43,14 @@ body:
     validations:
       required: false
 
-  - type: input
-    id: target
-    attributes:
-      label: Target Due Date
-      description: Optional deadline for the goal (e.g., 2024-07-01).
-      placeholder: 2024-07-01
-    validations:
-      required: false
+  # - type: input
+  #   id: target
+  #   attributes:
+  #     label: Target Due Date
+  #     description: Optional deadline for the goal (e.g., 2024-07-01).
+  #     placeholder: 2024-07-01
+  #   validations:
+  #     required: false
 
   - type: textarea
     id: stakeholders
