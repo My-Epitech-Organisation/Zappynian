@@ -1,8 +1,7 @@
 name: "🐛 Bug Report"
 description: "Something isn’t working as expected"
-title: "[BUG] <short description>"
+title: "🐛 (<scope>): <short description>"
 labels: ["bug", "triage"]
-assignees: []
 body:
   - type: markdown
     attributes:

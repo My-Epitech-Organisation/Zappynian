@@ -1,8 +1,7 @@
 name: "❓ Question / Help"
 description: "Ask how to use, build or extend Zappy"
-title: "[QUESTION] <short description>"
+title: "❓ (<scope>): <short description>"
 labels: ["question"]
-assignees: []
 body:
   - type: markdown
     attributes:

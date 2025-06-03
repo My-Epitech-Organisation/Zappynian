@@ -1,8 +1,7 @@
 name: "✨ Feature Request"
 description: "Propose an enhancement or new capability"
-title: "[FEAT] <short description>"
+title: "✨ (<scope>): <short description>"
 labels: ["enhancement", "needs-design"]
-assignees: []
 body:
   - type: markdown
     attributes:
