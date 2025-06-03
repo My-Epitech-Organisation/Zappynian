@@ -2,15 +2,15 @@
 ** EPITECH PROJECT, 2025
 ** zappy
 ** File description:
-** HUD
+** AFood
 */
 
-#include "HUD.hpp"
+#include "AFood.hpp"
 
-HUD::HUD()
+AFood::AFood()
 {
 }
 
-HUD::~HUD()
+AFood::~AFood()
 {
 }

@@ -2,15 +2,15 @@
 ** EPITECH PROJECT, 2025
 ** zappy
 ** File description:
-** HUD
+** AStone
 */
 
 #pragma once
 
-class HUD {
+class AStone {
   public:
-    HUD();
-    ~HUD();
+    AStone();
+    ~AStone();
 
   protected:
   private:

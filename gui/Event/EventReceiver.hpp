@@ -2,15 +2,15 @@
 ** EPITECH PROJECT, 2025
 ** zappy
 ** File description:
-** HUD
+** EventReceiver
 */
 
 #pragma once
 
-class HUD {
+class EventReceiver {
   public:
-    HUD();
-    ~HUD();
+    EventReceiver();
+    ~EventReceiver();
 
   protected:
   private:

@@ -2,15 +2,15 @@
 ** EPITECH PROJECT, 2025
 ** zappy
 ** File description:
-** HUD
+** INetworkHandler
 */
 
 #pragma once
 
-class HUD {
+class INetworkHandler {
   public:
-    HUD();
-    ~HUD();
+    INetworkHandler();
+    ~INetworkHandler();
 
   protected:
   private:

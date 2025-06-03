@@ -2,15 +2,15 @@
 ** EPITECH PROJECT, 2025
 ** zappy
 ** File description:
-** HUD
+** PlayerEntity
 */
 
 #pragma once
 
-class HUD {
+class PlayerEntity {
   public:
-    HUD();
-    ~HUD();
+    PlayerEntity();
+    ~PlayerEntity();
 
   protected:
   private:

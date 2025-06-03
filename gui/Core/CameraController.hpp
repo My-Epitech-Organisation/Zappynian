@@ -2,15 +2,15 @@
 ** EPITECH PROJECT, 2025
 ** zappy
 ** File description:
-** HUD
+** CameraController
 */
 
 #pragma once
 
-class HUD {
+class CameraController {
   public:
-    HUD();
-    ~HUD();
+    CameraController();
+    ~CameraController();
 
   protected:
   private:

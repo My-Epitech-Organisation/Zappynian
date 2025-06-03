@@ -2,15 +2,15 @@
 ** EPITECH PROJECT, 2025
 ** zappy
 ** File description:
-** HUD
+** EntityManager
 */
 
 #pragma once
 
-class HUD {
+class EntityManager {
   public:
-    HUD();
-    ~HUD();
+    EntityManager();
+    ~EntityManager();
 
   protected:
   private:

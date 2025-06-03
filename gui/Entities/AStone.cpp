@@ -2,15 +2,15 @@
 ** EPITECH PROJECT, 2025
 ** zappy
 ** File description:
-** HUD
+** AStone
 */
 
-#include "HUD.hpp"
+#include "AStone.hpp"
 
-HUD::HUD()
+AStone::AStone()
 {
 }
 
-HUD::~HUD()
+AStone::~AStone()
 {
 }

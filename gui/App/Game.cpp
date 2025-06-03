@@ -2,15 +2,15 @@
 ** EPITECH PROJECT, 2025
 ** zappy
 ** File description:
-** HUD
+** Game
 */
 
-#include "HUD.hpp"
+#include "Game.hpp"
 
-HUD::HUD()
+Game::Game()
 {
 }
 
-HUD::~HUD()
+Game::~Game()
 {
 }

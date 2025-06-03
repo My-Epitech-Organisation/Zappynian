@@ -2,15 +2,15 @@
 ** EPITECH PROJECT, 2025
 ** zappy
 ** File description:
-** HUD
+** IScene
 */
 
 #pragma once
 
-class HUD {
+class IScene {
   public:
-    HUD();
-    ~HUD();
+    IScene();
+    ~IScene();
 
   protected:
   private:

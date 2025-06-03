@@ -2,15 +2,15 @@
 ** EPITECH PROJECT, 2025
 ** zappy
 ** File description:
-** HUD
+** TileEntity
 */
 
 #pragma once
 
-class HUD {
+class TileEntity {
   public:
-    HUD();
-    ~HUD();
+    TileEntity();
+    ~TileEntity();
 
   protected:
   private:

@@ -2,15 +2,15 @@
 ** EPITECH PROJECT, 2025
 ** zappy
 ** File description:
-** HUD
+** AEgg
 */
 
-#include "HUD.hpp"
+#include "AEgg.hpp"
 
-HUD::HUD()
+AEgg::AEgg()
 {
 }
 
-HUD::~HUD()
+AEgg::~AEgg()
 {
 }

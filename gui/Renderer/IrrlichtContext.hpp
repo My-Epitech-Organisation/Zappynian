@@ -2,15 +2,15 @@
 ** EPITECH PROJECT, 2025
 ** zappy
 ** File description:
-** HUD
+** IrrlichtContext
 */
 
 #pragma once
 
-class HUD {
+class IrrlichtContext {
   public:
-    HUD();
-    ~HUD();
+    IrrlichtContext();
+    ~IrrlichtContext();
 
   protected:
   private:

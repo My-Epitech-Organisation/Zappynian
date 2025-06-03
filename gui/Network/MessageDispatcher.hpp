@@ -2,15 +2,15 @@
 ** EPITECH PROJECT, 2025
 ** zappy
 ** File description:
-** HUD
+** MessageDispatcher
 */
 
 #pragma once
 
-class HUD {
+class MessageDispatcher {
   public:
-    HUD();
-    ~HUD();
+    MessageDispatcher();
+    ~MessageDispatcher();
 
   protected:
   private:

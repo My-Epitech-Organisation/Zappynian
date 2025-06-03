@@ -2,15 +2,15 @@
 ** EPITECH PROJECT, 2025
 ** zappy
 ** File description:
-** HUD
+** AEgg
 */
 
 #pragma once
 
-class HUD {
+class AEgg {
   public:
-    HUD();
-    ~HUD();
+    AEgg();
+    ~AEgg();
 
   protected:
   private:

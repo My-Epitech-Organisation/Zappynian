@@ -2,15 +2,15 @@
 ** EPITECH PROJECT, 2025
 ** zappy
 ** File description:
-** HUD
+** WorldScene
 */
 
 #pragma once
 
-class HUD {
+class WorldScene {
   public:
-    HUD();
-    ~HUD();
+    WorldScene();
+    ~WorldScene();
 
   protected:
   private:

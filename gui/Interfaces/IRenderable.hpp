@@ -2,15 +2,15 @@
 ** EPITECH PROJECT, 2025
 ** zappy
 ** File description:
-** HUD
+** IRenderable
 */
 
 #pragma once
 
-class HUD {
+class IRenderable {
   public:
-    HUD();
-    ~HUD();
+    IRenderable();
+    ~IRenderable();
 
   protected:
   private:
