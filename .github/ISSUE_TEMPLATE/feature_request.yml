@@ -1,0 +1,61 @@
+name: "✨ Feature Request"
+description: "Propose an enhancement or new capability"
+title: "[FEAT] <short description>"
+labels: ["enhancement", "needs-design"]
+assignees: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **Thank you for helping improve Zappy!**
+
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary
+      description: A concise description of the feature.
+      placeholder: |
+        Add WebSocket bridge to stream live match data to external dashboard.
+    validations:
+      required: true
+
+  - type: textarea
+    id: motivation
+    attributes:
+      label: Motivation & Context
+      description: Why is this feature important? What problem does it solve?
+      placeholder: |
+        We need real-time match stats for our hackathon spectators without running the full GUI.
+    validations:
+      required: true
+
+  - type: textarea
+    id: requirements
+    attributes:
+      label: Acceptance Criteria
+      description: Bullet-point list of measurable outcomes.
+      placeholder: |
+        * Server exposes JSON feed at `/ws`.
+        * Throughput ≥ 30 FPS with ≤ 200 ms latency.
+        * No performance drop ≥ 5 % in standard benchmarks.
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Considered Alternatives
+      description: Optional, but helpful to avoid re-discussing discarded ideas.
+      placeholder: |
+        * Polling REST endpoint — rejected: too chatty.
+        * UDP multicast — rejected: harder NAT traversal.
+    validations:
+      required: false
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: Additional Context / Mock-ups
+      placeholder: "Attach diagrams, UI sketches, or reference PRs."
+    validations:
+      required: false

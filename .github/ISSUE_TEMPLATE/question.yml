@@ -1,0 +1,43 @@
+name: "❓ Question / Help"
+description: "Ask how to use, build or extend Zappy"
+title: "[QUESTION] <short description>"
+labels: ["question"]
+assignees: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this form for usage questions or setup problems.
+        For suspected bugs, **please use the Bug Report template instead.**
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Context
+      description: What are you trying to achieve?
+      placeholder: |
+        I’m writing a custom AI in Rust and need clarification on the broadcast direction numbering.
+    validations:
+      required: true
+
+  - type: textarea
+    id: what_tried
+    attributes:
+      label: What I’ve Tried
+      placeholder: |
+        1. Read the spec section “7. Sound transmission”.
+        2. Checked AI examples in `examples/`.
+        3. Searched issues #12 and #34.
+    validations:
+      required: true
+
+  - type: textarea
+    id: details
+    attributes:
+      label: Details / Code Snippet / Logs
+      placeholder: |
+        ```txt
+        Server prints “eject: 5” but I expected “eject: 3” for a player facing East.
+        ```
+    validations:
+      required: false

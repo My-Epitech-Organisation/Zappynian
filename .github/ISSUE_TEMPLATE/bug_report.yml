@@ -1,0 +1,98 @@
+name: "🐛 Bug Report"
+description: "Something isn’t working as expected"
+title: "[BUG] <short description>"
+labels: ["bug", "triage"]
+assignees: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **Thanks for taking the time to fill out this bug report!**
+        Please provide as much detail as possible; incomplete reports may be automatically moved to the **Needs Info** column.
+
+  - type: dropdown
+    id: component
+    attributes:
+      label: Component
+      description: Area of the codebase affected
+      options:
+        - Server (C)
+        - GUI (C++)
+        - AI Client
+        - CI / Build
+        - Documentation
+        - Other
+    validations:
+      required: true
+
+  - type: input
+    id: version
+    attributes:
+      label: Zappy commit / tag
+      description: |
+        Paste the commit hash (`git rev-parse HEAD`) **or** the release tag (e.g. `v1.2.0`).
+      placeholder: "e.g. 4f7c52e or v1.2.0"
+    validations:
+      required: true
+
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: OS, compiler/SDK versions, hardware, Docker image, etc.
+      placeholder: |
+        - OS: Ubuntu 22.04
+        - Compiler: gcc 13.2
+        - SFML: 2.6.1 (for GUI)
+        - …
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to Reproduce
+      description: Clear, numbered steps—ideally with a minimal test case or script.
+      placeholder: |
+        1. Launch `zappy_server` with `./zappy_server -p 4242 -x 10 -y 10 -n TEAM -c 4`
+        2. Connect AI client built from commit 4f7c52e
+        3. Observe server crash after `Set object` command
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected Behaviour
+      placeholder: "Object should be placed on tile without crashing."
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual Behaviour
+      placeholder: |
+        Server logs:
+        ```
+        Segmentation fault at scheduler.c:212
+        ```
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant Logs / Screenshots / Core Dumps
+      description: Drag & drop files or paste text (use back-ticks for code).
+      placeholder: |
+        <Drag the core dump or attach screenshots here>
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: regress
+    attributes:
+      label: Regression?
+      options:
+        - label: This worked in a previous version

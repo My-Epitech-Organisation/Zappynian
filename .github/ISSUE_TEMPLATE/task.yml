@@ -1,0 +1,81 @@
+name: "🗒️ Task / To-Do"
+description: "Work needed to meet the core specification (no extra features)"
+title: "[TASK] <short, action-oriented description>"
+labels: ["task"]
+assignees: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this template for everything required by the subject: initial scaffolding,
+        mandatory spec compliance, refactors, documentation, CI set-up, etc.
+        **If it goes beyond the official requirements, open a _Feature Request_ instead.**
+
+  - type: textarea
+    id: objective
+    attributes:
+      label: Objective
+      description: What must be achieved? State it in one clear sentence.
+      placeholder: |
+        Implement poll-based event loop in zappy_server.
+
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: subtasks
+    attributes:
+      label: Sub-tasks
+      description: Break the work into concrete steps (edit as they finish).
+      options:
+        - label: Write failing unit test(s)
+        - label: Add code / files
+        - label: Update documentation
+        - label: Pass CI
+        - label: Clean up / lint
+    validations:
+      required: false
+
+  - type: dropdown
+    id: component
+    attributes:
+      label: Affected Component
+      options:
+        - Server (C)
+        - GUI (C++)
+        - AI Client
+        - CI / Tooling
+        - Docs
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: definition_of_done
+    attributes:
+      label: Definition of Done
+      description: Observable criteria to close this task (build passes, spec item ticked, etc.).
+      placeholder: |
+        * All existing integration tests still pass.
+        * New unit tests cover poll timeout edge-cases.
+        * No busy-wait detected by `strace` on idle server.
+    validations:
+      required: true
+
+  - type: input
+    id: estimate
+    attributes:
+      label: Estimated effort (ideal hours or story points)
+      placeholder: "e.g. 4h or 3 SP"
+    validations:
+      required: false
+
+  - type: textarea
+    id: notes
+    attributes:
+      label: Additional notes / dependencies
+      placeholder: |
+        Blocks: #12
+        Relates to: #7 (network abstraction)
+    validations:
+      required: false
