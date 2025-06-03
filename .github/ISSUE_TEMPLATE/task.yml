@@ -1,7 +1,7 @@
 name: "🗒️ Task / To-Do"
 description: "Work needed to meet the core specification (no extra features)"
-title: "[TASK] <short, action-oriented description>"
-labels: ["task"]
+title: "🗒️ (<scope>): <short, action-oriented description>"
+labels: ["TASK"]
 assignees: []
 body:
   - type: markdown
