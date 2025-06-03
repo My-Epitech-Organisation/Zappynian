@@ -1,0 +1,185 @@
+# Zappy CI Workflow
+name: Zappy CI
+
+###############################################################################
+# 1 — Déclencheurs
+###############################################################################
+on:
+  push:
+    branches: [ "main", "master", "dev" ]
+    paths-ignore: [ "**/*.md", "docs/**" ]
+  pull_request:
+    branches: [ "main", "master" ]
+  workflow_dispatch:      # exécution manuelle, pratique avant une soutenance
+  schedule:
+    - cron:  '0 5 * * 1'  # build hebdo le lundi 05 h UTC pour dépoussiérer le cache
+
+###############################################################################
+# 2 — Paramètres globaux (évite la duplication)
+###############################################################################
+env:
+  BUILD_DIR: build
+  CCACHE_DIR: ~/.ccache
+  CTEST_OUTPUT_ON_FAILURE: 1
+
+defaults:
+  run:
+    shell: bash
+
+###############################################################################
+# 3 — Jobs
+###############################################################################
+jobs:
+###############################################################################
+# 3.1 — Vérif. rapides : clone + pré-requis de base
+###############################################################################
+  check-prerequisites:
+    runs-on: ubuntu-latest
+    container:
+      image: epitechcontent/epitest-docker
+    steps:
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 0 }
+      - name: Display toolchain versions
+        run: |
+          echo "gcc:   $(gcc --version | head -1)"
+          echo "g++:   $(g++ --version | head -1)"
+          echo "make:  $(make --version | head -1)"
+          echo "cmake: $(cmake --version | head -1)"
+
+###############################################################################
+# 3.2 — Build & tests (matrice OS/compilo) + artefacts + couverture + lint
+###############################################################################
+  build-test:
+    needs: check-prerequisites
+    strategy:
+      fail-fast: false
+      matrix:
+        os:        [ubuntu-22.04, macos-14]      # ajoutez windows-latest si utile
+        compiler:  [gcc, clang]
+    runs-on: ${{ matrix.os }}
+    container: ${{ matrix.os == 'ubuntu-22.04' && 'epitechcontent/epitest-docker' || '' }}
+    steps:
+    #--------------------------------------------------------------------------#
+    # 3.2.1 — Checkout + cache ccache
+    #--------------------------------------------------------------------------#
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 0 }
+
+      - name: Restore ccache
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.CCACHE_DIR }}
+          key:  ${{ runner.os }}-${{ matrix.compiler }}-ccache-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-${{ matrix.compiler }}-ccache-
+
+      - name: Install build dependencies (Ubuntu)
+        if: runner.os == 'Linux'
+        run: |
+          apt-get update -y
+          DEBIAN_FRONTEND=noninteractive apt-get install -y \
+              libsfml-dev libconfig++-dev lcov clang-tidy ccache \
+              wget gnupg software-properties-common
+          # clang-format 15 pour homogénéité école
+          wget -qO - https://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add -
+          add-apt-repository "deb http://apt.llvm.org/jammy/ llvm-toolchain-jammy-15 main"
+          apt-get update -y && apt-get install -y clang-format-15
+          ln -sf /usr/bin/clang-format-15 /usr/local/bin/clang-format
+
+      - name: Install build dependencies (macOS)
+        if: runner.os == 'macOS'
+        run: |
+          brew install sfml ccache llvm@15 lcov
+          ln -sf /opt/homebrew/opt/llvm@15/bin/clang-format /usr/local/bin/clang-format
+
+    #--------------------------------------------------------------------------#
+    # 3.2.2 — Format & analyse statique
+    #--------------------------------------------------------------------------#
+      - name: Lint : clang-format (check)
+        run: make check_normalize
+
+      - name: Static analysis : clang-tidy
+        run: |
+          cmake -S . -B $BUILD_DIR -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+          run-clang-tidy -p $BUILD_DIR -quiet || true
+
+    #--------------------------------------------------------------------------#
+    # 3.2.3 — Build + tests + coverage
+    #--------------------------------------------------------------------------#
+      - name: Configure (CMake) + ccache
+        run: |
+          mkdir -p $BUILD_DIR
+          cmake -S . -B $BUILD_DIR \
+                -DCMAKE_BUILD_TYPE=Debug \
+                -DCMAKE_C_COMPILER=${{ matrix.compiler }} \
+                -DCMAKE_CXX_COMPILER=${{ matrix.compiler }}++ \
+                -DCMAKE_C_COMPILER_LAUNCHER=ccache \
+                -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
+      - name: Build all targets
+        run: cmake --build $BUILD_DIR --parallel
+      - name: Check binaries exist
+        run: |
+          for bin in zappy_server zappy_gui zappy_ai; do
+            [[ -f "$BUILD_DIR/$bin" || -f "$BUILD_DIR/src/$bin" ]] \
+              || { echo "❌ $bin missing"; exit 1; }
+          done
+
+      - name: Run unit & integration tests
+        run: ctest --test-dir $BUILD_DIR
+      - name: Generate coverage (gcov + lcov)
+        if: runner.os == 'Linux' && matrix.compiler == 'gcc'
+        run: |
+          lcov --capture --directory $BUILD_DIR --output-file coverage.info
+          lcov --remove coverage.info '/usr/*' '*tests*' -o coverage.info
+          lcov --list coverage.info
+      - name: Upload coverage to Codecov
+        if: runner.os == 'Linux' && matrix.compiler == 'gcc'
+        uses: codecov/codecov-action@v4
+        with:
+          files: coverage.info
+          token: ${{ secrets.CODECOV_TOKEN }}
+
+    #--------------------------------------------------------------------------#
+    # 3.2.4 — Upload artefacts (binaries + reports)
+    #--------------------------------------------------------------------------#
+      - name: Upload binaries
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: zappy-${{ matrix.os }}-${{ matrix.compiler }}
+          retention-days: 7
+          path: |
+            $BUILD_DIR/zappy_server
+            $BUILD_DIR/zappy_gui
+            $BUILD_DIR/zappy_ai
+      - name: Save updated ccache
+        uses: actions/cache/save@v4
+        with:
+          path: ${{ env.CCACHE_DIR }}
+          key: ${{ runner.os }}-${{ matrix.compiler }}-ccache-${{ github.sha }}
+
+###############################################################################
+# 3.3 — Miroir vers le dépôt Epitech (main / master seulement)
+###############################################################################
+  mirror-to-epitech:
+    needs: [check-prerequisites, build-test]
+    runs-on: ubuntu-latest
+    if: |
+      success() &&
+      (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
+    steps:
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 0 }
+      - name: Push to Epitech repository
+        uses: pixta-dev/repository-mirroring-action@v1
+        with:
+          target_repo_url: git@github.com:EpitechPromo2028/B-YEP-400-NAN-4-1-zappy-paul-antoine.salmon.git
+          ssh_private_key: ${{ secrets.EPITECH_SSH_KEY }}
+
+###############################################################################
+# 4 — Concurrency : évite 100 builds en // sur les grosses PR
+###############################################################################
+concurrency:
+  group: ${{ github.ref }}-ci
+  cancel-in-progress: true
