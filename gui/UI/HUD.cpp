@@ -7,10 +7,6 @@
 
 #include "HUD.hpp"
 
-HUD::HUD()
-{
-}
+HUD::HUD() {}
 
-HUD::~HUD()
-{
-}
+HUD::~HUD() {}

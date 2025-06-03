@@ -7,10 +7,6 @@
 
 #include "NetworkClient.hpp"
 
-NetworkClient::NetworkClient()
-{
-}
+NetworkClient::NetworkClient() {}
 
-NetworkClient::~NetworkClient()
-{
-}
+NetworkClient::~NetworkClient() {}

@@ -7,10 +7,6 @@
 
 #include "IrrlichtContext.hpp"
 
-IrrlichtContext::IrrlichtContext()
-{
-}
+IrrlichtContext::IrrlichtContext() {}
 
-IrrlichtContext::~IrrlichtContext()
-{
-}
+IrrlichtContext::~IrrlichtContext() {}

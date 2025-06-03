@@ -8,10 +8,10 @@
 #pragma once
 
 class CameraController {
-  public:
-    CameraController();
-    ~CameraController();
+public:
+  CameraController();
+  ~CameraController();
 
-  protected:
-  private:
+protected:
+private:
 };

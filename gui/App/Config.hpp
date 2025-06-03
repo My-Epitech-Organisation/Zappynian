@@ -8,10 +8,10 @@
 #pragma once
 
 class Config {
-  public:
-    Config();
-    ~Config();
+public:
+  Config();
+  ~Config();
 
-  protected:
-  private:
+protected:
+private:
 };

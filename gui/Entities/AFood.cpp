@@ -7,10 +7,6 @@
 
 #include "AFood.hpp"
 
-AFood::AFood()
-{
-}
+AFood::AFood() {}
 
-AFood::~AFood()
-{
-}
+AFood::~AFood() {}

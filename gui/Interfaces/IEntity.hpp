@@ -8,10 +8,10 @@
 #pragma once
 
 class IEntity {
-  public:
-    IEntity();
-    ~IEntity();
+public:
+  IEntity();
+  ~IEntity();
 
-  protected:
-  private:
+protected:
+private:
 };

@@ -8,10 +8,10 @@
 #pragma once
 
 class AFood {
-  public:
-    AFood();
-    ~AFood();
+public:
+  AFood();
+  ~AFood();
 
-  protected:
-  private:
+protected:
+private:
 };

@@ -8,10 +8,10 @@
 #pragma once
 
 class Game {
-  public:
-    Game();
-    ~Game();
+public:
+  Game();
+  ~Game();
 
-  protected:
-  private:
+protected:
+private:
 };

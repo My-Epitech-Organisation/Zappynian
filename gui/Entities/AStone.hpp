@@ -8,10 +8,10 @@
 #pragma once
 
 class AStone {
-  public:
-    AStone();
-    ~AStone();
+public:
+  AStone();
+  ~AStone();
 
-  protected:
-  private:
+protected:
+private:
 };

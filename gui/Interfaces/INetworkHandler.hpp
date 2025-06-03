@@ -8,10 +8,10 @@
 #pragma once
 
 class INetworkHandler {
-  public:
-    INetworkHandler();
-    ~INetworkHandler();
+public:
+  INetworkHandler();
+  ~INetworkHandler();
 
-  protected:
-  private:
+protected:
+private:
 };

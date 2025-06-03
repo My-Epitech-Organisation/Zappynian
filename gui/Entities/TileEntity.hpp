@@ -8,10 +8,10 @@
 #pragma once
 
 class TileEntity {
-  public:
-    TileEntity();
-    ~TileEntity();
+public:
+  TileEntity();
+  ~TileEntity();
 
-  protected:
-  private:
+protected:
+private:
 };

@@ -8,10 +8,10 @@
 #pragma once
 
 class AEgg {
-  public:
-    AEgg();
-    ~AEgg();
+public:
+  AEgg();
+  ~AEgg();
 
-  protected:
-  private:
+protected:
+private:
 };

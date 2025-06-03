@@ -8,10 +8,10 @@
 #pragma once
 
 class IScene {
-  public:
-    IScene();
-    ~IScene();
+public:
+  IScene();
+  ~IScene();
 
-  protected:
-  private:
+protected:
+private:
 };

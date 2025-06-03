@@ -8,10 +8,10 @@
 #pragma once
 
 class PlayerEntity {
-  public:
-    PlayerEntity();
-    ~PlayerEntity();
+public:
+  PlayerEntity();
+  ~PlayerEntity();
 
-  protected:
-  private:
+protected:
+private:
 };

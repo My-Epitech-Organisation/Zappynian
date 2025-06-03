@@ -8,10 +8,10 @@
 #pragma once
 
 class HUD {
-  public:
-    HUD();
-    ~HUD();
+public:
+  HUD();
+  ~HUD();
 
-  protected:
-  private:
+protected:
+private:
 };

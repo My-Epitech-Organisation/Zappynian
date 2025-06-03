@@ -8,10 +8,10 @@
 #pragma once
 
 class IrrlichtContext {
-  public:
-    IrrlichtContext();
-    ~IrrlichtContext();
+public:
+  IrrlichtContext();
+  ~IrrlichtContext();
 
-  protected:
-  private:
+protected:
+private:
 };

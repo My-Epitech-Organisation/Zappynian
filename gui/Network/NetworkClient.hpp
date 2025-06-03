@@ -8,10 +8,10 @@
 #pragma once
 
 class NetworkClient {
-  public:
-    NetworkClient();
-    ~NetworkClient();
+public:
+  NetworkClient();
+  ~NetworkClient();
 
-  protected:
-  private:
+protected:
+private:
 };

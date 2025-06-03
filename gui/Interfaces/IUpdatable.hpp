@@ -8,10 +8,10 @@
 #pragma once
 
 class IUpdatable {
-  public:
-    IUpdatable();
-    ~IUpdatable();
+public:
+  IUpdatable();
+  ~IUpdatable();
 
-  protected:
-  private:
+protected:
+private:
 };

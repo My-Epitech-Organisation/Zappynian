@@ -7,10 +7,6 @@
 
 #include "WorldScene.hpp"
 
-WorldScene::WorldScene()
-{
-}
+WorldScene::WorldScene() {}
 
-WorldScene::~WorldScene()
-{
-}
+WorldScene::~WorldScene() {}

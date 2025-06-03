@@ -7,10 +7,6 @@
 
 #include "AStone.hpp"
 
-AStone::AStone()
-{
-}
+AStone::AStone() {}
 
-AStone::~AStone()
-{
-}
+AStone::~AStone() {}

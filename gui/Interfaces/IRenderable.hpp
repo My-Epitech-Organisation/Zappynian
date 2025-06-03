@@ -8,10 +8,10 @@
 #pragma once
 
 class IRenderable {
-  public:
-    IRenderable();
-    ~IRenderable();
+public:
+  IRenderable();
+  ~IRenderable();
 
-  protected:
-  private:
+protected:
+private:
 };

@@ -8,10 +8,10 @@
 #pragma once
 
 class TextureManager {
-  public:
-    TextureManager();
-    ~TextureManager();
+public:
+  TextureManager();
+  ~TextureManager();
 
-  protected:
-  private:
+protected:
+private:
 };

@@ -8,10 +8,10 @@
 #pragma once
 
 class ProtocolParser {
-  public:
-    ProtocolParser();
-    ~ProtocolParser();
+public:
+  ProtocolParser();
+  ~ProtocolParser();
 
-  protected:
-  private:
+protected:
+private:
 };

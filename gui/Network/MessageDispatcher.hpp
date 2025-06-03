@@ -8,10 +8,10 @@
 #pragma once
 
 class MessageDispatcher {
-  public:
-    MessageDispatcher();
-    ~MessageDispatcher();
+public:
+  MessageDispatcher();
+  ~MessageDispatcher();
 
-  protected:
-  private:
+protected:
+private:
 };

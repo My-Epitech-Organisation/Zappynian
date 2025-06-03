@@ -7,10 +7,6 @@
 
 #include "TileEntity.hpp"
 
-TileEntity::TileEntity()
-{
-}
+TileEntity::TileEntity() {}
 
-TileEntity::~TileEntity()
-{
-}
+TileEntity::~TileEntity() {}

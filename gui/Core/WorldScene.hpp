@@ -8,10 +8,10 @@
 #pragma once
 
 class WorldScene {
-  public:
-    WorldScene();
-    ~WorldScene();
+public:
+  WorldScene();
+  ~WorldScene();
 
-  protected:
-  private:
+protected:
+private:
 };

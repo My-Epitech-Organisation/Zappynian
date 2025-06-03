@@ -7,10 +7,6 @@
 
 #include "AEgg.hpp"
 
-AEgg::AEgg()
-{
-}
+AEgg::AEgg() {}
 
-AEgg::~AEgg()
-{
-}
+AEgg::~AEgg() {}

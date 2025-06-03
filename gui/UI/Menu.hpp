@@ -8,10 +8,10 @@
 #pragma once
 
 class Menu {
-  public:
-    Menu();
-    ~Menu();
+public:
+  Menu();
+  ~Menu();
 
-  protected:
-  private:
+protected:
+private:
 };
