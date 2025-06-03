@@ -39,18 +39,18 @@ body:
       placeholder: |
         - [ ] #12 Implement base networking loop
         - [ ] #18 Add command buffer & rate limiter
-        - [ ] #27 Write integration tests for “Forward” & “Left/Right”
+        - [ ] #27 Write integration tests for "Forward" & "Left/Right"
     validations:
       required: false
 
-  # - type: input
-  #   id: target
-  #   attributes:
-  #     label: Target Due Date
-  #     description: Optional deadline for the goal (e.g., 2024-07-01).
-  #     placeholder: 2024-07-01
-  #   validations:
-  #     required: false
+  - type: input
+    id: target
+    attributes:
+      label: Target Due Date
+      description: Optional deadline for the goal (e.g., 2024-07-01).
+      placeholder: "2024-07-01"
+    validations:
+      required: false
 
   - type: textarea
     id: stakeholders
