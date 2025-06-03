@@ -1,5 +1,16 @@
-.PHONY: all clean fclean re \
-        zappy_server zappy_gui zappy_ai
+##
+## EPITECH PROJECT, 2025
+## Zappynian
+## File description:
+## Makefile
+##
+
+.PHONY: all				\
+		clean			\
+		fclean re		\
+        zappy_server	\
+		zappy_gui		\
+		zappy_ai
 
 all: zappy_server zappy_gui zappy_ai
 
@@ -16,11 +27,11 @@ clean:
 	$(MAKE) -C common clean
 	$(MAKE) -C server clean
 	$(MAKE) -C gui clean
-	# ai clean si besoin
+	$(MAKE) -C ai clean
 
 fclean: clean
 	$(MAKE) -C server fclean
 	$(MAKE) -C gui fclean
-	# ai fclean si besoin
+	$(MAKE) -C ai fclean
 
 re: fclean all
