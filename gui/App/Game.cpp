@@ -33,38 +33,42 @@ void Game::gameLoop() {
   irr::video::ITexture *image2 = driver_->getTexture(mediaPath + "grass.png");
   driver_->makeColorKeyTexture(image2, irr::core::position2d<irr::s32>(0, 0));
 
-  std::vector<irr::io::path> texturesArcher = {
-      mediaPath + "archer_texture/DarkBrown_CrossBow01.png",
-      mediaPath + "archer_texture/Black_CrossBow01.png",
-      mediaPath + "archer_texture/Brown_CrossBow01.png",
-      mediaPath + "archer_texture/ay_head.png",
-      mediaPath + "archer_texture/RedTeam_Archer_Armor_Red.png",
-      mediaPath + "archer_texture/BlueTeam_Archer_Helmet_Black.png",
-      mediaPath + "archer_texture/RedTeam_Archer_Armor_Red.png",
-      mediaPath + "archer_texture/RedTeam_Archer_Armor_DarkBrown.png",
-      mediaPath + "archer_texture/RedTeam_Archer_Armor_Brown.png",
-      mediaPath + "archer_texture/RedTeam_Archer_Gloves_DarkRed.png",
-      mediaPath + "archer_texture/RedTeam_Archer_Shoulders_Gray.png",
-      mediaPath + "archer_texture/RedTeam_Archer_Shoulders_Gray.png",
-      mediaPath + "archer_texture/RedTeam_Archer_Quiver_Brown.png",
-      mediaPath + "archer_texture/RedTeam_Archer_Belt_Brown.png"};
+  // std::vector<irr::io::path> texturesArcher = {
+  //     mediaPath + "archer_texture/DarkBrown_CrossBow01.png",
+  //     mediaPath + "archer_texture/Black_CrossBow01.png",
+  //     mediaPath + "archer_texture/Brown_CrossBow01.png",
+  //     mediaPath + "archer_texture/ay_head.png",
+  //     mediaPath + "archer_texture/RedTeam_Archer_Armor_Red.png",
+  //     mediaPath + "archer_texture/BlueTeam_Archer_Helmet_Black.png",
+  //     mediaPath + "archer_texture/RedTeam_Archer_Armor_Red.png",
+  //     mediaPath + "archer_texture/RedTeam_Archer_Armor_DarkBrown.png",
+  //     mediaPath + "archer_texture/RedTeam_Archer_Armor_Brown.png",
+  //     mediaPath + "archer_texture/RedTeam_Archer_Gloves_DarkRed.png",
+  //     mediaPath + "archer_texture/RedTeam_Archer_Shoulders_Gray.png",
+  //     mediaPath + "archer_texture/RedTeam_Archer_Shoulders_Gray.png",
+  //     mediaPath + "archer_texture/RedTeam_Archer_Quiver_Brown.png",
+  //     mediaPath + "archer_texture/RedTeam_Archer_Belt_Brown.png"};
 
-  entity_.push_back(std::make_shared<PlayerEntity>(
-      1, irr::core::vector3df(0, 6, 0),
-      irr::core::vector3df(8.0f, 8.0f, 8.0f), Direction::NORTH, "Red",
-      texturesArcher, mediaPath + "archer.b3d"));
+  // entity_.push_back(std::make_shared<PlayerEntity>(
+  //     1, irr::core::vector3df(0, 6, 0),
+  //     irr::core::vector3df(8.0f, 8.0f, 8.0f), Direction::NORTH, "Red",
+  //     texturesArcher, mediaPath + "archer.b3d"));
 
-  entity_[0]->createNode(smgr_, driver_, receiver_);
+  // entity_[0]->createNode(smgr_, driver_, receiver_);
 
-  std::vector<irr::io::path> texturesStone = {
-      mediaPath + "archer_texture/RedTeam_Archer_Armor_Red.png"};
+  // std::vector<irr::io::path> texturesStone = {
+  //     mediaPath + "archer_texture/RedTeam_Archer_Armor_Red.png"};
 
-  entity_.push_back(std::make_shared<Stone>(
-      1, irr::core::vector3df(0, 5, -60),
-      irr::core::vector3df(0.01f, 0.01f, 0.01f), texturesStone,
-      mediaPath + "ruby.b3d", "linemate"));
+  // entity_.push_back(std::make_shared<Stone>(
+  //     1, irr::core::vector3df(0, 5, -60),
+  //     irr::core::vector3df(0.01f, 0.01f, 0.01f), texturesStone,
+  //     mediaPath + "ruby.b3d", "linemate"));
 
-  entity_[1]->createNode(smgr_, driver_, receiver_);
+  // entity_[1]->createNode(smgr_, driver_, receiver_);
+  EntityManager entityManager(mediaPath);
+  entityManager.createPlayers(smgr_, driver_, receiver_);
+  entityManager.createStones(smgr_, driver_, receiver_);
+  entity_ = entityManager.getEntities();
 
   irr::u32 frames = 0;
   irr::u32 frames_cube = 0;

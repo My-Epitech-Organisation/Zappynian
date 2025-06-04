@@ -15,7 +15,6 @@ void AEntity::createNode(irr::scene::ISceneManager *smgr,
   node_->setPosition(pos_);
   node_->setRotation(irr::core::vector3df(0, 0, 0));
   node_->setAnimationSpeed(0.0f);
-  receiver.setAnimatedNode(node_);
   for (int i = 0; i < node_->getMaterialCount(); ++i) {
     node_->getMaterial(i).setFlag(irr::video::EMF_LIGHTING, false);
     node_->getMaterial(i).setFlag(irr::video::EMF_ZBUFFER, true);

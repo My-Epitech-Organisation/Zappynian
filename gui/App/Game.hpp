@@ -7,6 +7,7 @@
 #include "../Entities/PlayerEntity.hpp"
 #include "../Entities/Stone.hpp"
 #include "../Event/EventReceiver.hpp"
+#include "../Core/EntityManager.hpp"
 #include <irrlicht/irrlicht.h>
 #include <memory>
 #include <string>
