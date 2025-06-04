@@ -5,8 +5,4 @@
 ** AStone
 */
 
-#include "AStone.hpp"
-
-AStone::AStone() {}
-
-AStone::~AStone() {}
+#include "Stone.hpp"

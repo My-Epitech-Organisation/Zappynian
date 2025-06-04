@@ -5,11 +5,8 @@ SRC = src/main.cpp \
 	App/Game.cpp \
 	Core/EntityManager.cpp \
 	Core/WorldScene.cpp \
-	Entities/AEgg.cpp \
-	Entities/AFood.cpp \
-	Entities/AStone.cpp \
+	Entities/AEntity.cpp \
 	Entities/PlayerEntity.cpp \
-	Entities/TileEntity.cpp \
 	Network/NetworkClient.cpp \
 	Network/ProtocolParser.cpp \
 	Renderer/IrrlichtContext.cpp \

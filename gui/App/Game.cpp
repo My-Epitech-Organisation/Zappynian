@@ -33,78 +33,38 @@ void Game::gameLoop() {
   irr::video::ITexture *image2 = driver_->getTexture(mediaPath + "grass.png");
   driver_->makeColorKeyTexture(image2, irr::core::position2d<irr::s32>(0, 0));
 
-  irr::scene::IAnimatedMeshSceneNode *node = smgr_->addAnimatedMeshSceneNode(
-      smgr_->getMesh(mediaPath + "archer.b3d"), 0, 1 | 2);
-  node->setScale(irr::core::vector3df(8.0f, 8.0f, 8.0f));
-  node->setPosition(irr::core::vector3df(0, 6, 0));
-  node->setRotation(irr::core::vector3df(0, 0, 0));
-  node->setAnimationSpeed(0.0f);
-  receiver_.setAnimatedNode(node);
-  for (int i = 0; i < node->getMaterialCount(); ++i) {
-    node->getMaterial(i).setFlag(irr::video::EMF_LIGHTING, false);
-    node->getMaterial(i).setFlag(irr::video::EMF_ZBUFFER, true);
-    node->getMaterial(i).setFlag(irr::video::EMF_ZWRITE_ENABLE, true);
-    node->getMaterial(i).setFlag(irr::video::EMF_BACK_FACE_CULLING, false);
-    node->getMaterial(i).Lighting = true;
-    node->getMaterial(i).NormalizeNormals = true;
-  }
-  node->getMaterial(0).setTexture(
-      0, driver_->getTexture(mediaPath +
-                             "archer_texture/DarkBrown_CrossBow01.png"));
-  node->getMaterial(1).setTexture(
-      0,
-      driver_->getTexture(mediaPath + "archer_texture/Black_CrossBow01.png"));
-  node->getMaterial(2).setTexture(
-      0,
-      driver_->getTexture(mediaPath + "archer_texture/Brown_CrossBow01.png"));
+  std::vector<irr::io::path> texturesArcher = {
+      mediaPath + "archer_texture/DarkBrown_CrossBow01.png",
+      mediaPath + "archer_texture/Black_CrossBow01.png",
+      mediaPath + "archer_texture/Brown_CrossBow01.png",
+      mediaPath + "archer_texture/ay_head.png",
+      mediaPath + "archer_texture/RedTeam_Archer_Armor_Red.png",
+      mediaPath + "archer_texture/BlueTeam_Archer_Helmet_Black.png",
+      mediaPath + "archer_texture/RedTeam_Archer_Armor_Red.png",
+      mediaPath + "archer_texture/RedTeam_Archer_Armor_DarkBrown.png",
+      mediaPath + "archer_texture/RedTeam_Archer_Armor_Brown.png",
+      mediaPath + "archer_texture/RedTeam_Archer_Gloves_DarkRed.png",
+      mediaPath + "archer_texture/RedTeam_Archer_Shoulders_Gray.png",
+      mediaPath + "archer_texture/RedTeam_Archer_Shoulders_Gray.png",
+      mediaPath + "archer_texture/RedTeam_Archer_Quiver_Brown.png",
+      mediaPath + "archer_texture/RedTeam_Archer_Belt_Brown.png"};
 
-  node->getMaterial(3).setTexture(
-      0, driver_->getTexture(mediaPath + "archer_texture/ay_head.png"));
+  entity_.push_back(std::make_shared<PlayerEntity>(
+      1, irr::core::vector3df(0, 6, 0),
+      irr::core::vector3df(8.0f, 8.0f, 8.0f), Direction::NORTH, "Red",
+      texturesArcher, mediaPath + "archer.b3d"));
 
-  node->getMaterial(4).setTexture(
-      0, driver_->getTexture(mediaPath +
-                             "archer_texture/RedTeam_Archer_Armor_Red.png"));
-  node->getMaterial(5).setTexture(
-      0, driver_->getTexture(
-             mediaPath + "archer_texture/BlueTeam_Archer_Helmet_Black.png"));
-  node->getMaterial(6).setTexture(
-      0, driver_->getTexture(mediaPath +
-                             "archer_texture/RedTeam_Archer_Armor_Red.png"));
-  node->getMaterial(7).setTexture(
-      0, driver_->getTexture(
-             mediaPath + "archer_texture/RedTeam_Archer_Armor_DarkBrown.png"));
-  node->getMaterial(8).setTexture(
-      0, driver_->getTexture(mediaPath +
-                             "archer_texture/RedTeam_Archer_Armor_Brown.png"));
-  node->getMaterial(9).setTexture(
-      0, driver_->getTexture(
-             mediaPath + "archer_texture/RedTeam_Archer_Gloves_DarkRed.png"));
-  node->getMaterial(10).setTexture(
-      0, driver_->getTexture(
-             mediaPath + "archer_texture/RedTeam_Archer_Shoulders_Gray.png"));
-  node->getMaterial(11).setTexture(
-      0, driver_->getTexture(
-             mediaPath + "archer_texture/RedTeam_Archer_Shoulders_Gray.png"));
-  node->getMaterial(12).setTexture(
-      0, driver_->getTexture(mediaPath +
-                             "archer_texture/RedTeam_Archer_Quiver_Brown.png"));
-  node->getMaterial(13).setTexture(
-      0, driver_->getTexture(mediaPath +
-                             "archer_texture/RedTeam_Archer_Belt_Brown.png"));
+  entity_[0]->createNode(smgr_, driver_, receiver_);
 
-  irr::scene::IAnimatedMeshSceneNode *Rnode = smgr_->addAnimatedMeshSceneNode(
-      smgr_->getMesh(mediaPath + "ruby.b3d"), 0, 1 | 2);
-  Rnode->setScale(irr::core::vector3df(0.01f, 0.01f, 0.01f));
-  Rnode->setPosition(irr::core::vector3df(0, 5, -60));
-  Rnode->setRotation(irr::core::vector3df(0, 90, 0));
-  Rnode->setAnimationSpeed(10.0f);
-  for (int i = 0; i < Rnode->getMaterialCount(); ++i) {
-    Rnode->getMaterial(i).Lighting = true;
-    Rnode->getMaterial(i).NormalizeNormals = true;
-  }
-  Rnode->getMaterial(0).setTexture(
-      0, driver_->getTexture(mediaPath +
-                             "archer_texture/RedTeam_Archer_Armor_Red.png"));
+  std::vector<irr::io::path> texturesStone = {
+      mediaPath + "archer_texture/RedTeam_Archer_Armor_Red.png"};
+
+  entity_.push_back(std::make_shared<Stone>(
+      1, irr::core::vector3df(0, 5, -60),
+      irr::core::vector3df(0.01f, 0.01f, 0.01f), texturesStone,
+      mediaPath + "ruby.b3d", "linemate"));
+
+  entity_[1]->createNode(smgr_, driver_, receiver_);
 
   irr::u32 frames = 0;
   irr::u32 frames_cube = 0;
@@ -160,7 +120,7 @@ void Game::gameLoop() {
   }
 
   receiver_.setText(text);
-  receiver_.setAnimatedNode(node);
+  // receiver_.setAnimatedNode(node);
 
   while (device_->run()) {
     irr::u32 currentTime = device_->getTimer()->getTime();
@@ -172,18 +132,18 @@ void Game::gameLoop() {
         float angle = receiver_.currentRotationY * M_PI / 180.0f;
         pos.X = receiver_.moveStartX - 20.0f * sin(angle);
         pos.Z = receiver_.moveStartZ - 20.0f * cos(angle);
-        pos.Y = node->getPosition().Y;
-        node->setPosition(pos);
+        pos.Y = entity_[0]->getNode()->getPosition().Y;
+        entity_[0]->getNode()->setPosition(pos);
         receiver_.isMoving = false;
-        node->setAnimationSpeed(0.0f);
+        entity_[0]->getNode()->setAnimationSpeed(0.0f);
       } else {
         float progress = elapsedTime / 1.0f;
         irr::core::vector3df pos;
         float angle = receiver_.currentRotationY * M_PI / 180.0f;
         pos.X = receiver_.moveStartX - (20.0f * progress * sin(angle));
         pos.Z = receiver_.moveStartZ - (20.0f * progress * cos(angle));
-        pos.Y = node->getPosition().Y;
-        node->setPosition(pos);
+        pos.Y = entity_[0]->getNode()->getPosition().Y;
+        entity_[0]->getNode()->setPosition(pos);
       }
     }
 
