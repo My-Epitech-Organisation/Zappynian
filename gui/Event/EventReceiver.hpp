@@ -31,6 +31,13 @@ public:
   float currentRotationY;
 
 private:
+  bool handleKeyInput(const irr::SEvent::SKeyInput &keyInput);
+  bool handleMouseInput(const irr::SEvent::SMouseInput &mouseInput);
+  bool handleCameraMovement(int deltaX, int deltaY);
+  bool handleMouseWheelMovement(float wheel);
+  bool handleNodeSelection(const irr::SEvent::SMouseInput &mouseInput);
+  bool handleCharacterMovement(irr::EKEY_CODE key);
+
   irr::IrrlichtDevice *device;
   irr::scene::ISceneManager *smgr;
   irr::video::IVideoDriver *driver;
