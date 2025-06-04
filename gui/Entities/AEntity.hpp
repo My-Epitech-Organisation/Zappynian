@@ -10,7 +10,9 @@
 
 class AEntity : public IEntity {
 public:
-  AEntity() : id_(0), name_("unknow"), pos_(0, 0, 0), scale_(1.0f, 1.0f, 1.0f), node_(nullptr) {}
+  AEntity()
+      : id_(0), name_("unknow"), pos_(0, 0, 0), scale_(1.0f, 1.0f, 1.0f),
+        node_(nullptr) {}
   virtual ~AEntity() = default;
 
   void setId(int id) override { id_ = id; }
@@ -22,7 +24,7 @@ public:
   void setPosition(const irr::core::vector3df &pos) override { pos_ = pos; }
   irr::core::vector3df getPosition() const override { return pos_; }
 
-  void setScale(const irr::core::vector3df &scale) override { 
+  void setScale(const irr::core::vector3df &scale) override {
     scale_ = scale;
     if (node_)
       node_->setScale(scale_);

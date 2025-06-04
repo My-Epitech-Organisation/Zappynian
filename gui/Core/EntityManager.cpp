@@ -27,17 +27,16 @@ void EntityManager::createPlayers(irr::scene::ISceneManager *smgr_,
       mediaPath_ + "archer_texture/RedTeam_Archer_Belt_Brown.png"};
 
   entity_.push_back(std::make_shared<PlayerEntity>(
-      1, irr::core::vector3df(0, 6, 0),
-      irr::core::vector3df(8.0f, 8.0f, 8.0f), Direction::NORTH, "Red",
-      texturesArcher, mediaPath_ + "archer.b3d"));
+      1, irr::core::vector3df(0, 6, 0), irr::core::vector3df(8.0f, 8.0f, 8.0f),
+      Direction::NORTH, "Red", texturesArcher, mediaPath_ + "archer.b3d"));
 
   entity_[0]->createNode(smgr_, driver_, receiver_);
   receiver_.setAnimatedNode(entity_[0]->getNode());
 }
 
 void EntityManager::createStones(irr::scene::ISceneManager *smgr_,
-                                  irr::video::IVideoDriver *driver_,
-                                  EventReceiver &receiver_) {
+                                 irr::video::IVideoDriver *driver_,
+                                 EventReceiver &receiver_) {
   std::vector<irr::io::path> texturesStone = {
       mediaPath_ + "archer_texture/RedTeam_Archer_Armor_Red.png"};
 

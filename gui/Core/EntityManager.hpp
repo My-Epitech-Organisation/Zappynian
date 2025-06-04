@@ -17,16 +17,14 @@
 class EntityManager {
 public:
   EntityManager(const irr::io::path &mediaPath = "assets/")
-    : mediaPath_(mediaPath) {}
+      : mediaPath_(mediaPath) {}
 
   ~EntityManager() = default;
 
   void createPlayers(irr::scene::ISceneManager *smgr_,
-                     irr::video::IVideoDriver *driver,
-                     EventReceiver &receiver);
+                     irr::video::IVideoDriver *driver, EventReceiver &receiver);
   void createStones(irr::scene::ISceneManager *smgr_,
-                     irr::video::IVideoDriver *driver,
-                     EventReceiver &receiver);
+                    irr::video::IVideoDriver *driver, EventReceiver &receiver);
 
   const std::vector<std::shared_ptr<IEntity>> &getEntities() const {
     return entity_;
@@ -35,5 +33,6 @@ public:
 protected:
   std::vector<std::shared_ptr<IEntity>> entity_;
   irr::io::path mediaPath_;
+
 private:
 };
