@@ -11,6 +11,8 @@
     #include <stdio.h>
     #include <stdlib.h>
     #include <string.h>
+    #include <unistd.h>
+    #include <getopt.h>
 
 typedef struct server_config_s {
     int port;
@@ -23,11 +25,19 @@ typedef struct server_config_s {
     int error_code;
 } server_config_t;
 
-void fill_port(char **argv, int *i, server_config_t *server);
-void fill_witdh(char **argv, int *i, server_config_t *server);
-void fill_height(char **argv, int *i, server_config_t *server);
-void fill_name(char **argv, int argc, int *i, server_config_t *server);
-void fill_clientsNb(char **argv, int *i, server_config_t *server);
-void fill_frequency(char **argv, int *i, server_config_t *server);
+int check_args(int argc, char **argv, server_config_t *server);
+int handle_args(int argc, char **argv, server_config_t *server);
+
+void fill_port(server_config_t *server, char *optarg);
+void fill_witdh(server_config_t *server, char *optarg);
+void fill_height(server_config_t *server, char *optarg);
+void fill_name(server_config_t *server, int argc, char **argv);
+void fill_clients_nb(server_config_t *server, char *optarg);
+void fill_frequency(server_config_t *server, char *optarg);
+
+int display_help(void);
+void display_infos(server_config_t *server);
+
+void handle_free(server_config_t *server);
 
 #endif /* SERVER_H */
