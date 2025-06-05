@@ -47,9 +47,10 @@ fclean: clean
 	@echo -e "$(RED)Suppression de $(NAME)...$(NO_COLOR)"
 	$(RM) ../$(NAME)
 	@echo -e "$(RED)Suppression des tests...$(NO_COLOR)"
-	$(RM) -rf ../tests/server/$(NAME_TESTS)
-	$(RM) -f ../tests/server/*.gcda
-	$(RM) -f ../tests/server/*.gcno
+	@echo -e "$(RED)Suppression des fichiers de couverture...$(NO_COLOR)"
+	$(RM) -f ../$(NAME_TESTS)
+	$(RM) -f ../*.gcda
+	$(RM) -f ../*.gcno
 
 re: fclean all
 
@@ -57,13 +58,14 @@ tests_run:
 	@echo "Running tests..."
 	@echo -e "$(BLUE)Compilation des tests...$(NO_COLOR)"
 	$(CC) $(CFLAGS) $(filter-out src/main.c, $(SRCS)) $(TESTS) \
-	-o ../tests/server/$(NAME_TESTS) $(LDFLAGS)
+	-o ../$(NAME_TESTS) $(LDFLAGS)
 	@echo -e "$(GREEN)Tests compilés: tests/$(NAME_TESTS)$(NO_COLOR)"
 	@echo "Exécution des tests..."
-	./../tests/server/$(NAME_TESTS)
+	../$(NAME_TESTS)
 
 coverage : tests_run
-	-gcovr --exclude ../tests/server/ --branches
-	-gcovr --exclude ../tests/server/
+	@echo -e "$(BLUE)Génération du rapport de couverture...$(NO_COLOR)"
+	cd .. && gcovr --exclude tests/server/ branch
+	cd .. && gcovr --exclude tests/server/
 
 .PHONY: all clean fclean re tests_run coverage
