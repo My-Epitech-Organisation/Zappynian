@@ -45,6 +45,9 @@ fclean: clean
 
 re: fclean all
 
+tests_run:
+	$(MAKE) -C tests_run
+
 # Format check rule
 check_normalize:
 	@echo "Checking code format..."
