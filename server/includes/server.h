@@ -38,6 +38,6 @@ void fill_frequency(server_config_t *server, char *optarg);
 int display_help(void);
 void display_infos(server_config_t *server);
 
-void handle_free(server_config_t *server);
+int handle_free(server_config_t *server);
 
 #endif /* SERVER_H */
