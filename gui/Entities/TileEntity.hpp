@@ -4,14 +4,41 @@
 ** File description:
 ** TileEntity
 */
+#include "AEntity.hpp"
+#include "Event/EventReceiver.hpp"
+#include "irrlicht/irrlicht.h"
+#include <string>
+#include <vector>
 
 #pragma once
 
-class TileEntity {
+class TileEntity : public AEntity {
 public:
-  TileEntity();
-  ~TileEntity();
+  TileEntity(int id, const irr::core::vector3df &pos,
+             const irr::core::vector3df &scale,
+             const std::vector<irr::io::path> &textures,
+             const irr::io::path &entityB3D, irr::video::ITexture *textureTile,
+             irr::core::stringc name)
+      : AEntity(), textureTile_(textureTile), name_(name) {
+    setId(id);
+    setPosition(pos);
+    setScale(scale);
+    textures_ = textures;
+    entityB3D_ = entityB3D;
+  }
+  ~TileEntity() override = default;
+
+  void createTileNode(irr::scene::ISceneManager *smgr,
+                      irr::video::IVideoDriver *driver,
+                      EventReceiver &receiver);
+
+  irr::scene::IMeshSceneNode *getTileNode() const { return tileNode_; }
 
 protected:
+  irr::video::ITexture *textureTile_;
+  std::vector<irr::scene::IMeshSceneNode *> tileNodes_;
+  irr::core::stringc name_;
+  irr::scene::IMeshSceneNode *tileNode_;
+
 private:
 };
