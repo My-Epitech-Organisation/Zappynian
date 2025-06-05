@@ -15,13 +15,16 @@
 all: zappy_server zappy_gui zappy_ai
 
 zappy_server:
-	$(MAKE) -C server
+	@echo "Building Zappy Server..."
+#	$(MAKE) -C server
 
 zappy_gui:
-	$(MAKE) -C gui
+	@echo "Building Zappy GUI..."
+#	$(MAKE) -C gui
 
 zappy_ai:
-	$(MAKE) -C ai
+	@echo "Building Zappy AI..."
+#	$(MAKE) -C ai
 
 clean:
 	$(MAKE) -C common clean
