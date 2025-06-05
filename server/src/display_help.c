@@ -10,6 +10,6 @@
 int display_help(void)
 {
     printf("Usage: ./zappy_server -p port -x width -y height");
-    printf(" -n name1 name2 ...-c clientsNb -f freq\n");
+    printf(" -n name1 name2 ... -c clientsNb -f freq\n");
     return 1;
 }
