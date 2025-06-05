@@ -8,6 +8,8 @@
 .PHONY: all				\
 		clean			\
 		fclean re		\
+		tests_run		\
+		coverage		\
         libzappy_net    \
         zappy_server	\
 		zappy_gui		\
@@ -49,7 +51,10 @@ fclean: clean
 re: fclean all
 
 tests_run:
-	$(MAKE) -C tests_run
+	$(MAKE) -C server tests_run
+
+coverage:
+	$(MAKE) -C server coverage
 
 # Format check rule
 check_normalize:
