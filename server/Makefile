@@ -14,7 +14,7 @@ RM		=	rm -f
 SRCS	=	$(wildcard src/*.c)
 OBJS	=	$(SRCS:.c=.o)
 
-TESTS	=	$(wildcard tests/*.c)
+TESTS	=	$(wildcard ../tests/server/*.c)
 
 CFLAGS	=	-I./include -Wall -Wextra -Werror
 LDFLAGS	=  -lcriterion --coverage
