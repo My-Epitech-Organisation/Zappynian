@@ -28,8 +28,9 @@ void EntityManager::createPlayers(int id, int x, int y, Direction direction,
       mediaPath_ + "archer_texture/RedTeam_Archer_Belt_Brown.png"};
 
   entity_.push_back(std::make_shared<PlayerEntity>(
-      id, irr::core::vector3df(x, 6, y), irr::core::vector3df(8.0f, 8.0f, 8.0f),
-      direction, team, texturesArcher, level, mediaPath_ + "archer.b3d"));
+      id, irr::core::vector3df(x, 6, y),
+      irr::core::vector3df(12.0f, 12.0f, 12.0f), direction, team,
+      texturesArcher, level, mediaPath_ + "archer.b3d"));
 
   entity_.back()->createNode(smgr_, driver_);
   receiver_.setAnimatedNode(entity_.back()->getNode());
@@ -52,8 +53,8 @@ void EntityManager::createStones(int x, int y, int q0, int q1, int q2, int q3,
   std::vector<irr::io::path> qB3D(7, mediaPath_ + "ruby.b3d");
   qB3D[0] = mediaPath_ + "RedBull.b3d";
   std::vector<irr::core::vector3df> qScale(
-      1, irr::core::vector3df(0.7f, 0.7f, 0.7f));
-  qScale.resize(7, irr::core::vector3df(0.01f, 0.01f, 0.01f));
+      1, irr::core::vector3df(0.4f, 0.4f, 0.4f));
+  qScale.resize(7, irr::core::vector3df(0.005f, 0.005f, 0.005f));
 
   irr::core::vector3df position(0.0f, 0.0f, 0.0f);
   std::ostringstream oss;
@@ -64,15 +65,15 @@ void EntityManager::createStones(int x, int y, int q0, int q1, int q2, int q3,
       break;
     }
   std::vector<int> quantities = {q0, q1, q2, q3, q4, q5, q6};
-  const int gridCols = 4, gridRows = 4;
-  const float spacing = 4.0f;
+  const int gridCols = 8, gridRows = 8;
+  const float spacing = 2.1f;
   int objCount = 0;
   float yOffset = 0.0f;
   for (size_t stoneIdx = 0; stoneIdx < quantities.size(); ++stoneIdx)
     for (int i = 0; i < quantities[stoneIdx]; ++i, ++objCount) {
       int gridIndex = objCount % (gridCols * gridRows);
       if (gridIndex == 0 && objCount != 0)
-        yOffset += 4.0f;
+        yOffset += 2.0f;
       int row = gridIndex / gridCols, col = gridIndex % gridCols;
       irr::core::vector3df objPos = position;
       objPos.X += col * spacing - ((gridCols - 1) * spacing) / 2.0f;

@@ -33,7 +33,7 @@ public:
   void createWorld() {
     createEntities(1, 0, 0, Direction::NORTH, 0, "Red");
     createPlane(10, 10);
-    createEntities(2, 4, 16, 16, 16, 16, 16, 16, 16, 1);
+    createEntities(2, 4, 32, 32, 32, 32, 32, 32, 32, 1);
     createLights();
     createCamera();
     createText();
