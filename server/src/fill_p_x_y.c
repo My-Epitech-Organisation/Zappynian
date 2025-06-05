@@ -18,18 +18,26 @@ void fill_port(server_config_t *server, char *optarg)
 
 void fill_witdh(server_config_t *server, char *optarg)
 {
-    server->width = atoi(optarg);
-    if (server->width == 0) {
+    char *endptr;
+    long width = strtol(optarg, &endptr, 10);
+
+    if (*endptr != '\0' || width <= 0) {
         fprintf(stderr, "Invalid width.\n");
         server->error_code = 84;
+        return;
     }
+    server->width = (size_t)width;
 }
 
 void fill_height(server_config_t *server, char *optarg)
 {
-    server->height = atoi(optarg);
-    if (server->height == 0) {
+    char *endptr;
+    long height = strtol(optarg, &endptr, 10);
+
+    if (*endptr != '\0' || height <= 0) {
         fprintf(stderr, "Invalid height.\n");
         server->error_code = 84;
+        return;
     }
+    server->height = (size_t)height;
 }
