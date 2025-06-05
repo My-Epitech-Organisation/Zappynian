@@ -42,3 +42,7 @@ unit_tests
 
 # Debug files
 *.log
+
+# Coverage files
+*.gcda
+*.gcno
