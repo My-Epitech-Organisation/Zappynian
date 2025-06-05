@@ -42,28 +42,32 @@ bool EventReceiver::handleKeyInput(const irr::SEvent::SKeyInput &keyInput) {
 bool EventReceiver::handleCharacterMovement(irr::EKEY_CODE key) {
   switch (key) {
   case irr::KEY_KEY_Z:
-    currentRotationY = 180.0f;
-    animatedNode->setRotation(irr::core::vector3df(0, currentRotationY, 0));
+    setCurrentRotationY(180.0f);
+    animatedNode->setRotation(
+        irr::core::vector3df(0, getCurrentRotationY(), 0));
     return true;
   case irr::KEY_KEY_S:
-    currentRotationY = 0.0f;
-    animatedNode->setRotation(irr::core::vector3df(0, currentRotationY, 0));
+    setCurrentRotationY(0.0f);
+    animatedNode->setRotation(
+        irr::core::vector3df(0, getCurrentRotationY(), 0));
     return true;
   case irr::KEY_KEY_Q:
-    currentRotationY = 90.0f;
-    animatedNode->setRotation(irr::core::vector3df(0, currentRotationY, 0));
+    setCurrentRotationY(90.0f);
+    animatedNode->setRotation(
+        irr::core::vector3df(0, getCurrentRotationY(), 0));
     return true;
   case irr::KEY_KEY_D:
-    currentRotationY = 270.0f;
-    animatedNode->setRotation(irr::core::vector3df(0, currentRotationY, 0));
+    setCurrentRotationY(270.0f);
+    animatedNode->setRotation(
+        irr::core::vector3df(0, getCurrentRotationY(), 0));
     return true;
   case irr::KEY_SPACE:
     if (!isMoving) {
-      isMoving = true;
-      moveStartTime = device->getTimer()->getTime();
+      setIsMoving(true);
+      setMoveStartTime(device->getTimer()->getTime());
       irr::core::vector3df pos = animatedNode->getPosition();
-      moveStartX = pos.X;
-      moveStartZ = pos.Z;
+      setMoveStartX(pos.X);
+      setMoveStartZ(pos.Z);
       animatedNode->setAnimationSpeed(26.0f);
       return true;
     }

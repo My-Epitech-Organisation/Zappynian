@@ -26,7 +26,7 @@ public:
   ~EntityManager() = default;
 
   void createPlayers(int id, int x, int y, Direction direction, int level,
-                      std::string team);
+                     std::string team);
 
   void createStones();
 

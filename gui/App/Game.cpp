@@ -36,23 +36,24 @@ void Game::gameLoop() {
   while (device_->run()) {
     irr::u32 currentTime = device_->getTimer()->getTime();
 
-    if (receiver_.isMoving) {
-      float elapsedTime = (currentTime - receiver_.moveStartTime) / 1000.0f;
+    if (receiver_.getIsMoving()) {
+      float elapsedTime =
+          (currentTime - receiver_.getMoveStartTime()) / 1000.0f;
       if (elapsedTime >= 1.0f) {
         irr::core::vector3df pos;
-        float angle = receiver_.currentRotationY * M_PI / 180.0f;
-        pos.X = receiver_.moveStartX - 20.0f * sin(angle);
-        pos.Z = receiver_.moveStartZ - 20.0f * cos(angle);
+        float angle = receiver_.getCurrentRotationY() * M_PI / 180.0f;
+        pos.X = receiver_.getMoveStartX() - 20.0f * sin(angle);
+        pos.Z = receiver_.getMoveStartZ() - 20.0f * cos(angle);
         pos.Y = entity_[0]->getNode()->getPosition().Y;
         entity_[0]->getNode()->setPosition(pos);
-        receiver_.isMoving = false;
+        receiver_.setIsMoving(false);
         entity_[0]->getNode()->setAnimationSpeed(0.0f);
       } else {
         float progress = elapsedTime / 1.0f;
         irr::core::vector3df pos;
-        float angle = receiver_.currentRotationY * M_PI / 180.0f;
-        pos.X = receiver_.moveStartX - (20.0f * progress * sin(angle));
-        pos.Z = receiver_.moveStartZ - (20.0f * progress * cos(angle));
+        float angle = receiver_.getCurrentRotationY() * M_PI / 180.0f;
+        pos.X = receiver_.getMoveStartX() - (20.0f * progress * sin(angle));
+        pos.Z = receiver_.getMoveStartZ() - (20.0f * progress * cos(angle));
         pos.Y = entity_[0]->getNode()->getPosition().Y;
         entity_[0]->getNode()->setPosition(pos);
       }

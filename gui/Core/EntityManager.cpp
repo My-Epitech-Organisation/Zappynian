@@ -7,8 +7,8 @@
 
 #include "EntityManager.hpp"
 
-void EntityManager::createPlayers(int id, int x, int y, Direction direction, int level,
-                      std::string team) {
+void EntityManager::createPlayers(int id, int x, int y, Direction direction,
+                                  int level, std::string team) {
   std::vector<irr::io::path> texturesArcher = {
       mediaPath_ + "archer_texture/DarkBrown_CrossBow01.png",
       mediaPath_ + "archer_texture/Black_CrossBow01.png",
