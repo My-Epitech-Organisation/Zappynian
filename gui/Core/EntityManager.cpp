@@ -47,3 +47,32 @@ void EntityManager::createStones(irr::scene::ISceneManager *smgr_,
 
   entity_[1]->createNode(smgr_, driver_, receiver_);
 }
+
+void EntityManager::createTiles(irr::scene::ISceneManager *smgr_,
+                                irr::video::IVideoDriver *driver_,
+                                EventReceiver &receiver_) {
+  irr::video::ITexture *image2 = driver_->getTexture(mediaPath_ + "grass.png");
+  driver_->makeColorKeyTexture(image2, irr::core::position2d<irr::s32>(0, 0));
+  std::vector<irr::scene::IMeshSceneNode *> cubes;
+  float cubeX = -100.0f;
+  float cubeY = -100.0f;
+  for (int j = 0; j < 10; ++j) {
+    for (int i = 0; i < 10; ++i) {
+      irr::core::stringc name = "Cube info: ";
+      name += "row ";
+      name += i;
+      name += " col ";
+      name += j;
+      TileEntity *tile = new TileEntity(
+          i + j, irr::core::vector3df(cubeX, 0, cubeY),
+          irr::core::vector3df(1.0f, 0.5f, 1.0f), {mediaPath_ + "grass.png"},
+          mediaPath_ + "cube.b3d", image2, name);
+      tile->createTileNode(smgr_, driver_, receiver_);
+      cubes.push_back(tile->getTileNode());
+      receiver_.addCube(tile->getTileNode());
+      cubeX += 20.0f;
+    }
+    cubeX = -100.0f;
+    cubeY += 20.0f;
+  }
+}

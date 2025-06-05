@@ -6,6 +6,7 @@
 */
 #include "../Entities/PlayerEntity.hpp"
 #include "../Entities/Stone.hpp"
+#include "../Entities/TileEntity.hpp"
 #include "../Event/EventReceiver.hpp"
 #include <irrlicht/irrlicht.h>
 #include <memory>
@@ -23,8 +24,12 @@ public:
 
   void createPlayers(irr::scene::ISceneManager *smgr_,
                      irr::video::IVideoDriver *driver, EventReceiver &receiver);
+
   void createStones(irr::scene::ISceneManager *smgr_,
                     irr::video::IVideoDriver *driver, EventReceiver &receiver);
+
+  void createTiles(irr::scene::ISceneManager *smgr_,
+                   irr::video::IVideoDriver *driver, EventReceiver &receiver);
 
   const std::vector<std::shared_ptr<IEntity>> &getEntities() const {
     return entity_;
