@@ -28,10 +28,12 @@ SRC_DIR = src
 OBJ_DIR = obj
 
 # Header files
-HEADERS = $(INC_DIR)/libzappy_net.h
+HEADERS = $(INC_DIR)/libzappy_net.h \
+          $(INC_DIR)/zappy_net.h
 
 # Source files
-SRC_C = $(SRC_DIR)/libzappy_net.c
+SRC_C = $(SRC_DIR)/libzappy_net.c \
+        $(SRC_DIR)/zappy_net.c
 SRC_CPP =
 
 # All source files
