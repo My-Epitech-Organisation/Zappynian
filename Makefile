@@ -35,3 +35,7 @@ fclean: clean
 	$(MAKE) -C ai fclean
 
 re: fclean all
+
+# Format check rule
+check_normalize:
+	@echo "Checking code format..."
