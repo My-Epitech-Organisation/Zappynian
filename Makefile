@@ -8,17 +8,22 @@
 .PHONY: all				\
 		clean			\
 		fclean re		\
+        libzappy_net    \
         zappy_server	\
 		zappy_gui		\
 		zappy_ai
 
-all: zappy_server zappy_gui zappy_ai
+all: libzappy_net zappy_server zappy_gui zappy_ai
 
-zappy_server:
+libzappy_net:
+	@echo "Building Network Library..."
+	$(MAKE) -C libzappy_net
+
+zappy_server: libzappy_net
 	@echo "Building Zappy Server..."
 #	$(MAKE) -C server
 
-zappy_gui:
+zappy_gui: libzappy_net
 	@echo "Building Zappy GUI..."
 #	$(MAKE) -C gui
 
@@ -27,12 +32,13 @@ zappy_ai:
 #	$(MAKE) -C ai
 
 clean:
-	$(MAKE) -C common clean
+	$(MAKE) -C libzappy_net clean
 	$(MAKE) -C server clean
 	$(MAKE) -C gui clean
 	$(MAKE) -C ai clean
 
 fclean: clean
+	$(MAKE) -C libzappy_net fclean
 	$(MAKE) -C server fclean
 	$(MAKE) -C gui fclean
 	$(MAKE) -C ai fclean
