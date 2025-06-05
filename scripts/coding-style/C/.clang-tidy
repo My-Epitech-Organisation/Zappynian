@@ -1,0 +1,39 @@
+---
+Checks: '
+  *,
+  -llvmlibc-*,
+  -fuchsia-*,
+  -modernize-use-trailing-return-type,
+  -altera-unroll-loops,
+  -readability-identifier-length,
+  -cppcoreguidelines-avoid-magic-numbers,
+  -readability-magic-numbers,
+  -google-readability-namespace-comments,
+  -cert-dcl21-cpp,
+  -google-readability-braces-around-statements,
+  -readability-braces-around-statements,
+  -hicpp-braces-around-statements,
+  -cppcoreguidelines-init-variables,
+  -hicpp-vararg,
+  -readability-isolate-declaration,
+  -modernize-use-nodiscard,
+  -llvm-header-guard,
+  -cert-err58-cpp,
+  -bugprone-easily-swappable-parameters,
+  -hicpp-explicit-conversions,
+  -modernize-use-default-member-init,
+  -cppcoreguidelines-pro-type-member-init,
+  -cppcoreguidelines-*,
+  -misc-non-private-member-variables-in-classes,
+  -altera-struct-pack-align,
+  -modernize-pass-by-value,
+  -readability-static-accessed-through-instance'
+WarningsAsErrors: ''
+HeaderFilterRegex: '.*h'
+FormatStyle: file
+CheckOptions:
+  - key: readability-function-cognitive-complexity.IgnoreMacros
+    value: 'true'
+  - key: misc-non-private-member-variables-in-classes.IgnoreClassesWithAllMemberVariablesBeingPublic
+    value: 'true'
+---
