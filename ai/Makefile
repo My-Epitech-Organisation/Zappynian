@@ -5,10 +5,10 @@
 ## Makefile
 ##
 
-make:
+all:
 	cp src/zappy_ai.py ../zappy_ai
 
 clean:
 	rm -f ../zappy_ai
 
-re: clean make
+re: clean all
