@@ -27,6 +27,8 @@ typedef struct server_config_s {
 
 int check_args(int argc, char **argv, server_config_t *server);
 int handle_args(int argc, char **argv, server_config_t *server);
+int handle_options(int opt, char **argv, int argc, server_config_t *server);
+int parse_options(int argc, char **argv, server_config_t *server);
 
 void fill_port(server_config_t *server, char *optarg);
 void fill_witdh(server_config_t *server, char *optarg);
