@@ -17,7 +17,7 @@ OBJS	=	$(SRCS:.c=.o)
 TESTS	=	$(wildcard tests/*.c)
 
 CFLAGS	=	-I./include -Wall -Wextra -Werror
-LDFLAGS	=  -lcriterion
+LDFLAGS	=  -lcriterion --coverage
 
 NO_COLOR=\033[0m
 RED=\033[0;31m
@@ -31,7 +31,7 @@ all: $(NAME)
 	@echo -e "$(GREEN)Compilation réussie, le binaire :$(ORANGE) $(NAME) \
 	$(GREEN)générée $(NO_COLOR)"
 
-%.o: %.c include/server.h
+%.o: %.c includes/server.h
 	@echo -e "$(VIOLET)Compilation de $< en $@...$(NO_COLOR)"
 	$(CC) $(CFLAGS) -c $< -o $@
 
@@ -46,6 +46,10 @@ clean:
 fclean: clean
 	@echo -e "$(RED)Suppression de $(NAME)...$(NO_COLOR)"
 	$(RM) $(NAME)
+	@echo -e "$(RED)Suppression des tests...$(NO_COLOR)"
+	$(RM) -rf tests/$(NAME_TESTS)
+	$(RM) -f tests/*.gcda
+	$(RM) -f tests/*.gcno
 
 re: fclean all
 
@@ -53,9 +57,14 @@ tests_run:
 	@echo "Running tests..."
 	@echo -e "$(BLUE)Compilation des tests...$(NO_COLOR)"
 	@mkdir -p tests
-	$(CC) $(CFLAGS) $(TESTS) -o tests/$(NAME_TESTS) $(LDFLAGS)
+	$(CC) $(CFLAGS) $(filter-out src/main.c, $(SRCS)) $(TESTS) \
+	-o tests/$(NAME_TESTS) $(LDFLAGS)
 	@echo -e "$(GREEN)Tests compilés: tests/$(NAME_TESTS)$(NO_COLOR)"
 	@echo "Exécution des tests..."
 	./tests/$(NAME_TESTS)
 
-.PHONY: all clean fclean re tests_run
+coverage : tests_run
+	-gcovr --exclude tests/ --branches
+	-gcovr --exclude tests/
+
+.PHONY: all clean fclean re tests_run coverage
