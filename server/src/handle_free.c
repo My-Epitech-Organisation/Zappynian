@@ -7,7 +7,7 @@
 
 #include "../includes/server.h"
 
-void handle_free(server_config_t *server)
+int handle_free(server_config_t *server)
 {
     if (server->team_names != NULL) {
         for (int i = 0; server->team_names[i]; i++)
@@ -15,4 +15,5 @@ void handle_free(server_config_t *server)
         free(server->team_names);
     }
     free(server);
+    return 0;
 }
