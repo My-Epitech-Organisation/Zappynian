@@ -59,7 +59,7 @@ tests_run:
 	@echo -e "$(BLUE)Compilation des tests...$(NO_COLOR)"
 	$(CC) $(CFLAGS) $(filter-out src/main.c, $(SRCS)) $(TESTS) \
 	-o ../$(NAME_TESTS) $(LDFLAGS)
-	@echo -e "$(GREEN)Tests compilés: tests/$(NAME_TESTS)$(NO_COLOR)"
+	@echo -e "$(GREEN)Tests compilés: ./$(NAME_TESTS)$(NO_COLOR)"
 	@echo "Exécution des tests..."
 	../$(NAME_TESTS)
 
