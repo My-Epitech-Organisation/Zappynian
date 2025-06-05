@@ -65,7 +65,7 @@ tests_run:
 
 coverage : tests_run
 	@echo -e "$(BLUE)Génération du rapport de couverture...$(NO_COLOR)"
-	cd .. && gcovr --exclude tests/server/ --txt-metric branch
+	cd .. && gcovr --exclude tests/server/ --branches
 	cd .. && gcovr --exclude tests/server/
 
 .PHONY: all clean fclean re tests_run coverage
