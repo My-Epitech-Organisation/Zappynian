@@ -28,7 +28,9 @@ public:
   void createPlayers(int id, int x, int y, Direction direction, int level,
                      std::string team);
 
-  void createStones();
+  void createStones(int x, int y, int q0 = 0, int q1 = 0, int q2 = 0,
+                    int q3 = 0, int q4 = 0, int q5 = 0, int q6 = 0,
+                    int nbTiles = 1);
 
   void createTiles(int x, int y);
 
@@ -42,6 +44,7 @@ protected:
   irr::video::IVideoDriver *driver_;
   EventReceiver &receiver_;
   irr::io::path mediaPath_;
+  std::vector<irr::scene::IMeshSceneNode *> cubes_;
 
 private:
 };

@@ -6,6 +6,8 @@
 */
 
 #include "EntityManager.hpp"
+#include <iostream>
+#include <sstream>
 
 void EntityManager::createPlayers(int id, int x, int y, Direction direction,
                                   int level, std::string team) {
@@ -29,26 +31,63 @@ void EntityManager::createPlayers(int id, int x, int y, Direction direction,
       id, irr::core::vector3df(x, 6, y), irr::core::vector3df(8.0f, 8.0f, 8.0f),
       direction, team, texturesArcher, level, mediaPath_ + "archer.b3d"));
 
-  entity_[0]->createNode(smgr_, driver_);
-  receiver_.setAnimatedNode(entity_[0]->getNode());
+  entity_.back()->createNode(smgr_, driver_);
+  receiver_.setAnimatedNode(entity_.back()->getNode());
 }
 
-void EntityManager::createStones() {
-  std::vector<irr::io::path> texturesStone = {
-      mediaPath_ + "archer_texture/RedTeam_Archer_Armor_Red.png"};
+void EntityManager::createStones(int x, int y, int q0, int q1, int q2, int q3,
+                                 int q4, int q5, int q6, int nbTiles) {
+  std::vector<std::vector<irr::io::path>> stoneTextures = {
+      {mediaPath_ + "stone_texture/food_redbull.png",
+       mediaPath_ + "stone_texture/food_redbull.png"},
+      {mediaPath_ + "stone_texture/stone_red.png"},
+      {mediaPath_ + "stone_texture/stone_orange.png"},
+      {mediaPath_ + "stone_texture/stone_yellow.png"},
+      {mediaPath_ + "stone_texture/stone_green.png"},
+      {mediaPath_ + "stone_texture/stone_blue.png"},
+      {mediaPath_ + "stone_texture/stone_purple.png"}};
+  std::vector<std::string> stoneNames = {"food",    "linemate", "deraumere",
+                                         "sibur",   "mendiane", "phiras",
+                                         "thystame"};
+  std::vector<irr::io::path> qB3D(7, mediaPath_ + "ruby.b3d");
+  qB3D[0] = mediaPath_ + "RedBull.b3d";
+  std::vector<irr::core::vector3df> qScale(
+      1, irr::core::vector3df(0.7f, 0.7f, 0.7f));
+  qScale.resize(7, irr::core::vector3df(0.01f, 0.01f, 0.01f));
 
-  entity_.push_back(std::make_shared<Stone>(
-      1, irr::core::vector3df(0, 5, -60),
-      irr::core::vector3df(0.01f, 0.01f, 0.01f), texturesStone,
-      mediaPath_ + "ruby.b3d", "linemate"));
-
-  entity_[1]->createNode(smgr_, driver_);
+  irr::core::vector3df position(0.0f, 0.0f, 0.0f);
+  std::ostringstream oss;
+  oss << "Cube info: row " << x << " col " << y;
+  for (auto &cube : cubes_)
+    if (cube->getName() == oss.str()) {
+      position.set(x * 20.0f, 5.0f, y * 20.0f - 60.0f);
+      break;
+    }
+  std::vector<int> quantities = {q0, q1, q2, q3, q4, q5, q6};
+  const int gridCols = 4, gridRows = 4;
+  const float spacing = 4.0f;
+  int objCount = 0;
+  float yOffset = 0.0f;
+  for (size_t stoneIdx = 0; stoneIdx < quantities.size(); ++stoneIdx)
+    for (int i = 0; i < quantities[stoneIdx]; ++i, ++objCount) {
+      int gridIndex = objCount % (gridCols * gridRows);
+      if (gridIndex == 0 && objCount != 0)
+        yOffset += 4.0f;
+      int row = gridIndex / gridCols, col = gridIndex % gridCols;
+      irr::core::vector3df objPos = position;
+      objPos.X += col * spacing - ((gridCols - 1) * spacing) / 2.0f;
+      objPos.Z += row * spacing - ((gridRows - 1) * spacing) / 2.0f;
+      objPos.Y += yOffset;
+      entity_.push_back(std::make_shared<Stone>(
+          0, objPos, qScale[stoneIdx], stoneTextures[stoneIdx], qB3D[stoneIdx],
+          stoneNames[stoneIdx]));
+      entity_.back()->createNode(smgr_, driver_);
+    }
 }
 
 void EntityManager::createTiles(int x, int y) {
   irr::video::ITexture *image2 = driver_->getTexture(mediaPath_ + "grass.png");
   driver_->makeColorKeyTexture(image2, irr::core::position2d<irr::s32>(0, 0));
-  std::vector<irr::scene::IMeshSceneNode *> cubes;
   float cubeX = -100.0f;
   float cubeY = -100.0f;
   for (int j = 0; j < x; ++j) {
@@ -63,7 +102,7 @@ void EntityManager::createTiles(int x, int y) {
           irr::core::vector3df(1.0f, 0.5f, 1.0f), {mediaPath_ + "grass.png"},
           mediaPath_ + "cube.b3d", image2, name);
       tile->createTileNode(smgr_);
-      cubes.push_back(tile->getTileNode());
+      cubes_.push_back(tile->getTileNode());
       receiver_.addCube(tile->getTileNode());
       cubeX += 20.0f;
     }

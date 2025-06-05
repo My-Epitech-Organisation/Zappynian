@@ -6,6 +6,7 @@
 */
 
 #include "AEntity.hpp"
+#include <iostream>
 
 void AEntity::createNode(irr::scene::ISceneManager *smgr,
                          irr::video::IVideoDriver *driver) {

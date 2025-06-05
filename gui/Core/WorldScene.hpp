@@ -19,6 +19,9 @@ public:
   void createEntities(int id, int x, int y, Direction direction, int level,
                       std::string team);
 
+  void createEntities(int x, int y, int q0, int q1, int q2, int q3, int q4,
+                      int q5, int q6, int nbTiles);
+
   void createLights();
 
   void createCamera();
@@ -29,9 +32,10 @@ public:
 
   void createWorld() {
     createEntities(1, 0, 0, Direction::NORTH, 0, "Red");
+    createPlane(10, 10);
+    createEntities(2, 4, 16, 16, 16, 16, 16, 16, 16, 1);
     createLights();
     createCamera();
-    createPlane(10, 10);
     createText();
   }
 
