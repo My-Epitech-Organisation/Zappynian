@@ -43,11 +43,13 @@ jobs:
           [ -d "server" ] || { echo "❌ Missing server directory"; exit 1; }
           [ -d "gui" ] || { echo "❌ Missing gui directory"; exit 1; }
           [ -d "ai" ] || { echo "❌ Missing ai directory"; exit 1; }
+          [ -d "libzappy_net" ] || { echo "❌ Missing libzappy_net directory"; exit 1; }
 
           # Check for makefiles in each component
           [ -f "server/Makefile" ] || { echo "❌ Missing server Makefile"; exit 1; }
           [ -f "gui/Makefile" ] || { echo "❌ Missing gui Makefile"; exit 1; }
           [ -f "ai/Makefile" ] || { echo "❌ Missing ai Makefile"; exit 1; }
+          [ -f "libzappy_net/Makefile" ] || { echo "❌ Missing libzappy_net Makefile"; exit 1; }
 
           echo "✅ All required project components found!"
 
@@ -89,15 +91,22 @@ jobs:
 
       - name: Build with Makefile
         run: |
+          echo "Building network library..."
+          make -C libzappy_net
           echo "Building project with Makefile..."
           make
 
       - name: Check binaries exist
         run: |
+          # Check for required binaries
           for bin in zappy_server zappy_gui zappy_ai; do
             [ -f "$bin" ] || [ -f "$BUILD_DIR/$bin" ] || [ -f "$BUILD_DIR/src/$bin" ] || { echo "❌ $bin binary not found"; exit 1; }
           done
           echo "✅ All binaries successfully built!"
+
+          # Check for required libraries
+          [ -f "libzappy_net/libzappy_net.a" ] || { echo "❌ libzappy_net.a not found"; exit 1; }
+          echo "✅ Network library successfully built!"
 
       - name: Run tests if available
         run: |
