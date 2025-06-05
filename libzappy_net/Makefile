@@ -33,7 +33,8 @@ HEADERS = $(INC_DIR)/libzappy_net.h \
 
 # Source files
 SRC_C = $(SRC_DIR)/libzappy_net.c \
-        $(SRC_DIR)/zappy_net.c
+        $(SRC_DIR)/zappy_net_core.c \
+        $(SRC_DIR)/zappy_net_socket.c
 SRC_CPP =
 
 # All source files
