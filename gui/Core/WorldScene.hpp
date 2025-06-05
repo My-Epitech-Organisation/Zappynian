@@ -41,6 +41,7 @@ public:
 
 protected:
   std::vector<std::shared_ptr<IEntity>> entity_;
+  EntityManager entityManager_;
 
 private:
 };

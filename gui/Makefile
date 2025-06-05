@@ -7,6 +7,7 @@ SRC = src/main.cpp \
 	Core/WorldScene.cpp \
 	Entities/AEntity.cpp \
 	Entities/PlayerEntity.cpp \
+	Entities/TileEntity.cpp \
 	Network/NetworkClient.cpp \
 	Network/ProtocolParser.cpp \
 	Renderer/IrrlichtContext.cpp \
