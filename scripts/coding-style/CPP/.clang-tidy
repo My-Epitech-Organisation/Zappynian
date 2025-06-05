@@ -1,0 +1,27 @@
+---
+Checks: '
+  *,
+  -fuchsia-*,
+  -llvmlibc-*,
+  -modernize-use-trailing-return-type,
+  -altera-unroll-loops,
+  -readability-identifier-length,
+  -cppcoreguidelines-avoid-magic-numbers,
+  -readability-magic-numbers,
+  -google-readability-namespace-comments,
+  -cert-dcl21-cpp,
+  -bugprone-easily-swappable-parameters,
+  -modernize-use-nodiscard,
+  -llvm-header-guard,
+  -cert-err58-cpp,
+  -hicpp-uppercase-literal-suffix,
+  -readability-uppercase-literal-suffix'
+WarningsAsErrors: ''
+HeaderFilterRegex: '.*hpp'
+FormatStyle: file
+CheckOptions:
+  - key: readability-function-cognitive-complexity.IgnoreMacros
+    value: 'true'
+  - key: misc-non-private-member-variables-in-classes.IgnoreClassesWithAllMemberVariablesBeingPublic
+    value: 'true'
+---
