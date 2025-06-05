@@ -9,32 +9,30 @@
 
 class WorldScene {
 public:
-  WorldScene();
+  WorldScene(irr::scene::ISceneManager *smgr, irr::video::IVideoDriver *driver,
+             EventReceiver &receiver, const irr::io::path &mediaPath)
+      : smgr_(smgr), driver_(driver), receiver_(receiver),
+        mediaPath_(mediaPath),
+        entityManager_(smgr, driver, receiver, mediaPath) {};
   ~WorldScene();
 
-  void createEntities(irr::scene::ISceneManager *smgr,
-                      irr::video::IVideoDriver *driver,
-                      EventReceiver &receiver);
+  void createEntities(int id, int x, int y, Direction direction, int level,
+                      std::string team);
 
-  void createLights(irr::scene::ISceneManager *smgr);
+  void createLights();
 
-  void createCamera(irr::scene::ISceneManager *smgr);
+  void createCamera();
 
-  void createPlane(irr::scene::ISceneManager *smgr,
-                   irr::video::IVideoDriver *driver, EventReceiver &receiver,
-                   const irr::io::path &mediaPath);
+  void createPlane();
 
-  void createText(irr::gui::IGUIEnvironment *guienv,
-                  const irr::io::path &mediaPath, EventReceiver &receiver);
+  void createText();
 
-  void createWorld(irr::scene::ISceneManager *smgr,
-                   irr::video::IVideoDriver *driver, EventReceiver &receiver,
-                   const irr::io::path &mediaPath) {
-    createEntities(smgr, driver, receiver);
-    createLights(smgr);
-    createCamera(smgr);
-    createPlane(smgr, driver, receiver, mediaPath);
-    createText(smgr->getGUIEnvironment(), mediaPath, receiver);
+  void createWorld() {
+    createEntities(1, 0, 0, Direction::NORTH, 0, "Red");
+    createLights();
+    createCamera();
+    createPlane();
+    createText();
   }
 
   std::vector<std::shared_ptr<IEntity>> getEntities() const { return entity_; }
@@ -42,6 +40,10 @@ public:
 protected:
   std::vector<std::shared_ptr<IEntity>> entity_;
   EntityManager entityManager_;
+  irr::scene::ISceneManager *smgr_;
+  irr::video::IVideoDriver *driver_;
+  EventReceiver &receiver_;
+  irr::io::path mediaPath_;
 
 private:
 };

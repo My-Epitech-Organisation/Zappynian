@@ -7,9 +7,8 @@
 
 #include "EntityManager.hpp"
 
-void EntityManager::createPlayers(irr::scene::ISceneManager *smgr_,
-                                  irr::video::IVideoDriver *driver_,
-                                  EventReceiver &receiver_) {
+void EntityManager::createPlayers(int id, int x, int y, Direction direction, int level,
+                      std::string team) {
   std::vector<irr::io::path> texturesArcher = {
       mediaPath_ + "archer_texture/DarkBrown_CrossBow01.png",
       mediaPath_ + "archer_texture/Black_CrossBow01.png",
@@ -27,16 +26,14 @@ void EntityManager::createPlayers(irr::scene::ISceneManager *smgr_,
       mediaPath_ + "archer_texture/RedTeam_Archer_Belt_Brown.png"};
 
   entity_.push_back(std::make_shared<PlayerEntity>(
-      1, irr::core::vector3df(0, 6, 0), irr::core::vector3df(8.0f, 8.0f, 8.0f),
-      Direction::NORTH, "Red", texturesArcher, mediaPath_ + "archer.b3d"));
+      id, irr::core::vector3df(x, 6, y), irr::core::vector3df(8.0f, 8.0f, 8.0f),
+      direction, team, texturesArcher, level, mediaPath_ + "archer.b3d"));
 
   entity_[0]->createNode(smgr_, driver_, receiver_);
   receiver_.setAnimatedNode(entity_[0]->getNode());
 }
 
-void EntityManager::createStones(irr::scene::ISceneManager *smgr_,
-                                 irr::video::IVideoDriver *driver_,
-                                 EventReceiver &receiver_) {
+void EntityManager::createStones() {
   std::vector<irr::io::path> texturesStone = {
       mediaPath_ + "archer_texture/RedTeam_Archer_Armor_Red.png"};
 
@@ -48,9 +45,7 @@ void EntityManager::createStones(irr::scene::ISceneManager *smgr_,
   entity_[1]->createNode(smgr_, driver_, receiver_);
 }
 
-void EntityManager::createTiles(irr::scene::ISceneManager *smgr_,
-                                irr::video::IVideoDriver *driver_,
-                                EventReceiver &receiver_) {
+void EntityManager::createTiles() {
   irr::video::ITexture *image2 = driver_->getTexture(mediaPath_ + "grass.png");
   driver_->makeColorKeyTexture(image2, irr::core::position2d<irr::s32>(0, 0));
   std::vector<irr::scene::IMeshSceneNode *> cubes;

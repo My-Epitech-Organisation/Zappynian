@@ -28,8 +28,9 @@ void Game::initWindow() {
 void Game::gameLoop() {
   irr::u32 frames = 0;
 
-  WorldScene worldScene;
-  worldScene.createWorld(smgr_, driver_, receiver_, mediaPath_);
+  WorldScene worldScene(smgr_, driver_, receiver_, mediaPath_);
+
+  worldScene.createWorld();
   entity_ = worldScene.getEntities();
 
   while (device_->run()) {

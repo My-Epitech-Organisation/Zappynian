@@ -19,9 +19,9 @@ public:
   PlayerEntity(int id, const irr::core::vector3df &pos,
                const irr::core::vector3df &scale, Direction direction,
                const std::string &team,
-               const std::vector<irr::io::path> &textures,
+               const std::vector<irr::io::path> &textures, int level,
                const irr::io::path &entityB3D)
-      : AEntity(), direction_(direction), team_(team) {
+      : AEntity(), direction_(direction), team_(team), level_(level) {
     setId(id);
     setPosition(pos);
     setScale(scale);
