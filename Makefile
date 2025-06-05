@@ -8,10 +8,14 @@
 .PHONY: all				\
 		clean			\
 		fclean re		\
+		tests_run		\
+		coverage		\
         libzappy_net    \
         zappy_server	\
 		zappy_gui		\
 		zappy_ai
+
+MV = mv -f
 
 all: libzappy_net zappy_server zappy_gui zappy_ai
 
@@ -21,7 +25,8 @@ libzappy_net:
 
 zappy_server: libzappy_net
 	@echo "Building Zappy Server..."
-#	$(MAKE) -C server
+	$(MAKE) -C server
+	$(MV) server/zappy_server .
 
 zappy_gui: libzappy_net
 	@echo "Building Zappy GUI..."
@@ -34,16 +39,22 @@ zappy_ai:
 clean:
 	$(MAKE) -C libzappy_net clean
 	$(MAKE) -C server clean
-	$(MAKE) -C gui clean
-	$(MAKE) -C ai clean
+# $(MAKE) -C gui clean
+# $(MAKE) -C ai clean
 
 fclean: clean
 	$(MAKE) -C libzappy_net fclean
 	$(MAKE) -C server fclean
-	$(MAKE) -C gui fclean
-	$(MAKE) -C ai fclean
+# $(MAKE) -C gui fclean
+# $(MAKE) -C ai fclean
 
 re: fclean all
+
+tests_run:
+	$(MAKE) -C server tests_run
+
+coverage:
+	$(MAKE) -C server coverage
 
 # Format check rule
 check_normalize:
