@@ -33,8 +33,7 @@ public:
 
   irr::scene::IAnimatedMeshSceneNode *getNode() const override { return node_; }
   void createNode(irr::scene::ISceneManager *smgr,
-                  irr::video::IVideoDriver *driver,
-                  EventReceiver &receiver) override;
+                  irr::video::IVideoDriver *driver) override;
 
 protected:
   int id_;

@@ -23,7 +23,7 @@ public:
 
   void createCamera();
 
-  void createPlane();
+  void createPlane(int x, int y);
 
   void createText();
 
@@ -31,19 +31,19 @@ public:
     createEntities(1, 0, 0, Direction::NORTH, 0, "Red");
     createLights();
     createCamera();
-    createPlane();
+    createPlane(10, 10);
     createText();
   }
 
   std::vector<std::shared_ptr<IEntity>> getEntities() const { return entity_; }
 
 protected:
-  std::vector<std::shared_ptr<IEntity>> entity_;
-  EntityManager entityManager_;
   irr::scene::ISceneManager *smgr_;
   irr::video::IVideoDriver *driver_;
   EventReceiver &receiver_;
   irr::io::path mediaPath_;
+  EntityManager entityManager_;
+  std::vector<std::shared_ptr<IEntity>> entity_;
 
 private:
 };

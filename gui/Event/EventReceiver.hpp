@@ -41,9 +41,9 @@ private:
   irr::IrrlichtDevice *device;
   irr::scene::ISceneManager *smgr;
   irr::video::IVideoDriver *driver;
-  std::vector<irr::scene::IMeshSceneNode *> cubes;
-  irr::gui::IGUIStaticText *text;
   bool isMouseDown;
   int mouseX, mouseY;
   irr::scene::IAnimatedMeshSceneNode *animatedNode;
+  std::vector<irr::scene::IMeshSceneNode *> cubes;
+  irr::gui::IGUIStaticText *text;
 };

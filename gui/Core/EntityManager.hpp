@@ -30,7 +30,7 @@ public:
 
   void createStones();
 
-  void createTiles();
+  void createTiles(int x, int y);
 
   const std::vector<std::shared_ptr<IEntity>> &getEntities() const {
     return entity_;

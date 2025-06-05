@@ -28,9 +28,7 @@ public:
   }
   ~TileEntity() override = default;
 
-  void createTileNode(irr::scene::ISceneManager *smgr,
-                      irr::video::IVideoDriver *driver,
-                      EventReceiver &receiver);
+  void createTileNode(irr::scene::ISceneManager *smgr);
 
   irr::scene::IMeshSceneNode *getTileNode() const { return tileNode_; }
 

@@ -7,9 +7,7 @@
 
 #include "TileEntity.hpp"
 
-void TileEntity::createTileNode(irr::scene::ISceneManager *smgr,
-                                irr::video::IVideoDriver *driver,
-                                EventReceiver &receiver) {
+void TileEntity::createTileNode(irr::scene::ISceneManager *smgr) {
   tileNode_ =
       smgr->addCubeSceneNode(20.0f, 0, -1, pos_, irr::core::vector3df(0, 0, 0),
                              irr::core::vector3df(1.0f, 0.5f, 1.0f));

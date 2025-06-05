@@ -16,8 +16,7 @@ public:
   virtual ~IEntity() = default;
 
   virtual void createNode(irr::scene::ISceneManager *smgr,
-                          irr::video::IVideoDriver *driver,
-                          EventReceiver &receiver) = 0;
+                          irr::video::IVideoDriver *driver) = 0;
 
   virtual void setId(int id) = 0;
   virtual int getId() const = 0;

@@ -12,7 +12,6 @@ WorldScene::~WorldScene() {}
 void WorldScene::createEntities(int id, int x, int y, Direction direction,
                                 int level, std::string team) {
   entityManager_.createPlayers(id, x, y, direction, level, team);
-  entityManager_.createStones();
   entity_ = entityManager_.getEntities();
 }
 
@@ -30,8 +29,10 @@ void WorldScene::createCamera() {
                             irr::core::vector3df(0, 30, 0));
 }
 
-void WorldScene::createPlane() {
-  entityManager_.createTiles();
+void WorldScene::createPlane(int x, int y) {
+  entityManager_.createTiles(x, y);
+  entityManager_.createStones();
+  entity_ = entityManager_.getEntities();
 }
 
 void WorldScene::createText() {
