@@ -58,4 +58,4 @@ tests_run:
 	@echo "Exécution des tests..."
 	./tests/$(NAME_TESTS)
 
-.PHONY: all clean fclean re test_run
+.PHONY: all clean fclean re tests_run
