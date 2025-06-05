@@ -3,6 +3,11 @@ zappy_server
 zappy_gui
 zappy_ai
 
+# Coding style files
+server/.clang-format
+gui/.clang-format
+libzappy_net/.clang-format
+
 #vscode
 .vscode
 
