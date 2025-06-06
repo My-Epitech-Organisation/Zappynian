@@ -46,6 +46,15 @@ bool EventReceiver::handleKeyInput(const irr::SEvent::SKeyInput &keyInput) {
   if (!camera)
     return false;
 
+  if (moveCamera(keyInput.Key, camera)) {
+    return true;
+  }
+
+  return false;
+}
+
+bool EventReceiver::moveCamera(irr::EKEY_CODE key,
+                               irr::scene::ICameraSceneNode *camera) {
   float moveSpeed = 5.0f;
   irr::core::vector3df pos = camera->getPosition();
   irr::core::vector3df target = camera->getTarget();
@@ -54,7 +63,7 @@ bool EventReceiver::handleKeyInput(const irr::SEvent::SKeyInput &keyInput) {
       direction.crossProduct(irr::core::vector3df(0, 1, 0));
   rightVector.normalize();
 
-  switch (keyInput.Key) {
+  switch (key) {
   case irr::KEY_UP:
     pos += direction * moveSpeed;
     target += direction * moveSpeed;
