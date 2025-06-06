@@ -1,7 +1,6 @@
 name: "🎯 Goal"
 description: "A high-level objective that will be split into multiple Tasks"
-title: "🎯 :<concise outcome, e.g. ‘Minimal playable server’>"
-labels: ["GOAL"]
+title: "🎯: <concise outcome>"
 body:
   - type: markdown
     attributes:
@@ -40,7 +39,7 @@ body:
       placeholder: |
         - [ ] #12 Implement base networking loop
         - [ ] #18 Add command buffer & rate limiter
-        - [ ] #27 Write integration tests for “Forward” & “Left/Right”
+        - [ ] #27 Write integration tests for "Forward" & "Left/Right"
     validations:
       required: false
 
@@ -49,7 +48,7 @@ body:
     attributes:
       label: Target Due Date
       description: Optional deadline for the goal (e.g., 2024-07-01).
-      placeholder: 2024-07-01
+      placeholder: "2024-07-01"
     validations:
       required: false
 
