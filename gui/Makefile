@@ -8,6 +8,7 @@ SRC = src/main.cpp \
 	Entities/AEntity.cpp \
 	Entities/PlayerEntity.cpp \
 	Entities/TileEntity.cpp \
+	Entities/Inventory.cpp \
 	Network/NetworkClient.cpp \
 	Network/ProtocolParser.cpp \
 	Renderer/IrrlichtContext.cpp \
@@ -18,7 +19,7 @@ SRC = src/main.cpp \
 OBJDIR = build
 OBJ = $(SRC:%.cpp=$(OBJDIR)/%.o)
 
-CXXFLAGS = -I. -I../include -Wall -Wextra -std=c++17
+CXXFLAGS = -Wall -Wextra -std=c++17 -I./
 LDFLAGS = -lIrrlicht -lGL -lXxf86vm -lXext -lX11
 
 all: $(NAME)
