@@ -15,4 +15,5 @@ void TileEntity::createTileNode(irr::scene::ISceneManager *smgr) {
   tileNode_->setMaterialFlag(irr::video::EMF_LIGHTING, false);
   tileNode_->setMaterialTexture(0, textureTile_);
   tileNode_->setName(name_.c_str());
+  setName(name_.c_str());
 }
