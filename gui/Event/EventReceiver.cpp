@@ -30,16 +30,55 @@ bool EventReceiver::OnEvent(const irr::SEvent &event) {
 
 bool EventReceiver::handleKeyInput(const irr::SEvent::SKeyInput &keyInput) {
   if (keyInput.PressedDown && animatedNode && !isMoving) {
-    if (handleCharacterMovement(keyInput.Key)) {
+    if (handleCharacterMovement(keyInput.Key))
       return true;
-    }
   }
 
   if (keyInput.Key == irr::KEY_ESCAPE && !keyInput.PressedDown) {
     device->closeDevice();
     return true;
   }
-  return false;
+
+  if (!smgr)
+    return false;
+
+  irr::scene::ICameraSceneNode *camera = smgr->getActiveCamera();
+  if (!camera)
+    return false;
+
+  float moveSpeed = 5.0f;
+  irr::core::vector3df pos = camera->getPosition();
+  irr::core::vector3df target = camera->getTarget();
+  irr::core::vector3df direction = (target - pos).normalize();
+  irr::core::vector3df rightVector =
+      direction.crossProduct(irr::core::vector3df(0, 1, 0));
+  rightVector.normalize();
+
+  switch (keyInput.Key) {
+  case irr::KEY_UP:
+    pos += direction * moveSpeed;
+    target += direction * moveSpeed;
+    break;
+  case irr::KEY_DOWN:
+    pos -= direction * moveSpeed;
+    target -= direction * moveSpeed;
+    break;
+  case irr::KEY_LEFT:
+    pos += rightVector * moveSpeed;
+    target += rightVector * moveSpeed;
+    break;
+  case irr::KEY_RIGHT:
+    pos -= rightVector * moveSpeed;
+    target -= rightVector * moveSpeed;
+    break;
+  default:
+    return false;
+  }
+
+  camera->setPosition(pos);
+  camera->setTarget(target);
+
+  return true;
 }
 
 bool EventReceiver::handleCharacterMovement(irr::EKEY_CODE key) {
