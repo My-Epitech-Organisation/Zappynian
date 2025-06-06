@@ -7,7 +7,7 @@
 
 #include "../includes/server.h"
 
-void fill_port(server_config_t *server, char *optarg)
+void fill_port(server_args_t *server, char *optarg)
 {
     server->port = atoi(optarg);
     if (server->port <= 0 || server->port > 65535) {
@@ -16,7 +16,7 @@ void fill_port(server_config_t *server, char *optarg)
     }
 }
 
-void fill_witdh(server_config_t *server, char *optarg)
+void fill_witdh(server_args_t *server, char *optarg)
 {
     char *endptr;
     long width = strtol(optarg, &endptr, 10);
@@ -29,7 +29,7 @@ void fill_witdh(server_config_t *server, char *optarg)
     server->width = (size_t)width;
 }
 
-void fill_height(server_config_t *server, char *optarg)
+void fill_height(server_args_t *server, char *optarg)
 {
     char *endptr;
     long height = strtol(optarg, &endptr, 10);
