@@ -44,7 +44,7 @@ protected:
   irr::video::IVideoDriver *driver_;
   EventReceiver &receiver_;
   irr::io::path mediaPath_;
-  std::vector<irr::scene::IMeshSceneNode *> cubes_;
+  std::vector<std::shared_ptr<TileEntity>> tiles_;
 
 private:
 };

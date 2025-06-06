@@ -59,11 +59,19 @@ void EntityManager::createStones(int x, int y, int q0, int q1, int q2, int q3,
   irr::core::vector3df position(0.0f, 0.0f, 0.0f);
   std::ostringstream oss;
   oss << "Cube info: row " << x << " col " << y;
-  for (auto &cube : cubes_)
-    if (cube->getName() == oss.str()) {
-      position.set(x * 20.0f, 5.0f, y * 20.0f - 60.0f);
+  for (auto &tile : tiles_) {
+    if (tile->getName() == oss.str()) {
+      position.set(x * 20.0f, 5.0f, y * 20.0f);
+      tile->getInventory().addItem("food", q0);
+      tile->getInventory().addItem("linemate", q1);
+      tile->getInventory().addItem("deraumere", q2);
+      tile->getInventory().addItem("sibur", q3);
+      tile->getInventory().addItem("mendiane", q4);
+      tile->getInventory().addItem("phiras", q5);
+      tile->getInventory().addItem("thystame", q6);
       break;
     }
+  }
   std::vector<int> quantities = {q0, q1, q2, q3, q4, q5, q6};
   const int gridCols = 8, gridRows = 8;
   const float spacing = 2.1f;
@@ -89,8 +97,8 @@ void EntityManager::createStones(int x, int y, int q0, int q1, int q2, int q3,
 void EntityManager::createTiles(int x, int y) {
   irr::video::ITexture *image2 = driver_->getTexture(mediaPath_ + "grass.png");
   driver_->makeColorKeyTexture(image2, irr::core::position2d<irr::s32>(0, 0));
-  float cubeX = -100.0f;
-  float cubeY = -100.0f;
+  float cubeX = 0.0f;
+  float cubeY = 0.0f;
   for (int j = 0; j < x; ++j) {
     for (int i = 0; i < y; ++i) {
       irr::core::stringc name = "Cube info: ";
@@ -100,14 +108,15 @@ void EntityManager::createTiles(int x, int y) {
       name += j;
       auto tile = std::make_shared<TileEntity>(
           i + j, irr::core::vector3df(cubeX, 0, cubeY),
-          irr::core::vector3df(1.0f, 0.5f, 1.0f), std::vector<irr::io::path>{mediaPath_ + "grass.png"},
+          irr::core::vector3df(1.0f, 0.5f, 1.0f),
+          std::vector<irr::io::path>{mediaPath_ + "grass.png"},
           mediaPath_ + "cube.b3d", image2, name);
       tile->createTileNode(smgr_);
-      cubes_.push_back(tile->getTileNode());
-      receiver_.addCube(tile->getTileNode());
+      receiver_.addCube(tile.get());
+      tiles_.push_back(tile);
       cubeX += 20.0f;
     }
-    cubeX = -100.0f;
+    cubeX = 0.0f;
     cubeY += 20.0f;
   }
 }
