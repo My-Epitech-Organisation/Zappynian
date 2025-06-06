@@ -1,0 +1,41 @@
+NAME = zappy_gui
+
+SRC = src/main.cpp \
+	Event/EventReceiver.cpp \
+	App/Game.cpp \
+	Core/EntityManager.cpp \
+	Core/WorldScene.cpp \
+	Entities/AEntity.cpp \
+	Entities/PlayerEntity.cpp \
+	Entities/TileEntity.cpp \
+	Network/NetworkClient.cpp \
+	Network/ProtocolParser.cpp \
+	Renderer/IrrlichtContext.cpp \
+	Renderer/TextureManager.cpp \
+	UI/HUD.cpp \
+	UI/Menu.cpp
+
+OBJDIR = build
+OBJ = $(SRC:%.cpp=$(OBJDIR)/%.o)
+
+CXXFLAGS = -I. -I../include -Wall -Wextra -std=c++17
+LDFLAGS = -lIrrlicht -lGL -lXxf86vm -lXext -lX11
+
+all: $(NAME)
+
+$(OBJDIR)/%.o: %.cpp
+	@mkdir -p $(dir $@)
+	g++ $(CXXFLAGS) -c $< -o $@
+
+$(NAME): $(OBJ)
+	g++ -o $(NAME) $(OBJ) $(LDFLAGS)
+
+clean:
+	rm -rf $(OBJDIR)
+
+fclean: clean
+	rm -f $(NAME)
+
+re: fclean all
+
+.PHONY: all clean fclean re

@@ -9,6 +9,9 @@ server/.clang-format
 gui/.clang-format
 libzappy_net/.clang-format
 
+# Graphical
+gui/build/
+
 #vscode
 .vscode
 
