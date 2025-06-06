@@ -39,7 +39,8 @@ void WorldScene::createPlane(int x, int y) { entityManager_.createTiles(x, y); }
 
 void WorldScene::createText() {
   irr::gui::IGUIStaticText *text = smgr_->getGUIEnvironment()->addStaticText(
-      L"Hello bb chat <3 !", irr::core::rect<irr::s32>(10, 10, 220, 27), true);
+      L"Hello bb chat <3 !", irr::core::rect<irr::s32>(10, 10, 1920, 1080),
+      true);
 
   irr::gui::IGUIFont *font = smgr_->getGUIEnvironment()->getFont(
       mediaPath_ + "fonthaettenschweiler.bmp");
