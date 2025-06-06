@@ -47,6 +47,7 @@ public:
   bool handleMouseWheelMovement(float wheel);
   bool handleNodeSelection(const irr::SEvent::SMouseInput &mouseInput);
   bool handleCharacterMovement(irr::EKEY_CODE key);
+  bool moveCamera(irr::EKEY_CODE key, irr::scene::ICameraSceneNode *camera);
 
 protected:
   irr::IrrlichtDevice *device;
