@@ -98,9 +98,9 @@ void EntityManager::createTiles(int x, int y) {
       name += i;
       name += " col ";
       name += j;
-      TileEntity *tile = new TileEntity(
+      auto tile = std::make_shared<TileEntity>(
           i + j, irr::core::vector3df(cubeX, 0, cubeY),
-          irr::core::vector3df(1.0f, 0.5f, 1.0f), {mediaPath_ + "grass.png"},
+          irr::core::vector3df(1.0f, 0.5f, 1.0f), std::vector<irr::io::path>{mediaPath_ + "grass.png"},
           mediaPath_ + "cube.b3d", image2, name);
       tile->createTileNode(smgr_);
       cubes_.push_back(tile->getTileNode());
