@@ -7,14 +7,37 @@
 
 #ifndef SERVER_H
     #define SERVER_H
+    #define MAX_CLIENTS 100
 
     #include <stdio.h>
     #include <stdlib.h>
     #include <string.h>
     #include <unistd.h>
     #include <getopt.h>
+    #include <arpa/inet.h>
+    #include <sys/types.h>
+    #include <sys/socket.h>
+    #include <netinet/in.h>
+    #include <errno.h>
 
-typedef struct server_config_s {
+typedef struct client_s {
+    int fd;
+    struct sockaddr_in addr;
+    char *team_name;
+    int team_id;
+    int id;
+} client_t;
+
+typedef struct server_connection_s {
+    int fd;
+    struct sockaddr_in addr;
+    struct pollfd *fds;
+    client_t *clients;
+    int client_count;
+    int port;
+} server_connection_t;
+
+typedef struct server_args_s {
     int port;
     size_t width;
     size_t height;
@@ -23,23 +46,34 @@ typedef struct server_config_s {
     int clients_per_team;
     int frequency;
     int error_code;
-} server_config_t;
+} server_args_t;
 
-int check_args(int argc, char **argv, server_config_t *server);
-int handle_args(int argc, char **argv, server_config_t *server);
-int handle_options(int opt, char **argv, int argc, server_config_t *server);
-int parse_options(int argc, char **argv, server_config_t *server);
+typedef struct server_s {
+    server_args_t *args;
+    server_connection_t *connection;
+} server_t;
 
-void fill_port(server_config_t *server, char *optarg);
-void fill_witdh(server_config_t *server, char *optarg);
-void fill_height(server_config_t *server, char *optarg);
-void fill_name(server_config_t *server, int argc, char **argv);
-void fill_clients_nb(server_config_t *server, char *optarg);
-void fill_frequency(server_config_t *server, char *optarg);
+int check_args(int argc, char **argv, server_args_t *server);
+int handle_args(int argc, char **argv, server_t *server);
+int handle_options(int opt, char **argv, int argc, server_args_t *server);
+int parse_options(int argc, char **argv, server_args_t *server);
+
+void fill_port(server_args_t *server, char *optarg);
+void fill_witdh(server_args_t *server, char *optarg);
+void fill_height(server_args_t *server, char *optarg);
+void fill_name(server_args_t *server, int argc, char **argv);
+void fill_clients_nb(server_args_t *server, char *optarg);
+void fill_frequency(server_args_t *server, char *optarg);
 
 int display_help(void);
-void display_infos(server_config_t *server);
+void display_infos(server_args_t *server);
 
-int handle_free(server_config_t *server);
+int handle_free(server_t *server);
+void handle_error_connection(char *msg, server_connection_t *connection);
+
+void set_server(server_connection_t *connection);
+void set_bind(server_connection_t *connection);
+void set_listen(server_connection_t *connection);
+int set_server_socket(server_connection_t *connection);
 
 #endif /* SERVER_H */
