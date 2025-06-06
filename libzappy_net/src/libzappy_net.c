@@ -7,13 +7,13 @@
 
 #include "libzappy_net.h"
 
+/* Initialize network resources */
 int zappy_net_init(void)
 {
-    /* Initialize network resources */
     return 0;
 }
 
+/* Cleanup network resources */
 void zappy_net_cleanup(void)
 {
-    /* Cleanup network resources */
 }

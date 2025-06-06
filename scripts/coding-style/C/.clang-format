@@ -1,18 +1,68 @@
 ---
 Language: C
 BasedOnStyle: LLVM
+
+# C-F3: Line length must not exceed 80 columns
+ColumnLimit: 80
+
+# C-L2: Indentation with 4 spaces, no tabs
 IndentWidth: 4
 TabWidth: 4
-UseTab: Always
-BreakBeforeBraces: Allman
-AllowShortBlocksOnASingleLine: false
+UseTab: Never
+
+# C-L4: Curly brackets placement - opening at end of line (except functions)
+BreakBeforeBraces: Linux
+
+# C-L1: One statement per line
+AllowShortBlocksOnASingleLine: Never
 AllowShortFunctionsOnASingleLine: None
-AllowShortIfStatementsOnASingleLine: false
+AllowShortIfStatementsOnASingleLine: Never
 AllowShortLoopsOnASingleLine: false
-AlignConsecutiveAssignments: true
-AlignConsecutiveDeclarations: true
-AlignTrailingComments: true
-SpaceAfterCStyleCast: true
-ColumnLimit: 80
+AllowShortCaseLabelsOnASingleLine: false
+
+# C-V3: Pointer alignment - asterisk attached to variable
 PointerAlignment: Right
+
+# C-L3: Spacing rules
+SpaceAfterCStyleCast: true
+SpaceBeforeParens: ControlStatements
+SpaceInEmptyParentheses: false
+SpacesInCStyleCastParentheses: false
+SpacesInParentheses: false
+SpacesInSquareBrackets: false
+SpaceBeforeAssignmentOperators: true
+SpaceBeforeSquareBrackets: false
+
+# Function parameters and arguments
+BinPackArguments: false
+BinPackParameters: false
+AllowAllArgumentsOnNextLine: true
+AllowAllParametersOfDeclarationOnNextLine: true
+
+# Alignment settings
+AlignConsecutiveAssignments: false
+AlignConsecutiveDeclarations: false
+AlignConsecutiveMacros: false
+AlignTrailingComments: false
+AlignOperands: true
+
+# Indentation for various constructs
+IndentCaseLabels: true
+IndentGotoLabels: true
+IndentPPDirectives: AfterHash
+PPIndentWidth: 4
+
+# Line breaking
+BreakBeforeBinaryOperators: NonAssignment
+BreakBeforeTernaryOperators: true
+BreakStringLiterals: true
+MaxEmptyLinesToKeep: 1
+
+# Keep function declaration format clean
+AllowShortEnumsOnASingleLine: false
+CompactNamespaces: false
+
+# Include sorting (for headers)
+SortIncludes: true
+IncludeBlocks: Regroup
 ---

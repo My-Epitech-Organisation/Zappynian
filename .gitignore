@@ -4,6 +4,11 @@ zappy_gui
 zappy_ai
 unit_tests
 
+# Coding style files
+server/.clang-format
+gui/.clang-format
+libzappy_net/.clang-format
+
 # Graphical
 gui/build/
 
