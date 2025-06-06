@@ -2,11 +2,7 @@
 ** EPITECH PROJECT, 2025
 ** zappy
 ** File description:
-** HUD
+** PlayerEntity
 */
 
-#include "HUD.hpp"
-
-HUD::HUD() {}
-
-HUD::~HUD() {}
+#include "PlayerEntity.hpp"

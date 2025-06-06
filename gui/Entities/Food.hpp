@@ -2,15 +2,15 @@
 ** EPITECH PROJECT, 2025
 ** zappy
 ** File description:
-** HUD
+** AFood
 */
 
 #pragma once
 
-class HUD {
+class AFood {
 public:
-  HUD();
-  ~HUD();
+  AFood();
+  ~AFood();
 
 protected:
 private:

@@ -4,6 +4,9 @@ zappy_gui
 zappy_ai
 unit_tests
 
+# Graphical
+gui/build/
+
 #vscode
 .vscode
 

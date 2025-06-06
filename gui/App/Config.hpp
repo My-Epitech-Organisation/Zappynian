@@ -2,15 +2,15 @@
 ** EPITECH PROJECT, 2025
 ** zappy
 ** File description:
-** HUD
+** Config
 */
 
 #pragma once
 
-class HUD {
+class Config {
 public:
-  HUD();
-  ~HUD();
+  Config();
+  ~Config();
 
 protected:
 private:

@@ -2,15 +2,15 @@
 ** EPITECH PROJECT, 2025
 ** zappy
 ** File description:
-** HUD
+** IUpdatable
 */
 
 #pragma once
 
-class HUD {
+class IUpdatable {
 public:
-  HUD();
-  ~HUD();
+  IUpdatable();
+  ~IUpdatable();
 
 protected:
 private:
