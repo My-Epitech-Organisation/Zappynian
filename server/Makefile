@@ -18,6 +18,8 @@ SRCS	=	src/main.c \
             src/fill_p_x_y.c \
 			src/handle_free.c \
 			src/parsing.c \
+			src/set_server.c \
+			src/error_handling.c \
 
 OBJS	=	$(SRCS:.c=.o)
 
