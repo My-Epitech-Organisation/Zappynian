@@ -9,6 +9,9 @@
 #include <irrlicht/irrlicht.h>
 #include <vector>
 
+// Forward declarations
+class TileEntity;
+
 class EventReceiver : public irr::IEventReceiver {
 public:
   EventReceiver();
@@ -18,7 +21,7 @@ public:
 
   void setDevice(irr::IrrlichtDevice *dev);
 
-  void addCube(irr::scene::IMeshSceneNode *c);
+  void addCube(TileEntity *c);
 
   void setText(irr::gui::IGUIStaticText *t);
 
@@ -59,6 +62,6 @@ protected:
   float moveStartZ;
   float currentRotationY;
 
-  std::vector<irr::scene::IMeshSceneNode *> cubes;
+  std::vector<TileEntity *> cubes;
   irr::gui::IGUIStaticText *text;
 };
