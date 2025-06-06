@@ -11,7 +11,7 @@
 class AEntity : public IEntity {
 public:
   AEntity()
-      : id_(0), name_("unknow"), pos_(0, 0, 0), scale_(1.0f, 1.0f, 1.0f),
+      : id_(0), name_("unknown"), pos_(0, 0, 0), scale_(1.0f, 1.0f, 1.0f),
         node_(nullptr) {}
   virtual ~AEntity() = default;
 
