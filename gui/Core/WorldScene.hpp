@@ -34,6 +34,7 @@ public:
     createEntities(1, 0, 0, Direction::NORTH, 0, "Red");
     createPlane(10, 10);
     createEntities(2, 4, 32, 32, 32, 32, 32, 32, 32, 1);
+    createEntities(9, 9, 32, 32, 32, 32, 32, 32, 32, 1);
     createLights();
     createCamera();
     createText();

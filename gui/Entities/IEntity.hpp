@@ -4,12 +4,14 @@
 ** File description:
 ** IEntity
 */
-#include "Event/EventReceiver.hpp"
-#include "irrlicht/irrlicht.h"
+
+#pragma once
+#include <irrlicht/irrlicht.h>
 #include <string>
 #include <vector>
 
-#pragma once
+// Forward declaration
+class EventReceiver;
 
 class IEntity {
 public:
