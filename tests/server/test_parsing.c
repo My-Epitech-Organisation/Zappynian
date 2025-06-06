@@ -11,7 +11,7 @@
 
 Test(handle_options, valid_option_p)
 {
-    server_config_t server = {0};
+    server_args_t server = {0};
     char *mock_argv[] = {"./zappy_server", "-p", "8080", NULL};
     int mock_argc = 3;
 
@@ -23,7 +23,7 @@ Test(handle_options, valid_option_p)
 
 Test(handle_options, invalid_option_p)
 {
-    server_config_t server = {0};
+    server_args_t server = {0};
     char *mock_argv[] = {"./zappy_server", "-p", "invalid_port", NULL};
     int mock_argc = 3;
 
@@ -35,7 +35,7 @@ Test(handle_options, invalid_option_p)
 
 Test(handle_options, valid_option_c)
 {
-    server_config_t server = {0};
+    server_args_t server = {0};
     char *argv[] = {"./zappy_server", "-p", "8080", "-x", "10", "-y", "10", "-n", "Team1", "-c", "invalid_clients", "-f", "5", NULL};
     int argc = 13;
     char *opt_string = "p:x:y:n:c:f:";
@@ -48,7 +48,7 @@ Test(handle_options, valid_option_c)
 
 Test(handle_options, invalid_option_c)
 {
-    server_config_t server = {0};
+    server_args_t server = {0};
     char *argv[] = {"./zappy_server", "-p", "70000", "-x", "10", "-y", "10", "-n", "Team1", "-c", "invalid_clients", "-f", "5", NULL};
     int argc = 13;
     char *opt_string = "p:x:y:n:c:f:";

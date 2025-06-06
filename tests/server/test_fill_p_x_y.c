@@ -14,7 +14,7 @@ char *optarg1;
 
 Test(fill_port, valid_port)
 {
-    server_config_t server = {0};
+    server_args_t server = {0};
     char *mock_optarg1 = "8080";
 
     optarg1 = mock_optarg1;
@@ -25,7 +25,7 @@ Test(fill_port, valid_port)
 
 Test(fill_port, invalid_port)
 {
-    server_config_t server = {0};
+    server_args_t server = {0};
     char *mock_optarg1 = "70000";
 
     optarg1 = mock_optarg1;
@@ -35,7 +35,7 @@ Test(fill_port, invalid_port)
 
 Test(fill_width, valid_width)
 {
-    server_config_t server = {0};
+    server_args_t server = {0};
     char *mock_optarg1 = "100";
 
     optarg1 = mock_optarg1;
@@ -46,7 +46,7 @@ Test(fill_width, valid_width)
 
 Test(fill_width, invalid_width)
 {
-    server_config_t server = {0};
+    server_args_t server = {0};
     char *mock_optarg1 = "0";
 
     optarg1 = mock_optarg1;
@@ -56,7 +56,7 @@ Test(fill_width, invalid_width)
 
 Test(fill_height, valid_height)
 {
-    server_config_t server = {0};
+    server_args_t server = {0};
     char *mock_optarg1 = "200";
 
     optarg1 = mock_optarg1;
@@ -67,7 +67,7 @@ Test(fill_height, valid_height)
 
 Test(fill_height, invalid_height)
 {
-    server_config_t server = {0};
+    server_args_t server = {0};
     char *mock_optarg1 = "0";
 
     optarg1 = mock_optarg1;
