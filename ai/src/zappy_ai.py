@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 
-"""Main entry point for the Zappy AI client."""
-
 import argparse
 import sys
-from connection import Connection
+from ai.src.connection import Connection
+from ai.src.command_queue import CommandQueue
+
 
 class ZappyAI:
 
@@ -20,12 +20,26 @@ class ZappyAI:
         print(f"[INFO] Starting AI for team '{self.team_name}' on {self.host}:{self.port}")
         self.conn.connect()
         self.conn.handshake()
-        pass
+        self.queue = CommandQueue(self.conn)
+        # Test très simple pour envoyer des commandes en boucle.
+        while True:
+            self.queue.push("Forward")
+            self.queue.flush()
+            line = self.conn.read_line()
+            if line:
+                print("[RECV]", line)
+                self.queue.handle_response(line)
 
 
 def parse_args():
-    # Analyse les arguments de la ligne de commande pour configurer l'IA.
-    parser = argparse.ArgumentParser(description='Zappy AI Client')
+    if len(sys.argv) == 2 and sys.argv[1] == "-help":
+        print("USAGE: ./zappy_ai -p port -n name -h machine")
+        sys.exit(0)
+
+    parser = argparse.ArgumentParser(
+        description='Zappy AI Client',
+        add_help=False
+    )
     parser.add_argument('-p', '--port', type=int, required=True, help='Port number of the server')
     parser.add_argument('-n', '--team', type=str, required=True, help='Name of the team')
     parser.add_argument('-h', '--host', type=str, default='localhost', help='Server hostname (default: localhost)')
