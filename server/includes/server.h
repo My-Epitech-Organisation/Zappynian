@@ -8,6 +8,7 @@
 #ifndef SERVER_H
     #define SERVER_H
     #define MAX_CLIENTS 100
+    #define BUFFER_SIZE 4096
 
     #include <stdio.h>
     #include <stdlib.h>
@@ -19,20 +20,33 @@
     #include <sys/socket.h>
     #include <netinet/in.h>
     #include <errno.h>
+    #include <poll.h>
+
+typedef enum {
+    CLIENT_UNKNOWN,
+    CLIENT_IA,
+    CLIENT_GUI
+} client_type_t;
 
 typedef struct client_s {
     int fd;
     struct sockaddr_in addr;
+    socklen_t addr_len;
+    char read_buffer[BUFFER_SIZE];
+    int read_index;
+    char write_buffer[BUFFER_SIZE];
+    int write_index;
+    int write_total;
+    client_type_t type;
     char *team_name;
-    int team_id;
-    int id;
 } client_t;
 
 typedef struct server_connection_s {
     int fd;
+    int nfds;
     struct sockaddr_in addr;
     struct pollfd *fds;
-    client_t *clients;
+    client_t **clients;
     int client_count;
     int port;
 } server_connection_t;
@@ -75,5 +89,11 @@ void set_server(server_connection_t *connection);
 void set_bind(server_connection_t *connection);
 void set_listen(server_connection_t *connection);
 int set_server_socket(server_connection_t *connection);
+
+void handle_clients(server_t *server);
+void handle_client_read(server_connection_t *connection, int client_idx);
+void disconnect_client(server_connection_t *connection, int client_idx);
+int check_correct_read(server_connection_t *connection, int idx,
+    ssize_t bytes_read, client_t *client);
 
 #endif /* SERVER_H */
