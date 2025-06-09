@@ -26,7 +26,5 @@ int main(int argc, char **argv)
         return handle_free(server);
     display_infos(server->args);
     set_server(server->connection);
-    while (1) {
-        sleep(1);
-    }
+    handle_clients(server);
 }
