@@ -20,6 +20,8 @@ SRCS	=	src/main.c \
 			src/parsing.c \
 			src/set_server.c \
 			src/error_handling.c \
+			src/handle_client.c \
+			src/client_manager.c \
 
 OBJS	=	$(SRCS:.c=.o)
 
