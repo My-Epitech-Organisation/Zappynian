@@ -26,10 +26,8 @@ int handle_free(server_t *server)
         handle_free_args(server->args);
     }
     if (server->connection->clients != NULL) {
-        for (int i = 0; i < server->connection->client_count; i++) {
-            close(server->connection->clients[i].fd);
-            free(server->connection->clients[i].team_name);
-        }
+        for (int i = 0; i < server->connection->client_count; i++)
+            close(server->connection->clients[i]->fd);
         free(server->connection->clients);
     }
     free(server);
