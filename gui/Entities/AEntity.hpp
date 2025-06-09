@@ -4,9 +4,10 @@
 ** File description:
 ** AEntity
 */
-#include "IEntity.hpp"
-
 #pragma once
+
+#include "IEntity.hpp"
+#include <vector>
 
 class AEntity : public IEntity {
 public:

@@ -6,6 +6,9 @@
 */
 
 #include "EventReceiver.hpp"
+#include "Entities/TileEntity.hpp"
+#include <iostream>
+#include <string>
 
 EventReceiver::EventReceiver()
     : device(nullptr), smgr(nullptr), driver(nullptr), isMouseDown(false),
@@ -166,10 +169,20 @@ bool EventReceiver::handleNodeSelection(
       smgr->getSceneCollisionManager()->getSceneNodeFromRayBB(ray);
 
   for (auto &c : cubes) {
-    if (c == selectedNode) {
-      printf("Cube Name: %s\n", c->getName());
+    if (c->getName() == selectedNode->getName()) {
       irr::core::stringw selectedText =
-          irr::core::stringw(L"Selected Cube: ") + c->getName();
+          irr::core::stringw(L"Selected Cube: ") + c->getName().c_str();
+      std::vector<std::string> stoneNames = {"food",    "linemate", "deraumere",
+                                             "sibur",   "mendiane", "phiras",
+                                             "thystame"};
+      for (int i = 0; i < stoneNames.size(); ++i) {
+        selectedText += L"\n: ";
+        selectedText += irr::core::stringw(stoneNames[i].c_str());
+        selectedText += L" (";
+        selectedText += irr::core::stringw(
+            c->getInventory().getItemQuantity(stoneNames[i]));
+        selectedText += L")";
+      }
       text->setText(selectedText.c_str());
       return true;
     }
@@ -185,9 +198,7 @@ void EventReceiver::setDevice(irr::IrrlichtDevice *dev) {
   }
 }
 
-void EventReceiver::addCube(irr::scene::IMeshSceneNode *c) {
-  cubes.push_back(c);
-}
+void EventReceiver::addCube(TileEntity *c) { cubes.push_back(c); }
 
 void EventReceiver::setText(irr::gui::IGUIStaticText *t) { text = t; }
 

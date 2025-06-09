@@ -4,13 +4,11 @@
 ** File description:
 ** TileEntity
 */
+#pragma once
 #include "AEntity.hpp"
-#include "Event/EventReceiver.hpp"
-#include "irrlicht/irrlicht.h"
+#include "Inventory.hpp"
 #include <string>
 #include <vector>
-
-#pragma once
 
 class TileEntity : public AEntity {
 public:
@@ -32,11 +30,14 @@ public:
 
   irr::scene::IMeshSceneNode *getTileNode() const { return tileNode_; }
 
+  Inventory &getInventory() { return inventory_; }
+
 protected:
   irr::video::ITexture *textureTile_;
   std::vector<irr::scene::IMeshSceneNode *> tileNodes_;
   irr::core::stringc name_;
   irr::scene::IMeshSceneNode *tileNode_;
+  Inventory inventory_;
 
 private:
 };
