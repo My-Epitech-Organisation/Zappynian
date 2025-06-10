@@ -114,7 +114,8 @@
     *
     * Creates a TCP client socket and attempts to connect to the specified
     * host and port. The socket is created with O_NONBLOCK flag.
-    * The connection may not be immediately established due to non-blocking nature.
+    * The connection may not be immediately established due to
+    * non-blocking nature.
     *
     * @param host The hostname or IP address to connect to
     * @param port The port number to connect to (1-65535)
