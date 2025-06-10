@@ -17,7 +17,22 @@ void WorldScene::createEntities(int id, int x, int y, Direction direction,
 
 void WorldScene::createEntities(int x, int y, int q0, int q1, int q2, int q3,
                                 int q4, int q5, int q6, int nbTiles) {
-  entityManager_.createStones(x, y, q0, q1, q2, q3, q4, q5, q6, nbTiles);
+  int countTiles = 0;
+  for (int i = 0; i < x; i++) {
+    for (int j = 0; j < y; j++) {
+      entityManager_.createStones(i, j, q0, q1, q2, q3, q4, q5, q6);
+      countTiles++;
+      if (countTiles >= nbTiles) {
+        return;
+      }
+    }
+  }
+  entity_ = entityManager_.getEntities();
+}
+
+void WorldScene::createEntities(int x, int y, int q0, int q1, int q2, int q3,
+                                int q4, int q5, int q6) {
+  entityManager_.createStones(x, y, q0, q1, q2, q3, q4, q5, q6);
   entity_ = entityManager_.getEntities();
 }
 

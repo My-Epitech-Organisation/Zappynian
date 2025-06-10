@@ -22,6 +22,9 @@ public:
   void createEntities(int x, int y, int q0, int q1, int q2, int q3, int q4,
                       int q5, int q6, int nbTiles);
 
+  void createEntities(int x, int y, int q0, int q1, int q2, int q3, int q4,
+                      int q5, int q6);
+
   void createLights();
 
   void createCamera();
@@ -33,8 +36,9 @@ public:
   void createWorld() {
     createEntities(1, 0, 0, Direction::NORTH, 0, "Red");
     createPlane(10, 10);
-    createEntities(2, 4, 32, 32, 32, 32, 32, 32, 32, 1);
-    createEntities(9, 9, 32, 32, 32, 32, 32, 32, 32, 1);
+    createEntities(2, 4, 32, 32, 32, 32, 32, 32, 32);
+    createEntities(9, 9, 32, 32, 32, 32, 32, 32, 32);
+    createEntities(9, 9, 32, 32, 32, 32, 32, 32, 32, 30);
     createLights();
     createCamera();
     createText();

@@ -37,7 +37,7 @@ void EntityManager::createPlayers(int id, int x, int y, Direction direction,
 }
 
 void EntityManager::createStones(int x, int y, int q0, int q1, int q2, int q3,
-                                 int q4, int q5, int q6, int nbTiles) {
+                                 int q4, int q5, int q6) {
   std::vector<std::vector<irr::io::path>> stoneTextures = {
       {mediaPath_ + "stone_texture/food_redbull.png",
        mediaPath_ + "stone_texture/food_redbull.png"},
