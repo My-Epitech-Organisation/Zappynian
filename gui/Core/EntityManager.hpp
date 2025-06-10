@@ -8,6 +8,7 @@
 #include "../Entities/Stone.hpp"
 #include "../Entities/TileEntity.hpp"
 #include "../Event/EventReceiver.hpp"
+#include <iostream>
 #include <irrlicht/irrlicht.h>
 #include <memory>
 #include <string>
@@ -35,6 +36,15 @@ public:
 
   const std::vector<std::shared_ptr<IEntity>> &getEntities() const {
     return entity_;
+  }
+
+  std::shared_ptr<IEntity> getTileByName(const std::string &name) {
+    for (const auto &tile : tiles_) {
+      if (tile->getName() == name) {
+        return tile;
+      }
+    }
+    return nullptr;
   }
 
 protected:

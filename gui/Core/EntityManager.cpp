@@ -88,7 +88,7 @@ void EntityManager::createStones(int x, int y, int q0, int q1, int q2, int q3,
       objPos.Z += row * spacing - ((gridRows - 1) * spacing) / 2.0f;
       objPos.Y += yOffset;
       entity_.push_back(std::make_shared<Stone>(
-          0, objPos, qScale[stoneIdx], stoneTextures[stoneIdx], qB3D[stoneIdx],
+          -1, objPos, qScale[stoneIdx], stoneTextures[stoneIdx], qB3D[stoneIdx],
           stoneNames[stoneIdx]));
       entity_.back()->createNode(smgr_, driver_);
     }
@@ -107,7 +107,7 @@ void EntityManager::createTiles(int x, int y) {
       name += " col ";
       name += j;
       auto tile = std::make_shared<TileEntity>(
-          i + j, irr::core::vector3df(cubeX, 0, cubeY),
+          -1, irr::core::vector3df(cubeX, 0, cubeY),
           irr::core::vector3df(1.0f, 0.5f, 1.0f),
           std::vector<irr::io::path>{mediaPath_ + "grass.png"},
           mediaPath_ + "cube.b3d", image2, name);

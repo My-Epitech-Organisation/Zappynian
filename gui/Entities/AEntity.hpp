@@ -22,7 +22,11 @@ public:
   void setName(const std::string &name) override { name_ = name; }
   std::string getName() const override { return name_; }
 
-  void setPosition(const irr::core::vector3df &pos) override { pos_ = pos; }
+  void setPosition(const irr::core::vector3df &pos) override {
+    pos_ = pos;
+    if (node_)
+      node_->setPosition(pos_);
+  }
   irr::core::vector3df getPosition() const override { return pos_; }
 
   void setScale(const irr::core::vector3df &scale) override {
