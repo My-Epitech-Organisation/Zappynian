@@ -28,7 +28,7 @@ void Game::initWindow() {
 void Game::gameLoop() {
   irr::u32 frames = 0;
 
-  WorldScene worldScene(smgr_, driver_, receiver_, mediaPath_);
+  WorldScene worldScene(device_, smgr_, driver_, receiver_, mediaPath_);
 
   worldScene.createWorld();
   entity_ = worldScene.getEntities();
@@ -48,6 +48,8 @@ void Game::gameLoop() {
         entity_[0]->getNode()->setPosition(pos);
         receiver_.setIsMoving(false);
         entity_[0]->getNode()->setAnimationSpeed(0.0f);
+        worldScene.updateMovements(); // Call updateMovements after movement is
+                                      // complete
       } else {
         float progress = elapsedTime / 1.0f;
         irr::core::vector3df pos;
