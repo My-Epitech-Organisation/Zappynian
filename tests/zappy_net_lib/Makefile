@@ -26,6 +26,7 @@ SRC_FILES = test_socket_creation.c \
             test_loopback.c \
             test_socket_close.c \
             test_edge_cases.c \
+            test_pollbusy.c \
             test_helpers.c
 
 # Object files

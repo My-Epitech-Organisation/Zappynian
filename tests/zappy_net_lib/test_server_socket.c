@@ -10,11 +10,12 @@
 #include <sys/socket.h>
 #include "../../libzappy_net/include/zappy_net.h"
 
-Test(server_socket, test_server_listen_invalid_port_zero)
+Test(server_socket, test_server_listen_port_zero_auto_assign)
 {
     zn_socket_t sock = zn_server_listen(0);
 
-    cr_assert_null(sock, "Server listen with port 0 should fail");
+    cr_assert_not_null(sock, "Server listen with port 0 should succeed (auto-assign)");
+    zn_close(sock);
 }
 
 Test(server_socket, test_server_listen_invalid_port_negative)
