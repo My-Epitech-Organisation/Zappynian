@@ -30,7 +30,11 @@ void handle_client_read(server_connection_t *connection, int idx)
 
     if (check_correct_read(connection, idx, bytes_read, client) == 84)
         return;
-    memcpy(client->read_buffer + client->read_index, tmp_buffer, bytes_read);
+    if (memcpy(client->read_buffer + client->read_index, tmp_buffer,
+        bytes_read) == NULL) {
+        perror("memcpy");
+        return;
+    }
     client->read_index += bytes_read;
     for (int i = 0; i < client->read_index; i++) {
         if (client->read_buffer[i] == '\n') {
