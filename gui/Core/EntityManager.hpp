@@ -8,11 +8,11 @@
 #include "../Entities/Stone.hpp"
 #include "../Entities/TileEntity.hpp"
 #include "../Event/EventReceiver.hpp"
+#include <iostream>
 #include <irrlicht/irrlicht.h>
 #include <memory>
 #include <string>
 #include <vector>
-#include <iostream>
 
 #pragma once
 
