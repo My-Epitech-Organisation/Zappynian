@@ -23,6 +23,10 @@ int set_server_socket(server_connection_t *connection)
 void set_bind(server_connection_t *connection)
 {
     memset(&connection->addr, 0, sizeof(connection->addr));
+    if (connection == NULL) {
+        fprintf(stderr, "Server connection is NULL.\n");
+        exit(84);
+    }
     connection->addr.sin_family = AF_INET;
     connection->addr.sin_port = htons(connection->port);
     connection->addr.sin_addr.s_addr = INADDR_ANY;
