@@ -47,7 +47,7 @@ OBJ_FILES = $(patsubst $(SRC_DIR)/%.c,$(OBJ_DIR)/%.o,$(SRC_C)) \
 # Include flags
 INC_FLAGS = -I$(INC_DIR)
 
-.PHONY: all clean fclean re debug sanitize
+.PHONY: all clean fclean re debug sanitize tests_run
 
 all: $(NAME)
 
@@ -87,3 +87,7 @@ debug: re
 sanitize: CFLAGS += $(DEBUG_FLAGS) $(SANITIZE_FLAGS)
 sanitize: CXXFLAGS += $(DEBUG_FLAGS) $(SANITIZE_FLAGS)
 sanitize: re
+
+tests_run: $(NAME)
+	@echo "Running libzappy_net tests..."
+	@$(MAKE) -C ../tests/zappy_net_lib tests_run
