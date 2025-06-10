@@ -99,10 +99,7 @@ jobs:
       - name: Check binaries exist
         run: |
           # Check for required binaries
-          ################################################
-          # for bin in zappy_server zappy_gui zappy_ai; do
-          ################################################
-          for bin in zappy_server ; do
+          for bin in zappy_server zappy_gui zappy_ai; do
             [ -f "$bin" ] || [ -f "$BUILD_DIR/$bin" ] || [ -f "$BUILD_DIR/src/$bin" ] || { echo "❌ $bin binary not found"; exit 1; }
           done
           echo "✅ All binaries successfully built!"
