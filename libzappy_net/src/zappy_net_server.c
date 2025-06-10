@@ -53,7 +53,7 @@ zn_socket_t zn_server_listen(int port)
 {
     zn_socket_t sock;
 
-    if (port <= 0 || port > 65535) {
+    if (port < 0 || port > 65535) {
         return NULL;
     }
     if (create_and_init_server_socket(&sock) < 0) {
