@@ -2,8 +2,10 @@
 zappy_server
 zappy_gui
 zappy_ai
-zappy_gui.AppImage
 unit_tests
+
+# Subject binary files
+zappy_gui.AppImage
 
 # Coding style files
 server/.clang-format
