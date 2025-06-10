@@ -83,6 +83,20 @@ jobs:
           apt-get update -y && apt-get install -y clang-format-15
           ln -sf /usr/bin/clang-format-15 /usr/local/bin/clang-format
 
+          # Create ccache directory to ensure it exists for caching
+          mkdir -p ${{ env.CCACHE_DIR }}
+
+      - name: Setup ccache
+        run: |
+          # Configure ccache now that it's installed
+          ccache --max-size=500M
+          ccache --set-config=compression=true
+          # Show ccache config
+          echo "Ccache configuration:"
+          ccache --show-config
+          # Clear stats for this run
+          ccache -z
+
       - name: Check Code Formatting
         run: |
           echo "Checking code formatting..."
@@ -94,15 +108,12 @@ jobs:
           echo "Building network library..."
           make -C libzappy_net
           echo "Building project with Makefile..."
-          make
+          make re
 
       - name: Check binaries exist
         run: |
           # Check for required binaries
-          ################################################
-          # for bin in zappy_server zappy_gui zappy_ai; do
-          ################################################
-          for bin in zappy_server ; do
+          for bin in zappy_server zappy_gui zappy_ai; do
             [ -f "$bin" ] || [ -f "$BUILD_DIR/$bin" ] || [ -f "$BUILD_DIR/src/$bin" ] || { echo "❌ $bin binary not found"; exit 1; }
           done
           echo "✅ All binaries successfully built!"
@@ -121,7 +132,18 @@ jobs:
           fi
 
       - name: Save updated ccache
+        run: |
+          # Ensure ccache directory exists and has content before saving
+          mkdir -p ${{ env.CCACHE_DIR }}
+          # Initialize ccache if it's empty
+          ccache -z || true
+          # Display ccache stats
+          echo "Ccache status before saving:"
+          ccache -s
+
+      - name: Save ccache
         uses: actions/cache/save@v4
+        if: always()  # Try to save cache even if previous steps failed
         with:
           path: ${{ env.CCACHE_DIR }}
           key: ubuntu-clang-ccache-${{ github.sha }}

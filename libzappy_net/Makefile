@@ -42,7 +42,7 @@ OBJ_FILES = $(patsubst $(SRC_DIR)/%.c,$(OBJ_DIR)/%.o,$(SRC_C)) \
 
 INC_FLAGS = -I$(INC_DIR)
 
-.PHONY: all clean fclean re debug sanitize tests_run
+.PHONY: all clean fclean re debug sanitize tests_run create_directories
 
 all: $(NAME)
 
@@ -65,10 +65,12 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
 clean:
 	@echo "Cleaning object files"
 	@$(RM) -r $(OBJ_DIR)
+	@$(MAKE) -C ../tests/zappy_net_lib clean
 
 fclean: clean
 	@echo "Cleaning library $(NAME)"
 	@$(RM) $(NAME)
+	@$(MAKE) -C ../tests/zappy_net_lib fclean
 
 re: fclean all
 
