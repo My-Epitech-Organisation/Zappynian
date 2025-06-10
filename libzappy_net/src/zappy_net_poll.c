@@ -50,6 +50,12 @@ static void setup_poll_fds(zn_socket_t *sockets, short *events, int count,
     struct pollfd *poll_fds)
 {
     for (int i = 0; i < count; i++) {
+        if (!sockets[i]) {
+            poll_fds[i].fd = -1;
+            poll_fds[i].events = 0;
+            poll_fds[i].revents = 0;
+            continue;
+        }
         poll_fds[i].fd = sockets[i]->fd;
         poll_fds[i].events = events[i];
         poll_fds[i].revents = 0;
