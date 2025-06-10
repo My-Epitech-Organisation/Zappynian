@@ -12,6 +12,7 @@
 #include <memory>
 #include <string>
 #include <vector>
+#include <iostream>
 
 #pragma once
 
@@ -35,6 +36,15 @@ public:
 
   const std::vector<std::shared_ptr<IEntity>> &getEntities() const {
     return entity_;
+  }
+
+  std::shared_ptr<IEntity> getTileByName(const std::string &name) {
+    for (const auto &tile : tiles_) {
+      if (tile->getName() == name) {
+        return tile;
+      }
+    }
+    return nullptr;
   }
 
 protected:
