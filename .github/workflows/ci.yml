@@ -108,7 +108,7 @@ jobs:
           echo "Building network library..."
           make -C libzappy_net
           echo "Building project with Makefile..."
-          make
+          make re
 
       - name: Check binaries exist
         run: |
