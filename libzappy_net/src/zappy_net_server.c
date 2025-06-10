@@ -8,7 +8,6 @@
 #include "zappy_net_internal.h"
 
 #include <sys/socket.h>
-#include <errno.h>
 
 static int setup_server_socket(zn_socket_t sock, int port)
 {

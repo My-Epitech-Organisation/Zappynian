@@ -7,8 +7,6 @@
 
 #include "../include/zappy_net.h"
 
-#include <stdlib.h>
-
 /* TODO: Initialize library-wide resources */
 int zn_init(void)
 {
