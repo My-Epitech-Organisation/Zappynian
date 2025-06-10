@@ -65,10 +65,12 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
 clean:
 	@echo "Cleaning object files"
 	@$(RM) -r $(OBJ_DIR)
+	@$(MAKE) -C ../tests/zappy_net_lib clean
 
 fclean: clean
 	@echo "Cleaning library $(NAME)"
 	@$(RM) $(NAME)
+	@$(MAKE) -C ../tests/zappy_net_lib fclean
 
 re: fclean all
 
