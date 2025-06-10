@@ -182,7 +182,7 @@
     * @return Poll result structure with bitmaps of ready sockets
     */
     zn_poll_result_t zn_poll(zn_socket_t *sockets, short *events,
-                            int count, int timeout_ms);
+        int count, int timeout_ms);
 
 #ifdef __cplusplus
 }
