@@ -40,17 +40,30 @@ void WorldScene::createEntities(int x, int y, int q0, int q1, int q2, int q3,
 }
 
 void WorldScene::changePlayerPos(int id, int x, int y, Direction direction) {
-  entity_ = entityManager_.getEntities();
+  Movement movement = {id, x, y, direction};
+  movementQueue_.push(movement);
+  if (!receiver_.getIsMoving()) {
+    updateMovements();
+  }
+}
+
+void WorldScene::updateMovements() {
+  if (movementQueue_.empty() || receiver_.getIsMoving())
+    return;
+
+  Movement movement = movementQueue_.front();
+  movementQueue_.pop();
+
   for (auto &entity : entity_) {
-    if (entity->getId() == id) {
+    if (entity->getId() == movement.id) {
       auto* node = entity->getNode();
-      node->setRotation(irr::core::vector3df(0, static_cast<float>(direction) * 90.0f, 0));
+      node->setRotation(irr::core::vector3df(0, static_cast<float>(movement.direction) * 90.0f, 0));
       if (auto* animatedNode = dynamic_cast<irr::scene::IAnimatedMeshSceneNode*>(node)) {
         animatedNode->setFrameLoop(1, 13);
         animatedNode->setAnimationSpeed(15.0f);
         receiver_.setMoveStartX(node->getPosition().X);
         receiver_.setMoveStartZ(node->getPosition().Z);
-        receiver_.setCurrentRotationY(static_cast<float>(direction) * 90.0f);
+        receiver_.setCurrentRotationY(static_cast<float>(movement.direction) * 90.0f);
         receiver_.setIsMoving(true);
         receiver_.setMoveStartTime(device_->getTimer()->getTime());
       }

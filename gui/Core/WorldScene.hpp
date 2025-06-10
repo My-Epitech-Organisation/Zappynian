@@ -6,7 +6,15 @@
 */
 #include "EntityManager.hpp"
 #include <iostream>
+#include <queue>
 #pragma once
+
+struct Movement {
+  int id;
+  int x;
+  int y;
+  Direction direction;
+};
 
 class WorldScene {
 public:
@@ -50,9 +58,12 @@ public:
     changePlayerPos(1, 5, 2, Direction::NORTH);
     changePlayerPos(1, 5, 1, Direction::NORTH);
     changePlayerPos(1, 5, 0, Direction::NORTH);
+    changePlayerPos(1, 5, 0, Direction::EAST);
   }
 
   std::vector<std::shared_ptr<IEntity>> getEntities() const { return entity_; }
+
+  void updateMovements();
 
 protected:
   irr::IrrlichtDevice* device_;
@@ -62,6 +73,7 @@ protected:
   irr::io::path mediaPath_;
   EntityManager entityManager_;
   std::vector<std::shared_ptr<IEntity>> entity_;
+  std::queue<Movement> movementQueue_;
 
 private:
 };
