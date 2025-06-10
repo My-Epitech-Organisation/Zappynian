@@ -36,6 +36,8 @@ public:
   void createEntities(int id, int x, int y, Direction direction, int level,
                       std::string team);
 
+  void setPlayerLevel(int id, int level);
+
   void createEntities(int x, int y, int q0, int q1, int q2, int q3, int q4,
                       int q5, int q6, int nbTiles);
 
@@ -56,15 +58,18 @@ public:
 
   void createText();
 
+  void updatePlayersInfos();
+
   void createWorld() {
+    createText();
     createPlane(5, 5);
     createEntities(1, 2, 2, Direction::NORTH, 0, "Red");
+    createEntities(2, 4, 2, Direction::NORTH, 0, "Blue");
     createEntities(2, 4, 32, 32, 32, 32, 32, 32, 32);
     createEntities(4, 4, 32, 32, 32, 32, 32, 32, 32);
     // createEntities(9, 9, 32, 32, 32, 32, 32, 32, 32, 30);
     createLights();
     createCamera();
-    createText();
     changePlayerPos(1, 2, 2, Direction::NORTH);
     changePlayerPos(1, 2, 1, Direction::NORTH);
     changePlayerPos(1, 2, 0, Direction::NORTH);
@@ -76,6 +81,7 @@ public:
     changePlayerPos(1, 4, 1, Direction::SOUTH);
     changePlayerPos(1, 4, 2, Direction::SOUTH);
     changePlayerPos(1, 0, 2, Direction::WEST);
+    updatePlayersInfos();
   }
 
   std::vector<std::shared_ptr<IEntity>> getEntities() const { return entity_; }
@@ -91,6 +97,7 @@ protected:
   std::queue<Movement> movementQueue_;
   irr::core::vector3df actualPos_;
   std::pair<int, int> planeSize_;
+  irr::gui::IGUIStaticText *playersInfos_;
 
 private:
 };
