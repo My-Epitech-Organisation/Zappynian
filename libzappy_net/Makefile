@@ -51,6 +51,7 @@ $(NAME): create_directories $(OBJ_FILES)
 	@$(AR) $(ARFLAGS) $(NAME) $(OBJ_FILES)
 	@echo "$(NAME) created successfully!"
 
+create_directories:
 	@mkdir -p $(OBJ_DIR)
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
