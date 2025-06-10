@@ -2,48 +2,88 @@
 ** EPITECH PROJECT, 2025
 ** Zappy
 ** File description:
-** Zappy Network Library - Socket Management
+** Zappy Network Library - Socket Management (Basic Functions)
 */
 
-#include "zappy_net.h"
+#include "zappy_net_internal.h"
 
 #include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+#include <sys/socket.h>
+#include <fcntl.h>
+#include <errno.h>
 
-/**
- * @brief Internal socket structure definition
- *
- * This structure contains the internal representation of a socket
- * handle. It is opaque to library users to maintain encapsulation.
- */
-struct zn_socket {
-    int fd; /* Socket file descriptor */
-    int initialized; /* Initialization state flag */
-    void *internal_data; /* Reserved for future use */
-};
-
-/* TODO: Allocate and return new socket handle */
 zn_socket_t zn_socket_create(void)
 {
-    return NULL;
-}
+    zn_socket_t socket = malloc(sizeof(struct zn_socket));
 
-/* TODO: Destroy socket handle and free resources */
-void zn_socket_destroy(zn_socket_t socket)
-{
-    (void) socket;
-}
-
-/* TODO: Initialize socket handle */
-int zn_socket_init(zn_socket_t socket)
-{
     if (socket == NULL) {
+        return NULL;
+    }
+    socket->fd = -1;
+    socket->initialized = 0;
+    socket->type = 0;
+    memset(&socket->addr, 0, sizeof(socket->addr));
+    return socket;
+}
+
+void zn_socket_destroy(zn_socket_t sock)
+{
+    if (sock == NULL) {
+        return;
+    }
+    if (sock->fd >= 0) {
+        close(sock->fd);
+    }
+    free(sock);
+}
+
+int zn_socket_init(zn_socket_t sock)
+{
+    int flags;
+
+    if (sock == NULL) {
         return -1;
     }
+    sock->fd = socket(AF_INET, SOCK_STREAM, 0);
+    if (sock->fd < 0) {
+        return -1;
+    }
+    flags = fcntl(sock->fd, F_GETFL, 0);
+    if (flags < 0 || fcntl(sock->fd, F_SETFL, flags | O_NONBLOCK) < 0) {
+        close(sock->fd);
+        sock->fd = -1;
+        return -1;
+    }
+    sock->initialized = 1;
     return 0;
 }
 
-/* TODO: Clean up socket handle */
-void zn_socket_cleanup(zn_socket_t socket)
+void zn_socket_cleanup(zn_socket_t sock)
 {
-    (void) socket;
+    if (sock == NULL) {
+        return;
+    }
+    if (sock->fd >= 0) {
+        close(sock->fd);
+        sock->fd = -1;
+    }
+    sock->initialized = 0;
+}
+
+int zn_close(zn_socket_t sock)
+{
+    int result = 0;
+
+    if (sock == NULL) {
+        return -1;
+    }
+    if (sock->fd >= 0) {
+        do {
+            result = close(sock->fd);
+        } while (result < 0 && errno == EINTR);
+    }
+    zn_socket_destroy(sock);
+    return result;
 }

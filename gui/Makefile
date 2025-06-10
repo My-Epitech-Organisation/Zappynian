@@ -1,3 +1,10 @@
+##
+## EPITECH PROJECT, 2025
+## Zappynian
+## File description:
+## Makefile
+##
+
 NAME = zappy_gui
 
 SRC = src/main.cpp \
