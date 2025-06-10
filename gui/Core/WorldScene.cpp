@@ -11,7 +11,10 @@ WorldScene::~WorldScene() {}
 
 void WorldScene::createEntities(int id, int x, int y, Direction direction,
                                 int level, std::string team) {
-  entityManager_.createPlayers(id, x, y, direction, level, team);
+  irr::core::vector3df pos = entityManager_.getTileByName(
+      "Cube info: row " + std::to_string(x) + " col " + std::to_string(y))
+      ->getPosition();
+  entityManager_.createPlayers(id, pos.X, pos.Z, direction, level, team);
   entity_ = entityManager_.getEntities();
 }
 
@@ -40,12 +43,17 @@ void WorldScene::changePlayerPos(int id, int x, int y, Direction direction) {
   entity_ = entityManager_.getEntities();
   for (auto &entity : entity_) {
     if (entity->getId() == id) {
-      const irr::core::vector3df &pos = entityManager_.getTileByName(
-          "Cube info: row " + std::to_string(x) + " col " + std::to_string(y))
-          ->getPosition();
-      const irr::core::vector3df &oldPos = entity->getNode()->getPosition();
-      entity->setPosition(irr::core::vector3df(pos.X, oldPos.Y, pos.Z));
-      entity->getNode()->setRotation(irr::core::vector3df(0, static_cast<float>(direction) * 90.0f, 0));
+      auto* node = entity->getNode();
+      node->setRotation(irr::core::vector3df(0, static_cast<float>(direction) * 90.0f, 0));
+      if (auto* animatedNode = dynamic_cast<irr::scene::IAnimatedMeshSceneNode*>(node)) {
+        animatedNode->setFrameLoop(1, 13);
+        animatedNode->setAnimationSpeed(15.0f);
+        receiver_.setMoveStartX(node->getPosition().X);
+        receiver_.setMoveStartZ(node->getPosition().Z);
+        receiver_.setCurrentRotationY(static_cast<float>(direction) * 90.0f);
+        receiver_.setIsMoving(true);
+        receiver_.setMoveStartTime(device_->getTimer()->getTime());
+      }
       return;
     }
   }

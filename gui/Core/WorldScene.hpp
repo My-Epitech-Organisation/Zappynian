@@ -10,9 +10,9 @@
 
 class WorldScene {
 public:
-  WorldScene(irr::scene::ISceneManager *smgr, irr::video::IVideoDriver *driver,
+  WorldScene(irr::IrrlichtDevice* device, irr::scene::ISceneManager *smgr, irr::video::IVideoDriver *driver,
              EventReceiver &receiver, const irr::io::path &mediaPath)
-      : smgr_(smgr), driver_(driver), receiver_(receiver),
+      : device_(device), smgr_(smgr), driver_(driver), receiver_(receiver),
         mediaPath_(mediaPath),
         entityManager_(smgr, driver, receiver, mediaPath) {};
   ~WorldScene();
@@ -37,20 +37,25 @@ public:
   void createText();
 
   void createWorld() {
-    createEntities(1, 0, 0, Direction::NORTH, 0, "Red");
     createPlane(10, 10);
+    createEntities(1, 5, 5, Direction::NORTH, 0, "Red");
     createEntities(2, 4, 32, 32, 32, 32, 32, 32, 32);
     createEntities(9, 9, 32, 32, 32, 32, 32, 32, 32);
     // createEntities(9, 9, 32, 32, 32, 32, 32, 32, 32, 30);
     createLights();
     createCamera();
     createText();
-    changePlayerPos(1, 1, 1, Direction::NORTH);
+    changePlayerPos(1, 5, 4, Direction::NORTH);
+    changePlayerPos(1, 5, 3, Direction::NORTH);
+    changePlayerPos(1, 5, 2, Direction::NORTH);
+    changePlayerPos(1, 5, 1, Direction::NORTH);
+    changePlayerPos(1, 5, 0, Direction::NORTH);
   }
 
   std::vector<std::shared_ptr<IEntity>> getEntities() const { return entity_; }
 
 protected:
+  irr::IrrlichtDevice* device_;
   irr::scene::ISceneManager *smgr_;
   irr::video::IVideoDriver *driver_;
   EventReceiver &receiver_;
