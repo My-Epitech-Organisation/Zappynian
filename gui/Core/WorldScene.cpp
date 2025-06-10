@@ -36,6 +36,21 @@ void WorldScene::createEntities(int x, int y, int q0, int q1, int q2, int q3,
   entity_ = entityManager_.getEntities();
 }
 
+void WorldScene::changePlayerPos(int id, int x, int y, Direction direction) {
+  entity_ = entityManager_.getEntities();
+  for (auto &entity : entity_) {
+    if (entity->getId() == id) {
+      const irr::core::vector3df &pos = entityManager_.getTileByName(
+          "Cube info: row " + std::to_string(x) + " col " + std::to_string(y))
+          ->getPosition();
+      const irr::core::vector3df &oldPos = entity->getNode()->getPosition();
+      entity->setPosition(irr::core::vector3df(pos.X, oldPos.Y, pos.Z));
+      entity->getNode()->setRotation(irr::core::vector3df(0, static_cast<float>(direction) * 90.0f, 0));
+      return;
+    }
+  }
+}
+
 void WorldScene::createLights() {
   smgr_->addLightSceneNode(0, irr::core::vector3df(0, 100, -100),
                            irr::video::SColorf(1.0f, 1.0f, 1.0f), 800.0f);
@@ -50,7 +65,10 @@ void WorldScene::createCamera() {
                             irr::core::vector3df(0, 30, 0));
 }
 
-void WorldScene::createPlane(int x, int y) { entityManager_.createTiles(x, y); }
+void WorldScene::createPlane(int x, int y) {
+  entityManager_.createTiles(x, y);
+  entity_ = entityManager_.getEntities();
+}
 
 void WorldScene::createText() {
   irr::gui::IGUIStaticText *text = smgr_->getGUIEnvironment()->addStaticText(
