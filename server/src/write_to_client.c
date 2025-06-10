@@ -56,6 +56,14 @@ void put_str_fd(int fd, char *str)
         return;
     len = strlen_fd(str);
     write_ret = write(fd, str, len);
-    if (write_ret != len)
+    if (write_ret < 0) {
+        perror("write");
+        return;
+    }
+    if (write_ret == 0) {
+        fprintf(stderr, "Write returned 0, nothing written.\n");
+        return;
+    }
+    if (write_ret < len)
         put_str_fd(fd, str + write_ret);
 }

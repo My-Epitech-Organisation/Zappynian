@@ -12,6 +12,10 @@ int init_teams(server_args_t *server)
     server->teams = calloc(server->team_count, sizeof(team_t));
     if (server->teams == NULL) {
         fprintf(stderr, "Memory allocation failed for teams.\n");
+        for (int i = 0; i < server->team_count; i++) {
+            free(server->team_names[i]);
+        }
+        free(server->team_names);
         return 84;
     }
     for (int i = 0; i < server->team_count; i++) {

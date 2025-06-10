@@ -24,7 +24,7 @@ void assign_client_type(client_t *client, server_connection_t *connection,
     team = get_team_by_name(args, team_name);
     if (team && team->current_players < team->max_players) {
         client->type = CLIENT_IA;
-        client->team_name = strdup("team_name");
+        client->team_name = strdup(team_name);
         team->current_players++;
         put_str_fd(client->fd, "WELCOME IA\n");
         printf("Client %d is an IA client %s.\n", client->fd, team_name);
