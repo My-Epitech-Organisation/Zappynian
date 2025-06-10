@@ -2,6 +2,7 @@
 zappy_server
 zappy_gui
 zappy_ai
+zappy_gui.AppImage
 unit_tests
 
 # Coding style files
