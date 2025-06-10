@@ -10,6 +10,13 @@
 
     #include <stddef.h>
     #include <stdint.h>
+    #include <sys/socket.h>
+    #include <netinet/in.h>
+    #include <arpa/inet.h>
+    #include <unistd.h>
+    #include <fcntl.h>
+    #include <errno.h>
+    #include <netdb.h>
 
     #ifdef __cplusplus
     extern "C" {
@@ -89,6 +96,44 @@
     * @param socket The socket handle to clean up
     */
     void zn_socket_cleanup(zn_socket_t socket);
+
+    /**
+    * @brief Create a server socket and listen on specified port
+    *
+    * Creates a TCP server socket, binds it to the specified port on all
+    * available interfaces, and starts listening for incoming connections.
+    * The socket is created with O_NONBLOCK flag.
+    *
+    * @param port The port number to listen on (1-65535)
+    * @return A valid socket handle on success, NULL on failure
+    */
+    zn_socket_t zn_server_listen(int port);
+
+    /**
+    * @brief Connect to a server as a client
+    *
+    * Creates a TCP client socket and attempts to connect to the specified
+    * host and port. The socket is created with O_NONBLOCK flag.
+    * The connection may not be immediately established due to
+    * non-blocking nature.
+    *
+    * @param host The hostname or IP address to connect to
+    * @param port The port number to connect to (1-65535)
+    * @return A valid socket handle on success, NULL on failure
+    */
+    zn_socket_t zn_client_connect(const char *host, int port);
+
+    /**
+    * @brief Close a socket connection
+    *
+    * Closes the socket connection and cleans up the associated resources.
+    * This function handles EINTR and EAGAIN appropriately.
+    * After calling this function, the socket handle becomes invalid.
+    *
+    * @param socket The socket handle to close
+    * @return 0 on success, -1 on failure
+    */
+    int zn_close(zn_socket_t socket);
 
 #ifdef __cplusplus
 }

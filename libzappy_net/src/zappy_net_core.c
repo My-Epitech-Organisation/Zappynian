@@ -5,9 +5,7 @@
 ** Zappy Network Library - Core Functions
 */
 
-#include "zappy_net.h"
-
-#include <stdlib.h>
+#include "../include/zappy_net.h"
 
 /* TODO: Initialize library-wide resources */
 int zn_init(void)
