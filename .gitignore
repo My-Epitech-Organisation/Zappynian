@@ -2,7 +2,10 @@
 zappy_server
 zappy_gui
 zappy_ai
+
+# Project tests binaries
 unit_tests
+tests_zappy_net
 
 # Coding style files
 server/.clang-format
