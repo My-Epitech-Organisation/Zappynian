@@ -42,7 +42,7 @@ OBJ_FILES = $(patsubst $(SRC_DIR)/%.c,$(OBJ_DIR)/%.o,$(SRC_C)) \
 
 INC_FLAGS = -I$(INC_DIR)
 
-.PHONY: all clean fclean re debug sanitize tests_run
+.PHONY: all clean fclean re debug sanitize tests_run create_directories
 
 all: $(NAME)
 
