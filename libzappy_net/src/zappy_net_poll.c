@@ -13,7 +13,6 @@ static void check_poll_errors(struct pollfd *poll_fds, int index,
 {
     if (poll_fds[index].revents & (POLLERR | POLLHUP | POLLNVAL)) {
         result->error |= mask;
-        result->ready_count++;
     }
 }
 
@@ -24,13 +23,14 @@ static void build_poll_bitmaps(struct pollfd *poll_fds, int count,
 
     for (int i = 0; i < count; i++) {
         mask = 1ULL << i;
+        if (poll_fds[i].revents) {
+            result->ready_count++;
+        }
         if (poll_fds[i].revents & (POLLIN | POLLPRI)) {
             result->readable |= mask;
-            result->ready_count++;
         }
         if (poll_fds[i].revents & POLLOUT) {
             result->writable |= mask;
-            result->ready_count++;
         }
         check_poll_errors(poll_fds, i, mask, result);
     }
@@ -50,6 +50,12 @@ static void setup_poll_fds(zn_socket_t *sockets, short *events, int count,
     struct pollfd *poll_fds)
 {
     for (int i = 0; i < count; i++) {
+        if (!sockets[i]) {
+            poll_fds[i].fd = -1;
+            poll_fds[i].events = 0;
+            poll_fds[i].revents = 0;
+            continue;
+        }
         poll_fds[i].fd = sockets[i]->fd;
         poll_fds[i].events = events[i];
         poll_fds[i].revents = 0;
