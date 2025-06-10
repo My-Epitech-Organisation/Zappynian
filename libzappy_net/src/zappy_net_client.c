@@ -39,29 +39,46 @@ static int setup_client_socket(zn_socket_t sock, const char *host, int port)
     return 0;
 }
 
+static int connect_to_server(zn_socket_t sock)
+{
+    int result;
+
+    result = connect(sock->fd, (struct sockaddr *)&sock->addr,
+        sizeof(sock->addr));
+    if (result < 0 && errno != EINPROGRESS) {
+        return -1;
+    }
+    return 0;
+}
+
+static int create_and_init_socket(zn_socket_t *sock)
+{
+    *sock = zn_socket_create();
+    if (*sock == NULL) {
+        return -1;
+    }
+    if (zn_socket_init(*sock) < 0) {
+        zn_socket_destroy(*sock);
+        return -1;
+    }
+    return 0;
+}
+
 zn_socket_t zn_client_connect(const char *host, int port)
 {
     zn_socket_t sock;
-    int result;
 
     if (host == NULL || port <= 0 || port > 65535) {
         return NULL;
     }
-    sock = zn_socket_create();
-    if (sock == NULL) {
-        return NULL;
-    }
-    if (zn_socket_init(sock) < 0) {
-        zn_socket_destroy(sock);
+    if (create_and_init_socket(&sock) < 0) {
         return NULL;
     }
     if (setup_client_socket(sock, host, port) < 0) {
         zn_socket_destroy(sock);
         return NULL;
     }
-    result = connect(sock->fd, (struct sockaddr *)&sock->addr,
-        sizeof(sock->addr));
-    if (result < 0 && errno != EINPROGRESS) {
+    if (connect_to_server(sock) < 0) {
         zn_socket_destroy(sock);
         return NULL;
     }

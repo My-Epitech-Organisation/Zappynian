@@ -37,6 +37,19 @@ static int bind_and_listen(zn_socket_t sock)
     return 0;
 }
 
+static int create_and_init_server_socket(zn_socket_t *sock)
+{
+    *sock = zn_socket_create();
+    if (*sock == NULL) {
+        return -1;
+    }
+    if (zn_socket_init(*sock) < 0) {
+        zn_socket_destroy(*sock);
+        return -1;
+    }
+    return 0;
+}
+
 zn_socket_t zn_server_listen(int port)
 {
     zn_socket_t sock;
@@ -44,12 +57,7 @@ zn_socket_t zn_server_listen(int port)
     if (port <= 0 || port > 65535) {
         return NULL;
     }
-    sock = zn_socket_create();
-    if (sock == NULL) {
-        return NULL;
-    }
-    if (zn_socket_init(sock) < 0) {
-        zn_socket_destroy(sock);
+    if (create_and_init_server_socket(&sock) < 0) {
         return NULL;
     }
     if (setup_server_socket(sock, port) < 0) {

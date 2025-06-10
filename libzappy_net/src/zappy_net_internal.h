@@ -6,10 +6,10 @@
 */
 
 #ifndef ZAPPY_NET_INTERNAL_H_
-#define ZAPPY_NET_INTERNAL_H_
+    #define ZAPPY_NET_INTERNAL_H_
 
-#include "../include/zappy_net.h"
-#include <netinet/in.h>
+    #include "../include/zappy_net.h"
+    #include <netinet/in.h>
 
 /**
  * @brief Internal socket structure definition
