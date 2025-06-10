@@ -55,8 +55,6 @@ clean:
 	$(RM) $(OBJS)
 
 fclean: clean
-	@echo -e "$(RED)Suppression de $(NAME)...$(NO_COLOR)"
-	$(RM) ../$(NAME)
 	@echo -e "$(RED)Suppression des tests...$(NO_COLOR)"
 	@echo -e "$(RED)Suppression des fichiers de couverture...$(NO_COLOR)"
 	$(RM) -f ../$(NAME_TESTS)
