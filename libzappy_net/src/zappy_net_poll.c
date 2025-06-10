@@ -13,7 +13,6 @@ static void check_poll_errors(struct pollfd *poll_fds, int index,
 {
     if (poll_fds[index].revents & (POLLERR | POLLHUP | POLLNVAL)) {
         result->error |= mask;
-        result->ready_count++;
     }
 }
 
@@ -24,13 +23,14 @@ static void build_poll_bitmaps(struct pollfd *poll_fds, int count,
 
     for (int i = 0; i < count; i++) {
         mask = 1ULL << i;
+        if (poll_fds[i].revents) {
+            result->ready_count++;
+        }
         if (poll_fds[i].revents & (POLLIN | POLLPRI)) {
             result->readable |= mask;
-            result->ready_count++;
         }
         if (poll_fds[i].revents & POLLOUT) {
             result->writable |= mask;
-            result->ready_count++;
         }
         check_poll_errors(poll_fds, i, mask, result);
     }
