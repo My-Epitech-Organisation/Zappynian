@@ -22,6 +22,8 @@ SRCS	=	src/main.c \
 			src/error_handling.c \
 			src/handle_client.c \
 			src/client_manager.c \
+			src/manage_teams.c \
+			src/write_to_client.c \
 
 OBJS	=	$(SRCS:.c=.o)
 
