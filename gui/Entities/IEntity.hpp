@@ -34,6 +34,9 @@ public:
 
   virtual irr::scene::IAnimatedMeshSceneNode *getNode() const = 0;
 
+  virtual void setLevel(int level) = 0;
+  virtual int getLevel() const = 0;
+
 protected:
 private:
 };

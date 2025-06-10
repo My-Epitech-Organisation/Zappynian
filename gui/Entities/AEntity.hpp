@@ -13,7 +13,7 @@ class AEntity : public IEntity {
 public:
   AEntity()
       : id_(0), name_("unknown"), pos_(0, 0, 0), scale_(1.0f, 1.0f, 1.0f),
-        node_(nullptr) {}
+        node_(nullptr), level_(1) {}
   virtual ~AEntity() = default;
 
   void setId(int id) override { id_ = id; }
@@ -40,6 +40,9 @@ public:
   void createNode(irr::scene::ISceneManager *smgr,
                   irr::video::IVideoDriver *driver) override;
 
+  void setLevel(int level) override { level_ = level; }
+  int getLevel() const override { return level_; }
+
 protected:
   int id_;
   std::string name_;
@@ -48,6 +51,7 @@ protected:
   irr::scene::IAnimatedMeshSceneNode *node_;
   std::vector<irr::io::path> textures_;
   irr::io::path entityB3D_;
+  int level_;
 
 private:
 };
