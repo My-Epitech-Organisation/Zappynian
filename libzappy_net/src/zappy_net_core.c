@@ -5,7 +5,7 @@
 ** Zappy Network Library - Core Functions
 */
 
-#include "zappy_net.h"
+#include "../include/zappy_net.h"
 
 #include <stdlib.h>
 
