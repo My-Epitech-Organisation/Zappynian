@@ -9,24 +9,22 @@
 
 int main(int argc, char **argv)
 {
-    server_config_t *server = malloc(sizeof(server_config_t));
+    server_t *server = malloc(sizeof(server_t));
     int args_result = 0;
 
     if (server == NULL) {
         fprintf(stderr, "Memory allocation failed.\n");
         return 84;
     }
-    memset(server, 0, sizeof(server_config_t));
+    memset(server, 0, sizeof(server_t));
     args_result = handle_args(argc, argv, server);
     if (args_result == 84) {
         handle_free(server);
         return 84;
     }
-    if (args_result == 1) {
+    if (args_result == 1)
         return handle_free(server);
-    }
-    display_infos(server);
-    while (1) {
-        sleep(1);
-    }
+    display_infos(server->args);
+    set_server(server->connection);
+    handle_clients(server);
 }

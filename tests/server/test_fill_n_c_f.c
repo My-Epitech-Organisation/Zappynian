@@ -14,7 +14,7 @@ char *optarg;
 
 Test(fill_name, single_team_name)
 {
-    server_config_t server = {0};
+    server_args_t server = {0};
     char *mock_argv[] = {"./zappy_server", "-n", "Team1", NULL};
     int mock_argc = 3;
 
@@ -30,7 +30,7 @@ Test(fill_name, single_team_name)
 
 Test(fill_frequency, valid_frequency)
 {
-    server_config_t server = {0};
+    server_args_t server = {0};
     char *mock_optarg = "10";
 
     optarg = mock_optarg;
@@ -41,7 +41,7 @@ Test(fill_frequency, valid_frequency)
 
 Test(fill_frequency, invalid_frequency)
 {
-    server_config_t server = {0};
+    server_args_t server = {0};
     char *mock_optarg = "0";
 
     optarg = mock_optarg;
@@ -52,7 +52,7 @@ Test(fill_frequency, invalid_frequency)
 
 Test(fill_clients_nb, valid_clients_number)
 {
-    server_config_t server = {0};
+    server_args_t server = {0};
     char *mock_optarg = "5";
 
     optarg = mock_optarg;
@@ -63,7 +63,7 @@ Test(fill_clients_nb, valid_clients_number)
 
 Test(fill_clients_nb, invalid_clients_number)
 {
-    server_config_t server = {0};
+    server_args_t server = {0};
     char *mock_optarg = "0";
 
     optarg = mock_optarg;

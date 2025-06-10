@@ -7,7 +7,7 @@
 
 #include "../includes/server.h"
 
-static int process_option_p_x_y(int opt, server_config_t *server)
+static int process_option_p_x_y(int opt, server_args_t *server)
 {
     switch (opt) {
         case 'p':
@@ -25,7 +25,7 @@ static int process_option_p_x_y(int opt, server_config_t *server)
 }
 
 static int process_option_n_c_f(int opt, char **argv, int argc,
-    server_config_t *server)
+    server_args_t *server)
 {
     switch (opt) {
         case 'n':
@@ -42,7 +42,7 @@ static int process_option_n_c_f(int opt, char **argv, int argc,
     }
 }
 
-int handle_options(int opt, char **argv, int argc, server_config_t *server)
+int handle_options(int opt, char **argv, int argc, server_args_t *server)
 {
     if (process_option_p_x_y(opt, server) == 0)
         return (server->error_code == 84) ? 84 : 0;
@@ -52,7 +52,7 @@ int handle_options(int opt, char **argv, int argc, server_config_t *server)
     return 84;
 }
 
-int parse_options(int argc, char **argv, server_config_t *server)
+int parse_options(int argc, char **argv, server_args_t *server)
 {
     int opt = 0;
     char *opt_string = "p:x:y:n:c:f:";
@@ -71,7 +71,7 @@ int parse_options(int argc, char **argv, server_config_t *server)
     return 0;
 }
 
-int verify_config(server_config_t *server)
+int verify_config(server_args_t *server)
 {
     if (server->port == 0 || server->width == 0 || server->height == 0 ||
         server->team_count == 0 || server->clients_per_team == 0 ||
@@ -82,7 +82,7 @@ int verify_config(server_config_t *server)
     return 0;
 }
 
-int check_args(int argc, char **argv, server_config_t *server)
+int check_args(int argc, char **argv, server_args_t *server)
 {
     server->team_names = NULL;
     server->team_count = 0;
@@ -93,17 +93,25 @@ int check_args(int argc, char **argv, server_config_t *server)
     return 0;
 }
 
-int handle_args(int argc, char **argv, server_config_t *server)
+int handle_args(int argc, char **argv, server_t *server)
 {
+    server->connection = malloc(sizeof(server_connection_t));
+    server->args = malloc(sizeof(server_args_t));
+    if (server->args == NULL) {
+        fprintf(stderr, "Memory allocation failed for server arguments.\n");
+        return 84;
+    }
+    memset(server->args, 0, sizeof(server_args_t));
     if (argc < 2) {
         fprintf(stderr, "For the usage, check: %s -help\n", argv[0]);
         return 84;
     }
     if (argc == 2 && strcmp(argv[1], "-help") == 0)
         return display_help();
-    if (check_args(argc, argv, server) == 84) {
+    if (check_args(argc, argv, server->args) == 84) {
         fprintf(stderr, "Invalid arguments.\n");
         return 84;
     }
+    server->connection->port = server->args->port;
     return 0;
 }

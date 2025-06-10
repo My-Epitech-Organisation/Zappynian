@@ -11,7 +11,18 @@ NAME_TESTS	=	unit_tests
 CC		=	gcc
 RM		=	rm -f
 
-SRCS	=	$(wildcard src/*.c)
+SRCS	=	src/main.c \
+            src/display_help.c \
+            src/display_infos.c \
+            src/fill_n_c_f.c \
+            src/fill_p_x_y.c \
+			src/handle_free.c \
+			src/parsing.c \
+			src/set_server.c \
+			src/error_handling.c \
+			src/handle_client.c \
+			src/client_manager.c \
+
 OBJS	=	$(SRCS:.c=.o)
 
 TESTS	=	$(wildcard ../tests/server/*.c)

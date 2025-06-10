@@ -11,7 +11,7 @@
 
 Test(display_infos, check_display_infos)
 {
-    server_config_t server;
+    server_args_t server;
     server.port = 8080;
     server.width = 10;
     server.height = 10;

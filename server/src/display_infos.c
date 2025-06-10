@@ -7,7 +7,7 @@
 
 #include "../includes/server.h"
 
-void display_infos(server_config_t *server)
+void display_infos(server_args_t *server)
 {
     printf("Server configuration:\n");
     printf("Port: %d\n", server->port);

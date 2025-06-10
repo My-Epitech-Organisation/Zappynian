@@ -7,7 +7,7 @@
 
 #include "../includes/server.h"
 
-void fill_name(server_config_t *server, int argc, char **argv)
+void fill_name(server_args_t *server, int argc, char **argv)
 {
     int name_count = 0;
 
@@ -30,7 +30,7 @@ void fill_name(server_config_t *server, int argc, char **argv)
     server->team_count = name_count;
 }
 
-void fill_clients_nb(server_config_t *server, char *optarg)
+void fill_clients_nb(server_args_t *server, char *optarg)
 {
     server->clients_per_team = atoi(optarg);
     if (server->clients_per_team <= 0) {
@@ -39,7 +39,7 @@ void fill_clients_nb(server_config_t *server, char *optarg)
     }
 }
 
-void fill_frequency(server_config_t *server, char *optarg)
+void fill_frequency(server_args_t *server, char *optarg)
 {
     server->frequency = atoi(optarg);
     if (server->frequency <= 0) {
