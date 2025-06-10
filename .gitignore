@@ -4,6 +4,9 @@ zappy_gui
 zappy_ai
 unit_tests
 
+# Subject binary files
+zappy_gui.AppImage
+
 # Coding style files
 server/.clang-format
 gui/.clang-format

@@ -37,28 +37,34 @@ class ZappyAI:
             print("[RECV]", line)
             self.queue.handle_response(line)
             if line.startswith("["):
-                if "food" in line or "linemate" in line:
+                if any(char.isdigit() for char in line):
                     self.world.parse_inventory(line)
                     print("[DEBUG] Inventory:", self.world)
-                elif "player" in line or " " in line or line.strip().startswith("["):
+                else:
                     self.vision.parse_look(line)
                     print("[DEBUG] Vision:", self.vision)
             # Exemple de décision simple :
-            if self.world.get_food_count() <= 2:
+            if self.world.get_food_count() <= 500:
                 tile = self.vision.find_nearest("food")
                 print(f"[DECISION] Food low. Found at tile {tile}")
                 if tile == 0:
                     self.queue.push("Take food")
+                    self.queue.push("Forward")
                 elif tile == 1:
                     self.queue.push("Forward")
+                    self.queue.push("Take food")
                 elif tile in [2, 3]:
                     self.queue.push("Right")
                     self.queue.push("Forward")
+                    self.queue.push("Take food")
                 elif tile in [4, 5]:
                     self.queue.push("Left")
                     self.queue.push("Forward")
+                    self.queue.push("Take food")
                 else:
                     print("[INFO] Food is too far or not found.")
+            self.queue.push("Inventory")
+            self.queue.push("Look")
 
 
 def parse_args():
