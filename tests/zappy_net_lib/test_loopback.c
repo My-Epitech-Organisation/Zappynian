@@ -11,7 +11,6 @@
 #include <pthread.h>
 #include <sys/socket.h>
 #include <poll.h>
-#include <string.h>
 #include "../../libzappy_net/include/zappy_net.h"
 #include "test_helpers.h"
 
