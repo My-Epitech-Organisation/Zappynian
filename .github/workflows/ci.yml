@@ -71,6 +71,19 @@ jobs:
           restore-keys: |
             ubuntu-clang-ccache-
 
+      - name: Setup ccache
+        run: |
+          # Ensure ccache directory exists
+          mkdir -p ${{ env.CCACHE_DIR }}
+          # Configure ccache
+          ccache --max-size=500M
+          ccache --set-config=compression=true
+          # Show ccache config
+          echo "Ccache configuration:"
+          ccache --show-config
+          # Clear stats for this run
+          ccache -z
+
       - name: Install build dependencies
         run: |
           apt-get update -y
@@ -82,6 +95,9 @@ jobs:
           add-apt-repository "deb http://apt.llvm.org/jammy/ llvm-toolchain-jammy-15 main"
           apt-get update -y && apt-get install -y clang-format-15
           ln -sf /usr/bin/clang-format-15 /usr/local/bin/clang-format
+
+          # Create ccache directory to ensure it exists for caching
+          mkdir -p ${{ env.CCACHE_DIR }}
 
       - name: Check Code Formatting
         run: |
@@ -118,7 +134,18 @@ jobs:
           fi
 
       - name: Save updated ccache
+        run: |
+          # Ensure ccache directory exists and has content before saving
+          mkdir -p ${{ env.CCACHE_DIR }}
+          # Initialize ccache if it's empty
+          ccache -z || true
+          # Display ccache stats
+          echo "Ccache status before saving:"
+          ccache -s
+
+      - name: Save ccache
         uses: actions/cache/save@v4
+        if: always()  # Try to save cache even if previous steps failed
         with:
           path: ${{ env.CCACHE_DIR }}
           key: ubuntu-clang-ccache-${{ github.sha }}
