@@ -28,9 +28,9 @@ Test(edge_cases, test_multiple_servers_different_ports)
 Test(edge_cases, test_multiple_clients_same_server)
 {
     zn_socket_t server = zn_server_listen(8088);
-    zn_socket_t client1 = zn_client_connect("localhost", 22);
-    zn_socket_t client2 = zn_client_connect("localhost", 22);
-    zn_socket_t client3 = zn_client_connect("localhost", 22);
+    zn_socket_t client1 = zn_client_connect("localhost", 8088);
+    zn_socket_t client2 = zn_client_connect("localhost", 8088);
+    zn_socket_t client3 = zn_client_connect("localhost", 8088);
 
     cr_assert_not_null(server, "Server should start");
     cr_assert_not_null(client1, "First client should connect");
