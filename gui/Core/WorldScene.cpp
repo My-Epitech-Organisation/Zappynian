@@ -11,9 +11,11 @@ WorldScene::~WorldScene() {}
 
 void WorldScene::createEntities(int id, int x, int y, Direction direction,
                                 int level, std::string team) {
-  irr::core::vector3df pos = entityManager_.getTileByName(
-      "Cube info: row " + std::to_string(x) + " col " + std::to_string(y))
-      ->getPosition();
+  irr::core::vector3df pos =
+      entityManager_
+          .getTileByName("Cube info: row " + std::to_string(x) + " col " +
+                         std::to_string(y))
+          ->getPosition();
   entityManager_.createPlayers(id, pos.X, pos.Z, direction, level, team);
   entity_ = entityManager_.getEntities();
 }
@@ -47,23 +49,72 @@ void WorldScene::changePlayerPos(int id, int x, int y, Direction direction) {
   }
 }
 
+EdgePositionResult WorldScene::isEdgePosition(const irr::core::vector3df &position,
+                                         Direction direction, int nextX, int nextY) {
+    EdgePositionResult result = {false, 0.0f, 0.0f, irr::core::vector3df()};
+    
+    result.isEdge = (position.Z == 0 && direction == Direction::NORTH) ||
+                    (position.X == 0 && direction == Direction::EAST) ||
+                    (position.Z == planeSize_.second - 1 && direction == Direction::SOUTH) ||
+                    (position.X == planeSize_.first - 1 && direction == Direction::WEST);
+
+    if (result.isEdge) {
+        auto nextTile = entityManager_.getTileByName(
+            "Cube info: row " + std::to_string(nextX) + " col " +
+            std::to_string(nextY));
+        if (nextTile) {
+            result.nextPosition = nextTile->getPosition();
+            switch (direction) {
+            case Direction::NORTH:
+                result.offsetZ = 20.0f;
+                break;
+            case Direction::EAST:
+                result.offsetX = 20.0f;
+                break;
+            case Direction::SOUTH:
+                result.offsetZ = -20.0f;
+                break;
+            case Direction::WEST:
+                result.offsetX = -20.0f;
+                break;
+            default:
+                break;
+            }
+        }
+    }
+    return result;
+}
+
 void WorldScene::updateMovements() {
-  if (movementQueue_.empty() || receiver_.getIsMoving())
-    return;
+    if (movementQueue_.empty() || receiver_.getIsMoving())
+        return;
 
-  Movement movement = movementQueue_.front();
-  movementQueue_.pop();
+    Movement movement = movementQueue_.front();
+    movementQueue_.pop();
 
-  for (auto &entity : entity_) {
-    if (entity->getId() == movement.id) {
-      auto* node = entity->getNode();
-      node->setRotation(irr::core::vector3df(0, static_cast<float>(movement.direction) * 90.0f, 0));
-      if (auto* animatedNode = dynamic_cast<irr::scene::IAnimatedMeshSceneNode*>(node)) {
+    for (auto &entity : entity_) {
+        if (entity->getId() == movement.id) {
+            auto *node = entity->getNode();
+
+            auto edgeResult = isEdgePosition(actualPos_, movement.direction, movement.x, movement.y);
+            if (edgeResult.isEdge) {
+                node->setPosition(irr::core::vector3df(
+                    edgeResult.nextPosition.X + edgeResult.offsetX,
+                    node->getPosition().Y,
+                    edgeResult.nextPosition.Z + edgeResult.offsetZ));
+            }
+
+      actualPos_ = irr::core::vector3df(movement.x, 0, movement.y);
+      node->setRotation(irr::core::vector3df(
+          0, static_cast<float>(movement.direction) * 90.0f, 0));
+      if (auto *animatedNode =
+              dynamic_cast<irr::scene::IAnimatedMeshSceneNode *>(node)) {
         animatedNode->setFrameLoop(1, 13);
         animatedNode->setAnimationSpeed(15.0f);
         receiver_.setMoveStartX(node->getPosition().X);
         receiver_.setMoveStartZ(node->getPosition().Z);
-        receiver_.setCurrentRotationY(static_cast<float>(movement.direction) * 90.0f);
+        receiver_.setCurrentRotationY(static_cast<float>(movement.direction) *
+                                      90.0f);
         receiver_.setIsMoving(true);
         receiver_.setMoveStartTime(device_->getTimer()->getTime());
       }
@@ -87,6 +138,7 @@ void WorldScene::createCamera() {
 }
 
 void WorldScene::createPlane(int x, int y) {
+  planeSize_ = {x, y};
   entityManager_.createTiles(x, y);
   entity_ = entityManager_.getEntities();
 }
