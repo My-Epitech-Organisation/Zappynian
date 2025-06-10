@@ -36,7 +36,8 @@ SRC_C = $(SRC_DIR)/libzappy_net.c \
         $(SRC_DIR)/zappy_net_core.c \
         $(SRC_DIR)/zappy_net_socket.c \
         $(SRC_DIR)/zappy_net_server.c \
-        $(SRC_DIR)/zappy_net_client.c
+        $(SRC_DIR)/zappy_net_client.c \
+        $(SRC_DIR)/zappy_net_poll.c
 SRC_CPP =
 
 # All source files

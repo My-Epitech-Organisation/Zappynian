@@ -17,6 +17,7 @@
     #include <fcntl.h>
     #include <errno.h>
     #include <netdb.h>
+    #include <poll.h>
 
     #ifdef __cplusplus
     extern "C" {
@@ -104,7 +105,8 @@
     * available interfaces, and starts listening for incoming connections.
     * The socket is created with O_NONBLOCK flag.
     *
-    * @param port The port number to listen on (1-65535)
+    * @param port The port number to listen on (0-65535)
+    *             Port 0 means auto-assign a free port
     * @return A valid socket handle on success, NULL on failure
     */
     zn_socket_t zn_server_listen(int port);
@@ -134,6 +136,53 @@
     * @return 0 on success, -1 on failure
     */
     int zn_close(zn_socket_t socket);
+
+    /**
+    * @brief Get the file descriptor from a socket handle
+    *
+    * Retrieves the underlying file descriptor from a socket handle.
+    * This is useful for advanced operations or integration with
+    * other networking libraries.
+    *
+    * @param socket The socket handle
+    * @return The file descriptor on success, -1 on failure
+    */
+    int zn_get_fd(zn_socket_t socket);
+
+    /**
+    * @brief Maximum number of sockets supported by zn_poll()
+    */
+    #define ZN_POLL_MAX_SOCKETS 64
+
+    /**
+    * @brief Result structure for zn_poll() operations
+    *
+    * Contains bitmaps indicating which sockets are ready for various
+    * operations. Each bit position corresponds to the index in the
+    * sockets array passed to zn_poll().
+    */
+    typedef struct {
+        uint64_t readable;      /**< Bitmap of sockets ready for reading */
+        uint64_t writable;      /**< Bitmap of sockets ready for writing */
+        uint64_t error;         /**< Bitmap of sockets with errors */
+        int ready_count;        /**< Total number of ready sockets */
+    } zn_poll_result_t;
+
+    /**
+    * @brief Poll multiple sockets with timeout
+    *
+    * Waits for events on multiple sockets with a specified timeout.
+    * Returns a bitmap structure indicating which sockets are ready
+    * for reading, writing, or have errors.
+    *
+    * @param sockets Array of socket handles to monitor
+    * @param events Array of events to monitor for each socket (POLLIN, POLLOUT, etc.)
+    * @param count Number of sockets in the array (max ZN_POLL_MAX_SOCKETS)
+    * @param timeout_ms Timeout in milliseconds (-1 for infinite, 0 for no wait)
+    * @return Poll result structure with bitmaps of ready sockets
+    */
+    zn_poll_result_t zn_poll(zn_socket_t *sockets, short *events,
+                             int count, int timeout_ms);
 
 #ifdef __cplusplus
 }
