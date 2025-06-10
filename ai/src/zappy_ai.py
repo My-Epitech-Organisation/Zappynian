@@ -4,6 +4,9 @@ import argparse
 import sys
 from ai.src.connection import Connection
 from ai.src.command_queue import CommandQueue
+from ai.src.inventory_parser import WorldState
+from ai.src.vision_parser import Vision
+
 
 
 class ZappyAI:
@@ -14,6 +17,9 @@ class ZappyAI:
         self.port = port
         self.team_name = team_name
         self.conn = Connection(host, port, team_name)
+        self.queue = None
+        self.world = WorldState()
+        self.vision = Vision()
 
     def run(self):
         # Lance la connexion, effectue le handshake et démarre la logique principale de l'IA.
@@ -21,14 +27,38 @@ class ZappyAI:
         self.conn.connect()
         self.conn.handshake()
         self.queue = CommandQueue(self.conn)
-        # Test très simple pour envoyer des commandes en boucle.
+        self.queue.push("Inventory")
+        self.queue.push("Look")
         while True:
-            self.queue.push("Forward")
             self.queue.flush()
             line = self.conn.read_line()
-            if line:
-                print("[RECV]", line)
-                self.queue.handle_response(line)
+            if not line:
+                continue
+            print("[RECV]", line)
+            self.queue.handle_response(line)
+            if line.startswith("["):
+                if "food" in line or "linemate" in line:
+                    self.world.parse_inventory(line)
+                    print("[DEBUG] Inventory:", self.world)
+                elif "player" in line or " " in line or line.strip().startswith("["):
+                    self.vision.parse_look(line)
+                    print("[DEBUG] Vision:", self.vision)
+            # Exemple de décision simple :
+            if self.world.get_food_count() <= 2:
+                tile = self.vision.find_nearest("food")
+                print(f"[DECISION] Food low. Found at tile {tile}")
+                if tile == 0:
+                    self.queue.push("Take food")
+                elif tile == 1:
+                    self.queue.push("Forward")
+                elif tile in [2, 3]:
+                    self.queue.push("Right")
+                    self.queue.push("Forward")
+                elif tile in [4, 5]:
+                    self.queue.push("Left")
+                    self.queue.push("Forward")
+                else:
+                    print("[INFO] Food is too far or not found.")
 
 
 def parse_args():
