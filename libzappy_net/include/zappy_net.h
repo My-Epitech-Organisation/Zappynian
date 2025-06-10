@@ -176,13 +176,13 @@
     * for reading, writing, or have errors.
     *
     * @param sockets Array of socket handles to monitor
-    * @param events Array of events to monitor for each socket (POLLIN, POLLOUT, etc.)
+    * @param events Array of events to monitor for each socket
     * @param count Number of sockets in the array (max ZN_POLL_MAX_SOCKETS)
-    * @param timeout_ms Timeout in milliseconds (-1 for infinite, 0 for no wait)
+    * @param timeout_ms Timeout in milliseconds (-1 infinite, 0 no wait)
     * @return Poll result structure with bitmaps of ready sockets
     */
     zn_poll_result_t zn_poll(zn_socket_t *sockets, short *events,
-                             int count, int timeout_ms);
+                            int count, int timeout_ms);
 
 #ifdef __cplusplus
 }
