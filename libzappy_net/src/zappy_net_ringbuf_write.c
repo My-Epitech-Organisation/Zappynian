@@ -7,8 +7,6 @@
 
 #include "../include/zappy_net_ringbuf.h"
 
-#define MAX_QUEUED_LINES 10
-
 static ssize_t write_no_wrap(zn_ringbuf_t *rb, const uint8_t *src, size_t len)
 {
     memcpy(rb->buffer + rb->write_pos, src, len);

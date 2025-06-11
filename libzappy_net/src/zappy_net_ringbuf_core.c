@@ -7,8 +7,6 @@
 
 #include "../include/zappy_net_ringbuf.h"
 
-#define DEFAULT_BUFFER_SIZE (64 * 1024)
-
 int zn_ringbuf_init(zn_ringbuf_t *rb, size_t capacity)
 {
     if (rb == NULL)

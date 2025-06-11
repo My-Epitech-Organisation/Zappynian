@@ -7,8 +7,6 @@
 
 #include "../include/zappy_net_ringbuf.h"
 
-#define MAX_QUEUED_LINES 10
-
 static ssize_t flush_no_wrap(zn_ringbuf_t *rb, int fd, size_t available)
 {
     ssize_t result;
@@ -26,7 +24,8 @@ static ssize_t flush_with_wrap(zn_ringbuf_t *rb, int fd, size_t available)
 {
     ssize_t written = 0;
     ssize_t result;
-    size_t first_chunk, second_chunk;
+    size_t first_chunk;
+    size_t second_chunk;
 
     first_chunk = rb->capacity - rb->read_pos;
     result = write(fd, rb->buffer + rb->read_pos, first_chunk);
@@ -88,7 +87,8 @@ static ssize_t read_with_wrap(zn_ringbuf_t *rb, int fd, size_t available)
 {
     ssize_t bytes_read = 0;
     ssize_t result;
-    size_t first_chunk, second_chunk;
+    size_t first_chunk;
+    size_t second_chunk;
 
     first_chunk = rb->capacity - rb->write_pos;
     result = read(fd, rb->buffer + rb->write_pos, first_chunk);

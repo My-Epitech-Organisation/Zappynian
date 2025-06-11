@@ -16,6 +16,9 @@
     #include <unistd.h>
     #include <errno.h>
 
+    #define MAX_QUEUED_LINES 10
+    #define DEFAULT_BUFFER_SIZE 65536 // 64 KiB
+
 /**
  * @brief Ring buffer structure for socket I/O operations
  *

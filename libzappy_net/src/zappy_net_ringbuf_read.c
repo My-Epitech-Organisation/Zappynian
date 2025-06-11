@@ -65,13 +65,16 @@ static int validate_read_line_params(zn_ringbuf_t *rb, void *data,
 static ssize_t read_until_newline(zn_ringbuf_t *rb, uint8_t *dst,
     size_t max_len)
 {
-    size_t i, pos, bytes_read = 0;
+    size_t i;
+    size_t pos;
+    size_t bytes_read = 0;
     uint8_t c;
 
     pos = rb->read_pos;
     for (i = 0; i < max_len; i++) {
         c = rb->buffer[pos];
-        dst[bytes_read++] = c;
+        bytes_read++;
+        dst[bytes_read] = c;
         pos = (pos + 1) % rb->capacity;
         if (c == '\n') {
             rb->line_count--;

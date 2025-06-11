@@ -11,27 +11,44 @@
 #include <unistd.h>
 #include <errno.h>
 
-/**
- * Initialize the socket buffers if they haven't been initialized yet
- */
 static int init_socket_buffers_if_needed(zn_socket_t sock)
 {
-    if (sock == NULL || !sock->initialized) {
+    if (sock == NULL || !sock->initialized)
         return -1;
-    }
-
     if (!sock->buffer_initialized) {
-        if (zn_ringbuf_init(&sock->read_buffer, 0) < 0) {
+        if (zn_ringbuf_init(&sock->read_buffer, 0) < 0)
             return -1;
-        }
         if (zn_ringbuf_init(&sock->write_buffer, 0) < 0) {
             zn_ringbuf_cleanup(&sock->read_buffer);
             return -1;
         }
         sock->buffer_initialized = 1;
     }
-
     return 0;
+}
+
+static int validate_socket_params(zn_socket_t sock, void *data, size_t len)
+{
+    if (sock == NULL || !sock->initialized || data == NULL || len == 0) {
+        errno = EINVAL;
+        return -1;
+    }
+    return 0;
+}
+
+static ssize_t try_read_from_socket(zn_socket_t sock)
+{
+    ssize_t result;
+
+    result = zn_ringbuf_read_from_fd(&sock->read_buffer, sock->fd);
+    if (result < 0) {
+        if (errno == EAGAIN || errno == EWOULDBLOCK)
+            return 0;
+        return -1;
+    } else if (result == 0) {
+        return 0;
+    }
+    return result;
 }
 
 /**
@@ -48,17 +65,12 @@ static int init_socket_buffers_if_needed(zn_socket_t sock)
  */
 ssize_t zn_write(zn_socket_t sock, const void *data, size_t len)
 {
-    if (sock == NULL || !sock->initialized || data == NULL || len == 0) {
-        errno = EINVAL;
+    if (validate_socket_params(sock, (void *)data, len) < 0)
         return -1;
-    }
-
-    /* Initialize buffers if needed */
     if (init_socket_buffers_if_needed(sock) < 0) {
         errno = ENOMEM;
         return -1;
     }
-
     return zn_ringbuf_write(&sock->write_buffer, data, len);
 }
 
@@ -66,45 +78,30 @@ ssize_t zn_write(zn_socket_t sock, const void *data, size_t len)
  * @brief Read data from the socket's receive buffer
  *
  * This function reads data from the socket's internal receive buffer.
- * If the buffer is empty, it attempts to read from the socket into the buffer
- * first. This function does not block if no data is available.
+ * If the buffer is empty, it attempts to read from the socket into
+ * the buffer first. This function does not block if no data is available.
  *
  * @param sock The socket handle
  * @param data Buffer to store read data
  * @param len Maximum amount of data to read
- * @return Number of bytes read, -1 on error with errno set, 0 if no data available
+ * @return Number of bytes read, -1 on error with errno set,
+ *         0 if no data available
  */
 ssize_t zn_read(zn_socket_t sock, void *data, size_t len)
 {
     ssize_t result;
 
-    if (sock == NULL || !sock->initialized || data == NULL || len == 0) {
-        errno = EINVAL;
+    if (validate_socket_params(sock, data, len) < 0)
         return -1;
-    }
-
-    /* Initialize buffers if needed */
     if (init_socket_buffers_if_needed(sock) < 0) {
         errno = ENOMEM;
         return -1;
     }
-
-    /* If buffer is empty, try to read from socket */
     if (zn_ringbuf_is_empty(&sock->read_buffer)) {
-        result = zn_ringbuf_read_from_fd(&sock->read_buffer, sock->fd);
-        if (result < 0) {
-            /* If would block, it's not an error */
-            if (errno == EAGAIN || errno == EWOULDBLOCK) {
-                return 0;
-            }
-            return -1;
-        } else if (result == 0) {
-            /* End of file */
-            return 0;
-        }
+        result = try_read_from_socket(sock);
+        if (result <= 0)
+            return result;
     }
-
-    /* Read from buffer */
     return zn_ringbuf_read(&sock->read_buffer, data, len);
 }
 
@@ -121,39 +118,39 @@ ssize_t zn_read(zn_socket_t sock, void *data, size_t len)
  * @return Number of bytes read (including newline), -1 on error with errno set
  *         or if no complete line is available
  */
+static ssize_t try_read_line_from_socket(zn_socket_t sock)
+{
+    ssize_t result;
+
+    result = zn_ringbuf_read_from_fd(&sock->read_buffer, sock->fd);
+    if (result < 0) {
+        if (errno == EAGAIN || errno == EWOULDBLOCK) {
+            errno = EAGAIN;
+            return -1;
+        }
+        return -1;
+    } else if (result == 0) {
+        errno = EAGAIN;
+        return -1;
+    }
+    return result;
+}
+
 ssize_t zn_readln(zn_socket_t sock, void *data, size_t len)
 {
     ssize_t result;
 
-    if (sock == NULL || !sock->initialized || data == NULL || len == 0) {
-        errno = EINVAL;
+    if (validate_socket_params(sock, data, len) < 0)
         return -1;
-    }
-
-    /* Initialize buffers if needed */
     if (init_socket_buffers_if_needed(sock) < 0) {
         errno = ENOMEM;
         return -1;
     }
-
-    /* Try to read from socket if no lines are available */
     if (zn_ringbuf_count_lines(&sock->read_buffer) == 0) {
-        result = zn_ringbuf_read_from_fd(&sock->read_buffer, sock->fd);
-        if (result < 0) {
-            /* If would block, it's not an error */
-            if (errno == EAGAIN || errno == EWOULDBLOCK) {
-                errno = EAGAIN;
-                return -1;
-            }
+        result = try_read_line_from_socket(sock);
+        if (result < 0)
             return -1;
-        } else if (result == 0) {
-            /* End of file */
-            errno = EAGAIN;
-            return -1;
-        }
     }
-
-    /* Read line from buffer */
     return zn_ringbuf_read_line(&sock->read_buffer, data, len);
 }
 
@@ -175,7 +172,8 @@ ssize_t zn_flush(zn_socket_t sock)
     }
 
     /* If buffers not initialized or buffer is empty, nothing to do */
-    if (!sock->buffer_initialized || zn_ringbuf_is_empty(&sock->write_buffer)) {
+    if (!sock->buffer_initialized ||
+        zn_ringbuf_is_empty(&sock->write_buffer)) {
         return 0;
     }
 
@@ -191,33 +189,29 @@ ssize_t zn_flush(zn_socket_t sock)
  * @param sock The socket handle
  * @return 1 if data is available, 0 if not, -1 on error with errno set
  */
+static int check_socket_ready_for_reading(int fd)
+{
+    struct pollfd pfd;
+    int result;
+
+    pfd.fd = fd;
+    pfd.events = POLLIN;
+    pfd.revents = 0;
+    result = poll(&pfd, 1, 0);
+    if (result < 0)
+        return -1;
+    return (pfd.revents & POLLIN) ? 1 : 0;
+}
+
 int zn_has_data(zn_socket_t sock)
 {
     if (sock == NULL || !sock->initialized) {
         errno = EINVAL;
         return -1;
     }
-
-    /* If buffers not initialized, nothing to do */
-    if (!sock->buffer_initialized) {
+    if (!sock->buffer_initialized)
         return 0;
-    }
-
-    /* Check if there's data in the buffer */
-    if (!zn_ringbuf_is_empty(&sock->read_buffer)) {
+    if (!zn_ringbuf_is_empty(&sock->read_buffer))
         return 1;
-    }
-
-    /* Check if socket is ready for reading */
-    struct pollfd pfd;
-    pfd.fd = sock->fd;
-    pfd.events = POLLIN;
-    pfd.revents = 0;
-
-    int result = poll(&pfd, 1, 0);
-    if (result < 0) {
-        return -1;
-    }
-
-    return (pfd.revents & POLLIN) ? 1 : 0;
+    return check_socket_ready_for_reading(sock->fd);
 }
