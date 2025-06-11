@@ -53,6 +53,11 @@ public:
     WorldScene::changePlayerPos(id, x, y, direction);
   }
 
+  void PlayerInventory(int id, int x, int y, int q0, int q1, int q2, int q3,
+                          int q4, int q5, int q6) {
+    WorldScene::setPlayerInventory(id, x, y, q0, q1, q2, q3, q4, q5, q6);
+  }
+
   void createWorld() override {
     createPlane(5, 5);
     createLights();
@@ -66,19 +71,20 @@ public:
       createPlayer(2, 4, 2, Direction::NORTH, 0, "Blue");
     } catch (const std::exception& e) {
     }
-    createEntities(2, 4, 32, 32, 32, 32, 32, 32, 32);
-    createEntities(4, 4, 32, 32, 32, 32, 32, 32, 32);
-    changePlayerPos(1, 2, 2, Direction::NORTH);
-    changePlayerPos(1, 2, 1, Direction::NORTH);
-    changePlayerPos(1, 2, 0, Direction::NORTH);
-    changePlayerPos(1, 2, 4, Direction::NORTH);
-    changePlayerPos(1, 1, 4, Direction::EAST);
-    changePlayerPos(1, 0, 4, Direction::EAST);
-    changePlayerPos(1, 4, 4, Direction::EAST);
-    changePlayerPos(1, 4, 0, Direction::SOUTH);
-    changePlayerPos(1, 4, 1, Direction::SOUTH);
-    changePlayerPos(1, 4, 2, Direction::SOUTH);
-    changePlayerPos(1, 0, 2, Direction::WEST);
+    contentTiles(2, 4, 32, 32, 32, 32, 32, 32, 32);
+    contentTiles(4, 4, 32, 32, 32, 32, 32, 32, 32);
+    movePlayer(1, 2, 2, Direction::NORTH);
+    movePlayer(1, 2, 1, Direction::NORTH);
+    movePlayer(1, 2, 0, Direction::NORTH);
+    movePlayer(1, 2, 4, Direction::NORTH);
+    movePlayer(1, 1, 4, Direction::EAST);
+    movePlayer(1, 0, 4, Direction::EAST);
+    movePlayer(1, 4, 4, Direction::EAST);
+    movePlayer(1, 4, 0, Direction::SOUTH);
+    movePlayer(1, 4, 1, Direction::SOUTH);
+    movePlayer(1, 4, 2, Direction::SOUTH);
+    movePlayer(1, 0, 2, Direction::WEST);
+    PlayerInventory(1, 0, 2, 1, 1, 1, 14, 1, 1, 1);
   }
 
   std::vector<std::shared_ptr<IEntity>> getEntities() {
