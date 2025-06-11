@@ -45,7 +45,8 @@ static ssize_t read_with_wrap(zn_ringbuf_t *rb, int fd, size_t available)
 {
     ssize_t bytes_read = 0;
     ssize_t result;
-    size_t first_chunk, second_chunk;
+    size_t first_chunk;
+    size_t second_chunk;
 
     first_chunk = rb->capacity - rb->write_pos;
     result = handle_wrap_read_first(rb, fd, first_chunk);
