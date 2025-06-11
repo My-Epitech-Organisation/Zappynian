@@ -6,8 +6,8 @@
 */
 
 #include "EventReceiver.hpp"
-#include "Entities/PlayerEntity.hpp"
-#include "Entities/TileEntity.hpp"
+#include "../Entities/PlayerEntity.hpp"
+#include "../Entities/TileEntity.hpp"
 #include <iostream>
 #include <string>
 
