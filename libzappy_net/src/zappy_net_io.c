@@ -170,13 +170,10 @@ ssize_t zn_flush(zn_socket_t sock)
         errno = EINVAL;
         return -1;
     }
-
-    /* If buffers not initialized or buffer is empty, nothing to do */
     if (!sock->buffer_initialized ||
         zn_ringbuf_is_empty(&sock->write_buffer)) {
         return 0;
     }
-
     return zn_ringbuf_flush_to_fd(&sock->write_buffer, sock->fd);
 }
 
