@@ -6,6 +6,7 @@
 */
 
 #include "zappy_net_internal.h"
+#include "../include/zappy_net_ringbuf.h"
 
 #include <stdlib.h>
 #include <string.h>
@@ -24,6 +25,7 @@ zn_socket_t zn_socket_create(void)
     socket->fd = -1;
     socket->initialized = 0;
     socket->type = 0;
+    socket->buffer_initialized = 0;
     memset(&socket->addr, 0, sizeof(socket->addr));
     return socket;
 }
@@ -35,6 +37,10 @@ void zn_socket_destroy(zn_socket_t sock)
     }
     if (sock->fd >= 0) {
         close(sock->fd);
+    }
+    if (sock->buffer_initialized) {
+        zn_ringbuf_cleanup(&sock->read_buffer);
+        zn_ringbuf_cleanup(&sock->write_buffer);
     }
     free(sock);
 }
@@ -68,6 +74,11 @@ void zn_socket_cleanup(zn_socket_t sock)
     if (sock->fd >= 0) {
         close(sock->fd);
         sock->fd = -1;
+    }
+    if (sock->buffer_initialized) {
+        zn_ringbuf_cleanup(&sock->read_buffer);
+        zn_ringbuf_cleanup(&sock->write_buffer);
+        sock->buffer_initialized = 0;
     }
     sock->initialized = 0;
 }
