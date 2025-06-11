@@ -32,8 +32,7 @@ void Game::initWindow() {
       driver_->getTexture(mediaPath_ + "sky_texture/skymid.png"),
       driver_->getTexture(mediaPath_ + "sky_texture/skymidright.png"),
       driver_->getTexture(mediaPath_ + "sky_texture/skymidleft.png"),
-      driver_->getTexture(mediaPath_ + "sky_texture/skyleft.png")
-  );
+      driver_->getTexture(mediaPath_ + "sky_texture/skyleft.png"));
 
   driver_->setTextureCreationFlag(irr::video::ETCF_CREATE_MIP_MAPS, true);
 }
@@ -77,8 +76,8 @@ void Game::gameLoop() {
 
     driver_->beginScene(true, true, irr::video::SColor(255, 255, 128, 0));
 
-    guienv_->drawAll();
     smgr_->drawAll();
+    guienv_->drawAll();
 
     driver_->endScene();
 

@@ -36,6 +36,9 @@ public:
   void createEntities(int id, int x, int y, Direction direction, int level,
                       std::string team);
 
+  void setPlayerInventory(int id, int x, int y, int q0, int q1, int q2, int q3,
+                          int q4, int q5, int q6);
+
   void setPlayerLevel(int id, int level);
 
   void createEntities(int x, int y, int q0, int q1, int q2, int q3, int q4,
