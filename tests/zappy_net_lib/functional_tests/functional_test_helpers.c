@@ -37,31 +37,31 @@ int create_test_server(int port)
     int server_fd;
     struct sockaddr_in addr;
     int opt = 1;
-    
+
     server_fd = socket(AF_INET, SOCK_STREAM, 0);
     if (server_fd < 0)
         return -1;
-    
+
     if (setsockopt(server_fd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) < 0) {
         close(server_fd);
         return -1;
     }
-    
+
     memset(&addr, 0, sizeof(addr));
     addr.sin_family = AF_INET;
     addr.sin_addr.s_addr = INADDR_ANY;
     addr.sin_port = htons(port);
-    
+
     if (bind(server_fd, (struct sockaddr *)&addr, sizeof(addr)) < 0) {
         close(server_fd);
         return -1;
     }
-    
+
     if (listen(server_fd, 5) < 0) {
         close(server_fd);
         return -1;
     }
-    
+
     if (socket_count < 256) {
         test_sockets[socket_count++] = server_fd;
     }
@@ -72,25 +72,25 @@ int create_test_client(const char *host, int port)
 {
     int client_fd;
     struct sockaddr_in addr;
-    
+
     client_fd = socket(AF_INET, SOCK_STREAM, 0);
     if (client_fd < 0)
         return -1;
-    
+
     memset(&addr, 0, sizeof(addr));
     addr.sin_family = AF_INET;
     addr.sin_port = htons(port);
-    
+
     if (inet_pton(AF_INET, host, &addr.sin_addr) <= 0) {
         close(client_fd);
         return -1;
     }
-    
+
     if (connect(client_fd, (struct sockaddr *)&addr, sizeof(addr)) < 0) {
         close(client_fd);
         return -1;
     }
-    
+
     if (socket_count < 256) {
         test_sockets[socket_count++] = client_fd;
     }
@@ -101,7 +101,7 @@ void generate_random_message(test_message_t *msg, int id)
 {
     msg->id = id;
     msg->size = rand() % 200 + 50;
-    
+
     for (size_t i = 0; i < msg->size && i < 255; i++) {
         msg->data[i] = 'A' + (rand() % 26);
     }
@@ -130,13 +130,13 @@ int wait_for_connection(int server_socket, double timeout_sec)
 {
     fd_set readfds;
     struct timeval timeout;
-    
+
     FD_ZERO(&readfds);
     FD_SET(server_socket, &readfds);
-    
+
     timeout.tv_sec = (int)timeout_sec;
     timeout.tv_usec = ((int)(timeout_sec * 1000000)) % 1000000;
-    
+
     return select(server_socket + 1, &readfds, NULL, NULL, &timeout);
 }
 
@@ -154,7 +154,7 @@ void update_performance_stats(performance_stats_t *stats, double latency)
 {
     stats->success_count++;
     stats->total_time += latency;
-    
+
     if (latency < stats->min_latency)
         stats->min_latency = latency;
     if (latency > stats->max_latency)

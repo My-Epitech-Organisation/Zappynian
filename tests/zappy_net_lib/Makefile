@@ -70,7 +70,7 @@ tests_run: $(NAME)
 	@echo "Running tests..."
 	@./$(NAME) --verbose
 
-functional: 
+functional:
 	@echo "Running functional tests..."
 	@$(MAKE) -C functional_tests test
 
