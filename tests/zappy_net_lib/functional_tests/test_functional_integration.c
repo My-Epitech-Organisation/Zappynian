@@ -144,7 +144,7 @@ Test(integration, connection_error_handling, .init = setup, .fini = teardown)
     zn_socket_t *socket;
     
     /* Test connection to non-existent server */
-    client_fd = create_test_client("127.0.0.1", 99999);
+    client_fd = create_test_client("127.0.0.1", 65535);
     cr_assert(client_fd < 0, "Should fail to connect to non-existent server");
     
     /* Test invalid hostname */
