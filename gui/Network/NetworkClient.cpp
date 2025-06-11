@@ -52,7 +52,6 @@ void NetworkClient::parseMessage(const std::string &message) {
             std::cerr << "Invalid arguments for bct (map) command\n";
             return;
         }
-        printf("bct %d %d %d %d %d %d %d %d %d %d\n", x, y, q0, q1, q2, q3, q4, q5, q6, nbTiles);
         contentMap(x, y, q0, q1, q2, q3, q4, q5, q6, nbTiles);
     } else if (command == "bct" && nbArgs == 9) {
         std::istringstream iss2(message);
@@ -61,7 +60,6 @@ void NetworkClient::parseMessage(const std::string &message) {
             std::cerr << "Invalid arguments for bct (tile) command\n";
             return;
         }
-        printf("x = %d", x);
         contentTiles(x, y, q0, q1, q2, q3, q4, q5, q6);
     }
 }
