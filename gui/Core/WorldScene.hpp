@@ -31,7 +31,7 @@ public:
       : device_(device), smgr_(smgr), driver_(driver), receiver_(receiver),
         mediaPath_(mediaPath),
         entityManager_(smgr, driver, receiver, mediaPath) {};
-  ~WorldScene();
+  virtual ~WorldScene() = default;
 
   void createEntities(int id, int x, int y, Direction direction, int level,
                       std::string team);
@@ -58,28 +58,7 @@ public:
 
   void createText();
 
-  void createWorld() {
-    createText();
-    createPlane(5, 5);
-    createEntities(1, 2, 2, Direction::NORTH, 0, "Red");
-    createEntities(2, 4, 2, Direction::NORTH, 0, "Blue");
-    createEntities(2, 4, 32, 32, 32, 32, 32, 32, 32);
-    createEntities(4, 4, 32, 32, 32, 32, 32, 32, 32);
-    // createEntities(9, 9, 32, 32, 32, 32, 32, 32, 32, 30);
-    createLights();
-    createCamera();
-    changePlayerPos(1, 2, 2, Direction::NORTH);
-    changePlayerPos(1, 2, 1, Direction::NORTH);
-    changePlayerPos(1, 2, 0, Direction::NORTH);
-    changePlayerPos(1, 2, 4, Direction::NORTH);
-    changePlayerPos(1, 1, 4, Direction::EAST);
-    changePlayerPos(1, 0, 4, Direction::EAST);
-    changePlayerPos(1, 4, 4, Direction::EAST);
-    changePlayerPos(1, 4, 0, Direction::SOUTH);
-    changePlayerPos(1, 4, 1, Direction::SOUTH);
-    changePlayerPos(1, 4, 2, Direction::SOUTH);
-    changePlayerPos(1, 0, 2, Direction::WEST);
-  }
+  virtual void createWorld();
 
   std::vector<std::shared_ptr<IEntity>> getEntities() const { return entity_; }
 

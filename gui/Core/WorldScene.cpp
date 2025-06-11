@@ -7,15 +7,15 @@
 
 #include "WorldScene.hpp"
 
-WorldScene::~WorldScene() {}
-
 void WorldScene::createEntities(int id, int x, int y, Direction direction,
                                 int level, std::string team) {
-  irr::core::vector3df pos =
-      entityManager_
-          .getTileByName("Cube info: row " + std::to_string(x) + " col " +
-                         std::to_string(y))
-          ->getPosition();
+  // Vérification de l'existence du tile avant d'accéder à sa position
+  auto tile = entityManager_.getTileByName("Cube info: row " + std::to_string(x) + " col " + std::to_string(y));
+  if (!tile) {
+      std::cerr << "[CRITICAL] Tile introuvable pour le joueur (" << x << ", " << y << ") !" << std::endl;
+      return;
+  }
+  irr::core::vector3df pos = tile->getPosition();
   entityManager_.createPlayers(id, pos.X, pos.Z, direction, level, team);
   entity_ = entityManager_.getEntities();
   receiver_.addEntity(entity_.back());
@@ -178,3 +178,5 @@ void WorldScene::setPlayerLevel(int id, int level) {
     }
   }
 }
+
+void WorldScene::createWorld() {}

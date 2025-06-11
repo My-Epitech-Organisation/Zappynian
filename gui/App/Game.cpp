@@ -41,10 +41,12 @@ void Game::initWindow() {
 void Game::gameLoop() {
   irr::u32 frames = 0;
 
-  WorldScene worldScene(device_, smgr_, driver_, receiver_, mediaPath_);
-
-  worldScene.createWorld();
-  entity_ = worldScene.getEntities();
+  NetworkClient scene(device_, smgr_, driver_, receiver_, mediaPath_);
+  scene.createWorld();
+  entity_ = scene.getEntities();
+  if (entity_.empty() || !entity_[0] || !entity_[0]->getNode()) {
+    return;
+  }
 
   while (device_->run()) {
     irr::u32 currentTime = device_->getTimer()->getTime();
@@ -61,7 +63,7 @@ void Game::gameLoop() {
         entity_[0]->getNode()->setPosition(pos);
         receiver_.setIsMoving(false);
         entity_[0]->getNode()->setAnimationSpeed(0.0f);
-        worldScene.updateMovements();
+        scene.updateMovements();
       } else {
         float progress = elapsedTime / 1.0f;
         irr::core::vector3df pos;
