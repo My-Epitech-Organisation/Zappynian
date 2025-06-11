@@ -61,8 +61,6 @@ void Game::gameLoop() {
       }
     }
 
-    worldScene.updatePlayersInfos();
-
     driver_->beginScene(true, true, irr::video::SColor(255, 255, 128, 0));
 
     guienv_->drawAll();
