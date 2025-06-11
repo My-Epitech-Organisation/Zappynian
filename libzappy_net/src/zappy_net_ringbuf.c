@@ -12,7 +12,7 @@
 #include <sys/socket.h>
 #include <errno.h>
 
-#define DEFAULT_BUFFER_SIZE (64 * 1024) /* 64 KiB */
+#define DEFAULT_BUFFER_SIZE (64 * 1024)
 #define MAX_QUEUED_LINES 10
 
 int zn_ringbuf_init(zn_ringbuf_t *rb, size_t capacity)
@@ -59,7 +59,7 @@ size_t zn_ringbuf_write_available(const zn_ringbuf_t *rb)
     }
 
     if (rb->is_empty) {
-        return rb->capacity - 1; /* Keep one byte to distinguish full from empty */
+        return rb->capacity - 1;
     }
 
     if (rb->write_pos >= rb->read_pos) {
