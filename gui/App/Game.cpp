@@ -48,8 +48,7 @@ void Game::gameLoop() {
         entity_[0]->getNode()->setPosition(pos);
         receiver_.setIsMoving(false);
         entity_[0]->getNode()->setAnimationSpeed(0.0f);
-        worldScene.updateMovements(); // Call updateMovements after movement is
-                                      // complete
+        worldScene.updateMovements();
       } else {
         float progress = elapsedTime / 1.0f;
         irr::core::vector3df pos;

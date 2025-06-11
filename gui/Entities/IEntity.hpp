@@ -10,7 +10,6 @@
 #include <string>
 #include <vector>
 
-// Forward declaration
 class EventReceiver;
 
 class IEntity {
@@ -33,6 +32,9 @@ public:
   virtual irr::core::vector3df getScale() const = 0;
 
   virtual irr::scene::IAnimatedMeshSceneNode *getNode() const = 0;
+
+  virtual void setLevel(int level) = 0;
+  virtual int getLevel() const = 0;
 
 protected:
 private:

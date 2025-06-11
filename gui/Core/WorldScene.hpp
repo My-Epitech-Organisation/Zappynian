@@ -17,10 +17,10 @@ struct Movement {
 };
 
 struct EdgePositionResult {
-    bool isEdge;
-    float offsetX;
-    float offsetZ;
-    irr::core::vector3df nextPosition;
+  bool isEdge;
+  float offsetX;
+  float offsetZ;
+  irr::core::vector3df nextPosition;
 };
 
 class WorldScene {
@@ -36,13 +36,17 @@ public:
   void createEntities(int id, int x, int y, Direction direction, int level,
                       std::string team);
 
+  void setPlayerLevel(int id, int level);
+
   void createEntities(int x, int y, int q0, int q1, int q2, int q3, int q4,
                       int q5, int q6, int nbTiles);
 
   void createEntities(int x, int y, int q0, int q1, int q2, int q3, int q4,
                       int q5, int q6);
 
-  void changePlayerPos(int id, int x, int y, Direction direction);    EdgePositionResult isEdgePosition(const irr::core::vector3df& position, Direction direction, int nextX, int nextY);
+  void changePlayerPos(int id, int x, int y, Direction direction);
+  EdgePositionResult isEdgePosition(const irr::core::vector3df &position,
+                                    Direction direction, int nextX, int nextY);
 
   void updateMovements();
 
@@ -55,14 +59,15 @@ public:
   void createText();
 
   void createWorld() {
+    createText();
     createPlane(5, 5);
     createEntities(1, 2, 2, Direction::NORTH, 0, "Red");
+    createEntities(2, 4, 2, Direction::NORTH, 0, "Blue");
     createEntities(2, 4, 32, 32, 32, 32, 32, 32, 32);
-    createEntities(5, 5, 32, 32, 32, 32, 32, 32, 32);
+    createEntities(4, 4, 32, 32, 32, 32, 32, 32, 32);
     // createEntities(9, 9, 32, 32, 32, 32, 32, 32, 32, 30);
     createLights();
     createCamera();
-    createText();
     changePlayerPos(1, 2, 2, Direction::NORTH);
     changePlayerPos(1, 2, 1, Direction::NORTH);
     changePlayerPos(1, 2, 0, Direction::NORTH);
