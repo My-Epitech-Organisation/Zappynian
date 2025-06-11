@@ -257,11 +257,11 @@ bool EventReceiver::handlePlayerSelection(
     if (player && player->getNode() == selectedNode) {
       irr::core::stringw selectedText = L"Player Info:\n";
       selectedText += L"ID: ";
-      selectedText += player->getId();
+      selectedText += irr::core::stringw(player->getId());
       selectedText += L"\nTeam: ";
       selectedText += irr::core::stringw(player->getTeam().c_str());
       selectedText += L"\nLevel: ";
-      selectedText += player->getLevel();
+      selectedText += irr::core::stringw(player->getLevel());
       textPlayer->setText(selectedText.c_str());
       return true;
     }
