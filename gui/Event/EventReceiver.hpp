@@ -7,6 +7,8 @@
 
 #pragma once
 #include <irrlicht/irrlicht.h>
+#include "../Entities/IEntity.hpp"
+#include <memory>
 #include <vector>
 
 // Forward declarations
@@ -23,7 +25,10 @@ public:
 
   void addCube(TileEntity *c);
 
+  void addEntity(std::shared_ptr<IEntity> entity);
+
   void setText(irr::gui::IGUIStaticText *t);
+  void setPlayerText(irr::gui::IGUIStaticText *t) { textPlayer = t; }
 
   void setAnimatedNode(irr::scene::IAnimatedMeshSceneNode *node);
 
@@ -48,6 +53,7 @@ public:
   bool handleNodeSelection(const irr::SEvent::SMouseInput &mouseInput);
   bool handleCharacterMovement(irr::EKEY_CODE key);
   bool moveCamera(irr::EKEY_CODE key, irr::scene::ICameraSceneNode *camera);
+  bool handlePlayerSelection(const irr::SEvent::SMouseInput &mouseInput);
 
 protected:
   irr::IrrlichtDevice *device;
@@ -64,5 +70,7 @@ protected:
   float currentRotationY;
 
   std::vector<TileEntity *> cubes;
-  irr::gui::IGUIStaticText *text;
+  irr::gui::IGUIStaticText *textCube;
+  irr::gui::IGUIStaticText *textPlayer;
+  std::vector<std::shared_ptr<IEntity>> entity_;
 };
