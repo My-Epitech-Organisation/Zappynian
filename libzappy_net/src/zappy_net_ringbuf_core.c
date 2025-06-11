@@ -6,7 +6,6 @@
 */
 
 #include "../include/zappy_net_ringbuf.h"
-#include <stdlib.h>
 
 #define DEFAULT_BUFFER_SIZE (64 * 1024)
 

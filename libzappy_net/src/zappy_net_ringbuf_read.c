@@ -55,32 +55,45 @@ ssize_t zn_ringbuf_read(zn_ringbuf_t *rb, void *data, size_t len)
     return len;
 }
 
-ssize_t zn_ringbuf_read_line(zn_ringbuf_t *rb, void *data, size_t max_len)
+static int validate_read_line_params(zn_ringbuf_t *rb, void *data,
+    size_t max_len)
 {
-    size_t available;
-    size_t i, pos, bytes_read = 0;
-    uint8_t *dst = (uint8_t *)data;
-    uint8_t c;
-    int found_newline = 0;
+    return (rb == NULL || rb->buffer == NULL || data == NULL ||
+        max_len == 0 || rb->is_empty);
+}
 
-    if (rb == NULL || rb->buffer == NULL || data == NULL || max_len == 0 ||
-        rb->is_empty)
-        return -1;
-    available = zn_ringbuf_read_available(rb);
-    max_len = (max_len < available) ? max_len : available;
+static ssize_t read_until_newline(zn_ringbuf_t *rb, uint8_t *dst,
+    size_t max_len)
+{
+    size_t i, pos, bytes_read = 0;
+    uint8_t c;
+
     pos = rb->read_pos;
     for (i = 0; i < max_len; i++) {
         c = rb->buffer[pos];
         dst[bytes_read++] = c;
         pos = (pos + 1) % rb->capacity;
         if (c == '\n') {
-            found_newline = 1;
             rb->line_count--;
             rb->read_pos = pos;
-            break;
+            return bytes_read;
         }
     }
+    return -1;
+}
+
+ssize_t zn_ringbuf_read_line(zn_ringbuf_t *rb, void *data, size_t max_len)
+{
+    size_t available;
+    uint8_t *dst = (uint8_t *)data;
+    ssize_t result;
+
+    if (validate_read_line_params(rb, data, max_len))
+        return -1;
+    available = zn_ringbuf_read_available(rb);
+    max_len = (max_len < available) ? max_len : available;
+    result = read_until_newline(rb, dst, max_len);
     if (rb->read_pos == rb->write_pos)
         rb->is_empty = 1;
-    return found_newline ? bytes_read : -1;
+    return result;
 }

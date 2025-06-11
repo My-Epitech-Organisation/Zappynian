@@ -6,8 +6,6 @@
 */
 
 #include "../include/zappy_net_ringbuf.h"
-#include <unistd.h>
-#include <errno.h>
 
 #define MAX_QUEUED_LINES 10
 

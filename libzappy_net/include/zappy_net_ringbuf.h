@@ -11,6 +11,10 @@
     #include <stddef.h>
     #include <stdint.h>
     #include <sys/types.h>
+    #include <stdlib.h>
+    #include <string.h>
+    #include <unistd.h>
+    #include <errno.h>
 
 /**
  * @brief Ring buffer structure for socket I/O operations
