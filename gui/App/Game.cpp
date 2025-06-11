@@ -23,6 +23,19 @@ void Game::initWindow() {
   receiver_.setDevice(device_);
   mediaPath_ = "assets/";
   device_->setWindowCaption(L"Zappy FPS: 0");
+
+  driver_->setTextureCreationFlag(irr::video::ETCF_CREATE_MIP_MAPS, false);
+
+  smgr_->addSkyBoxSceneNode(
+      driver_->getTexture(mediaPath_ + "sky_texture/skyup.png"),
+      driver_->getTexture(mediaPath_ + "sky_texture/skydown.png"),
+      driver_->getTexture(mediaPath_ + "sky_texture/skymid.png"),
+      driver_->getTexture(mediaPath_ + "sky_texture/skymidright.png"),
+      driver_->getTexture(mediaPath_ + "sky_texture/skymidleft.png"),
+      driver_->getTexture(mediaPath_ + "sky_texture/skyleft.png")
+  );
+
+  driver_->setTextureCreationFlag(irr::video::ETCF_CREATE_MIP_MAPS, true);
 }
 
 void Game::gameLoop() {
