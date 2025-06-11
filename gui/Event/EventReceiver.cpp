@@ -262,6 +262,17 @@ bool EventReceiver::handlePlayerSelection(
       selectedText += irr::core::stringw(player->getTeam().c_str());
       selectedText += L"\nLevel: ";
       selectedText += irr::core::stringw(player->getLevel());
+      std::vector<std::string> stoneNames = {"food",    "linemate", "deraumere",
+                                             "sibur",   "mendiane", "phiras",
+                                             "thystame"};
+      for (std::size_t i = 0; i < stoneNames.size(); ++i) {
+        selectedText += L"\n: ";
+        selectedText += irr::core::stringw(stoneNames[i].c_str());
+        selectedText += L" (";
+        selectedText += irr::core::stringw(
+            player->getInventory().getItemQuantity(stoneNames[i]));
+        selectedText += L")";
+      }
       textPlayer->setText(selectedText.c_str());
       return true;
     }

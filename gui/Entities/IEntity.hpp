@@ -6,6 +6,7 @@
 */
 
 #pragma once
+#include "Inventory.hpp"
 #include <irrlicht/irrlicht.h>
 #include <string>
 #include <vector>
@@ -35,6 +36,8 @@ public:
 
   virtual void setLevel(int level) = 0;
   virtual int getLevel() const = 0;
+
+  virtual Inventory &getInventory() = 0;
 
 protected:
 private:

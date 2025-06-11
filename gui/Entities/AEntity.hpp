@@ -43,6 +43,8 @@ public:
   void setLevel(int level) override { level_ = level; }
   int getLevel() const override { return level_; }
 
+  Inventory &getInventory() { return inventory_; }
+
 protected:
   int id_;
   std::string name_;
@@ -51,6 +53,7 @@ protected:
   irr::scene::IAnimatedMeshSceneNode *node_;
   std::vector<irr::io::path> textures_;
   irr::io::path entityB3D_;
+  Inventory inventory_;
   int level_;
 
 private:
