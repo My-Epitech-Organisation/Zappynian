@@ -31,7 +31,7 @@ static void read_with_wrap(zn_ringbuf_t *rb, uint8_t *dst, size_t len)
 static int validate_read_params(zn_ringbuf_t *rb, void *data, size_t len)
 {
     return (rb == NULL || rb->buffer == NULL || data == NULL || len == 0 ||
-        rb->is_empty);
+        rb->is_empty) ? 1 : 0;
 }
 
 static int count_newlines_for_read(zn_ringbuf_t *rb, size_t len)
