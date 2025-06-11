@@ -149,13 +149,15 @@ void WorldScene::createPlane(int x, int y) {
 
 void WorldScene::createText() {
   irr::gui::IGUIStaticText *text = smgr_->getGUIEnvironment()->addStaticText(
-      L"Tile Info:", irr::core::rect<irr::s32>(10, 10, 220, 200),
-      false);
+      L"Tile Info:", irr::core::rect<irr::s32>(10, 10, 220, 200), false);
 
-  irr::gui::IGUIStaticText *playerText = smgr_->getGUIEnvironment()->addStaticText(
-      L"Player Info:", irr::core::rect<irr::s32>(smgr_->getVideoDriver()->getScreenSize().Width - 120, 10, 
-                                                smgr_->getVideoDriver()->getScreenSize().Width - 10, 200),
-      false);
+  irr::gui::IGUIStaticText *playerText =
+      smgr_->getGUIEnvironment()->addStaticText(
+          L"Player Info:",
+          irr::core::rect<irr::s32>(
+              smgr_->getVideoDriver()->getScreenSize().Width - 120, 10,
+              smgr_->getVideoDriver()->getScreenSize().Width - 10, 200),
+          false);
 
   irr::gui::IGUIFont *font = smgr_->getGUIEnvironment()->getFont(
       mediaPath_ + "fonthaettenschweiler.bmp");

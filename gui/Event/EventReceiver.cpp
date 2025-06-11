@@ -6,8 +6,8 @@
 */
 
 #include "EventReceiver.hpp"
-#include "Entities/TileEntity.hpp"
 #include "Entities/PlayerEntity.hpp"
+#include "Entities/TileEntity.hpp"
 #include <iostream>
 #include <string>
 
@@ -239,7 +239,8 @@ bool EventReceiver::handleNodeSelection(
   return false;
 }
 
-bool EventReceiver::handlePlayerSelection(const irr::SEvent::SMouseInput &mouseInput) {
+bool EventReceiver::handlePlayerSelection(
+    const irr::SEvent::SMouseInput &mouseInput) {
   if (!smgr || !driver || !textPlayer)
     return false;
 

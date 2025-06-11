@@ -6,12 +6,11 @@
 */
 
 #pragma once
-#include <irrlicht/irrlicht.h>
 #include "../Entities/IEntity.hpp"
+#include <irrlicht/irrlicht.h>
 #include <memory>
 #include <vector>
 
-// Forward declarations
 class TileEntity;
 
 class EventReceiver : public irr::IEventReceiver {
