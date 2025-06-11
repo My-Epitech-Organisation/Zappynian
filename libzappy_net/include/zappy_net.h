@@ -99,6 +99,61 @@
     void zn_socket_cleanup(zn_socket_t socket);
 
     /**
+     * @brief Write data to the socket's send buffer
+     *
+     * This function writes data to the socket's internal send buffer.
+     * The data is not immediately sent over the network but queued for
+     * later transmission when zn_flush() is called.
+     *
+     * @param sock The socket handle
+     * @param data Pointer to data to write
+     * @param len Length of data in bytes
+     * @return Number of bytes written, -1 on error with errno set
+     */
+    ssize_t zn_write(zn_socket_t sock, const void *data, size_t len);
+
+    /**
+     * @brief Read data from the socket's receive buffer
+     *
+     * This function reads data from the socket's internal receive buffer.
+     * If the buffer is empty, it attempts to read from the socket into the buffer
+     * first. This function does not block if no data is available.
+     *
+     * @param sock The socket handle
+     * @param data Buffer to store read data
+     * @param len Maximum amount of data to read
+     * @return Number of bytes read, -1 on error with errno set, 0 if no data available
+     */
+    ssize_t zn_read(zn_socket_t sock, void *data, size_t len);
+
+    /**
+     * @brief Read a line from the socket's receive buffer
+     *
+     * This function reads a complete line (ending with '\n') from the socket's
+     * internal receive buffer. If no complete line is available, it attempts to
+     * read from the socket into the buffer first.
+     *
+     * @param sock The socket handle
+     * @param data Buffer to store read data
+     * @param len Maximum amount of data to read
+     * @return Number of bytes read (including newline), -1 on error with errno set
+     *         or if no complete line is available
+     */
+    ssize_t zn_readln(zn_socket_t sock, void *data, size_t len);
+
+    /**
+     * @brief Flush the socket's send buffer to the network
+     *
+     * This function attempts to send all data in the socket's send buffer
+     * to the network. It may not send all data in a single call if the network
+     * is not ready to accept more data.
+     *
+     * @param sock The socket handle
+     * @return Number of bytes flushed, -1 on error with errno set
+     */
+    ssize_t zn_flush(zn_socket_t sock);
+
+    /**
     * @brief Create a server socket and listen on specified port
     *
     * Creates a TCP server socket, binds it to the specified port on all
