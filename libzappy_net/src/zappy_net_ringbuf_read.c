@@ -82,18 +82,18 @@ static ssize_t read_until_newline(zn_ringbuf_t *rb, uint8_t *dst,
 {
     size_t i;
     size_t pos;
-    size_t bytes_read = 0;
     uint8_t c;
 
     pos = rb->read_pos;
     for (i = 0; i < max_len; i++) {
         c = rb->buffer[pos];
-        dst[bytes_read++] = c;
+        dst[i] = c;
         pos = (pos + 1) % rb->capacity;
         if (c == '\n') {
             rb->line_count--;
             rb->read_pos = pos;
-            return bytes_read;
+            dst[i + 1] = '\0';
+            return i + 1;
         }
     }
     return -1;
