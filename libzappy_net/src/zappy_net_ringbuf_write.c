@@ -28,24 +28,38 @@ static ssize_t write_with_wrap(zn_ringbuf_t *rb, const uint8_t *src,
     return len;
 }
 
-ssize_t zn_ringbuf_write(zn_ringbuf_t *rb, const void *data, size_t len)
+static int validate_write_params(zn_ringbuf_t *rb, const void *data,
+    size_t len)
+{
+    return (rb == NULL || rb->buffer == NULL || data == NULL || len == 0);
+}
+
+static int check_write_capacity(zn_ringbuf_t *rb, size_t len)
 {
     size_t available;
+
+    available = zn_ringbuf_write_available(rb);
+    if (len > available) {
+        errno = ENOBUFS;
+        return -1;
+    }
+    return 0;
+}
+
+ssize_t zn_ringbuf_write(zn_ringbuf_t *rb, const void *data, size_t len)
+{
     const uint8_t *src = (const uint8_t *)data;
     int newline_count;
 
-    if (rb == NULL || rb->buffer == NULL || data == NULL || len == 0)
+    if (validate_write_params(rb, data, len))
         return -1;
     newline_count = zn_count_newlines(src, len);
     if (rb->line_count + newline_count > MAX_QUEUED_LINES) {
         errno = ENOBUFS;
         return -1;
     }
-    available = zn_ringbuf_write_available(rb);
-    if (len > available) {
-        errno = ENOBUFS;
+    if (check_write_capacity(rb, len) < 0)
         return -1;
-    }
     if (rb->write_pos + len <= rb->capacity)
         write_no_wrap(rb, src, len);
     else

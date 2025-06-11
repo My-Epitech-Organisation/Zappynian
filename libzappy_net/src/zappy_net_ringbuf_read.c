@@ -28,27 +28,42 @@ static void read_with_wrap(zn_ringbuf_t *rb, uint8_t *dst, size_t len)
     rb->read_pos = second_chunk;
 }
 
+static int validate_read_params(zn_ringbuf_t *rb, void *data, size_t len)
+{
+    return (rb == NULL || rb->buffer == NULL || data == NULL || len == 0 ||
+        rb->is_empty);
+}
+
+static int count_newlines_for_read(zn_ringbuf_t *rb, size_t len)
+{
+    int newline_count;
+
+    if (rb->read_pos + len <= rb->capacity) {
+        newline_count = zn_count_newlines(rb->buffer + rb->read_pos, len);
+    } else {
+        newline_count = zn_count_newlines(rb->buffer + rb->read_pos,
+            rb->capacity - rb->read_pos);
+        newline_count += zn_count_newlines(rb->buffer,
+            len - (rb->capacity - rb->read_pos));
+    }
+    return newline_count;
+}
+
 ssize_t zn_ringbuf_read(zn_ringbuf_t *rb, void *data, size_t len)
 {
     size_t available;
     uint8_t *dst = (uint8_t *)data;
     int newline_count;
 
-    if (rb == NULL || rb->buffer == NULL || data == NULL || len == 0 ||
-        rb->is_empty)
+    if (validate_read_params(rb, data, len))
         return 0;
     available = zn_ringbuf_read_available(rb);
     len = (len < available) ? len : available;
-    if (rb->read_pos + len <= rb->capacity) {
-        newline_count = zn_count_newlines(rb->buffer + rb->read_pos, len);
+    newline_count = count_newlines_for_read(rb, len);
+    if (rb->read_pos + len <= rb->capacity)
         read_no_wrap(rb, dst, len);
-    } else {
-        newline_count = zn_count_newlines(rb->buffer + rb->read_pos,
-            rb->capacity - rb->read_pos);
-        newline_count += zn_count_newlines(rb->buffer,
-            len - (rb->capacity - rb->read_pos));
+    else
         read_with_wrap(rb, dst, len);
-    }
     rb->line_count -= newline_count;
     if (rb->read_pos == rb->write_pos)
         rb->is_empty = 1;
@@ -73,8 +88,7 @@ static ssize_t read_until_newline(zn_ringbuf_t *rb, uint8_t *dst,
     pos = rb->read_pos;
     for (i = 0; i < max_len; i++) {
         c = rb->buffer[pos];
-        bytes_read++;
-        dst[bytes_read] = c;
+        dst[bytes_read++] = c;
         pos = (pos + 1) % rb->capacity;
         if (c == '\n') {
             rb->line_count--;
