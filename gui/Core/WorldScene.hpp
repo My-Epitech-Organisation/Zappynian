@@ -36,6 +36,9 @@ public:
   void createEntities(int id, int x, int y, Direction direction, int level,
                       std::string team);
 
+  void setPlayerInventory(int id, int x, int y, int q0, int q1, int q2, int q3,
+                          int q4, int q5, int q6);
+
   void setPlayerLevel(int id, int level);
 
   void createEntities(int x, int y, int q0, int q1, int q2, int q3, int q4,
@@ -79,6 +82,7 @@ public:
     changePlayerPos(1, 4, 1, Direction::SOUTH);
     changePlayerPos(1, 4, 2, Direction::SOUTH);
     changePlayerPos(1, 0, 2, Direction::WEST);
+    setPlayerInventory(1, 0, 2, 1, 1, 1, 14, 1, 1, 1);
   }
 
   std::vector<std::shared_ptr<IEntity>> getEntities() const { return entity_; }

@@ -21,6 +21,22 @@ void WorldScene::createEntities(int id, int x, int y, Direction direction,
   receiver_.addEntity(entity_.back());
 }
 
+void WorldScene::setPlayerInventory(int id, int x, int y, int q0, int q1,
+                                    int q2, int q3, int q4, int q5, int q6) {
+  for (auto &entity : entity_) {
+    if (entity->getId() == id) {
+      entity->getInventory().addItem("food", q0);
+      entity->getInventory().addItem("linemate", q1);
+      entity->getInventory().addItem("deraumere", q2);
+      entity->getInventory().addItem("sibur", q3);
+      entity->getInventory().addItem("mendiane", q4);
+      entity->getInventory().addItem("phiras", q5);
+      entity->getInventory().addItem("thystame", q6);
+      return;
+    }
+  }
+}
+
 void WorldScene::createEntities(int x, int y, int q0, int q1, int q2, int q3,
                                 int q4, int q5, int q6, int nbTiles) {
   int countTiles = 0;
