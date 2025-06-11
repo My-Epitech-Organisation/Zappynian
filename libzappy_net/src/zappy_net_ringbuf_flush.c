@@ -37,6 +37,21 @@ static ssize_t write_second_chunk(zn_ringbuf_t *rb, int fd, size_t available,
     return write(fd, rb->buffer, second_chunk);
 }
 
+static ssize_t handle_wrap_write_success(zn_ringbuf_t *rb, int fd,
+    size_t available, size_t first_chunk, ssize_t written)
+{
+    ssize_t result;
+
+    result = write_second_chunk(rb, fd, available, first_chunk);
+    if (result < 0) {
+        rb->read_pos = (rb->read_pos + written) % rb->capacity;
+        return written;
+    }
+    written += result;
+    rb->read_pos = result;
+    return written;
+}
+
 static ssize_t flush_with_wrap(zn_ringbuf_t *rb, int fd, size_t available)
 {
     ssize_t written = 0;
@@ -49,13 +64,8 @@ static ssize_t flush_with_wrap(zn_ringbuf_t *rb, int fd, size_t available)
         return -1;
     written = result;
     if (written == (ssize_t)first_chunk) {
-        result = write_second_chunk(rb, fd, available, first_chunk);
-        if (result < 0) {
-            rb->read_pos = (rb->read_pos + written) % rb->capacity;
-            return written;
-        }
-        written += result;
-        rb->read_pos = result;
+        return handle_wrap_write_success(rb, fd, available, first_chunk,
+            written);
     } else {
         rb->read_pos += written;
     }
