@@ -7,8 +7,6 @@
 
 #include "../include/zappy_net_ringbuf.h"
 
-#define MAX_QUEUED_LINES 10
-
 static ssize_t read_no_wrap(zn_ringbuf_t *rb, int fd, size_t available)
 {
     ssize_t result;
