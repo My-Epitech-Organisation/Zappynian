@@ -58,8 +58,6 @@ public:
 
   void createText();
 
-  void updatePlayersInfos();
-
   void createWorld() {
     createText();
     createPlane(5, 5);
@@ -81,7 +79,6 @@ public:
     changePlayerPos(1, 4, 1, Direction::SOUTH);
     changePlayerPos(1, 4, 2, Direction::SOUTH);
     changePlayerPos(1, 0, 2, Direction::WEST);
-    updatePlayersInfos();
   }
 
   std::vector<std::shared_ptr<IEntity>> getEntities() const { return entity_; }
@@ -97,7 +94,6 @@ protected:
   std::queue<Movement> movementQueue_;
   irr::core::vector3df actualPos_;
   std::pair<int, int> planeSize_;
-  irr::gui::IGUIStaticText *playersInfos_;
 
 private:
 };

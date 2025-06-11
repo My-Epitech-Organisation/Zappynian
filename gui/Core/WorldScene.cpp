@@ -18,6 +18,7 @@ void WorldScene::createEntities(int id, int x, int y, Direction direction,
           ->getPosition();
   entityManager_.createPlayers(id, pos.X, pos.Z, direction, level, team);
   entity_ = entityManager_.getEntities();
+  receiver_.addEntity(entity_.back());
 }
 
 void WorldScene::createEntities(int x, int y, int q0, int q1, int q2, int q3,
@@ -148,22 +149,23 @@ void WorldScene::createPlane(int x, int y) {
 
 void WorldScene::createText() {
   irr::gui::IGUIStaticText *text = smgr_->getGUIEnvironment()->addStaticText(
-      L"Hello bb chat <3 !", irr::core::rect<irr::s32>(10, 10, 220, 200),
+      L"Tile Info:", irr::core::rect<irr::s32>(10, 10, 220, 200),
       false);
 
-  playersInfos_ = smgr_->getGUIEnvironment()->addStaticText(
-      L"Players:\nEvann level 0 team Red",
-      irr::core::rect<irr::s32>(1750, 10, 1920, 200), false);
+  irr::gui::IGUIStaticText *playerText = smgr_->getGUIEnvironment()->addStaticText(
+      L"Player Info:", irr::core::rect<irr::s32>(smgr_->getVideoDriver()->getScreenSize().Width - 120, 10, 
+                                                smgr_->getVideoDriver()->getScreenSize().Width - 10, 200),
+      false);
 
   irr::gui::IGUIFont *font = smgr_->getGUIEnvironment()->getFont(
       mediaPath_ + "fonthaettenschweiler.bmp");
   if (font) {
-    printf("Font loaded successfully.\n");
     text->setOverrideFont(font);
-    playersInfos_->setOverrideFont(font);
+    playerText->setOverrideFont(font);
   }
 
   receiver_.setText(text);
+  receiver_.setPlayerText(playerText);
 }
 
 void WorldScene::setPlayerLevel(int id, int level) {
@@ -171,25 +173,6 @@ void WorldScene::setPlayerLevel(int id, int level) {
     if (entity->getId() == id) {
       entity->setLevel(level);
       return;
-    }
-  }
-}
-
-void WorldScene::updatePlayersInfos() {
-  if (playersInfos_) {
-    playersInfos_->setText(L"Players Infos:\n");
-    for (const auto &entity : entity_) {
-      if (auto *player = dynamic_cast<PlayerEntity *>(entity.get())) {
-        irr::core::stringw info = L"Player ID: ";
-        info += irr::core::stringw(player->getId());
-        info += L"\nTeam: ";
-        info += irr::core::stringw(player->getTeam().c_str());
-        info += L"\nLevel: ";
-        info += irr::core::stringw(player->getLevel());
-        info += L"\n\n";
-        irr::core::stringw currentText = playersInfos_->getText();
-        playersInfos_->setText((currentText + info).c_str());
-      }
     }
   }
 }
