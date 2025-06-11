@@ -6,6 +6,7 @@ zappy_ai
 # Project tests binaries
 unit_tests
 tests_zappy_net
+functional_tests_zappy_net
 
 # Subject binary files
 zappy_gui.AppImage
