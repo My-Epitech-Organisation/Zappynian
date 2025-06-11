@@ -8,9 +8,9 @@
 #ifndef ZAPPY_NET_RINGBUF_H_
     #define ZAPPY_NET_RINGBUF_H_
 
-#include <stddef.h>
-#include <stdint.h>
-#include <sys/types.h>
+    #include <stddef.h>
+    #include <stdint.h>
+    #include <sys/types.h>
 
 /**
  * @brief Ring buffer structure for socket I/O operations
@@ -107,5 +107,38 @@ int zn_ringbuf_is_empty(const zn_ringbuf_t *rb);
  * @return Number of bytes read (including newline), or -1 on failure
  */
 ssize_t zn_ringbuf_read_line(zn_ringbuf_t *rb, void *data, size_t max_len);
+
+/**
+ * @brief Get available write space in the buffer
+ *
+ * @param rb Pointer to ring buffer structure
+ * @return Number of bytes that can be written
+ */
+size_t zn_ringbuf_write_available(const zn_ringbuf_t *rb);
+
+/**
+ * @brief Get available read data in the buffer
+ *
+ * @param rb Pointer to ring buffer structure
+ * @return Number of bytes that can be read
+ */
+size_t zn_ringbuf_read_available(const zn_ringbuf_t *rb);
+
+/**
+ * @brief Check if the buffer is full
+ *
+ * @param rb Pointer to ring buffer structure
+ * @return 1 if full, 0 if not full
+ */
+int zn_ringbuf_is_full(const zn_ringbuf_t *rb);
+
+/**
+ * @brief Count newlines in a data segment
+ *
+ * @param data Pointer to data buffer
+ * @param len Length of data
+ * @return Number of newline characters found
+ */
+int zn_count_newlines(const uint8_t *data, size_t len);
 
 #endif /* !ZAPPY_NET_RINGBUF_H_ */
