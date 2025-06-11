@@ -34,7 +34,11 @@ SRC_C = $(SRC_DIR)/libzappy_net.c \
         $(SRC_DIR)/zappy_net_server.c \
         $(SRC_DIR)/zappy_net_client.c \
         $(SRC_DIR)/zappy_net_poll.c \
-        $(SRC_DIR)/zappy_net_ringbuf.c \
+        $(SRC_DIR)/zappy_net_ringbuf_core.c \
+        $(SRC_DIR)/zappy_net_ringbuf_utils.c \
+        $(SRC_DIR)/zappy_net_ringbuf_write.c \
+        $(SRC_DIR)/zappy_net_ringbuf_read.c \
+        $(SRC_DIR)/zappy_net_ringbuf_io.c \
         $(SRC_DIR)/zappy_net_io.c
 SRC_CPP =
 
