@@ -141,6 +141,21 @@
     ssize_t zn_readln(zn_socket_t sock, void *data, size_t len);
 
     /**
+     * @brief Read a complete line from socket with partial segment support
+     *
+     * This function reads a complete newline-terminated line from the socket.
+     * It handles TCP fragmentation by accumulating partial segments until
+     * a complete line is available. Returns dynamically allocated string
+     * containing the complete line (without newline) or NULL if no complete
+     * line is available.
+     *
+     * @param sock The socket handle
+     * @return Dynamically allocated string with complete line (caller must
+     *         free), or NULL if no complete line available or on error
+     */
+    char *zn_readline(zn_socket_t sock);
+
+    /**
      * @brief Flush the socket's send buffer to the network
      *
      * This function attempts to send all data in the socket's send buffer

@@ -212,3 +212,67 @@ int zn_has_data(zn_socket_t sock)
         return 1;
     return check_socket_ready_for_reading(sock->fd);
 }
+
+static char *extract_line_from_buffer(zn_socket_t sock)
+{
+    char temp_buffer[DEFAULT_BUFFER_SIZE];
+    ssize_t bytes_read;
+    char *newline_pos;
+    char *result;
+    size_t line_length;
+
+    bytes_read = zn_ringbuf_read_line(&sock->read_buffer, temp_buffer,
+        DEFAULT_BUFFER_SIZE - 1);
+    if (bytes_read <= 0)
+        return NULL;
+    temp_buffer[bytes_read] = '\0';
+    newline_pos = strchr(temp_buffer, '\n');
+    if (newline_pos == NULL)
+        return NULL;
+    line_length = newline_pos - temp_buffer;
+    result = malloc(line_length + 1);
+    if (result == NULL) {
+        errno = ENOMEM;
+        return NULL;
+    }
+    strncpy(result, temp_buffer, line_length);
+    result[line_length] = '\0';
+    return result;
+}
+
+static int try_read_more_data(zn_socket_t sock)
+{
+    ssize_t result;
+
+    result = zn_ringbuf_read_from_fd(&sock->read_buffer, sock->fd);
+    if (result < 0) {
+        if (errno == EAGAIN || errno == EWOULDBLOCK)
+            return 0;
+        return -1;
+    }
+    return (result > 0) ? 1 : 0;
+}
+
+char *zn_readline(zn_socket_t sock)
+{
+    char *result;
+    int read_result;
+
+    if (sock == NULL || !sock->initialized) {
+        errno = EINVAL;
+        return NULL;
+    }
+    if (init_socket_buffers_if_needed(sock) < 0) {
+        errno = ENOMEM;
+        return NULL;
+    }
+    if (zn_ringbuf_count_lines(&sock->read_buffer) == 0) {
+        read_result = try_read_more_data(sock);
+        if (read_result < 0)
+            return NULL;
+        if (read_result == 0 && zn_ringbuf_count_lines(&sock->read_buffer) == 0)
+            return NULL;
+    }
+    result = extract_line_from_buffer(sock);
+    return result;
+}
