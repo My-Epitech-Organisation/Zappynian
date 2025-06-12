@@ -270,7 +270,8 @@ char *zn_readline(zn_socket_t sock)
         read_result = try_read_more_data(sock);
         if (read_result < 0)
             return NULL;
-        if (read_result == 0 && zn_ringbuf_count_lines(&sock->read_buffer) == 0)
+        if (read_result == 0
+            && zn_ringbuf_count_lines(&sock->read_buffer) == 0)
             return NULL;
     }
     result = extract_line_from_buffer(sock);
