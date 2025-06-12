@@ -38,15 +38,47 @@
     } zn_err_t;
 
     /**
-    * @brief Get the last error that occurred in the current thread
+    * @brief Result structure containing both success/failure and error code
     *
-    * This function returns the error code of the last operation that
-    * failed in the current thread. The error is thread-local, meaning
-    * each thread has its own error state.
-    *
-    * @return The last error code, or ZN_SUCCESS if no error occurred
+    * This structure is returned by all library functions to provide
+    * both the operation result and detailed error information.
     */
-    zn_err_t zn_last_error(void);
+    typedef struct zn_result_s {
+        int success;
+        zn_err_t error;
+    } zn_result_t;
+
+    /**
+    * @brief Create a successful result
+    *
+    * @param result The success value (typically 0 or positive)
+    * @return A zn_result_t indicating success
+    */
+    #define ZN_OK(result) ((zn_result_t){.success = (result), .error = ZN_SUCCESS})
+
+    /**
+    * @brief Create an error result
+    *
+    * @param code The error code
+    * @return A zn_result_t indicating failure with the given error code
+    */
+    #define ZN_ERR(code) ((zn_result_t){.success = -1, .error = (code)})
+
+    /**
+    * @brief Check if a result indicates success
+    *
+    * @param result The result to check
+    * @return Non-zero if successful, 0 if failed
+    */
+    #define ZN_IS_SUCCESS(result) ((result).success >= 0)
+
+    /**
+    * @brief Check if a result indicates failure
+    *
+    * @param result The result to check
+    * @return Non-zero if failed, 0 if successful
+    */
+    #define ZN_IS_ERROR(result) ((result).success < 0)
 
     /**
     * @brief Convert an error code to a human-readable string
@@ -58,17 +90,6 @@
     * @return String describing the error, or "Unknown error" for invalid codes
     */
     const char *zn_strerror(zn_err_t code);
-
-    /**
-    * @brief Set the last error for the current thread (internal use)
-    *
-    * This function is used internally by the library to set the error
-    * state when an operation fails. It should not be called directly
-    * by library users.
-    *
-    * @param error The error code to set
-    */
-    void zn_set_error(zn_err_t error);
 
     #ifdef __cplusplus
 }

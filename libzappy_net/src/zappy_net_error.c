@@ -8,8 +8,6 @@
 #include "zappy_net_error.h"
 #include <stddef.h>
 
-static __thread zn_err_t g_last_error = ZN_SUCCESS;
-
 static const char *get_basic_error_msg(zn_err_t code)
 {
     if (code == ZN_SUCCESS)
@@ -67,29 +65,24 @@ static const char *get_connection_error_msg(zn_err_t code)
     return NULL;
 }
 
-void zn_set_error(zn_err_t error)
+static const char *resolve_error_message(zn_err_t code)
 {
-    g_last_error = error;
-}
+    const char *msg = get_basic_error_msg(code);
 
-zn_err_t zn_last_error(void)
-{
-    return g_last_error;
+    if (msg == NULL)
+        msg = get_socket_creation_msg(code);
+    if (msg == NULL)
+        msg = get_socket_io_msg(code);
+    if (msg == NULL)
+        msg = get_buffer_error_msg(code);
+    if (msg == NULL)
+        msg = get_connection_error_msg(code);
+    return msg;
 }
 
 const char *zn_strerror(zn_err_t code)
 {
-    const char *msg = NULL;
+    const char *msg = resolve_error_message(code);
 
-    if (code <= ZN_ERROR_MEMORY_ALLOCATION)
-        msg = get_basic_error_msg(code);
-    else if (code <= ZN_ERROR_SOCKET_CONNECT)
-        msg = get_socket_creation_msg(code);
-    else if (code <= ZN_ERROR_SOCKET_RECEIVE)
-        msg = get_socket_io_msg(code);
-    else if (code <= ZN_ERROR_BUFFER_EMPTY)
-        msg = get_buffer_error_msg(code);
-    else
-        msg = get_connection_error_msg(code);
     return msg ? msg : "Unknown error";
 }
