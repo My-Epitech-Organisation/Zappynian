@@ -15,7 +15,7 @@ EventReceiver::EventReceiver()
     : device(nullptr), smgr(nullptr), driver(nullptr), isMouseDown(false),
       mouseX(0), mouseY(0), animatedNode(nullptr), isMoving(false),
       moveStartTime(0), moveStartX(0.0f), moveStartZ(0.0f),
-      currentRotationY(0.0f) {}
+      currentRotationY(0.0f), currentEntityId(0) {}
 
 EventReceiver::~EventReceiver() = default;
 
