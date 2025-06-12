@@ -81,7 +81,7 @@ public:
     // movePlayer(2, 4, 2, Direction::NORTH);
     PlayerInventory(1, 0, 2, 1, 1, 1, 14, 1, 1, 1);
     startIncantation(4, 2, 2, {2});
-    stopIncantation(4, 2, true);
+    // stopIncantation(4, 2, true);
   }
 
   std::vector<std::shared_ptr<IEntity>> getEntities() {

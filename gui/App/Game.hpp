@@ -25,6 +25,8 @@ public:
   void initWindow();
   void gameLoop();
   std::shared_ptr<IEntity> findEntityById(int id);
+  void updatePlayerMovement(irr::u32 currentTime, NetworkClient &scene);
+  void updateIncantingPlayers(NetworkClient &scene);
 
 private:
   irr::IrrlichtDevice *device_;
