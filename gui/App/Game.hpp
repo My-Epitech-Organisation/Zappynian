@@ -23,17 +23,15 @@ public:
   ~Game();
 
   void initWindow();
-
   void gameLoop();
+  std::shared_ptr<IEntity> findEntityById(int id);
 
-protected:
+private:
   irr::IrrlichtDevice *device_;
   irr::video::IVideoDriver *driver_;
   irr::scene::ISceneManager *smgr_;
   irr::gui::IGUIEnvironment *guienv_;
   EventReceiver receiver_;
+  irr::io::path mediaPath_;
   std::vector<std::shared_ptr<IEntity>> entity_;
-  irr::io::path mediaPath_ = "assets/";
-
-private:
 };

@@ -11,6 +11,15 @@ Game::Game() { initWindow(); }
 
 Game::~Game() {}
 
+std::shared_ptr<IEntity> Game::findEntityById(int id) {
+  for (auto &entity : entity_) {
+    if (entity->getId() == id) {
+      return entity;
+    }
+  }
+  return nullptr;
+}
+
 void Game::initWindow() {
   device_ = irr::createDevice(irr::video::EDT_OPENGL,
                               irr::core::dimension2d<irr::u32>(1920, 1080), 16,
@@ -51,6 +60,12 @@ void Game::gameLoop() {
     irr::u32 currentTime = device_->getTimer()->getTime();
 
     if (receiver_.getIsMoving()) {
+      auto currentEntity = findEntityById(receiver_.getCurrentEntityId());
+      if (!currentEntity) {
+        receiver_.setIsMoving(false);
+        continue;
+      }
+
       float elapsedTime =
           (currentTime - receiver_.getMoveStartTime()) / 1000.0f;
       if (elapsedTime >= 1.0f) {
@@ -58,10 +73,10 @@ void Game::gameLoop() {
         float angle = receiver_.getCurrentRotationY() * M_PI / 180.0f;
         pos.X = receiver_.getMoveStartX() - 20.0f * sin(angle);
         pos.Z = receiver_.getMoveStartZ() - 20.0f * cos(angle);
-        pos.Y = entity_[0]->getNode()->getPosition().Y;
-        entity_[0]->getNode()->setPosition(pos);
+        pos.Y = currentEntity->getNode()->getPosition().Y;
+        currentEntity->getNode()->setPosition(pos);
         receiver_.setIsMoving(false);
-        entity_[0]->getNode()->setAnimationSpeed(0.0f);
+        currentEntity->getNode()->setAnimationSpeed(0.0f);
         scene.updateMovements();
       } else {
         float progress = elapsedTime / 1.0f;
@@ -69,8 +84,8 @@ void Game::gameLoop() {
         float angle = receiver_.getCurrentRotationY() * M_PI / 180.0f;
         pos.X = receiver_.getMoveStartX() - (20.0f * progress * sin(angle));
         pos.Z = receiver_.getMoveStartZ() - (20.0f * progress * cos(angle));
-        pos.Y = entity_[0]->getNode()->getPosition().Y;
-        entity_[0]->getNode()->setPosition(pos);
+        pos.Y = currentEntity->getNode()->getPosition().Y;
+        currentEntity->getNode()->setPosition(pos);
       }
     }
 
