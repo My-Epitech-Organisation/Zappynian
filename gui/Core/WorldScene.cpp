@@ -6,6 +6,13 @@
 */
 
 #include "WorldScene.hpp"
+#include <cmath>
+#include <cstdlib>
+#include <map>
+
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif
 
 void WorldScene::createEntities(int id, int x, int y, Direction direction,
                                 int level, std::string team) {
@@ -225,6 +232,66 @@ void WorldScene::stopIncantation(int x, int y, bool result) {
       ++it;
     }
   }
+}
+
+void WorldScene::resourceDroping(int id, const std::string &item) {
+  for (auto &entity : entity_) {
+    if (entity->getId() == id) {
+      entity->getInventory().removeItem(item, 1);
+      int tileX = static_cast<int>(entity->getPosition().X / 20);
+      int tileZ = static_cast<int>(entity->getPosition().Z / 20);
+      auto tile = entityManager_.getTileByName("Cube info: row " +
+                                               std::to_string(tileX) + " col " +
+                                               std::to_string(tileZ));
+      if (!tile)
+        return;
+      tile->getInventory().addItem(item, 1);
+      createDroppedResource(tileX, tileZ, item);
+      return;
+    }
+  }
+}
+
+void WorldScene::createDroppedResource(int x, int y, const std::string &item) {
+  std::map<std::string, std::vector<irr::io::path>> resourceTextures = {
+      {"food",
+       {mediaPath_ + "stone_texture/food_redbull.png",
+        mediaPath_ + "stone_texture/food_redbull.png"}},
+      {"linemate", {mediaPath_ + "stone_texture/stone_red.png"}},
+      {"deraumere", {mediaPath_ + "stone_texture/stone_orange.png"}},
+      {"sibur", {mediaPath_ + "stone_texture/stone_yellow.png"}},
+      {"mendiane", {mediaPath_ + "stone_texture/stone_green.png"}},
+      {"phiras", {mediaPath_ + "stone_texture/stone_blue.png"}},
+      {"thystame", {mediaPath_ + "stone_texture/stone_purple.png"}}};
+  std::map<std::string, irr::io::path> resourceB3D = {
+      {"food", mediaPath_ + "RedBull.b3d"},
+      {"linemate", mediaPath_ + "ruby.b3d"},
+      {"deraumere", mediaPath_ + "ruby.b3d"},
+      {"sibur", mediaPath_ + "ruby.b3d"},
+      {"mendiane", mediaPath_ + "ruby.b3d"},
+      {"phiras", mediaPath_ + "ruby.b3d"},
+      {"thystame", mediaPath_ + "ruby.b3d"}};
+  std::map<std::string, irr::core::vector3df> resourceScale = {
+      {"food", irr::core::vector3df(0.8f, 0.8f, 0.8f)},
+      {"linemate", irr::core::vector3df(0.009f, 0.009f, 0.009f)},
+      {"deraumere", irr::core::vector3df(0.009f, 0.009f, 0.009f)},
+      {"sibur", irr::core::vector3df(0.009f, 0.009f, 0.009f)},
+      {"mendiane", irr::core::vector3df(0.009f, 0.009f, 0.009f)},
+      {"phiras", irr::core::vector3df(0.009f, 0.009f, 0.009f)},
+      {"thystame", irr::core::vector3df(0.009f, 0.009f, 0.009f)}};
+
+  if (resourceTextures.find(item) == resourceTextures.end())
+    return;
+
+  irr::core::vector3df position(x * 20.0f, 5.0f, y * 20.0f);
+  float randomOffsetX = (rand() % 100 - 50) / 50.0f;
+  float randomOffsetZ = (rand() % 100 - 50) / 50.0f;
+  position.X += randomOffsetX * 3.0f;
+  position.Z += randomOffsetZ * 3.0f;
+  entity_.push_back(std::make_shared<Stone>(-1, position, resourceScale[item],
+                                            resourceTextures[item],
+                                            resourceB3D[item], item));
+  entity_.back()->createNode(smgr_, driver_);
 }
 
 void WorldScene::createWorld() {}

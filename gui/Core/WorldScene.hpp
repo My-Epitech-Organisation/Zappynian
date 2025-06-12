@@ -72,6 +72,10 @@ public:
 
   std::vector<std::shared_ptr<IEntity>> getEntities() const { return entity_; }
 
+  void resourceDroping(int id, const std::string &item);
+
+  void createDroppedResource(int x, int y, const std::string &item);
+
 protected:
   irr::IrrlichtDevice *device_;
   irr::scene::ISceneManager *smgr_;
