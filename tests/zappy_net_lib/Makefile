@@ -28,7 +28,8 @@ SRC_FILES = test_socket_creation.c \
             test_edge_cases.c \
             test_pollbusy.c \
             test_helpers.c \
-            test_ringbuf.c
+            test_ringbuf.c \
+            test_readline_fragmentation.c
 
 # Object files
 OBJ_FILES = $(patsubst %.c,$(OBJ_DIR)/%.o,$(SRC_FILES))
