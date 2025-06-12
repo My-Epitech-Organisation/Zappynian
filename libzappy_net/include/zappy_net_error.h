@@ -55,7 +55,7 @@
     * The returned string is statically allocated and should not be freed.
     *
     * @param code The error code to convert
-    * @return A string describing the error, or "Unknown error" for invalid codes
+    * @return String describing the error, or "Unknown error" for invalid codes
     */
     const char *zn_strerror(zn_err_t code);
 
@@ -71,7 +71,7 @@
     void zn_set_error(zn_err_t error);
 
     #ifdef __cplusplus
-    }
+}
     #endif
 
 #endif /* !ZAPPY_NET_ERROR_H */
