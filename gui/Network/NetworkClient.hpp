@@ -7,7 +7,9 @@
 
 #pragma once
 #include "../Core/WorldScene.hpp"
+#include <chrono>
 #include <iostream>
+#include <thread>
 
 class NetworkClient : public WorldScene {
 public:
@@ -76,8 +78,10 @@ public:
     movePlayer(1, 4, 1, Direction::SOUTH);
     movePlayer(1, 4, 2, Direction::SOUTH);
     movePlayer(1, 0, 2, Direction::WEST);
-    movePlayer(2, 4, 2, Direction::NORTH);
+    // movePlayer(2, 4, 2, Direction::NORTH);
     PlayerInventory(1, 0, 2, 1, 1, 1, 14, 1, 1, 1);
+    startIncantation(4, 2, 2, {2});
+    stopIncantation(4, 2, true);
   }
 
   std::vector<std::shared_ptr<IEntity>> getEntities() {
