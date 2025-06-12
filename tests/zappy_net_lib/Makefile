@@ -27,7 +27,9 @@ SRC_FILES = test_socket_creation.c \
             test_socket_close.c \
             test_edge_cases.c \
             test_pollbusy.c \
-            test_helpers.c
+            test_helpers.c \
+            test_ringbuf.c \
+            test_readline_fragmentation.c
 
 # Object files
 OBJ_FILES = $(patsubst %.c,$(OBJ_DIR)/%.o,$(SRC_FILES))
@@ -35,7 +37,7 @@ OBJ_FILES = $(patsubst %.c,$(OBJ_DIR)/%.o,$(SRC_FILES))
 # Include flags
 INC_FLAGS = -I$(LIB_DIR)/include
 
-.PHONY: all clean fclean re tests_run
+.PHONY: all clean fclean re tests_run functional all_tests
 
 all: $(NAME)
 
@@ -68,3 +70,10 @@ re: fclean all
 tests_run: $(NAME)
 	@echo "Running tests..."
 	@./$(NAME) --verbose
+
+functional:
+	@echo "Running functional tests..."
+	@$(MAKE) -C functional_tests test
+
+all_tests: tests_run functional
+	@echo "All tests completed!"

@@ -3,7 +3,6 @@ from ai.src.connection import Connection
 
 
 class CommandQueue:
-    MAX_PENDING = 10
 
     def __init__(self, connection: Connection):
         # Initialise la file de commandes avec une connexion donnée
@@ -17,7 +16,7 @@ class CommandQueue:
 
     def flush(self):
         # Envoie les commandes tant que la limite de commandes en attente n'est pas atteinte
-        while self.queue and self.pending < self.MAX_PENDING:
+        while self.queue:
             cmd = self.queue.popleft()
             self.connection.send_command(cmd)
             self.pending += 1

@@ -1,5 +1,3 @@
-"""Zappy server connection and protocol handler."""
-
 import socket
 import select
 
