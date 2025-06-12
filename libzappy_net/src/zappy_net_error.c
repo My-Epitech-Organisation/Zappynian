@@ -27,8 +27,8 @@ static const zn_error_entry_t error_messages[] = {
     {ZN_ERROR_UNKNOWN, "Unknown error"}
 };
 
-static const size_t error_messages_count = sizeof(error_messages) /
-sizeof(error_messages[0]);
+static const size_t error_messages_count =
+sizeof(error_messages) / sizeof(error_messages[0]);
 
 static const char *lookup_error_message(zn_err_t code)
 {
