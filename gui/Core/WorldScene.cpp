@@ -194,4 +194,38 @@ void WorldScene::setPlayerLevel(int id, int level) {
   }
 }
 
+void WorldScene::startIncantation(int x, int y, int level,
+                                 std::vector<int> ids) {
+  for (int id : ids) {
+    for (auto &entity : entity_) {
+      if (entity->getId() == id) {
+        incantationData_.push_back(std::make_tuple(x, y, id));
+        isIncanting_[id] = true;
+        break;
+      }
+    }
+  }
+}
+
+void WorldScene::stopIncantation(int x, int y, bool result) {
+  // pour tout les x y dans incantationData_ qui correspondent à x, y
+  // mettre isIncanting_[incantationData_.id] = false
+  for (auto it = incantationData_.begin(); it != incantationData_.end();) {
+    if (std::get<0>(*it) == x && std::get<1>(*it) == y) {
+      isIncanting_[std::get<2>(*it)] = false;
+      it = incantationData_.erase(it);
+      if (result) {
+        for (auto &entity : entity_) {
+          if (entity->getId() == std::get<2>(*it)) {
+            entity->setLevel(entity->getLevel() + 1);
+            break;
+          }
+        }
+      }
+    } else {
+      ++it;
+    }
+  }
+}
+
 void WorldScene::createWorld() {}
