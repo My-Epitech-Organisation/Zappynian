@@ -42,8 +42,9 @@ static int setup_client_socket(zn_socket_t sock, const char *host, int port)
 static int connect_to_server(zn_socket_t sock)
 {
     int result;
+
     result = connect(sock->fd, (struct sockaddr *)&sock->addr,
-            sizeof(sock->addr));
+        sizeof(sock->addr));
     if (result < 0 && errno != EINPROGRESS) {
         return -1;
     }
