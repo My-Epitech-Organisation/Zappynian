@@ -210,11 +210,12 @@ void WorldScene::startIncantation(int x, int y, int level,
 void WorldScene::stopIncantation(int x, int y, bool result) {
   for (auto it = incantationData_.begin(); it != incantationData_.end();) {
     if (std::get<0>(*it) == x && std::get<1>(*it) == y) {
-      isIncanting_[std::get<2>(*it)] = false;
+      int entityId = std::get<2>(*it);
+      isIncanting_[entityId] = false;
       it = incantationData_.erase(it);
       if (result) {
         for (auto &entity : entity_) {
-          if (entity->getId() == std::get<2>(*it)) {
+          if (entity->getId() == entityId) {
             entity->setLevel(entity->getLevel() + 1);
             break;
           }
