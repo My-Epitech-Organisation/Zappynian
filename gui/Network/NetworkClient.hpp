@@ -65,8 +65,13 @@ public:
       createPlayer(2, 4, 2, Direction::NORTH, 0, "Blue");
     } catch (const std::exception &e) {
     }
-    contentTiles(2, 4, 32, 32, 32, 32, 32, 32, 32);
-    contentTiles(4, 4, 32, 32, 32, 32, 32, 32, 32);
+    try {
+      createPlayer(3, 0, 0, Direction::SOUTH, 0, "Red");
+    } catch (const std::exception &e) {
+    }
+    contentTiles(2, 4, 0, 32, 32, 32, 32, 32, 32);
+    contentTiles(4, 4, 32, 32, 32, 0, 32, 32, 32);
+    contentTiles(3, 3, 0, 0, 32, 0, 32, 0, 32);
     movePlayer(1, 2, 2, Direction::NORTH);
     movePlayer(1, 2, 1, Direction::NORTH);
     movePlayer(1, 2, 0, Direction::NORTH);
@@ -80,8 +85,12 @@ public:
     movePlayer(1, 0, 2, Direction::WEST);
     // movePlayer(2, 4, 2, Direction::NORTH);
     PlayerInventory(1, 0, 2, 1, 1, 1, 14, 1, 1, 1);
+    PlayerInventory(3, 0, 0, 10, 10, 10, 10, 10, 10, 10);
     startIncantation(4, 2, 2, {2});
     // stopIncantation(4, 2, true);
+    resourceDroping(3, "mendiane");
+    resourceDroping(3, "mendiane");
+    resourceDroping(3, "mendiane");
   }
 
   std::vector<std::shared_ptr<IEntity>> getEntities() {
