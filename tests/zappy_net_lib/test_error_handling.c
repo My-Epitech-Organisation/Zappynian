@@ -6,24 +6,23 @@
 */
 
 #include <criterion/criterion.h>
-#include <pthread.h>
-#include "zappy_net_error.h"
+#include "../../libzappy_net/include/zappy_net.h"
 
-Test(error_handling, test_initial_state)
+Test(error_handling, test_success_result)
 {
-    zn_err_t error = zn_last_error();
+    zn_result_t result = ZN_OK(42);
 
-    cr_assert_eq(error, ZN_SUCCESS, "Initial error state should be SUCCESS");
+    cr_assert(ZN_IS_SUCCESS(result), "Result should be successful");
+    cr_assert_eq(result.success, 42, "Success value should be 42");
 }
 
-Test(error_handling, test_set_and_get_error)
+Test(error_handling, test_error_result)
 {
-    zn_set_error(ZN_ERROR_INVALID_PARAMS);
+    zn_result_t result = ZN_ERR(ZN_ERROR_INVALID_PARAMS);
 
-    zn_err_t error = zn_last_error();
-
-    cr_assert_eq(error, ZN_ERROR_INVALID_PARAMS,
-        "Error should be set correctly");
+    cr_assert(ZN_IS_ERROR(result), "Result should be an error");
+    cr_assert_eq(result.error, ZN_ERROR_INVALID_PARAMS,
+        "Error code should be ZN_ERROR_INVALID_PARAMS");
 }
 
 Test(error_handling, test_error_messages)
@@ -49,26 +48,46 @@ Test(error_handling, test_unknown_error)
         "Unknown error should return generic message");
 }
 
-static void *thread_test_func(void *arg)
+Test(error_handling, test_all_error_codes)
 {
-    int *result = (int *)arg;
+    const char *msg;
 
-    zn_set_error(ZN_ERROR_MEMORY_ALLOCATION);
-    *result = (zn_last_error() == ZN_ERROR_MEMORY_ALLOCATION) ? 1 : 0;
-    return NULL;
-}
+    msg = zn_strerror(ZN_ERROR_MEMORY_ALLOCATION);
+    cr_assert_str_eq(msg, "Memory allocation failed");
 
-Test(error_handling, test_thread_local_errors)
-{
-    pthread_t thread;
-    int thread_result = 0;
+    msg = zn_strerror(ZN_ERROR_SOCKET_BIND);
+    cr_assert_str_eq(msg, "Socket bind failed");
 
-    zn_set_error(ZN_ERROR_SOCKET_CREATION);
-    pthread_create(&thread, NULL, thread_test_func, &thread_result);
-    pthread_join(thread, NULL);
+    msg = zn_strerror(ZN_ERROR_SOCKET_LISTEN);
+    cr_assert_str_eq(msg, "Socket listen failed");
 
-    cr_assert_eq(thread_result, 1,
-        "Thread should have its own error state");
-    cr_assert_eq(zn_last_error(), ZN_ERROR_SOCKET_CREATION,
-        "Main thread error should be preserved");
+    msg = zn_strerror(ZN_ERROR_SOCKET_CONNECT);
+    cr_assert_str_eq(msg, "Socket connect failed");
+
+    msg = zn_strerror(ZN_ERROR_SOCKET_ACCEPT);
+    cr_assert_str_eq(msg, "Socket accept failed");
+
+    msg = zn_strerror(ZN_ERROR_SOCKET_SEND);
+    cr_assert_str_eq(msg, "Socket send failed");
+
+    msg = zn_strerror(ZN_ERROR_SOCKET_RECEIVE);
+    cr_assert_str_eq(msg, "Socket receive failed");
+
+    msg = zn_strerror(ZN_ERROR_BUFFER_FULL);
+    cr_assert_str_eq(msg, "Buffer is full");
+
+    msg = zn_strerror(ZN_ERROR_BUFFER_EMPTY);
+    cr_assert_str_eq(msg, "Buffer is empty");
+
+    msg = zn_strerror(ZN_ERROR_CONNECTION_LOST);
+    cr_assert_str_eq(msg, "Connection lost");
+
+    msg = zn_strerror(ZN_ERROR_HOSTNAME_RESOLUTION);
+    cr_assert_str_eq(msg, "Hostname resolution failed");
+
+    msg = zn_strerror(ZN_ERROR_TIMEOUT);
+    cr_assert_str_eq(msg, "Operation timed out");
+
+    msg = zn_strerror(ZN_ERROR_UNKNOWN);
+    cr_assert_str_eq(msg, "Unknown error");
 }
