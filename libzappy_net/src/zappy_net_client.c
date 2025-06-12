@@ -20,6 +20,7 @@ static int resolve_hostname(const char *host, struct sockaddr_in *addr)
     he = gethostbyname(host);
     if (he == NULL) {
         if (inet_pton(AF_INET, host, &addr->sin_addr) <= 0) {
+            zn_set_error(ZN_ERROR_HOSTNAME_RESOLUTION);
             return -1;
         }
     } else {
@@ -46,6 +47,7 @@ static int connect_to_server(zn_socket_t sock)
     result = connect(sock->fd, (struct sockaddr *)&sock->addr,
         sizeof(sock->addr));
     if (result < 0 && errno != EINPROGRESS) {
+        zn_set_error(ZN_ERROR_SOCKET_CONNECT);
         return -1;
     }
     return 0;
@@ -55,10 +57,12 @@ static int create_and_init_socket(zn_socket_t *sock)
 {
     *sock = zn_socket_create();
     if (*sock == NULL) {
+        zn_set_error(ZN_ERROR_SOCKET_CREATION);
         return -1;
     }
     if (zn_socket_init(*sock) < 0) {
         zn_socket_destroy(*sock);
+        zn_set_error(ZN_ERROR_SOCKET_CREATION);
         return -1;
     }
     return 0;
@@ -69,6 +73,7 @@ zn_socket_t zn_client_connect(const char *host, int port)
     zn_socket_t sock;
 
     if (host == NULL || port <= 0 || port > 65535) {
+        zn_set_error(ZN_ERROR_INVALID_PARAMS);
         return NULL;
     }
     if (create_and_init_socket(&sock) < 0) {
@@ -82,5 +87,6 @@ zn_socket_t zn_client_connect(const char *host, int port)
         zn_socket_destroy(sock);
         return NULL;
     }
+    zn_set_error(ZN_SUCCESS);
     return sock;
 }
