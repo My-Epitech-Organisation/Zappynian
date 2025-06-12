@@ -11,6 +11,7 @@
 
 class INetworkHandler {
 public:
-    virtual ~INetworkHandler() = default;
-    virtual void handleMessage(const std::string& cmd, const std::vector<std::string>& args) = 0;
+  virtual ~INetworkHandler() = default;
+  virtual void handleMessage(const std::string &cmd,
+                             const std::vector<std::string> &args) = 0;
 };

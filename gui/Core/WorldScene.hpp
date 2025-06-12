@@ -7,6 +7,7 @@
 #include "EntityManager.hpp"
 #include <iostream>
 #include <queue>
+#include <unordered_map>
 #pragma once
 
 struct Movement {
@@ -63,6 +64,12 @@ public:
 
   virtual void createWorld();
 
+  void startIncantation(int x, int y, int level, std::vector<int> ids);
+  void stopIncantation(int x, int y, bool result);
+  bool isPlayerIncanting(int id) const {
+    return isIncanting_.count(id) > 0 && isIncanting_.at(id);
+  }
+
   std::vector<std::shared_ptr<IEntity>> getEntities() const { return entity_; }
 
 protected:
@@ -76,6 +83,8 @@ protected:
   std::queue<Movement> movementQueue_;
   irr::core::vector3df actualPos_;
   std::pair<int, int> planeSize_;
+  std::unordered_map<int, bool> isIncanting_;
+  std::vector<std::tuple<int, int, int>> incantationData_; // x, y, id
 
 private:
 };

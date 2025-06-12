@@ -7,14 +7,16 @@
 
 #pragma once
 #include "../Core/WorldScene.hpp"
+#include <chrono>
 #include <iostream>
+#include <thread>
 
 class NetworkClient : public WorldScene {
 public:
-
-  NetworkClient(irr::IrrlichtDevice *device, irr::scene::ISceneManager *smgr, irr::video::IVideoDriver *driver,
-                EventReceiver &receiver, const irr::io::path &mediaPath)
-    : WorldScene(device, smgr, driver, receiver, mediaPath) {}
+  NetworkClient(irr::IrrlichtDevice *device, irr::scene::ISceneManager *smgr,
+                irr::video::IVideoDriver *driver, EventReceiver &receiver,
+                const irr::io::path &mediaPath)
+      : WorldScene(device, smgr, driver, receiver, mediaPath) {}
 
   void parseMessage(const std::string &message);
 
@@ -23,38 +25,30 @@ public:
     WorldScene::createEntities(id, x, y, direction, level, team);
   }
 
-  void contentMap(int x, int y, int q0, int q1, int q2, int q3, int q4,
-                     int q5, int q6, int nbTiles) {
+  void contentMap(int x, int y, int q0, int q1, int q2, int q3, int q4, int q5,
+                  int q6, int nbTiles) {
     WorldScene::createEntities(x, y, q0, q1, q2, q3, q4, q5, q6, nbTiles);
   }
 
   void contentTiles(int x, int y, int q0, int q1, int q2, int q3, int q4,
-                     int q5, int q6) {
+                    int q5, int q6) {
     WorldScene::createEntities(x, y, q0, q1, q2, q3, q4, q5, q6);
   }
 
-  void createPlane(int x, int y) {
-    WorldScene::createPlane(x, y);
-  }
+  void createPlane(int x, int y) { WorldScene::createPlane(x, y); }
 
-  void createLights() {
-    WorldScene::createLights();
-  }
+  void createLights() { WorldScene::createLights(); }
 
-  void createCamera() {
-    WorldScene::createCamera();
-  }
+  void createCamera() { WorldScene::createCamera(); }
 
-  void createText() {
-    WorldScene::createText();
-  }
+  void createText() { WorldScene::createText(); }
 
   void movePlayer(int id, int x, int y, Direction direction) {
     WorldScene::changePlayerPos(id, x, y, direction);
   }
 
   void PlayerInventory(int id, int x, int y, int q0, int q1, int q2, int q3,
-                          int q4, int q5, int q6) {
+                       int q4, int q5, int q6) {
     WorldScene::setPlayerInventory(id, x, y, q0, q1, q2, q3, q4, q5, q6);
   }
 
@@ -65,11 +59,11 @@ public:
     createText();
     try {
       createPlayer(1, 2, 2, Direction::NORTH, 0, "Red");
-    } catch (const std::exception& e) {
+    } catch (const std::exception &e) {
     }
     try {
       createPlayer(2, 4, 2, Direction::NORTH, 0, "Blue");
-    } catch (const std::exception& e) {
+    } catch (const std::exception &e) {
     }
     contentTiles(2, 4, 32, 32, 32, 32, 32, 32, 32);
     contentTiles(4, 4, 32, 32, 32, 32, 32, 32, 32);
@@ -84,7 +78,10 @@ public:
     movePlayer(1, 4, 1, Direction::SOUTH);
     movePlayer(1, 4, 2, Direction::SOUTH);
     movePlayer(1, 0, 2, Direction::WEST);
+    // movePlayer(2, 4, 2, Direction::NORTH);
     PlayerInventory(1, 0, 2, 1, 1, 1, 14, 1, 1, 1);
+    startIncantation(4, 2, 2, {2});
+    // stopIncantation(4, 2, true);
   }
 
   std::vector<std::shared_ptr<IEntity>> getEntities() {

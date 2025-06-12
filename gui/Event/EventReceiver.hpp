@@ -37,6 +37,7 @@ public:
   float getMoveStartX() const { return moveStartX; }
   float getMoveStartZ() const { return moveStartZ; }
   float getCurrentRotationY() const { return currentRotationY; }
+  int getCurrentEntityId() const { return currentEntityId; }
 
   // Setters
   void setIsMoving(bool value) { isMoving = value; }
@@ -44,6 +45,7 @@ public:
   void setMoveStartX(float value) { moveStartX = value; }
   void setMoveStartZ(float value) { moveStartZ = value; }
   void setCurrentRotationY(float value) { currentRotationY = value; }
+  void setCurrentEntityId(int id) { currentEntityId = id; }
 
   bool handleKeyInput(const irr::SEvent::SKeyInput &keyInput);
   bool handleMouseInput(const irr::SEvent::SMouseInput &mouseInput);
@@ -67,6 +69,7 @@ protected:
   float moveStartX;
   float moveStartZ;
   float currentRotationY;
+  int currentEntityId;
 
   std::vector<TileEntity *> cubes;
   irr::gui::IGUIStaticText *textCube;
