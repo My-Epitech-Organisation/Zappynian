@@ -68,7 +68,7 @@ void Game::gameLoop() {
 
       float elapsedTime =
           (currentTime - receiver_.getMoveStartTime()) / 1000.0f;
-      if (elapsedTime >= 1.0f) {
+      if (elapsedTime >= 0.4f) {
         irr::core::vector3df pos;
         float angle = receiver_.getCurrentRotationY() * M_PI / 180.0f;
         pos.X = receiver_.getMoveStartX() - 20.0f * sin(angle);
@@ -79,13 +79,26 @@ void Game::gameLoop() {
         currentEntity->getNode()->setAnimationSpeed(0.0f);
         scene.updateMovements();
       } else {
-        float progress = elapsedTime / 1.0f;
+        float progress = elapsedTime / 0.4f;
         irr::core::vector3df pos;
         float angle = receiver_.getCurrentRotationY() * M_PI / 180.0f;
         pos.X = receiver_.getMoveStartX() - (20.0f * progress * sin(angle));
         pos.Z = receiver_.getMoveStartZ() - (20.0f * progress * cos(angle));
         pos.Y = currentEntity->getNode()->getPosition().Y;
         currentEntity->getNode()->setPosition(pos);
+      }
+    }
+
+    for (auto &entity : entity_) {
+      if (scene.isPlayerIncanting(entity->getId())) {
+        if (auto *node = dynamic_cast<irr::scene::IAnimatedMeshSceneNode *>(
+                entity->getNode())) {
+          irr::core::vector3df rotation = node->getRotation();
+          rotation.Y += 15.0f;
+          if (rotation.Y >= 360.0f)
+            rotation.Y = 0.0f;
+          node->setRotation(rotation);
+        }
       }
     }
 
