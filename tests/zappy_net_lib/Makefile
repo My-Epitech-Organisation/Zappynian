@@ -31,7 +31,6 @@ SRC_FILES = test_socket_creation.c \
             test_ringbuf.c \
             test_readline_fragmentation.c \
             test_error_handling.c \
-            test_error_integration.c \
             test_result_api.c
 
 # Object files

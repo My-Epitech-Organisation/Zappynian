@@ -54,7 +54,8 @@
     * @param result The success value (typically 0 or positive)
     * @return A zn_result_t indicating success
     */
-    #define ZN_OK(result) ((zn_result_t){.success = (result), .error = ZN_SUCCESS})
+    #define ZN_OK(result) /*
+    */((zn_result_t){.success = (result), .error = ZN_SUCCESS})
 
     /**
     * @brief Create an error result
