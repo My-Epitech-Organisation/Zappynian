@@ -77,16 +77,16 @@ void EntityManager::createStones(int x, int y, int q0, int q1, int q2, int q3,
   for (size_t i = 1; i < quantities.size(); ++i)
   if (quantities[i] > 0)
     ++numStones;
-  if (quantities[0] > 0) {
-  entity_.push_back(std::make_shared<Stone>(
-    -1, position, qScale[0], stoneTextures[0], qB3D[0], stoneNames[0]));
-  entity_.back()->createNode(smgr_, driver_);
+  for (int i = 0; i < quantities[0]; ++i) {
+    entity_.push_back(std::make_shared<Stone>(
+      -1, position, qScale[0], stoneTextures[0], qB3D[0], stoneNames[0]));
+    entity_.back()->createNode(smgr_, driver_);
   }
   if (numStones == 0)
   return;
 
   float radius = 6.0f;
-  float angleStep = 2.0f * 3.14159265f / numStones;
+  float angleStep = 2.0f * M_PI / numStones;
   int placed = 0;
   for (size_t i = 1; i < quantities.size(); ++i) {
   if (quantities[i] > 0) {
