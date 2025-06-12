@@ -12,13 +12,22 @@ class Survivor(Role):
             queue.push("Forward")
         elif tile == 1:
             queue.push("Forward")
+            queue.push("Left")
+            queue.push("Forward")
             queue.push("Take food")
         elif tile in [2, 3]:
+            queue.push("Forward")
+            queue.push("Take food")
             queue.push("Right")
             queue.push("Forward")
             queue.push("Take food")
         elif tile in [4, 5]:
+            queue.push("Forward")
+            queue.push("Forward")
+            queue.push("Take food")
             queue.push("Left")
+            queue.push("Forward")
+            queue.push("Take food")
             queue.push("Forward")
             queue.push("Take food")
         else:
