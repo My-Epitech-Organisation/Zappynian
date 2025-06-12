@@ -37,68 +37,68 @@ void EntityManager::createPlayers(int id, int x, int y, Direction direction,
 }
 
 void EntityManager::createStones(int x, int y, int q0, int q1, int q2, int q3,
-         int q4, int q5, int q6) {
+                                 int q4, int q5, int q6) {
   std::vector<std::vector<irr::io::path>> stoneTextures = {
-  {mediaPath_ + "stone_texture/food_redbull.png",
-   mediaPath_ + "stone_texture/food_redbull.png"},
-  {mediaPath_ + "stone_texture/stone_red.png"},
-  {mediaPath_ + "stone_texture/stone_orange.png"},
-  {mediaPath_ + "stone_texture/stone_yellow.png"},
-  {mediaPath_ + "stone_texture/stone_green.png"},
-  {mediaPath_ + "stone_texture/stone_blue.png"},
-  {mediaPath_ + "stone_texture/stone_purple.png"}};
+      {mediaPath_ + "stone_texture/food_redbull.png",
+       mediaPath_ + "stone_texture/food_redbull.png"},
+      {mediaPath_ + "stone_texture/stone_red.png"},
+      {mediaPath_ + "stone_texture/stone_orange.png"},
+      {mediaPath_ + "stone_texture/stone_yellow.png"},
+      {mediaPath_ + "stone_texture/stone_green.png"},
+      {mediaPath_ + "stone_texture/stone_blue.png"},
+      {mediaPath_ + "stone_texture/stone_purple.png"}};
   std::vector<std::string> stoneNames = {"food",    "linemate", "deraumere",
-           "sibur",   "mendiane", "phiras",
-           "thystame"};
+                                         "sibur",   "mendiane", "phiras",
+                                         "thystame"};
   std::vector<irr::io::path> qB3D(7, mediaPath_ + "ruby.b3d");
   qB3D[0] = mediaPath_ + "RedBull.b3d";
   std::vector<irr::core::vector3df> qScale(
-  1, irr::core::vector3df(0.8f, 0.8f, 0.8f));
+      1, irr::core::vector3df(0.8f, 0.8f, 0.8f));
   qScale.resize(7, irr::core::vector3df(0.009f, 0.009f, 0.009f));
 
   irr::core::vector3df position(0.0f, 0.0f, 0.0f);
   std::ostringstream oss;
   oss << "Cube info: row " << x << " col " << y;
   for (auto &tile : tiles_) {
-  if (tile->getName() == oss.str()) {
-    position.set(x * 20.0f, 5.0f, y * 20.0f);
-    tile->getInventory().addItem("food", q0);
-    tile->getInventory().addItem("linemate", q1);
-    tile->getInventory().addItem("deraumere", q2);
-    tile->getInventory().addItem("sibur", q3);
-    tile->getInventory().addItem("mendiane", q4);
-    tile->getInventory().addItem("phiras", q5);
-    tile->getInventory().addItem("thystame", q6);
-    break;
-  }
+    if (tile->getName() == oss.str()) {
+      position.set(x * 20.0f, 5.0f, y * 20.0f);
+      tile->getInventory().addItem("food", q0);
+      tile->getInventory().addItem("linemate", q1);
+      tile->getInventory().addItem("deraumere", q2);
+      tile->getInventory().addItem("sibur", q3);
+      tile->getInventory().addItem("mendiane", q4);
+      tile->getInventory().addItem("phiras", q5);
+      tile->getInventory().addItem("thystame", q6);
+      break;
+    }
   }
   std::vector<int> quantities = {q0, q1, q2, q3, q4, q5, q6};
   int numStones = 0;
   for (size_t i = 1; i < quantities.size(); ++i)
-  if (quantities[i] > 0)
-    ++numStones;
+    if (quantities[i] > 0)
+      ++numStones;
   for (int i = 0; i < quantities[0]; ++i) {
     entity_.push_back(std::make_shared<Stone>(
-      -1, position, qScale[0], stoneTextures[0], qB3D[0], stoneNames[0]));
+        -1, position, qScale[0], stoneTextures[0], qB3D[0], stoneNames[0]));
     entity_.back()->createNode(smgr_, driver_);
   }
   if (numStones == 0)
-  return;
+    return;
 
   float radius = 6.0f;
   float angleStep = 2.0f * M_PI / numStones;
   int placed = 0;
   for (size_t i = 1; i < quantities.size(); ++i) {
-  if (quantities[i] > 0) {
-    float angle = placed * angleStep;
-    irr::core::vector3df objPos = position;
-    objPos.X += std::cos(angle) * radius;
-    objPos.Z += std::sin(angle) * radius;
-    entity_.push_back(std::make_shared<Stone>(
-    -1, objPos, qScale[i], stoneTextures[i], qB3D[i], stoneNames[i]));
-    entity_.back()->createNode(smgr_, driver_);
-    ++placed;
-  }
+    if (quantities[i] > 0) {
+      float angle = placed * angleStep;
+      irr::core::vector3df objPos = position;
+      objPos.X += std::cos(angle) * radius;
+      objPos.Z += std::sin(angle) * radius;
+      entity_.push_back(std::make_shared<Stone>(
+          -1, objPos, qScale[i], stoneTextures[i], qB3D[i], stoneNames[i]));
+      entity_.back()->createNode(smgr_, driver_);
+      ++placed;
+    }
   }
 }
 
