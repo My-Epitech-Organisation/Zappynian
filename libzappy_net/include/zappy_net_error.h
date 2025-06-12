@@ -38,6 +38,17 @@
     } zn_err_t;
 
     /**
+    * @brief Internal structure for error message lookup
+    *
+    * This structure is used internally to map error codes to their
+    * corresponding human-readable messages.
+    */
+    typedef struct zn_error_entry_s {
+        zn_err_t code;
+        const char *message;
+    } zn_error_entry_t;
+
+    /**
     * @brief Result structure containing both success/failure and error code
     *
     * This structure is returned by all library functions to provide
