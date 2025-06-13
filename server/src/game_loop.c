@@ -18,8 +18,6 @@ void game_loop_init(server_t *server)
 
 void game_loop_tick(server_t *server)
 {
-    player_t *player = NULL;
-
     if (!server || !server->game_running)
         return;
     server->tick_count++;
