@@ -110,9 +110,6 @@ void disconnect_client(server_connection_t *connection, int client_idx);
 int check_correct_read(server_connection_t *connection, int idx,
     ssize_t bytes_read, client_t *client);
 
-server_t *get_server_instance(void);
-void set_server_instance(server_t *server);
-
 void put_str_fd(int fd, char *str);
 int strlen_fd(char *str);
 
