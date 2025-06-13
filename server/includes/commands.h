@@ -19,6 +19,7 @@ typedef struct command_s {
 
 bool commands_add(player_t *player, const char *command_name);
 void commands_execute_next(player_t *player);
+
 void cmd_forward(player_t *player);
 void cmd_right(player_t *player);
 void cmd_left(player_t *player);
