@@ -128,3 +128,15 @@ void EntityManager::createTiles(int x, int y) {
     cubeY += 20.0f;
   }
 }
+
+std::shared_ptr<IEntity>
+EntityManager::createPaperPlane(irr::core::vector3df position) {
+  auto paperPlane = std::make_shared<TileEntity>(
+      -1, position, irr::core::vector3df(1.0f, 1.0f, 1.0f),
+      std::vector<irr::io::path>{mediaPath_ +
+                                 "plane_texture/plane_texture.jpg"},
+      mediaPath_ + "plane.b3d", nullptr, "Paper Plane");
+  paperPlane->createNode(smgr_, driver_);
+  entity_.push_back(paperPlane);
+  return paperPlane;
+}
