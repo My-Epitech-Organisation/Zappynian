@@ -88,6 +88,7 @@ public:
     PlayerInventory(3, 0, 0, 10, 10, 10, 10, 10, 10, 10);
     startIncantation(4, 2, 2, {2});
     // stopIncantation(4, 2, true);
+    // killPlayer(3);
     resourceDroping(3, "mendiane");
     resourceDroping(3, "mendiane");
     resourceDroping(3, "mendiane");

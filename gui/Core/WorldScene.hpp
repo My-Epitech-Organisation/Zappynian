@@ -72,6 +72,8 @@ public:
 
   std::vector<std::shared_ptr<IEntity>> getEntities() const { return entity_; }
 
+  void killPlayer(int id);
+
   void resourceDroping(int id, const std::string &item);
 
   void createDroppedResource(int x, int y, const std::string &item);

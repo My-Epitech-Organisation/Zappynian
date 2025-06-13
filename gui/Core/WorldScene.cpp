@@ -234,6 +234,20 @@ void WorldScene::stopIncantation(int x, int y, bool result) {
   }
 }
 
+void WorldScene::killPlayer(int id) {
+  for (auto it = entity_.begin(); it != entity_.end();) {
+    if ((*it)->getId() == id) {
+      auto player = std::dynamic_pointer_cast<PlayerEntity>(*it);
+      if (player)
+        player->getNode()->remove();
+      it = entity_.erase(it);
+      receiver_.removeEntity(id);
+    } else {
+      ++it;
+    }
+  }
+}
+
 void WorldScene::resourceDroping(int id, const std::string &item) {
   for (auto &entity : entity_) {
     if (entity->getId() == id) {
