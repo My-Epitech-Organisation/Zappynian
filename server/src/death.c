@@ -17,7 +17,7 @@ void death_handle(player_t *player, map_t *map)
     if (tile)
         remove_player_from_tile(tile, player);
     if (player->team_name)
-        team_free_slot(player->team_name);
+        team_free_slot(get_server_instance()->args, player->team_name);
     free(player->team_name);
     free(player);
 }
