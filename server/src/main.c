@@ -6,6 +6,7 @@
 */
 
 #include "../includes/server.h"
+#include "../includes/player.h"
 
 int main(int argc, char **argv)
 {
@@ -29,8 +30,8 @@ int main(int argc, char **argv)
     while (!server->game_running) {
         handle_clients(server);
         process_commands(server);
-        // decrement_food_for_all_players(server);
-        // check_player_deaths(server);
+        decrement_food_for_all_players(server);
+        check_player_deaths(server);
         // check_victory(server);
         // usleep(10000);
     }
