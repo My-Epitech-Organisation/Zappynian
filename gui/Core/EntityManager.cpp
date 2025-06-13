@@ -133,10 +133,12 @@ void EntityManager::createEgg(int id) {
   for (const auto& entities : entity_) {
     auto player = std::dynamic_pointer_cast<PlayerEntity>(entities);
     if (player && player->getId() == id) {
-      irr::core::vector3df pos = player->getPosition();
-      std::vector<irr::io::path> eggTextures = {mediaPath_ + "egg_texture.png"};
+      irr::core::vector3df pos = player->getNode()->getPosition();
+      std::vector<irr::io::path> eggTextures = {mediaPath_ + "egg_texture/egg_texture.png"};
+      printf("Creating egg for player %d at position (%f, %f, %f)\n",
+            id, pos.X, pos.Y, pos.Z);
       auto egg = std::make_shared<Egg>(
-          -1, pos, irr::core::vector3df(0.5f, 0.5f, 0.5f),
+          -1, pos, irr::core::vector3df(20.f, 20.f, 20.f),
           eggTextures, mediaPath_ + "Egg.b3d");
       entity_.push_back(egg);
       egg->createNode(smgr_, driver_);
