@@ -74,7 +74,7 @@ void process_commands(server_t *server)
 
     for (size_t i = 0; i < server->player_count; i++) {
         player = server->players[i];
-        if (player->command_count > 0) {
+        if (player != NULL && !player->dead && player->command_count > 0) {
             commands_execute_next(player, server);
         }
     }
