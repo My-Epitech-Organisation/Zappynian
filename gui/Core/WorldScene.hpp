@@ -105,7 +105,6 @@ protected:
   std::unordered_map<int, bool> isIncanting_;
   std::vector<std::tuple<int, int, int>> incantationData_; // x, y, id
   irr::gui::IGUIStaticText *textChat_;
-  double chatYOffset_ = 0.0;
   std::vector<std::string> chatMessages_;
   static const size_t MAX_CHAT_MESSAGES = 20;
 

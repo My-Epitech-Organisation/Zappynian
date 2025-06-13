@@ -182,7 +182,7 @@ void WorldScene::createText() {
   irr::core::dimension2du screenSize = smgr_->getVideoDriver()->getScreenSize();
   textChat_ = smgr_->getGUIEnvironment()->addStaticText(
       L"Chat:\n",
-      irr::core::rect<irr::s32>(10, 220, 400, screenSize.Height - 10), false);
+      irr::core::rect<irr::s32>(10, 700, 400, screenSize.Height - 10), false);
 
   irr::gui::IGUIFont *font = smgr_->getGUIEnvironment()->getFont(
       mediaPath_ + "fonthaettenschweiler.bmp");
@@ -282,10 +282,7 @@ void WorldScene::broadcast(int id, const std::string &message) {
     return;
 
   std::string fullMessage = "Player " + std::to_string(id) + ": " + message;
-  chatMessages_.push_back(fullMessage);
-  if (chatMessages_.size() > MAX_CHAT_MESSAGES)
-    chatMessages_.erase(chatMessages_.begin());
-  updateChatDisplay();
+  addChatMessage(fullMessage);
 
   irr::core::vector3df broadcasterPos = broadcaster->getNode()->getPosition();
   irr::u32 currentTime = device_->getTimer()->getTime();
@@ -303,7 +300,7 @@ void WorldScene::broadcast(int id, const std::string &message) {
       movement.startPosition = broadcasterPos;
       movement.targetPosition = targetPos;
       movement.startTime = currentTime;
-      movement.duration = 3.0f;
+      movement.duration = 1.5f;
       movement.isActive = true;
       paperPlaneMovements_.push_back(movement);
     }
