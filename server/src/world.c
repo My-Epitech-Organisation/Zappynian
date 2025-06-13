@@ -27,7 +27,7 @@ static int set_tiles(map_t *map, size_t width, size_t height, size_t y)
         return 84;
     }
     for (size_t x = 0; x < width; x++) {
-        set_resource(&map->tiles[y][x], false);
+        resource_init(map);
         map->tiles[y][x].players = NULL;
         map->tiles[y][x].player_count = 0;
     }

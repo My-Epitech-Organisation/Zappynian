@@ -7,9 +7,10 @@
 
 #ifndef WORLD_H
     #define WORLD_H
+    #define RESOURCE_COUNT 7
 
     #include <stdbool.h>
-    #include "resource.h"
+    #include <stddef.h>
 
 typedef struct player_s player_t;
 
