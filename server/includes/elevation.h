@@ -13,9 +13,10 @@
     #include "player.h"
     #include "world.h"
     #include <stdbool.h>
+    #include <string.h>
 
 typedef struct elevation_requirement_s {
-    int required_players;
+    size_t required_players;
     int required_resources[NB_RESOURCE_TYPES];
 } elevation_requirement_t;
 
