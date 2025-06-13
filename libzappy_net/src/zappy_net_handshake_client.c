@@ -45,31 +45,45 @@ static int send_team_name(zn_socket_t sock, zn_role_t role,
     return zn_send_message(sock, send_name);
 }
 
-static int receive_handshake_response(zn_socket_t sock,
-    zn_handshake_result_t *result)
+static int receive_world_dimensions(zn_socket_t sock, int *world_x,
+    int *world_y)
+{
+    char *world_size_msg = NULL;
+
+    world_size_msg = zn_receive_message(sock);
+    if (world_size_msg == NULL) {
+        *world_x = 0;
+        *world_y = 0;
+        return 0;
+    }
+    if (sscanf(world_size_msg, "%d %d", world_x, world_y) != 2) {
+        free(world_size_msg);
+        return -1;
+    }
+    free(world_size_msg);
+    return 0;
+}
+
+static int receive_client_number(zn_socket_t sock, int *client_num)
 {
     char *client_num_msg = NULL;
-    char *world_size_msg = NULL;
 
     client_num_msg = zn_receive_message(sock);
     if (client_num_msg == NULL) {
         return -1;
     }
-    result->client_num = atoi(client_num_msg);
+    *client_num = atoi(client_num_msg);
     free(client_num_msg);
-    world_size_msg = zn_receive_message(sock);
-    if (world_size_msg == NULL) {
-        result->world_x = 0;
-        result->world_y = 0;
-        return 0;
-    }
-    if (sscanf(world_size_msg, "%d %d", &result->world_x,
-        &result->world_y) != 2) {
-            free(world_size_msg);
-            return -1;
-    }
-    free(world_size_msg);
     return 0;
+}
+
+static int receive_handshake_response(zn_socket_t sock,
+    zn_handshake_result_t *result)
+{
+    if (receive_client_number(sock, &result->client_num) == -1) {
+        return -1;
+    }
+    return receive_world_dimensions(sock, &result->world_x, &result->world_y);
 }
 
 int zn_perform_handshake(zn_socket_t sock, zn_role_t role,
