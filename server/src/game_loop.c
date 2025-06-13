@@ -39,3 +39,19 @@ void game_loop_tick(server_t *server)
         }
     }
 }
+
+void game_loop_run(server_t *server)
+{
+    if (!server || !server->game_running) {
+        return;
+    }
+    while (!server->game_running) {
+        handle_clients(server);
+        process_commands(server);
+        decrement_food_for_all_players(server);
+        death_check(server->players, server->player_count, server->map,
+            server);
+        check_victory(server);
+        usleep(10000);
+    }
+}

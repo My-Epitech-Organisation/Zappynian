@@ -14,5 +14,6 @@
 
 void game_loop_init(server_t *server);
 void game_loop_tick(server_t *server);
+void game_loop_run(server_t *server);
 
 #endif // GAME_LOOP_H
