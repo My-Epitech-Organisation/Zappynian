@@ -9,9 +9,11 @@
     #define RESOURCE_H
     #define RESOURCE_COUNT 7
 
-    #include "world.h"
     #include <stdbool.h>
     #include <stddef.h>
+
+typedef struct tile_s tile_t;
+typedef struct map_s map_t;
 
 enum resource_type {
     RESOURCE_FOOD = 0,
