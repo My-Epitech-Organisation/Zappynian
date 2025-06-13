@@ -65,6 +65,10 @@ public:
       createPlayer(2, 4, 2, Direction::NORTH, 0, "Blue");
     } catch (const std::exception &e) {
     }
+    try {
+      createPlayer(3, 0, 0, Direction::SOUTH, 0, "Red");
+    } catch (const std::exception &e) {
+    }
     contentTiles(2, 4, 32, 32, 32, 32, 32, 32, 32);
     contentTiles(4, 4, 32, 32, 32, 32, 32, 32, 32);
     movePlayer(1, 2, 2, Direction::NORTH);
@@ -82,6 +86,7 @@ public:
     PlayerInventory(1, 0, 2, 1, 1, 1, 14, 1, 1, 1);
     startIncantation(4, 2, 2, {2});
     // stopIncantation(4, 2, true);
+    // killPlayer(3);
   }
 
   std::vector<std::shared_ptr<IEntity>> getEntities() {
