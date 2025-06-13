@@ -8,6 +8,7 @@
 #include "../includes/server.h"
 #include "../includes/player.h"
 #include "../includes/death.h"
+#include "../includes/game_loop.h"
 
 int main(int argc, char **argv)
 {
@@ -28,15 +29,7 @@ int main(int argc, char **argv)
         return handle_free(server);
     display_infos(server->args);
     set_server(server->connection);
-    while (!server->game_running) {
-        handle_clients(server);
-        process_commands(server);
-        decrement_food_for_all_players(server);
-        death_check(server->players, server->player_count, server->map,
-            server);
-        check_victory(server);
-        usleep(10000);
-    }
+    game_loop_run(server);
     handle_free(server);
     return 0;
 }
