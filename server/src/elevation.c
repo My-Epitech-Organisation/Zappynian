@@ -6,6 +6,7 @@
 */
 
 #include "../includes/elevation.h"
+#include <stdio.h>
 
 elevation_requirement_t requirements[MAX_LEVEL];
 
@@ -21,7 +22,7 @@ void elevation_init_requirements(void)
     requirements[7] = (elevation_requirement_t) {6, {2, 2, 2, 2, 2, 1, 0}};
 }
 
-bool can_start_incantation(tile_t *tile, int player_level)
+static bool can_start_incantation(tile_t *tile, int player_level)
 {
     elevation_requirement_t req;
 
@@ -43,6 +44,7 @@ bool can_start_incantation(tile_t *tile, int player_level)
 void start_incantation(tile_t *tile, int player_level)
 {
     if (!can_start_incantation(tile, player_level)) {
+        fprintf(stderr, "Cannot start incantation: requirements not met.\n");
         return;
     }
     for (size_t i = 0; i < tile->player_count; i++) {

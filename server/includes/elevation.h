@@ -21,7 +21,6 @@ typedef struct elevation_requirement_s {
 } elevation_requirement_t;
 
 void elevation_init_requirements(void);
-bool can_start_incantation(tile_t *tile, int player_level);
 void start_incantation(tile_t *tile, int player_level);
 bool complete_incantation(tile_t *tile, int player_level);
 void apply_elevation(tile_t *tile, int player_level);
