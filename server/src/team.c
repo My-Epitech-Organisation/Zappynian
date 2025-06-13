@@ -22,6 +22,7 @@ team_t *get_team_by_name(const char *name)
 void team_free_slot(const char *team_name)
 {
     team_t *team = get_team_by_name(team_name);
+
     if (team) {
         team->remaining_slots += 1;
         printf("✅ Slot libéré pour l'équipe %s. Slots restants : %d\n",
