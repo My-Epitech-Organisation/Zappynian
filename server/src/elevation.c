@@ -13,13 +13,13 @@ elevation_requirement_t requirements[MAX_LEVEL];
 void elevation_init_requirements(void)
 {
     memset(requirements, 0, sizeof(requirements));
-    requirements[1] = (elevation_requirement_t) {1, {1, 0, 0, 0, 0, 0, 0}};
-    requirements[2] = (elevation_requirement_t) {2, {1, 1, 1, 0, 0, 0, 0}};
-    requirements[3] = (elevation_requirement_t) {2, {2, 0, 1, 0, 2, 0, 0}};
-    requirements[4] = (elevation_requirement_t) {4, {1, 1, 2, 0, 1, 0, 0}};
-    requirements[5] = (elevation_requirement_t) {4, {1, 2, 1, 3, 0, 0, 0}};
-    requirements[6] = (elevation_requirement_t) {6, {1, 2, 3, 0, 1, 0, 0}};
-    requirements[7] = (elevation_requirement_t) {6, {2, 2, 2, 2, 2, 1, 0}};
+    requirements[0] = (elevation_requirement_t) {1, {1, 0, 0, 0, 0, 0, 0}};
+    requirements[1] = (elevation_requirement_t) {2, {1, 1, 1, 0, 0, 0, 0}};
+    requirements[2] = (elevation_requirement_t) {2, {2, 0, 1, 0, 2, 0, 0}};
+    requirements[3] = (elevation_requirement_t) {4, {1, 1, 2, 0, 1, 0, 0}};
+    requirements[4] = (elevation_requirement_t) {4, {1, 2, 1, 3, 0, 0, 0}};
+    requirements[5] = (elevation_requirement_t) {6, {1, 2, 3, 0, 1, 0, 0}};
+    requirements[6] = (elevation_requirement_t) {6, {2, 2, 2, 2, 2, 1, 0}};
 }
 
 static bool can_start_incantation(tile_t *tile, int player_level)
