@@ -6,6 +6,7 @@
 */
 
 #include "../includes/server.h"
+#include "../includes/team.h"
 
 static int process_option_p_x_y(int opt, server_args_t *server)
 {
