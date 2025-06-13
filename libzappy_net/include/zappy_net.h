@@ -18,6 +18,7 @@
     #include <errno.h>
     #include <netdb.h>
     #include <poll.h>
+    #include "zappy_net_error.h"
 
     #ifdef __cplusplus
     extern "C" {
