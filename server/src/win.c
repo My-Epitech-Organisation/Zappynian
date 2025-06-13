@@ -27,3 +27,17 @@ bool win_check(const char *team_name, player_t **players, int player_count)
     }
     return false;
 }
+
+void check_victory(server_t *server)
+{
+    if (!server || !server->players || server->player_count <= 0)
+        return;
+
+    for (int i = 0; i < server->args->team_count; i++) {
+        if (win_check(server->args->teams[i].name, server->players,
+            server->player_count)) {
+            server->game_running = false;
+            return;
+        }
+    }
+}
