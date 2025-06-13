@@ -220,6 +220,81 @@
     int zn_get_fd(zn_socket_t socket);
 
     /**
+    * @brief Client role enumeration for handshake
+    */
+    typedef enum {
+        ZN_ROLE_AI,         /**< AI client */
+        ZN_ROLE_GUI,        /**< Graphical client */
+        ZN_ROLE_UNKNOWN     /**< Unknown role */
+    } zn_role_t;
+
+    /**
+    * @brief Handshake result structure
+    */
+    typedef struct {
+        int client_num;     /**< Number of available slots */
+        int world_x;        /**< World width */
+        int world_y;        /**< World height */
+    } zn_handshake_result_t;
+
+    /**
+    * @brief Perform client handshake with server
+    *
+    * Performs the complete Zappy handshake sequence for a client:
+    * 1. Receives WELCOME message from server
+    * 2. Sends team name or "GRAPHIC" for GUI
+    * 3. Receives client number and world dimensions
+    *
+    * @param sock The connected client socket
+    * @param role The client role (AI or GUI)
+    * @param team_name The team name (ignored for GUI role)
+    * @param result Pointer to structure to store handshake result
+    * @return 0 on success, -1 on failure
+    */
+    int zn_perform_handshake(zn_socket_t sock, zn_role_t role,
+        const char *team_name, zn_handshake_result_t *result);
+
+    /**
+    * @brief Send WELCOME message to client (server side)
+    *
+    * Sends the initial WELCOME message to a newly connected client.
+    * This is the first step in the Zappy handshake protocol.
+    *
+    * @param sock The client socket
+    * @return 0 on success, -1 on failure
+    */
+    int zn_send_welcome(zn_socket_t sock);
+
+    /**
+    * @brief Receive team name from client (server side)
+    *
+    * Receives and parses the team name sent by the client.
+    * Returns the detected role based on the team name.
+    *
+    * @param sock The client socket
+    * @param team_name Buffer to store team name (max 256 chars)
+    * @param team_name_size Size of team_name buffer
+    * @return Client role on success, ZN_ROLE_UNKNOWN on failure
+    */
+    zn_role_t zn_receive_team_name(zn_socket_t sock, char *team_name,
+        size_t team_name_size);
+
+    /**
+    * @brief Send handshake response to client (server side)
+    *
+    * Sends the client number and world dimensions to complete
+    * the handshake sequence.
+    *
+    * @param sock The client socket
+    * @param client_num Number of available client slots
+    * @param world_x World width
+    * @param world_y World height
+    * @return 0 on success, -1 on failure
+    */
+    int zn_send_handshake_response(zn_socket_t sock, int client_num,
+        int world_x, int world_y);
+
+    /**
     * @brief Maximum number of sockets supported by zn_poll()
     */
     #define ZN_POLL_MAX_SOCKETS 64
