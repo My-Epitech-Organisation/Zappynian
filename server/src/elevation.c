@@ -56,7 +56,7 @@ bool complete_incantation(tile_t *tile, int player_level)
 {
     elevation_requirement_t req;
 
-    if (player_level < 1 || player_level >= MAX_LEVEL) {
+    if (player_level < 1 || player_level > MAX_LEVEL) {
         return false;
     }
     req = requirements[player_level - 1];
