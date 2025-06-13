@@ -33,10 +33,10 @@ SRCS	=	src/main.c				\
 			src/resource_spawning.c \
 			src/world.c 			\
 			src/player.c 			\
-			src/player_state.c 		\
 			src/elevation.c 		\
 			src/team.c 				\
 			src/server_instance.c 	\
+			# src/player_state.c 		\
 
 OBJS	=	$(SRCS:.c=.o)
 

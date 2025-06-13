@@ -1,0 +1,49 @@
+/*
+** EPITECH PROJECT, 2025
+** Zappynian
+** File description:
+** player
+*/
+
+#ifndef PLAYER_H
+    #define PLAYER_H
+
+    #include <stdlib.h>
+    #include <stdio.h>
+    #include <string.h>
+    #include <stdbool.h>
+    #include "world.h"
+
+    #define MAX_PLAYER_COMMANDS 10
+    #define NORTH 0
+    #define EAST 1
+    #define SOUTH 2
+    #define WEST 3
+
+typedef struct command_s command_t;
+
+typedef struct player_s {
+    int id;
+    char *team_name;
+    int x;
+    int y;
+    int level;
+    int orientation;
+    int food;
+    bool dead;
+    bool in_elevation;
+    int slot_id;
+    resource_t inventory;
+    const command_t *commands[MAX_PLAYER_COMMANDS];
+    int command_timers[MAX_PLAYER_COMMANDS];
+    int command_count;
+} player_t;
+
+player_t *create_player(int id, const char *team_name, int x, int y);
+void destroy_player(player_t *player);
+void move_player(player_t *player, int new_x, int new_y, map_t *map);
+void add_resource_to_player(player_t *player, const char *resource_name);
+bool remove_resource_from_player(player_t *player, const char *resource_name);
+bool player_decrement_food(player_t *player);
+
+#endif // PLAYER_H
