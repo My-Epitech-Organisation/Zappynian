@@ -2,10 +2,31 @@
 ** EPITECH PROJECT, 2025
 ** Zappynian
 ** File description:
-** manage_teams
+** team
 */
 
-#include "../includes/server.h"
+#include "../includes/team.h"
+
+team_t *get_team_by_name(server_args_t *server, const char *name)
+{
+    for (int i = 0; i < server->team_count; i++) {
+        if (strcmp(server->teams[i].name, name) == 0) {
+            return &server->teams[i];
+        }
+    }
+    return NULL;
+}
+
+void team_free_slot(server_args_t *server, const char *team_name)
+{
+    team_t *team = get_team_by_name(server, team_name);
+
+    if (team) {
+        team->remaining_slots += 1;
+        printf("Slot libéré pour l'équipe %s. Slots restants : %d\n",
+            team_name, team->remaining_slots);
+    }
+}
 
 int init_teams(server_args_t *server)
 {
@@ -24,20 +45,10 @@ int init_teams(server_args_t *server)
             fprintf(stderr, "Memory allocation failed for team name.\n");
             return 84;
         }
-        server->teams[i].max_players = server->clients_per_team;
+        server->teams[i].max_slots = server->clients_per_team;
         server->teams[i].current_players = 0;
     }
     return 0;
-}
-
-team_t *get_team_by_name(server_args_t *server, const char *name)
-{
-    for (int i = 0; i < server->team_count; i++) {
-        if (strcmp(server->teams[i].name, name) == 0) {
-            return &server->teams[i];
-        }
-    }
-    return NULL;
 }
 
 bool is_team_full(server_args_t *server, const char *name)
@@ -48,7 +59,7 @@ bool is_team_full(server_args_t *server, const char *name)
         fprintf(stderr, "Team '%s' not found.\n", name);
         return true;
     }
-    return team->current_players >= team->max_players;
+    return team->current_players >= team->max_slots;
 }
 
 bool is_valid_team(server_args_t *args, const char *name)
