@@ -30,7 +30,7 @@ typedef struct player_s {
     bool dead;
     bool in_elevation;
     int slot_id;
-    command_t *commands[MAX_PLAYER_COMMANDS];
+    const command_t *commands[MAX_PLAYER_COMMANDS];
     int command_timers[MAX_PLAYER_COMMANDS];
     int command_count;
 } player_t;
