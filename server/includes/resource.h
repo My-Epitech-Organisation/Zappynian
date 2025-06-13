@@ -7,11 +7,25 @@
 
 #ifndef RESOURCE_H
     #define RESOURCE_H
+    #define RESOURCE_COUNT 7
 
     #include "world.h"
+    #include <stdbool.h>
+    #include <stddef.h>
 
+enum resource_type {
+    RESOURCE_FOOD = 0,
+    RESOURCE_LINEMATE,
+    RESOURCE_DERAUMERE,
+    RESOURCE_SIBUR,
+    RESOURCE_MENDIANE,
+    RESOURCE_PHIRAS,
+    RESOURCE_THYSTAME
+};
+
+void resource_init(map_t *map);
 void resource_respawn(map_t *map);
-void init_resource_spawn_rates(void);
-int get_resource_spawn_rate(const char *resource_name);
+void resource_add(tile_t *tile, int resource_type, int amount);
+bool resource_remove(tile_t *tile, int resource_type, int amount);
 
 #endif // RESOURCE_H
