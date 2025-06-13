@@ -87,6 +87,8 @@ public:
     startIncantation(4, 2, 2, {2});
     // stopIncantation(4, 2, true);
     // killPlayer(3);
+    broadcast(1, "Hello from player 1!");
+    broadcast(1, "Hello from player 1 caca!");
   }
 
   std::vector<std::shared_ptr<IEntity>> getEntities() {
