@@ -10,6 +10,7 @@
 
     #include "server.h"
     #include "death.h"
+    #include "team.h"
 
 void game_loop_init(server_t *server);
 void game_loop_tick(server_t *server);
