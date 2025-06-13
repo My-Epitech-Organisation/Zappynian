@@ -21,6 +21,11 @@
     #include <netinet/in.h>
     #include <errno.h>
     #include <poll.h>
+    #include <stdbool.h>
+    #include "world.h"
+    #include "player.h"
+    #include "resource.h"
+    #include "team.h"
 
 typedef enum {
     CLIENT_UNKNOWN,
@@ -60,11 +65,15 @@ typedef struct server_args_s {
     int clients_per_team;
     int frequency;
     int error_code;
+    team_t *teams;
 } server_args_t;
 
 typedef struct server_s {
     server_args_t *args;
     server_connection_t *connection;
+    map_t *map;
+    player_t **players;
+    size_t player_count;
 } server_t;
 
 int check_args(int argc, char **argv, server_args_t *server);
@@ -95,5 +104,9 @@ void handle_client_read(server_connection_t *connection, int client_idx);
 void disconnect_client(server_connection_t *connection, int client_idx);
 int check_correct_read(server_connection_t *connection, int idx,
     ssize_t bytes_read, client_t *client);
+
+// Server instance management
+server_t *get_server_instance(void);
+void set_server_instance(server_t *server);
 
 #endif /* SERVER_H */
