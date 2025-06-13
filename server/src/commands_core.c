@@ -53,13 +53,13 @@ bool commands_add(player_t *player, const char *command_name)
     return false;
 }
 
-void commands_execute_next(player_t *player)
+void commands_execute_next(player_t *player, server_t *server)
 {
     if (player->command_count == 0)
         return;
     player->command_timers[0]--;
     if (player->command_timers[0] <= 0) {
-        player->commands[0]->execute(player);
+        player->commands[0]->execute(player, server);
         for (int i = 1; i < player->command_count; i++) {
             player->commands[i - 1] = player->commands[i];
             player->command_timers[i - 1] = player->command_timers[i];
@@ -75,7 +75,7 @@ void process_commands(server_t *server)
     for (size_t i = 0; i < server->player_count; i++) {
         player = server->players[i];
         if (player->command_count > 0) {
-            commands_execute_next(player);
+            commands_execute_next(player, server);
         }
     }
 }
