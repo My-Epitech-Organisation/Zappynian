@@ -27,7 +27,6 @@ typedef struct map_s {
 
 map_t *create_map(size_t width, size_t height);
 void destroy_map(map_t *map);
-// void set_resource(tile_t *tile, bool random_spawn);
 tile_t *get_tile(map_t *map, size_t x, size_t y);
 void add_player_to_tile(tile_t *tile, player_t *player);
 void remove_player_from_tile(tile_t *tile, player_t *player);
