@@ -44,7 +44,9 @@ SRC_C = $(SRC_DIR)/libzappy_net.c \
         $(SRC_DIR)/zappy_net_ringbuf_read_fd.c \
         $(SRC_DIR)/zappy_net_io.c \
         $(SRC_DIR)/zappy_net_readline.c \
-        $(SRC_DIR)/zappy_net_handshake.c \
+        $(SRC_DIR)/zappy_net_handshake_client.c \
+        $(SRC_DIR)/zappy_net_handshake_server.c \
+        $(SRC_DIR)/zappy_net_handshake_utils.c \
         $(SRC_DIR)/zappy_net_error.c
 SRC_CPP =
 
