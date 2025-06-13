@@ -27,7 +27,6 @@ int main(int argc, char **argv)
     }
     if (args_result == 1)
         return handle_free(server);
-    display_infos(server->args);
     set_server(server->connection);
     game_loop_run(server);
     handle_free(server);
