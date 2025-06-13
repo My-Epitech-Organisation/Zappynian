@@ -10,13 +10,14 @@
 
     #include <stdbool.h>
     #include "world.h"
-    #include "commands.h"
 
     #define MAX_PLAYER_COMMANDS 10
     #define NORTH 0
     #define EAST 1
     #define SOUTH 2
     #define WEST 3
+
+typedef struct command_s command_t;
 
 typedef struct player_s {
     int id;
