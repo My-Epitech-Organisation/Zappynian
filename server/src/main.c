@@ -34,7 +34,7 @@ int main(int argc, char **argv)
         decrement_food_for_all_players(server);
         death_check(server->players, server->player_count, server->map,
             server);
-        // check_victory(server);
+        check_victory(server);
         // usleep(10000);
     }
     handle_free(server);
