@@ -7,7 +7,6 @@
 
 #ifndef RESOURCE_H
     #define RESOURCE_H
-    #define RESOURCE_COUNT 7
 
     #include <stdbool.h>
     #include <stddef.h>
