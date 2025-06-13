@@ -11,6 +11,7 @@
     #include "player.h"
     #include "world.h"
     #include "team.h"
+    #include "win.h"
     #include <stdio.h>
     #include <stdlib.h>
 
