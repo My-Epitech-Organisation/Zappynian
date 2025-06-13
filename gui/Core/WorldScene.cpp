@@ -6,6 +6,7 @@
 */
 
 #include "WorldScene.hpp"
+#include <cmath>
 
 void WorldScene::createEntities(int id, int x, int y, Direction direction,
                                 int level, std::string team) {
@@ -270,17 +271,44 @@ void WorldScene::addChatMessage(const std::string &message) {
 }
 
 void WorldScene::broadcast(int id, const std::string &message) {
+  std::shared_ptr<IEntity> broadcaster = nullptr;
   for (const auto &entity : entity_) {
     if (entity->getId() == id) {
-      std::string fullMessage = "Player " + std::to_string(id) + ": " + message;
-      chatMessages_.push_back(fullMessage);
-      if (chatMessages_.size() > MAX_CHAT_MESSAGES) {
-        chatMessages_.erase(chatMessages_.begin());
-      }
-      updateChatDisplay();
-      return;
+      broadcaster = entity;
+      break;
     }
   }
+  if (!broadcaster)
+    return;
+
+  std::string fullMessage = "Player " + std::to_string(id) + ": " + message;
+  chatMessages_.push_back(fullMessage);
+  if (chatMessages_.size() > MAX_CHAT_MESSAGES)
+    chatMessages_.erase(chatMessages_.begin());
+  updateChatDisplay();
+
+  irr::core::vector3df broadcasterPos = broadcaster->getNode()->getPosition();
+  irr::u32 currentTime = device_->getTimer()->getTime();
+
+  for (const auto &entity : entity_) {
+    if (entity->getId() == id || entity->getId() < 0)
+      continue;
+
+    auto paperPlane = entityManager_.createPaperPlane(broadcasterPos);
+    if (paperPlane) {
+      irr::core::vector3df targetPos = entity->getNode()->getPosition();
+      PaperPlaneMovement movement;
+      movement.paperPlane = paperPlane;
+      movement.targetPlayerId = entity->getId();
+      movement.startPosition = broadcasterPos;
+      movement.targetPosition = targetPos;
+      movement.startTime = currentTime;
+      movement.duration = 3.0f;
+      movement.isActive = true;
+      paperPlaneMovements_.push_back(movement);
+    }
+  }
+  entity_ = entityManager_.getEntities();
 }
 
 void WorldScene::createWorld() {}
@@ -295,4 +323,48 @@ void WorldScene::updateChatDisplay() {
     chatText += L"\n";
   }
   textChat_->setText(chatText.c_str());
+}
+
+void WorldScene::updatePaperPlaneMovements() {
+  if (paperPlaneMovements_.empty())
+    return;
+  irr::u32 currentTime = device_->getTimer()->getTime();
+  for (auto it = paperPlaneMovements_.begin();
+       it != paperPlaneMovements_.end();) {
+    if (!it->isActive) {
+      ++it;
+      continue;
+    }
+
+    float elapsedTime = (currentTime - it->startTime) / 1000.0f;
+    if (elapsedTime >= it->duration) {
+      auto paperPlane = it->paperPlane;
+      if (paperPlane && paperPlane->getNode())
+        paperPlane->getNode()->remove();
+      for (auto entityIt = entity_.begin(); entityIt != entity_.end();
+           ++entityIt) {
+        if (*entityIt == paperPlane) {
+          entity_.erase(entityIt);
+          break;
+        }
+      }
+      it = paperPlaneMovements_.erase(it);
+    } else {
+      float progress = elapsedTime / it->duration;
+      progress = std::min(1.0f, std::max(0.0f, progress));
+      irr::core::vector3df currentPos = it->startPosition.getInterpolated(
+          it->targetPosition, 1.0f - progress);
+      float arcHeight = 15.0f;
+      float arcProgress = sin(progress * M_PI);
+      currentPos.Y += arcHeight * arcProgress;
+      if (it->paperPlane && it->paperPlane->getNode()) {
+        it->paperPlane->getNode()->setPosition(currentPos);
+        irr::core::vector3df direction =
+            (it->targetPosition - it->startPosition).normalize();
+        float yaw = atan2(direction.X, direction.Z) * 180.0f / M_PI;
+        it->paperPlane->getNode()->setRotation(irr::core::vector3df(0, yaw, 0));
+      }
+      ++it;
+    }
+  }
 }

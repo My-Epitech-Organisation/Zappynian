@@ -17,6 +17,16 @@ struct Movement {
   Direction direction;
 };
 
+struct PaperPlaneMovement {
+  std::shared_ptr<IEntity> paperPlane;
+  int targetPlayerId;
+  irr::core::vector3df startPosition;
+  irr::core::vector3df targetPosition;
+  irr::u32 startTime;
+  float duration; // sec
+  bool isActive;
+};
+
 struct EdgePositionResult {
   bool isEdge;
   float offsetX;
@@ -54,6 +64,8 @@ public:
 
   void updateMovements();
 
+  void updatePaperPlaneMovements();
+
   void createLights();
 
   void createCamera();
@@ -87,6 +99,7 @@ protected:
   EntityManager entityManager_;
   std::vector<std::shared_ptr<IEntity>> entity_;
   std::queue<Movement> movementQueue_;
+  std::vector<PaperPlaneMovement> paperPlaneMovements_;
   irr::core::vector3df actualPos_;
   std::pair<int, int> planeSize_;
   std::unordered_map<int, bool> isIncanting_;
