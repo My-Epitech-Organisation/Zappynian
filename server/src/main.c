@@ -35,7 +35,7 @@ int main(int argc, char **argv)
         death_check(server->players, server->player_count, server->map,
             server);
         check_victory(server);
-        // usleep(10000);
+        usleep(10000);
     }
     handle_free(server);
     return 0;
