@@ -26,5 +26,14 @@ int main(int argc, char **argv)
         return handle_free(server);
     display_infos(server->args);
     set_server(server->connection);
-    handle_clients(server);
+    while (!server->game_running) {
+        handle_clients(server);
+        process_commands(server);
+        // decrement_food_for_all_players(server);
+        // check_player_deaths(server);
+        // check_victory(server);
+        // usleep(10000);
+    }
+    handle_free(server);
+    return 0;
 }
