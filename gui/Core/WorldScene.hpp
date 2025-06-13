@@ -72,6 +72,8 @@ public:
 
   std::vector<std::shared_ptr<IEntity>> getEntities() const { return entity_; }
 
+  void killPlayer(int id);
+
 protected:
   irr::IrrlichtDevice *device_;
   irr::scene::ISceneManager *smgr_;
