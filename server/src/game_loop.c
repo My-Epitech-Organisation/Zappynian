@@ -30,7 +30,7 @@ void game_loop_tick(server_t *server)
         if (player && !player->dead)
             printf("Processing commands for player %d\n", player->id);
     }
-    death_check(server->players, server->player_count, server->map);
+    death_check(server->players, server->player_count, server->map, server);
     for (int i = 0; i < server->args->team_count; i++) {
         if (win_check(server->args->teams[i].name,
             server->players, server->player_count)) {
