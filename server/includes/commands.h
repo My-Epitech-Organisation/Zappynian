@@ -11,6 +11,9 @@
     #include <stdbool.h>
     #include "player.h"
 
+struct server_s;
+typedef struct server_s server_t;
+
 typedef struct command_s {
     char *name;
     int duration;
@@ -19,6 +22,7 @@ typedef struct command_s {
 
 bool commands_add(player_t *player, const char *command_name);
 void commands_execute_next(player_t *player);
+void process_commands(server_t *server);
 
 void cmd_forward(player_t *player);
 void cmd_right(player_t *player);

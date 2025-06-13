@@ -8,6 +8,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "../includes/commands.h"
+#include "../includes/server.h"
 
 static const command_t command_table[] = {
     {"forward", 7, cmd_forward},
@@ -64,5 +65,17 @@ void commands_execute_next(player_t *player)
             player->command_timers[i - 1] = player->command_timers[i];
         }
         player->command_count--;
+    }
+}
+
+void process_commands(server_t *server)
+{
+    player_t *player;
+
+    for (size_t i = 0; i < server->player_count; i++) {
+        player = server->players[i];
+        if (player->command_count > 0) {
+            commands_execute_next(player);
+        }
     }
 }
