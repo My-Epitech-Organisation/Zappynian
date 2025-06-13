@@ -9,6 +9,7 @@
     #define GAME_LOOP_H
 
     #include "server.h"
+    #include "death.h"
 
 void game_loop_init(server_t *server);
 void game_loop_tick(server_t *server);
