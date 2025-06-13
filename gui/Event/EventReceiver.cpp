@@ -8,6 +8,7 @@
 #include "EventReceiver.hpp"
 #include "../Entities/PlayerEntity.hpp"
 #include "../Entities/TileEntity.hpp"
+#include <algorithm>
 #include <iostream>
 #include <string>
 
@@ -292,6 +293,15 @@ void EventReceiver::addCube(TileEntity *c) { cubes.push_back(c); }
 
 void EventReceiver::addEntity(std::shared_ptr<IEntity> entity) {
   entity_.push_back(entity);
+}
+
+void EventReceiver::removeEntity(int id) {
+  auto it = std::remove_if(
+      entity_.begin(), entity_.end(),
+      [id](const std::shared_ptr<IEntity> &e) { return e->getId() == id; });
+  if (it != entity_.end()) {
+    entity_.erase(it, entity_.end());
+  }
 }
 
 void EventReceiver::setText(irr::gui::IGUIStaticText *t) { textCube = t; }
