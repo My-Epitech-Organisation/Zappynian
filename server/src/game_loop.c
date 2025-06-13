@@ -14,7 +14,6 @@ void game_loop_init(server_t *server)
     }
     server->tick_count = 0;
     server->game_running = true;
-    printf("Game loop initialized.\n");
 }
 
 void game_loop_tick(server_t *server)
@@ -24,7 +23,6 @@ void game_loop_tick(server_t *server)
     if (!server || !server->game_running)
         return;
     server->tick_count++;
-    printf("Game tick: %d\n", server->tick_count);
     for (size_t i = 0; i < server->player_count; i++) {
         player = server->players[i];
         if (player && !player->dead)
@@ -42,10 +40,14 @@ void game_loop_tick(server_t *server)
 
 void game_loop_run(server_t *server)
 {
-    if (!server || !server->game_running) {
+    if (!server) {
         return;
     }
-    while (!server->game_running) {
+    game_loop_init(server);
+    if (!server->game_running)
+        return;
+    while (server->game_running != false) {
+        game_loop_tick(server);
         handle_clients(server);
         process_commands(server);
         decrement_food_for_all_players(server);
