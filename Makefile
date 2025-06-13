@@ -63,8 +63,11 @@ fclean_zappy_ai:
 	$(MAKE) -C ai fclean
 	$(RM) -f zappy_ai
 
-fclean: clean fclean_libzappy_net fclean_zappy_server fclean_zappy_gui \
-	fclean_zappy_ai
+fclean: clean \
+		fclean_libzappy_net \
+		fclean_zappy_server \
+		fclean_zappy_gui \
+		fclean_zappy_ai
 	@echo "Removing all generated files..."
 
 re: fclean all

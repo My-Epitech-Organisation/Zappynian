@@ -25,14 +25,24 @@ SRC_DIR = src
 OBJ_DIR = obj
 
 HEADERS = $(INC_DIR)/libzappy_net.h \
-          $(INC_DIR)/zappy_net.h
+          $(INC_DIR)/zappy_net.h \
+          $(INC_DIR)/zappy_net_ringbuf.h
 
 SRC_C = $(SRC_DIR)/libzappy_net.c \
         $(SRC_DIR)/zappy_net_core.c \
         $(SRC_DIR)/zappy_net_socket.c \
         $(SRC_DIR)/zappy_net_server.c \
         $(SRC_DIR)/zappy_net_client.c \
-        $(SRC_DIR)/zappy_net_poll.c
+        $(SRC_DIR)/zappy_net_poll.c \
+        $(SRC_DIR)/zappy_net_ringbuf_core.c \
+        $(SRC_DIR)/zappy_net_ringbuf_utils.c \
+        $(SRC_DIR)/zappy_net_ringbuf_check.c \
+        $(SRC_DIR)/zappy_net_ringbuf_write.c \
+        $(SRC_DIR)/zappy_net_ringbuf_read.c \
+        $(SRC_DIR)/zappy_net_ringbuf_flush.c \
+        $(SRC_DIR)/zappy_net_ringbuf_read_fd.c \
+        $(SRC_DIR)/zappy_net_io.c \
+        $(SRC_DIR)/zappy_net_readline.c
 SRC_CPP =
 
 SRC_FILES = $(SRC_C) $(SRC_CPP)

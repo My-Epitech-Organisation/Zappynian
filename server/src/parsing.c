@@ -60,6 +60,7 @@ int parse_options(int argc, char **argv, server_args_t *server)
     opt = getopt(argc, argv, opt_string);
     while (opt != -1) {
         if (handle_options(opt, argv, argc, server) == 84) {
+            fprintf(stderr, "Error processing options.\n");
             return 84;
         }
         if (server->error_code == 84) {
@@ -90,7 +91,7 @@ int check_args(int argc, char **argv, server_args_t *server)
         return 84;
     if (verify_config(server) == 84)
         return 84;
-    return 0;
+    return init_teams(server);
 }
 
 int handle_args(int argc, char **argv, server_t *server)

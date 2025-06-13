@@ -6,7 +6,8 @@
 */
 
 #include "EventReceiver.hpp"
-#include "Entities/TileEntity.hpp"
+#include "../Entities/PlayerEntity.hpp"
+#include "../Entities/TileEntity.hpp"
 #include <iostream>
 #include <string>
 
@@ -14,7 +15,7 @@ EventReceiver::EventReceiver()
     : device(nullptr), smgr(nullptr), driver(nullptr), isMouseDown(false),
       mouseX(0), mouseY(0), animatedNode(nullptr), isMoving(false),
       moveStartTime(0), moveStartX(0.0f), moveStartZ(0.0f),
-      currentRotationY(0.0f) {}
+      currentRotationY(0.0f), currentEntityId(0) {}
 
 EventReceiver::~EventReceiver() = default;
 
@@ -152,7 +153,7 @@ bool EventReceiver::handleMouseInput(
 
   case irr::EMIE_LMOUSE_LEFT_UP:
     isMouseDown = false;
-    return handleNodeSelection(mouseInput);
+    return handleNodeSelection(mouseInput) || handlePlayerSelection(mouseInput);
 
   case irr::EMIE_MOUSE_WHEEL:
     return handleMouseWheelMovement(mouseInput.Wheel);
@@ -231,7 +232,48 @@ bool EventReceiver::handleNodeSelection(
             c->getInventory().getItemQuantity(stoneNames[i]));
         selectedText += L")";
       }
-      text->setText(selectedText.c_str());
+      textCube->setText(selectedText.c_str());
+      return true;
+    }
+  }
+  return false;
+}
+
+bool EventReceiver::handlePlayerSelection(
+    const irr::SEvent::SMouseInput &mouseInput) {
+  if (!smgr || !driver || !textPlayer)
+    return false;
+
+  irr::core::line3d<irr::f32> ray =
+      smgr->getSceneCollisionManager()->getRayFromScreenCoordinates(
+          irr::core::position2d<irr::s32>(mouseInput.X, mouseInput.Y),
+          smgr->getActiveCamera());
+
+  irr::scene::ISceneNode *selectedNode =
+      smgr->getSceneCollisionManager()->getSceneNodeFromRayBB(ray);
+
+  for (const auto &entity : entity_) {
+    auto player = std::dynamic_pointer_cast<PlayerEntity>(entity);
+    if (player && player->getNode() == selectedNode) {
+      irr::core::stringw selectedText = L"Player Info:\n";
+      selectedText += L"ID: ";
+      selectedText += irr::core::stringw(player->getId());
+      selectedText += L"\nTeam: ";
+      selectedText += irr::core::stringw(player->getTeam().c_str());
+      selectedText += L"\nLevel: ";
+      selectedText += irr::core::stringw(player->getLevel());
+      std::vector<std::string> stoneNames = {"food",    "linemate", "deraumere",
+                                             "sibur",   "mendiane", "phiras",
+                                             "thystame"};
+      for (std::size_t i = 0; i < stoneNames.size(); ++i) {
+        selectedText += L"\n: ";
+        selectedText += irr::core::stringw(stoneNames[i].c_str());
+        selectedText += L" (";
+        selectedText += irr::core::stringw(
+            player->getInventory().getItemQuantity(stoneNames[i]));
+        selectedText += L")";
+      }
+      textPlayer->setText(selectedText.c_str());
       return true;
     }
   }
@@ -248,7 +290,11 @@ void EventReceiver::setDevice(irr::IrrlichtDevice *dev) {
 
 void EventReceiver::addCube(TileEntity *c) { cubes.push_back(c); }
 
-void EventReceiver::setText(irr::gui::IGUIStaticText *t) { text = t; }
+void EventReceiver::addEntity(std::shared_ptr<IEntity> entity) {
+  entity_.push_back(entity);
+}
+
+void EventReceiver::setText(irr::gui::IGUIStaticText *t) { textCube = t; }
 
 void EventReceiver::setAnimatedNode(irr::scene::IAnimatedMeshSceneNode *node) {
   animatedNode = node;

@@ -33,6 +33,12 @@ typedef enum {
     CLIENT_GUI
 } client_type_t;
 
+typedef struct team_s {
+    char *name;
+    int max_players;
+    int current_players;
+} team_t;
+
 typedef struct client_s {
     int fd;
     struct sockaddr_in addr;
@@ -46,16 +52,6 @@ typedef struct client_s {
     char *team_name;
 } client_t;
 
-typedef struct server_connection_s {
-    int fd;
-    int nfds;
-    struct sockaddr_in addr;
-    struct pollfd *fds;
-    client_t **clients;
-    int client_count;
-    int port;
-} server_connection_t;
-
 typedef struct server_args_s {
     int port;
     size_t width;
@@ -67,6 +63,17 @@ typedef struct server_args_s {
     int error_code;
     team_t *teams;
 } server_args_t;
+
+typedef struct server_connection_s {
+    int fd;
+    int nfds;
+    struct sockaddr_in addr;
+    struct pollfd *fds;
+    client_t **clients;
+    int client_count;
+    int port;
+    server_args_t *args;
+} server_connection_t;
 
 typedef struct server_s {
     server_args_t *args;
@@ -110,5 +117,12 @@ int check_correct_read(server_connection_t *connection, int idx,
 // Server instance management
 server_t *get_server_instance(void);
 void set_server_instance(server_t *server);
+int init_teams(server_args_t *server);
+team_t *get_team_by_name(server_args_t *server, const char *name);
+bool is_team_full(server_args_t *server, const char *name);
+bool is_valid_team(server_args_t *server, const char *name);
+
+void put_str_fd(int fd, char *str);
+int strlen_fd(char *str);
 
 #endif /* SERVER_H */

@@ -6,7 +6,7 @@ from ai.src.connection import Connection
 from ai.src.command_queue import CommandQueue
 from ai.src.inventory_parser import WorldState
 from ai.src.vision_parser import Vision
-
+from ai.src.roles.survivor import Survivor
 
 
 class ZappyAI:
@@ -20,6 +20,7 @@ class ZappyAI:
         self.queue = None
         self.world = WorldState()
         self.vision = Vision()
+        self.role = Survivor()
 
     def run(self):
         # Lance la connexion, effectue le handshake et démarre la logique principale de l'IA.
@@ -43,26 +44,7 @@ class ZappyAI:
                 else:
                     self.vision.parse_look(line)
                     print("[DEBUG] Vision:", self.vision)
-            # Exemple de décision simple :
-            if self.world.get_food_count() <= 500:
-                tile = self.vision.find_nearest("food")
-                print(f"[DECISION] Food low. Found at tile {tile}")
-                if tile == 0:
-                    self.queue.push("Take food")
-                    self.queue.push("Forward")
-                elif tile == 1:
-                    self.queue.push("Forward")
-                    self.queue.push("Take food")
-                elif tile in [2, 3]:
-                    self.queue.push("Right")
-                    self.queue.push("Forward")
-                    self.queue.push("Take food")
-                elif tile in [4, 5]:
-                    self.queue.push("Left")
-                    self.queue.push("Forward")
-                    self.queue.push("Take food")
-                else:
-                    print("[INFO] Food is too far or not found.")
+            self.role.decide(self.queue, self.world, self.vision)
             self.queue.push("Inventory")
             self.queue.push("Look")
 

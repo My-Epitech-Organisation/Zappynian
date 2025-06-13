@@ -11,6 +11,15 @@ Game::Game() { initWindow(); }
 
 Game::~Game() {}
 
+std::shared_ptr<IEntity> Game::findEntityById(int id) {
+  for (auto &entity : entity_) {
+    if (entity->getId() == id) {
+      return entity;
+    }
+  }
+  return nullptr;
+}
+
 void Game::initWindow() {
   device_ = irr::createDevice(irr::video::EDT_OPENGL,
                               irr::core::dimension2d<irr::u32>(1920, 1080), 16,
@@ -23,48 +32,87 @@ void Game::initWindow() {
   receiver_.setDevice(device_);
   mediaPath_ = "assets/";
   device_->setWindowCaption(L"Zappy FPS: 0");
+
+  driver_->setTextureCreationFlag(irr::video::ETCF_CREATE_MIP_MAPS, false);
+
+  smgr_->addSkyBoxSceneNode(
+      driver_->getTexture(mediaPath_ + "sky_texture/skyup.png"),
+      driver_->getTexture(mediaPath_ + "sky_texture/skydown.png"),
+      driver_->getTexture(mediaPath_ + "sky_texture/skymid.png"),
+      driver_->getTexture(mediaPath_ + "sky_texture/skymidright.png"),
+      driver_->getTexture(mediaPath_ + "sky_texture/skymidleft.png"),
+      driver_->getTexture(mediaPath_ + "sky_texture/skyleft.png"));
+
+  driver_->setTextureCreationFlag(irr::video::ETCF_CREATE_MIP_MAPS, true);
+}
+
+void Game::updatePlayerMovement(irr::u32 currentTime, NetworkClient &scene) {
+  if (!receiver_.getIsMoving())
+    return;
+
+  auto currentEntity = findEntityById(receiver_.getCurrentEntityId());
+  if (!currentEntity) {
+    receiver_.setIsMoving(false);
+    return;
+  }
+
+  float elapsedTime = (currentTime - receiver_.getMoveStartTime()) / 1000.0f;
+  if (elapsedTime >= 0.4f) {
+    irr::core::vector3df pos;
+    float angle = receiver_.getCurrentRotationY() * M_PI / 180.0f;
+    pos.X = receiver_.getMoveStartX() - 20.0f * sin(angle);
+    pos.Z = receiver_.getMoveStartZ() - 20.0f * cos(angle);
+    pos.Y = currentEntity->getNode()->getPosition().Y;
+    currentEntity->getNode()->setPosition(pos);
+    receiver_.setIsMoving(false);
+    currentEntity->getNode()->setAnimationSpeed(0.0f);
+    scene.updateMovements();
+  } else {
+    float progress = elapsedTime / 0.4f;
+    irr::core::vector3df pos;
+    float angle = receiver_.getCurrentRotationY() * M_PI / 180.0f;
+    pos.X = receiver_.getMoveStartX() - (20.0f * progress * sin(angle));
+    pos.Z = receiver_.getMoveStartZ() - (20.0f * progress * cos(angle));
+    pos.Y = currentEntity->getNode()->getPosition().Y;
+    currentEntity->getNode()->setPosition(pos);
+  }
+}
+
+void Game::updateIncantingPlayers(NetworkClient &scene) {
+  for (auto &entity : entity_) {
+    if (scene.isPlayerIncanting(entity->getId())) {
+      if (auto *node = dynamic_cast<irr::scene::IAnimatedMeshSceneNode *>(
+              entity->getNode())) {
+        irr::core::vector3df rotation = node->getRotation();
+        rotation.Y += 15.0f;
+        if (rotation.Y >= 360.0f)
+          rotation.Y = 0.0f;
+        node->setRotation(rotation);
+      }
+    }
+  }
 }
 
 void Game::gameLoop() {
   irr::u32 frames = 0;
 
-  WorldScene worldScene(device_, smgr_, driver_, receiver_, mediaPath_);
-
-  worldScene.createWorld();
-  entity_ = worldScene.getEntities();
+  NetworkClient scene(device_, smgr_, driver_, receiver_, mediaPath_);
+  scene.createWorld();
+  entity_ = scene.getEntities();
+  if (entity_.empty() || !entity_[0] || !entity_[0]->getNode()) {
+    return;
+  }
 
   while (device_->run()) {
     irr::u32 currentTime = device_->getTimer()->getTime();
 
-    if (receiver_.getIsMoving()) {
-      float elapsedTime =
-          (currentTime - receiver_.getMoveStartTime()) / 1000.0f;
-      if (elapsedTime >= 1.0f) {
-        irr::core::vector3df pos;
-        float angle = receiver_.getCurrentRotationY() * M_PI / 180.0f;
-        pos.X = receiver_.getMoveStartX() - 20.0f * sin(angle);
-        pos.Z = receiver_.getMoveStartZ() - 20.0f * cos(angle);
-        pos.Y = entity_[0]->getNode()->getPosition().Y;
-        entity_[0]->getNode()->setPosition(pos);
-        receiver_.setIsMoving(false);
-        entity_[0]->getNode()->setAnimationSpeed(0.0f);
-        worldScene.updateMovements(); // Call updateMovements after movement is
-                                      // complete
-      } else {
-        float progress = elapsedTime / 1.0f;
-        irr::core::vector3df pos;
-        float angle = receiver_.getCurrentRotationY() * M_PI / 180.0f;
-        pos.X = receiver_.getMoveStartX() - (20.0f * progress * sin(angle));
-        pos.Z = receiver_.getMoveStartZ() - (20.0f * progress * cos(angle));
-        pos.Y = entity_[0]->getNode()->getPosition().Y;
-        entity_[0]->getNode()->setPosition(pos);
-      }
-    }
+    updatePlayerMovement(currentTime, scene);
+    updateIncantingPlayers(scene);
 
     driver_->beginScene(true, true, irr::video::SColor(255, 255, 128, 0));
 
-    guienv_->drawAll();
     smgr_->drawAll();
+    guienv_->drawAll();
 
     driver_->endScene();
 
