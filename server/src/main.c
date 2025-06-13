@@ -24,6 +24,7 @@ int main(int argc, char **argv)
     }
     if (args_result == 1)
         return handle_free(server);
+    set_server_instance(server);
     display_infos(server->args);
     set_server(server->connection);
     handle_clients(server);
