@@ -74,6 +74,8 @@ typedef struct server_s {
     map_t *map;
     player_t **players;
     size_t player_count;
+    int tick_count;
+    bool game_running;
 } server_t;
 
 int check_args(int argc, char **argv, server_args_t *server);
