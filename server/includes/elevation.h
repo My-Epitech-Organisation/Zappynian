@@ -7,12 +7,23 @@
 
 #ifndef ELEVATION_H
     #define ELEVATION_H
+    #define MAX_LEVEL 8
+    #define NB_RESOURCE_TYPES 7
 
     #include "player.h"
     #include "world.h"
+    #include <stdbool.h>
 
-bool elevation_start(player_t **players, int player_count, map_t *map);
-bool elevation_check(player_t **players, int player_count, map_t *map);
-void elevation_end(player_t **players, int player_count, bool success);
+typedef struct elevation_requirement_s {
+    int required_players;
+    int required_resources[NB_RESOURCE_TYPES];
+} elevation_requirement_t;
+
+void elevation_init_requirements(void);
+bool can_start_incantation(tile_t *tile, int player_level);
+void start_incantation(tile_t *tile, int player_level);
+bool complete_incantation(tile_t *tile, int player_level);
+void apply_elevation(tile_t *tile, int player_level);
+void cancel_incantation(tile_t *tile, int player_level);
 
 #endif // ELEVATION_H
