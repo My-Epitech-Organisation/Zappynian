@@ -31,13 +31,13 @@ Test(handshake, ai_client_handshake_validation)
     zn_handshake_result_t result = {0};
 
     cr_assert_eq(zn_init(), 0, "Library initialization failed");
-    
+
     // Test avec des paramètres invalides
     cr_assert_eq(zn_perform_handshake(NULL, ZN_ROLE_AI, "team1", &result),
         -1, "Should fail with NULL socket");
     cr_assert_eq(zn_perform_handshake(NULL, ZN_ROLE_AI, NULL, &result),
         -1, "Should fail with NULL team for AI");
-    
+
     zn_cleanup();
 }
 
@@ -46,11 +46,11 @@ Test(handshake, gui_client_handshake_validation)
     zn_handshake_result_t result = {0};
 
     cr_assert_eq(zn_init(), 0, "Library initialization failed");
-    
+
     // Pour GUI, team_name peut être NULL
     cr_assert_eq(zn_perform_handshake(NULL, ZN_ROLE_GUI, NULL, &result),
         -1, "Should fail with NULL socket even for GUI");
-    
+
     zn_cleanup();
 }
 
@@ -178,19 +178,19 @@ Test(handshake, api_validation_only)
     zn_role_t role = ZN_ROLE_UNKNOWN;
 
     cr_assert_eq(zn_init(), 0, "Library initialization failed");
-    
+
     cr_assert_eq(zn_perform_handshake(NULL, ZN_ROLE_AI, "team", &result), -1,
         "Should fail with NULL socket");
     cr_assert_eq(zn_perform_handshake(NULL, ZN_ROLE_AI, NULL, &result), -1,
         "Should fail with NULL team_name for AI");
-    
+
     cr_assert_eq(zn_send_welcome(NULL), -1, "Should fail with NULL socket");
-    
+
     role = zn_receive_team_name(NULL, team_name, sizeof(team_name));
     cr_assert_eq(role, ZN_ROLE_UNKNOWN, "Should return UNKNOWN for NULL socket");
-    
+
     cr_assert_eq(zn_send_handshake_response(NULL, 5, 10, 10), -1,
         "Should fail with NULL socket");
-    
+
     zn_cleanup();
 }
