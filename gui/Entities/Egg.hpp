@@ -19,13 +19,13 @@ public:
        const irr::core::vector3df &scale,
        const std::vector<irr::io::path> &textures,
        const irr::io::path &entityB3D)
-      : AEntity() type_("egg") {
+      : AEntity(), type_("egg") {
       setId(id);
       setName("Egg");
       setPosition(pos);
       setScale(scale);
-      textures_(textures);
-      entityB3D_(entityB3D);
+      textures_ = textures;
+      entityB3D_ = entityB3D;
   }
 
   ~Egg() override = default;
