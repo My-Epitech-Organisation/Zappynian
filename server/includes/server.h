@@ -25,6 +25,7 @@
     #include "world.h"
     #include "player.h"
     #include "resource.h"
+    #include "commands.h"
 
 typedef struct team_s team_t;
 
