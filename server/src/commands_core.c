@@ -49,7 +49,6 @@ bool commands_add(player_t *player, const char *command_name)
             return true;
         }
     }
-    fprintf(stderr, "Command '%s' not found.\n", command_name);
     return false;
 }
 
