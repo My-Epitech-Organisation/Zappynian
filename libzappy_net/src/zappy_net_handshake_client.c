@@ -5,6 +5,8 @@
 ** Client-side handshake implementation
 */
 
+#include <limits.h>
+
 #include "zappy_net.h"
 #include "zappy_net_internal.h"
 
@@ -72,7 +74,14 @@ static int receive_client_number(zn_socket_t sock, int *client_num)
     if (client_num_msg == NULL) {
         return -1;
     }
-    *client_num = atoi(client_num_msg);
+     char *endptr = NULL;
+    errno = 0;
+    long num = strtol(client_num_msg, &endptr, 10);
+    if (errno != 0 || *endptr != '\0' || num < INT_MIN || num > INT_MAX) {
+        free(client_num_msg);
+        return -1;
+    }
+    *client_num = (int)num;
     free(client_num_msg);
     return 0;
 }
