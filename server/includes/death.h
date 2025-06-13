@@ -11,7 +11,7 @@
     #include "player.h"
     #include "world.h"
 
-void death_check_all(player_t **players, int player_count, map_t *map);
-void death_kill_player(player_t *player, map_t *map);
+void death_check(player_t **players, int player_count, map_t *map);
+void death_handle(player_t *player, map_t *map);
 
 #endif // DEATH_H

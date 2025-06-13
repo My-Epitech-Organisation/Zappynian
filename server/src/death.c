@@ -5,3 +5,30 @@
 ** death
 */
 
+#include "death.h"
+
+void death_handle(player_t *player, map_t *map)
+{
+    tile_t *tile = NULL;
+
+    if (!player)
+        return;
+    tile = get_tile(map, player->x, player->y);
+    if (tile)
+        remove_player_from_tile(tile, player);
+    if (player->team_name)
+        team_free_slot(player->team_name);
+    free(player->team_name);
+    free(player);
+}
+
+void death_check(player_t **players, int player_count, map_t *map)
+{
+    for (int i = 0; i < player_count; i++) {
+        if (players[i] && players[i]->food <= 0) {
+            printf("Player %d died of hunger!\n", players[i]->id);
+            death_handle(players[i], map);
+            players[i] = NULL;
+        }
+    }
+}
