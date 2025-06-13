@@ -10,6 +10,9 @@
 
     #include "player.h"
     #include "world.h"
+    #include "team.h"
+    #include <stdio.h>
+    #include <stdlib.h>
 
 void death_check(player_t **players, int player_count, map_t *map);
 void death_handle(player_t *player, map_t *map);
