@@ -25,19 +25,14 @@
     #include "world.h"
     #include "player.h"
     #include "resource.h"
-    #include "team.h"
+
+typedef struct team_s team_t;
 
 typedef enum {
     CLIENT_UNKNOWN,
     CLIENT_IA,
     CLIENT_GUI
 } client_type_t;
-
-typedef struct team_s {
-    char *name;
-    int max_players;
-    int current_players;
-} team_t;
 
 typedef struct client_s {
     int fd;
@@ -114,13 +109,8 @@ void disconnect_client(server_connection_t *connection, int client_idx);
 int check_correct_read(server_connection_t *connection, int idx,
     ssize_t bytes_read, client_t *client);
 
-// Server instance management
 server_t *get_server_instance(void);
 void set_server_instance(server_t *server);
-int init_teams(server_args_t *server);
-team_t *get_team_by_name(server_args_t *server, const char *name);
-bool is_team_full(server_args_t *server, const char *name);
-bool is_valid_team(server_args_t *server, const char *name);
 
 void put_str_fd(int fd, char *str);
 int strlen_fd(char *str);
