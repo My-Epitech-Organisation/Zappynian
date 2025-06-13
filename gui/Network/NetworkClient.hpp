@@ -52,6 +52,22 @@ public:
     WorldScene::setPlayerInventory(id, x, y, q0, q1, q2, q3, q4, q5, q6);
   }
 
+  void startIncantation(int x, int y, int level, std::vector<int> ids) {
+    WorldScene::startIncantation(x, y, level, ids);
+  }
+
+  void stopIncantation(int x, int y, bool result) {
+    WorldScene::stopIncantation(x, y, result);
+  }
+
+  bool isPlayerIncanting(int id) const {
+    return WorldScene::isPlayerIncanting(id);
+  }
+
+  void createEgg(int id) {
+    WorldScene::createEntities(id);
+  }
+
   void createWorld() override {
     createPlane(5, 5);
     createLights();
@@ -59,13 +75,11 @@ public:
     createText();
     try {
       createPlayer(1, 2, 2, Direction::NORTH, 0, "Red");
-    } catch (const std::exception &e) {
-    }
+    } catch (const std::exception &e) {}
     try {
       createPlayer(2, 4, 2, Direction::NORTH, 0, "Blue");
-    } catch (const std::exception &e) {
-    }
-    contentTiles(2, 4, 32, 32, 32, 32, 32, 32, 32);
+    } catch (const std::exception &e) {}
+    contentTiles(2, 4, 32, 32, 1, 0, 1, 0, 32);
     contentTiles(4, 4, 32, 32, 32, 32, 32, 32, 32);
     movePlayer(1, 2, 2, Direction::NORTH);
     movePlayer(1, 2, 1, Direction::NORTH);
@@ -78,6 +92,7 @@ public:
     movePlayer(1, 4, 1, Direction::SOUTH);
     movePlayer(1, 4, 2, Direction::SOUTH);
     movePlayer(1, 0, 2, Direction::WEST);
+    createEgg(1);
     // movePlayer(2, 4, 2, Direction::NORTH);
     PlayerInventory(1, 0, 2, 1, 1, 1, 14, 1, 1, 1);
     startIncantation(4, 2, 2, {2});
