@@ -51,7 +51,6 @@ int init_teams(server_args_t *server)
     return 0;
 }
 
-
 bool is_team_full(server_args_t *server, const char *name)
 {
     team_t *team = get_team_by_name(server, name);
