@@ -6,6 +6,7 @@
 */
 #include "../Entities/PlayerEntity.hpp"
 #include "../Entities/Stone.hpp"
+#include "../Entities/Egg.hpp"
 #include "../Entities/TileEntity.hpp"
 #include "../Event/EventReceiver.hpp"
 #include <iostream>
@@ -33,6 +34,8 @@ public:
                     int q3 = 0, int q4 = 0, int q5 = 0, int q6 = 0);
 
   void createTiles(int x, int y);
+
+  void createEgg(int id);
 
   const std::vector<std::shared_ptr<IEntity>> &getEntities() const {
     return entity_;

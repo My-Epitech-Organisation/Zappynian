@@ -47,8 +47,8 @@ void EntityManager::createStones(int x, int y, int q0, int q1, int q2, int q3,
   {mediaPath_ + "stone_texture/stone_green.png"},
   {mediaPath_ + "stone_texture/stone_blue.png"},
   {mediaPath_ + "stone_texture/stone_purple.png"}};
-  std::vector<std::string> stoneNames = {"food",    "linemate", "deraumere",
-           "sibur",   "mendiane", "phiras",
+  std::vector<std::string> stoneNames = {"food", "linemate", "deraumere",
+           "sibur", "mendiane", "phiras",
            "thystame"};
   std::vector<irr::io::path> qB3D(7, mediaPath_ + "ruby.b3d");
   qB3D[0] = mediaPath_ + "RedBull.b3d";
@@ -126,5 +126,21 @@ void EntityManager::createTiles(int x, int y) {
     }
     cubeX = 0.0f;
     cubeY += 20.0f;
+  }
+}
+
+void EntityManager::createEgg(int id) {
+  for (const auto& entities : entity_) {
+    auto player = std::dynamic_pointer_cast<PlayerEntity>(entities);
+    if (player && player->getId() == id) {
+      irr::core::vector3df pos = player->getPosition();
+      std::vector<irr::io::path> eggTextures = {mediaPath_ + "egg_texture.png"};
+      auto egg = std::make_shared<Egg>(
+          -1, pos, irr::core::vector3df(0.5f, 0.5f, 0.5f),
+          eggTextures, mediaPath_ + "Egg.b3d");
+      entity_.push_back(egg);
+      egg->createNode(smgr_, driver_);
+      break;
+    }
   }
 }
