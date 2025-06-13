@@ -18,6 +18,10 @@ void WorldScene::createEntities(int id, int x, int y, Direction direction,
   entityManager_.createPlayers(id, pos.X, pos.Z, direction, level, team);
   entity_ = entityManager_.getEntities();
   receiver_.addEntity(entity_.back());
+  addChatMessage(
+      "Player " + std::to_string(id) + " created at (" + std::to_string(x) +
+      ", " + std::to_string(y) + ") with direction " +
+      std::to_string(static_cast<int>(direction)) + " and team " + team);
 }
 
 void WorldScene::setPlayerInventory(int id, int x, int y, int q0, int q1,
@@ -174,11 +178,17 @@ void WorldScene::createText() {
               smgr_->getVideoDriver()->getScreenSize().Width - 10, 200),
           false);
 
+  irr::core::dimension2du screenSize = smgr_->getVideoDriver()->getScreenSize();
+  textChat_ = smgr_->getGUIEnvironment()->addStaticText(
+      L"Chat:\n",
+      irr::core::rect<irr::s32>(10, 220, 400, screenSize.Height - 10), false);
+
   irr::gui::IGUIFont *font = smgr_->getGUIEnvironment()->getFont(
       mediaPath_ + "fonthaettenschweiler.bmp");
   if (font) {
     text->setOverrideFont(font);
     playerText->setOverrideFont(font);
+    textChat_->setOverrideFont(font);
   }
 
   receiver_.setText(text);
@@ -201,6 +211,9 @@ void WorldScene::startIncantation(int x, int y, int level,
       if (entity->getId() == id) {
         incantationData_.push_back(std::make_tuple(x, y, id));
         isIncanting_[id] = true;
+        addChatMessage(
+            "Player " + std::to_string(id) + " is incanting at (" +
+            std::to_string(x) + ", " + std::to_string(y) + ")");
         break;
       }
     }
@@ -217,6 +230,9 @@ void WorldScene::stopIncantation(int x, int y, bool result) {
         for (auto &entity : entity_) {
           if (entity->getId() == entityId) {
             entity->setLevel(entity->getLevel() + 1);
+            addChatMessage("Player " + std::to_string(entityId) +
+                     " has leveled up to " + std::to_string(entity->getLevel()) +
+                     " (result: " + std::string(result ? "true" : "false") + ")");
             break;
           }
         }
@@ -235,8 +251,35 @@ void WorldScene::killPlayer(int id) {
         player->getNode()->remove();
       it = entity_.erase(it);
       receiver_.removeEntity(id);
+      addChatMessage("Player " + std::to_string(id) + " has been killed.");
     } else {
       ++it;
+    }
+  }
+}
+
+void WorldScene::addChatMessage(const std::string &message) {
+  irr::core::stringw msg = L"Action: ";
+  msg += irr::core::stringw(message.c_str());
+  irr::core::stringw newText = textChat_->getText();
+  newText.append(msg);
+  newText.append(L"\n");
+  textChat_->setText(newText.c_str());
+  return;
+}
+
+void WorldScene::broadcast(int id, const std::string &message) {
+  for (const auto &entity : entity_) {
+    if (entity->getId() == id) {
+      irr::core::stringw msg = L"Player ";
+      msg += irr::core::stringw(id);
+      msg += L": ";
+      msg += irr::core::stringw(message.c_str());
+      irr::core::stringw newText = textChat_->getText();
+      newText.append(msg);
+      newText.append(L"\n");
+      textChat_->setText(newText.c_str());
+      return;
     }
   }
 }

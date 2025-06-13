@@ -74,6 +74,10 @@ public:
 
   void killPlayer(int id);
 
+  void addChatMessage(const std::string &message);
+
+  void broadcast(int id, const std::string &message);
+
 protected:
   irr::IrrlichtDevice *device_;
   irr::scene::ISceneManager *smgr_;
@@ -87,6 +91,8 @@ protected:
   std::pair<int, int> planeSize_;
   std::unordered_map<int, bool> isIncanting_;
   std::vector<std::tuple<int, int, int>> incantationData_; // x, y, id
+  irr::gui::IGUIStaticText *textChat_;
+  double chatYOffset_ = 0.0;
 
 private:
 };
