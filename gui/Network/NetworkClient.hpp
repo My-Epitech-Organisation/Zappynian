@@ -57,6 +57,12 @@ public:
     createLights();
     createCamera();
     createText();
+    addTeam("Red");
+    addTeam("Blue");
+    addTeam("Yellow");
+    addTeam("Purple");
+    addTeam("Orange");
+    addTeam("Green");
     try {
       createPlayer(1, 2, 2, Direction::NORTH, 0, "Red");
     } catch (const std::exception &e) {
@@ -69,6 +75,24 @@ public:
       createPlayer(3, 0, 0, Direction::SOUTH, 0, "Red");
     } catch (const std::exception &e) {
     }
+
+    try {
+      createPlayer(3, 0, 1, Direction::NORTH, 0, "Yellow");
+    } catch (const std::exception &e) {
+    }
+    try {
+      createPlayer(3, 0, 2, Direction::NORTH, 0, "Purple");
+    } catch (const std::exception &e) {
+    }
+    try {
+      createPlayer(3, 0, 3, Direction::NORTH, 0, "Orange");
+    } catch (const std::exception &e) {
+    }
+    try {
+      createPlayer(3, 0, 4, Direction::NORTH, 0, "Green");
+    } catch (const std::exception &e) {
+    }
+
     contentTiles(2, 4, 32, 32, 32, 32, 32, 32, 32);
     contentTiles(4, 4, 32, 32, 32, 32, 32, 32, 32);
     movePlayer(1, 2, 2, Direction::NORTH);
