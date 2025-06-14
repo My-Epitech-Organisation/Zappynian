@@ -17,6 +17,16 @@ struct Movement {
   Direction direction;
 };
 
+struct PaperPlaneMovement {
+  std::shared_ptr<IEntity> paperPlane;
+  int targetPlayerId;
+  irr::core::vector3df startPosition;
+  irr::core::vector3df targetPosition;
+  irr::u32 startTime;
+  float duration; // sec
+  bool isActive;
+};
+
 struct EdgePositionResult {
   bool isEdge;
   float offsetX;
@@ -54,6 +64,8 @@ public:
 
   void updateMovements();
 
+  void updatePaperPlaneMovements();
+
   void createLights();
 
   void createCamera();
@@ -74,6 +86,10 @@ public:
 
   void killPlayer(int id);
 
+  void addChatMessage(const std::string &message);
+
+  void broadcast(int id, const std::string &message);
+
 protected:
   irr::IrrlichtDevice *device_;
   irr::scene::ISceneManager *smgr_;
@@ -83,10 +99,15 @@ protected:
   EntityManager entityManager_;
   std::vector<std::shared_ptr<IEntity>> entity_;
   std::queue<Movement> movementQueue_;
+  std::vector<PaperPlaneMovement> paperPlaneMovements_;
   irr::core::vector3df actualPos_;
   std::pair<int, int> planeSize_;
   std::unordered_map<int, bool> isIncanting_;
   std::vector<std::tuple<int, int, int>> incantationData_; // x, y, id
+  irr::gui::IGUIStaticText *textChat_;
+  std::vector<std::string> chatMessages_;
+  static const size_t MAX_CHAT_MESSAGES = 20;
 
 private:
+  void updateChatDisplay();
 };

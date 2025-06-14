@@ -34,6 +34,8 @@ public:
 
   void createTiles(int x, int y);
 
+  std::shared_ptr<IEntity> createPaperPlane(irr::core::vector3df position);
+
   const std::vector<std::shared_ptr<IEntity>> &getEntities() const {
     return entity_;
   }
