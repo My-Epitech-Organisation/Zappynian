@@ -49,6 +49,8 @@ public:
     return nullptr;
   }
 
+  void addTeams(std::vector<std::string> teams) { teams_ = teams; }
+
 protected:
   std::vector<std::shared_ptr<IEntity>> entity_;
   irr::scene::ISceneManager *smgr_;
@@ -56,6 +58,7 @@ protected:
   EventReceiver &receiver_;
   irr::io::path mediaPath_;
   std::vector<std::shared_ptr<TileEntity>> tiles_;
+  std::vector<std::string> teams_;
 
 private:
 };

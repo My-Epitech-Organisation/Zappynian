@@ -10,6 +10,7 @@
 
 void WorldScene::createEntities(int id, int x, int y, Direction direction,
                                 int level, std::string team) {
+  entityManager_.addTeams(teams_);
   auto tile = entityManager_.getTileByName(
       "Cube info: row " + std::to_string(x) + " col " + std::to_string(y));
   if (!tile) {
