@@ -10,8 +10,5 @@ class Scout(Role):
         tile = random.randint(1, 8)
 
         path = route_to(tile)
-        for cmd in path[:3]:
+        for cmd in path:
             queue.push(cmd)
-
-        queue.push("Look")
-        queue.push("Inventory")
