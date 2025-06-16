@@ -366,3 +366,16 @@ void WorldScene::updatePaperPlaneMovements() {
     }
   }
 }
+
+void WorldScene::endGame(std::string winner) {
+  addChatMessage("Game Over! Winner: " + winner);
+  irr::gui::IGUIButton *quitButton = smgr_->getGUIEnvironment()->addButton(
+    irr::core::rect<irr::s32>(20, 20, 120, 60), 0, -1, L"Quit");
+
+  quitButton->setOverrideFont(smgr_->getGUIEnvironment()->getFont(mediaPath_ + "fonthaettenschweiler.bmp"));
+  quitButton->setUseAlphaChannel(true);
+  quitButton->setDrawBorder(true);
+  quitButton->setIsPushButton(true);
+  quitButton->setPressed(false);
+  quitButton->setID(9999);
+}

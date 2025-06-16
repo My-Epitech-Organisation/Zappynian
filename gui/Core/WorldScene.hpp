@@ -92,6 +92,8 @@ public:
 
   void addTeam(const std::string &team) { teams_.push_back(team); }
 
+  void endGame(std::string winner);
+
 protected:
   irr::IrrlichtDevice *device_;
   irr::scene::ISceneManager *smgr_;
