@@ -4,7 +4,7 @@ from ai.src.roles.scout import Scout
 
 def select_role(world, vision) -> object:
 
-    if world.get_food_count() <= 300:
+    if world.get_food_count() <= 3:
         return Survivor()
 
     GOALS = {
