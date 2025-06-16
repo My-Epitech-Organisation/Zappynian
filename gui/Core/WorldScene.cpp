@@ -212,7 +212,7 @@ void WorldScene::changeHeadLevel(std::shared_ptr<IEntity> &entity, int level) {
   std::vector<irr::io::path> texturesHead = {
       mediaPath_ + "archer_texture/santi_head.png",
       mediaPath_ + "archer_texture/santi_head.png",
-      mediaPath_ + "archer_texture/elliot_head.png",
+      mediaPath_ + "archer_texture/eliott_head.png",
       mediaPath_ + "archer_texture/pierrick_head.png",
       mediaPath_ + "archer_texture/matheo_head.png",
       mediaPath_ + "archer_texture/tom_head.png",
