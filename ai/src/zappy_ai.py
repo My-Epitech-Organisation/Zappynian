@@ -6,10 +6,7 @@ from ai.src.connection import Connection
 from ai.src.command_queue import CommandQueue
 from ai.src.inventory_parser import WorldState
 from ai.src.vision_parser import Vision
-from ai.src.roles.survivor import Survivor
-from ai.src.roles.scout import Scout
-from ai.src.roles.miner import Miner
-
+from ai.src.roles.role_selector import select_role
 
 class ZappyAI:
 
@@ -21,7 +18,7 @@ class ZappyAI:
         self.queue = None
         self.world = WorldState()
         self.vision = Vision()
-        self.role = Scout()
+        self.role = None
 
     def run(self):
         print(f"[INFO] Starting AI for team '{self.team_name}' on {self.host}:{self.port}")
