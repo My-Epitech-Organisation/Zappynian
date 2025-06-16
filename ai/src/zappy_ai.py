@@ -41,6 +41,7 @@ class ZappyAI:
                 else:
                     self.vision.parse_look(line)
                     print("[DEBUG] Vision:", self.vision)
+            self.role = select_role(self.world, self.vision)
             self.role.decide(self.queue, self.world, self.vision)
 
 
