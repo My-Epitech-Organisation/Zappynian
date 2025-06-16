@@ -50,6 +50,8 @@ void EntityManager::createPlayers(int id, int x, int y, Direction direction,
       texturesArcher, level, mediaPath_ + "archer.b3d"));
 
   entity_.back()->createNode(smgr_, driver_);
+  entity_.back()->getNode()->setRotation(
+      irr::core::vector3df(0.0f, static_cast<float>(direction) * 90.0f, 0.0f));
   receiver_.setAnimatedNode(entity_.back()->getNode());
 }
 
