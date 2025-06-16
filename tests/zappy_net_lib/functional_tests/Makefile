@@ -21,7 +21,8 @@ LIB_NAME = $(LIB_DIR)/libzappy_net.so
 
 # Source files
 SRC_FILES = test_simple_functional.c \
-            functional_test_helpers.c
+            functional_test_helpers.c \
+            test_functional_api_extensions.c
 
 OBJ_FILES = $(patsubst %.c,$(OBJ_DIR)/%.o,$(SRC_FILES))
 
