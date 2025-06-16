@@ -69,14 +69,15 @@ static int receive_world_dimensions(zn_socket_t sock, int *world_x,
 static int receive_client_number(zn_socket_t sock, int *client_num)
 {
     char *client_num_msg = NULL;
+    char *endptr = NULL;
+    long num;
 
     client_num_msg = zn_receive_message(sock);
     if (client_num_msg == NULL) {
         return -1;
     }
-     char *endptr = NULL;
     errno = 0;
-    long num = strtol(client_num_msg, &endptr, 10);
+    num = strtol(client_num_msg, &endptr, 10);
     if (errno != 0 || *endptr != '\0' || num < INT_MIN || num > INT_MAX) {
         free(client_num_msg);
         return -1;

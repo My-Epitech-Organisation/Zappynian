@@ -229,11 +229,14 @@
     * is pending.
     *
     * @param server_sock The server socket handle (must be listening)
-    * @param addr Pointer to sockaddr structure to store client address (optional)
-    * @param len Pointer to socklen_t for address length (optional)
+    * @param addr Pointer to sockaddr structure to store
+    client address (optional)
+    * @param len Pointer to socklen_t for
+    address length (optional)
     * @return A new socket handle for the accepted connection, NULL on failure
     */
-    zn_socket_t zn_accept(zn_socket_t server_sock, struct sockaddr *addr, socklen_t *len);
+    zn_socket_t zn_accept(zn_socket_t server_sock,
+        struct sockaddr *addr, socklen_t *len);
 
     /**
     * @brief Set or unset non-blocking mode on a socket
