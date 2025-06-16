@@ -5,8 +5,8 @@
 ** client_manager
 */
 
-#include "../includes/server.h"
-#include "../includes/team.h"
+#include "../include/server.h"
+#include "../include/team.h"
 
 void assign_client_type(client_t *client, server_connection_t *connection,
     int idx)

@@ -5,7 +5,7 @@
 ** team
 */
 
-#include "../includes/team.h"
+#include "../include/team.h"
 
 team_t *get_team_by_name(server_args_t *server, const char *name)
 {

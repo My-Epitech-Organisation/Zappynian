@@ -5,7 +5,7 @@
 ** handle_free
 */
 
-#include "../includes/server.h"
+#include "../include/server.h"
 
 int handle_free_args(server_args_t *server)
 {

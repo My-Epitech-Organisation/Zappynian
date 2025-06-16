@@ -5,10 +5,10 @@
 ** main
 */
 
-#include "../includes/server.h"
-#include "../includes/player.h"
-#include "../includes/death.h"
-#include "../includes/game_loop.h"
+#include "../include/server.h"
+#include "../include/player.h"
+#include "../include/death.h"
+#include "../include/game_loop.h"
 
 int main(int argc, char **argv)
 {

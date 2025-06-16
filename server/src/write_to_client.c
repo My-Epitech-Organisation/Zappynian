@@ -5,18 +5,18 @@
 ** write_to_client
 */
 
-#include "../includes/server.h"
+#include "../include/server.h"
 
-void send_to_client(client_t *client, const char *msg)
-{
-    int len = strlen(msg);
+// void send_to_client(client_t *client, const char *msg)
+// {
+//     int len = strlen(msg);
 
-    if (len > BUFFER_SIZE)
-        len = BUFFER_SIZE;
-    memcpy(client->write_buffer, msg, len);
-    client->write_total = len;
-    client->write_index = 0;
-}
+//     if (len > BUFFER_SIZE)
+//         len = BUFFER_SIZE;
+//     memcpy(client->write_buffer, msg, len);
+//     client->write_total = len;
+//     client->write_index = 0;
+// }
 
 void handle_client_write(server_connection_t *connection, int client_idx)
 {
@@ -36,34 +36,34 @@ void handle_client_write(server_connection_t *connection, int client_idx)
     }
 }
 
-int strlen_fd(char *str)
-{
-    int len = 0;
+// int strlen_fd(char *str)
+// {
+//     int len = 0;
 
-    if (!str)
-        return 0;
-    while (str[len] != '\0')
-        len++;
-    return len;
-}
+//     if (!str)
+//         return 0;
+//     while (str[len] != '\0')
+//         len++;
+//     return len;
+// }
 
-void put_str_fd(int fd, char *str)
-{
-    int len = 0;
-    int write_ret = 0;
+// void put_str_fd(int fd, char *str)
+// {
+//     int len = 0;
+//     int write_ret = 0;
 
-    if (!str)
-        return;
-    len = strlen_fd(str);
-    write_ret = write(fd, str, len);
-    if (write_ret < 0) {
-        perror("write");
-        return;
-    }
-    if (write_ret == 0) {
-        fprintf(stderr, "Write returned 0, nothing written.\n");
-        return;
-    }
-    if (write_ret < len)
-        put_str_fd(fd, str + write_ret);
-}
+//     if (!str)
+//         return;
+//     len = strlen_fd(str);
+//     write_ret = write(fd, str, len);
+//     if (write_ret < 0) {
+//         perror("write");
+//         return;
+//     }
+//     if (write_ret == 0) {
+//         fprintf(stderr, "Write returned 0, nothing written.\n");
+//         return;
+//     }
+//     if (write_ret < len)
+//         put_str_fd(fd, str + write_ret);
+// }

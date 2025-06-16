@@ -5,7 +5,7 @@
 ** Client connection handling
 */
 
-#include "../includes/server.h"
+#include "../include/server.h"
 
 void accept_client(server_connection_t *connection)
 {

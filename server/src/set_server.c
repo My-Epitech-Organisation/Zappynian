@@ -5,7 +5,7 @@
 ** Server socket setup functions
 */
 
-#include "../includes/server.h"
+#include "../include/server.h"
 
 int set_server_socket(server_connection_t *connection)
 {

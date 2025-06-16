@@ -7,8 +7,8 @@
 
 #include <stdio.h>
 #include <string.h>
-#include "../includes/commands.h"
-#include "../includes/server.h"
+#include "../include/commands.h"
+#include "../include/server.h"
 
 static const command_t command_table[] = {
     {"forward", 7, cmd_forward},

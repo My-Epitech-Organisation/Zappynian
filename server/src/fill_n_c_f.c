@@ -5,7 +5,7 @@
 ** fill_n_c_f
 */
 
-#include "../includes/server.h"
+#include "../include/server.h"
 
 void fill_name(server_args_t *server, int argc, char **argv)
 {

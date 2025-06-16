@@ -6,8 +6,9 @@
 */
 
 #include <stdio.h>
-#include "../includes/commands.h"
-#include "../includes/server.h"
+#include "../include/commands.h"
+#include "../include/server.h"
+#include "../../libzappy_net/include/zappy_net.h"
 
 void cmd_forward(player_t *player, server_t *server)
 {
@@ -27,14 +28,15 @@ void cmd_forward(player_t *player, server_t *server)
             move_player(player, player->x - 1, player->y, server->map);
             break;
     }
+    printf("Forward\n");
 }
 
 void cmd_right(player_t *player, server_t *server)
 {
-    (void) server;
     if (player->dead || player->in_elevation)
         return;
     player->orientation = (player->orientation + 1) % 4;
+    zn_send_message(server->connection->fd, "Right");
 }
 
 void cmd_left(player_t *player, server_t *server)
@@ -43,12 +45,18 @@ void cmd_left(player_t *player, server_t *server)
     if (player->dead || player->in_elevation)
         return;
     player->orientation = (player->orientation + 3) % 4;
+    zn_send_message(server->connection->fd, "Left");
 }
 
 void cmd_look(player_t *player, server_t *server)
 {
-    (void) server;
+    char *look_result = NULL;
+
     if (player->dead || player->in_elevation)
         return;
-    printf("Player %d is looking around\n", player->id);
+    look_result = get_player_vision(player, server->map);
+    if (look_result != NULL) {
+        zn_send_message(server->connection->fd, look_result);
+        free(look_result);
+    }
 }

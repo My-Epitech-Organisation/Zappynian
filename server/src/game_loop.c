@@ -5,7 +5,7 @@
 ** game_loop
 */
 
-#include "../includes/game_loop.h"
+#include "../include/game_loop.h"
 
 void game_loop_init(server_t *server)
 {

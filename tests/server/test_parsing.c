@@ -7,7 +7,7 @@
 
 #include <criterion/criterion.h>
 #include <criterion/redirect.h>
-#include "../../server/includes/server.h"
+#include "../../server/include/server.h"
 
 Test(handle_options, valid_option_p)
 {

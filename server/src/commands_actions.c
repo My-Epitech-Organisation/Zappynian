@@ -6,7 +6,7 @@
 */
 
 #include <stdio.h>
-#include "../includes/commands.h"
+#include "../include/commands.h"
 
 void cmd_eject(player_t *player, server_t *server)
 {

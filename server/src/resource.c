@@ -5,7 +5,7 @@
 ** resource
 */
 
-#include "../includes/resource.h"
+#include "../include/resource.h"
 
 void fill_resource(tile_t *tile, bool random)
 {

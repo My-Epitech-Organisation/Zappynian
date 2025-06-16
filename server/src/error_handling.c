@@ -5,7 +5,7 @@
 ** Error handling functions
 */
 
-#include "../includes/server.h"
+#include "../include/server.h"
 
 void close_connection(server_connection_t *connection)
 {
