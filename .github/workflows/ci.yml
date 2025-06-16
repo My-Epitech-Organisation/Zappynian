@@ -165,4 +165,4 @@ jobs:
 # Concurrency control to avoid running multiple workflows on the same branch
 concurrency:
   group: ${{ github.ref }}-ci
-  cancel-in-progress: true
+  # cancel-in-progress: true
