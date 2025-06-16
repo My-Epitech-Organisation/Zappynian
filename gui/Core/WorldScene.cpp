@@ -220,7 +220,8 @@ void WorldScene::changeHeadLevel(std::shared_ptr<IEntity> &entity, int level) {
       mediaPath_ + "archer_texture/napoli_head.png",
       mediaPath_ + "archer_texture/ay_head.png"};
 
-  entity->getNode()->getMaterial(3).setTexture(0, driver_->getTexture(texturesHead[level]));
+  entity->getNode()->getMaterial(3).setTexture(
+      0, driver_->getTexture(texturesHead[level]));
 }
 
 void WorldScene::startIncantation(int x, int y, int level,
