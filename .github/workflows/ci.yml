@@ -119,7 +119,7 @@ jobs:
           echo "✅ All binaries successfully built!"
 
           # Check for required libraries
-          [ -f "libzappy_net/libzappy_net.a" ] || { echo "❌ libzappy_net.a not found"; exit 1; }
+          [ -f "libzappy_net/libzappy_net.so" ] || { echo "❌ libzappy_net.so not found"; exit 1; }
           echo "✅ Network library successfully built!"
 
       - name: Run tests if available
