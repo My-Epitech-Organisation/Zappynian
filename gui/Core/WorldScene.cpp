@@ -301,7 +301,7 @@ void WorldScene::broadcast(int id, const std::string &message) {
       movement.startPosition = broadcasterPos;
       movement.targetPosition = targetPos;
       movement.startTime = currentTime;
-      movement.duration = 1.5f;
+      movement.duration = 1.7f;
       movement.isActive = true;
       paperPlaneMovements_.push_back(movement);
     }
@@ -352,7 +352,7 @@ void WorldScene::updatePaperPlaneMovements() {
       progress = std::min(1.0f, std::max(0.0f, progress));
       irr::core::vector3df currentPos = it->startPosition.getInterpolated(
           it->targetPosition, 1.0f - progress);
-      float arcHeight = 15.0f;
+      float arcHeight = 30.0f;
       float arcProgress = sin(progress * M_PI);
       currentPos.Y += arcHeight * arcProgress;
       if (it->paperPlane && it->paperPlane->getNode()) {
