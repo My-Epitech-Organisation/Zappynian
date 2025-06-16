@@ -220,6 +220,36 @@
     int zn_get_fd(zn_socket_t socket);
 
     /**
+    * @brief Accept a connection on a server socket
+    *
+    * Accepts an incoming connection on a server socket and returns
+    * a new socket handle for the accepted connection. The server socket
+    * must be in listening state (created with zn_server_listen).
+    * This function is non-blocking and will return NULL if no connection
+    * is pending.
+    *
+    * @param server_sock The server socket handle (must be listening)
+    * @param addr Pointer to sockaddr structure to store client address (optional)
+    * @param len Pointer to socklen_t for address length (optional)
+    * @return A new socket handle for the accepted connection, NULL on failure
+    */
+    zn_socket_t zn_accept(zn_socket_t server_sock, struct sockaddr *addr, socklen_t *len);
+
+    /**
+    * @brief Set or unset non-blocking mode on a socket
+    *
+    * Sets or removes the O_NONBLOCK flag on a socket's file descriptor.
+    * When enabled, socket operations will not block and return immediately
+    * even if they cannot complete. When disabled, operations may block
+    * until they can complete.
+    *
+    * @param sock The socket handle to modify
+    * @param enabled 1 to enable non-blocking mode, 0 to disable
+    * @return 0 on success, -1 on failure
+    */
+    int zn_set_nonblocking(zn_socket_t sock, int enabled);
+
+    /**
     * @brief Client role enumeration for handshake
     */
     typedef enum {

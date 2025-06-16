@@ -98,3 +98,25 @@ int zn_close(zn_socket_t sock)
     zn_socket_destroy(sock);
     return result;
 }
+
+int zn_set_nonblocking(zn_socket_t sock, int enabled)
+{
+    int flags;
+
+    if (sock == NULL || sock->fd < 0) {
+        return -1;
+    }
+    flags = fcntl(sock->fd, F_GETFL, 0);
+    if (flags < 0) {
+        return -1;
+    }
+    if (enabled) {
+        flags |= O_NONBLOCK;
+    } else {
+        flags &= ~O_NONBLOCK;
+    }
+    if (fcntl(sock->fd, F_SETFL, flags) < 0) {
+        return -1;
+    }
+    return 0;
+}
