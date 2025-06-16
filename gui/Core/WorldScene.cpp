@@ -201,9 +201,26 @@ void WorldScene::setPlayerLevel(int id, int level) {
   for (auto &entity : entity_) {
     if (entity->getId() == id) {
       entity->setLevel(level);
+      changeHeadLevel(entity, level);
       return;
     }
   }
+}
+
+void WorldScene::changeHeadLevel(std::shared_ptr<IEntity> &entity, int level) {
+
+  std::vector<irr::io::path> texturesHead = {
+      mediaPath_ + "archer_texture/santi_head.png",
+      mediaPath_ + "archer_texture/santi_head.png",
+      mediaPath_ + "archer_texture/elliot_head.png",
+      mediaPath_ + "archer_texture/pierrick_head.png",
+      mediaPath_ + "archer_texture/matheo_head.png",
+      mediaPath_ + "archer_texture/tom_head.png",
+      mediaPath_ + "archer_texture/hugo_head.png",
+      mediaPath_ + "archer_texture/napoli_head.png",
+      mediaPath_ + "archer_texture/ay_head.png"};
+
+  entity->getNode()->getMaterial(3).setTexture(0, driver_->getTexture(texturesHead[level]));
 }
 
 void WorldScene::startIncantation(int x, int y, int level,

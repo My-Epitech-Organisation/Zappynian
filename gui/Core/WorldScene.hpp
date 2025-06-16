@@ -52,6 +52,8 @@ public:
 
   void setPlayerLevel(int id, int level);
 
+  void changeHeadLevel(std::shared_ptr<IEntity> &entity, int level);
+
   void createEntities(int x, int y, int q0, int q1, int q2, int q3, int q4,
                       int q5, int q6, int nbTiles);
 
