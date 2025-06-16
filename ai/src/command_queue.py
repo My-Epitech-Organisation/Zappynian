@@ -10,6 +10,8 @@ class CommandQueue:
         self.pending = 0
 
     def push(self, command: str):
+        if not isinstance(command, str):
+            raise TypeError(f"[ERROR] Command must be a string, got: {type(command)} with value {command}")
         self.queue.append(command)
 
     def flush(self):
