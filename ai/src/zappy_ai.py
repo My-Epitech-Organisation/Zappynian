@@ -7,12 +7,13 @@ from ai.src.command_queue import CommandQueue
 from ai.src.inventory_parser import WorldState
 from ai.src.vision_parser import Vision
 from ai.src.roles.survivor import Survivor
+from ai.src.roles.scout import Scout
+from ai.src.roles.miner import Miner
 
 
 class ZappyAI:
 
     def __init__(self, host: str, port: int, team_name: str):
-        # Initialise l'IA avec les paramètres de connexion et le nom d'équipe.
         self.host = host
         self.port = port
         self.team_name = team_name
@@ -20,17 +21,16 @@ class ZappyAI:
         self.queue = None
         self.world = WorldState()
         self.vision = Vision()
-        self.role = Survivor()
+        self.role = Scout()
 
     def run(self):
-        # Lance la connexion, effectue le handshake et démarre la logique principale de l'IA.
         print(f"[INFO] Starting AI for team '{self.team_name}' on {self.host}:{self.port}")
         self.conn.connect()
         self.conn.handshake()
         self.queue = CommandQueue(self.conn)
-        self.queue.push("Inventory")
-        self.queue.push("Look")
         while True:
+            self.queue.push("Look")
+            self.queue.push("Inventory")
             self.queue.flush()
             line = self.conn.read_line()
             if not line:
@@ -45,8 +45,6 @@ class ZappyAI:
                     self.vision.parse_look(line)
                     print("[DEBUG] Vision:", self.vision)
             self.role.decide(self.queue, self.world, self.vision)
-            self.queue.push("Inventory")
-            self.queue.push("Look")
 
 
 def parse_args():
@@ -65,7 +63,6 @@ def parse_args():
 
 
 def main():
-    # Point d'entrée principal du programme, gère les exceptions et lance l'IA.
     args = parse_args()
     try:
         ai = ZappyAI(args.host, args.port, args.team)
