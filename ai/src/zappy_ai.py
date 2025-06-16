@@ -6,7 +6,9 @@ from ai.src.connection import Connection
 from ai.src.command_queue import CommandQueue
 from ai.src.inventory_parser import WorldState
 from ai.src.vision_parser import Vision
+from ai.src.roles.scout import Scout
 from ai.src.roles.role_selector import select_role
+
 
 class ZappyAI:
 
@@ -18,16 +20,16 @@ class ZappyAI:
         self.queue = None
         self.world = WorldState()
         self.vision = Vision()
-        self.role = None
+        self.role = Scout()
 
     def run(self):
         print(f"[INFO] Starting AI for team '{self.team_name}' on {self.host}:{self.port}")
         self.conn.connect()
         self.conn.handshake()
         self.queue = CommandQueue(self.conn)
+        self.queue.push("Inventory")
+        self.queue.push("Look")
         while True:
-            self.queue.push("Look")
-            self.queue.push("Inventory")
             self.queue.flush()
             line = self.conn.read_line()
             if not line:
@@ -40,9 +42,10 @@ class ZappyAI:
                     print("[DEBUG] Inventory:", self.world)
                 else:
                     self.vision.parse_look(line)
-                    print("[DEBUG] Vision:", self.vision)
             self.role = select_role(self.world, self.vision)
             self.role.decide(self.queue, self.world, self.vision)
+            self.queue.push("Inventory")
+            self.queue.push("Look")
 
 
 def parse_args():
