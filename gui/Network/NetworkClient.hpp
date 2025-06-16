@@ -67,48 +67,60 @@ public:
       createPlayer(1, 2, 2, Direction::NORTH, 0, "Red");
     } catch (const std::exception &e) {
     }
+    setPlayerLevel(1, 1);
     try {
       createPlayer(2, 4, 2, Direction::NORTH, 0, "Blue");
     } catch (const std::exception &e) {
     }
+    setPlayerLevel(2, 2);
     try {
-      createPlayer(3, 0, 0, Direction::SOUTH, 0, "Red");
+      createPlayer(3, 0, 0, Direction::EAST, 0, "Red");
     } catch (const std::exception &e) {
     }
+    setPlayerLevel(3, 3);
 
     try {
-      createPlayer(3, 0, 1, Direction::NORTH, 0, "Yellow");
+      createPlayer(4, 0, 1, Direction::EAST, 0, "Yellow");
     } catch (const std::exception &e) {
     }
+    setPlayerLevel(4, 4);
     try {
-      createPlayer(3, 0, 2, Direction::NORTH, 0, "Purple");
+      createPlayer(5, 0, 2, Direction::EAST, 0, "Purple");
     } catch (const std::exception &e) {
     }
+    setPlayerLevel(5, 5);
     try {
-      createPlayer(3, 0, 3, Direction::NORTH, 0, "Orange");
+      createPlayer(6, 0, 3, Direction::EAST, 0, "Orange");
     } catch (const std::exception &e) {
     }
+    setPlayerLevel(6, 6);
     try {
-      createPlayer(3, 0, 4, Direction::NORTH, 0, "Green");
+      createPlayer(7, 0, 4, Direction::EAST, 0, "Green");
     } catch (const std::exception &e) {
     }
+    setPlayerLevel(7, 7);
+    try {
+      createPlayer(8, 1, 0, Direction::NORTH, 0, "Green");
+    } catch (const std::exception &e) {
+    }
+    setPlayerLevel(8, 8);
 
     contentTiles(2, 4, 32, 32, 32, 32, 32, 32, 32);
     contentTiles(4, 4, 32, 32, 32, 32, 32, 32, 32);
-    movePlayer(1, 2, 2, Direction::NORTH);
-    movePlayer(1, 2, 1, Direction::NORTH);
-    movePlayer(1, 2, 0, Direction::NORTH);
-    movePlayer(1, 2, 4, Direction::NORTH);
-    movePlayer(1, 1, 4, Direction::EAST);
-    movePlayer(1, 0, 4, Direction::EAST);
-    movePlayer(1, 4, 4, Direction::EAST);
-    movePlayer(1, 4, 0, Direction::SOUTH);
-    movePlayer(1, 4, 1, Direction::SOUTH);
-    movePlayer(1, 4, 2, Direction::SOUTH);
-    movePlayer(1, 0, 2, Direction::WEST);
+    // movePlayer(1, 2, 2, Direction::NORTH);
+    // movePlayer(1, 2, 1, Direction::NORTH);
+    // movePlayer(1, 2, 0, Direction::NORTH);
+    // movePlayer(1, 2, 4, Direction::NORTH);
+    // movePlayer(1, 1, 4, Direction::EAST);
+    // movePlayer(1, 0, 4, Direction::EAST);
+    // movePlayer(1, 4, 4, Direction::EAST);
+    // movePlayer(1, 4, 0, Direction::SOUTH);
+    // movePlayer(1, 4, 1, Direction::SOUTH);
+    // movePlayer(1, 4, 2, Direction::SOUTH);
+    // movePlayer(1, 0, 2, Direction::WEST);
     // movePlayer(2, 4, 2, Direction::NORTH);
     PlayerInventory(1, 0, 2, 1, 1, 1, 14, 1, 1, 1);
-    startIncantation(4, 2, 2, {2});
+    // startIncantation(4, 2, 2, {2});
     // stopIncantation(4, 2, true);
     // killPlayer(3);
     broadcast(1, "Hello from player 1!");
