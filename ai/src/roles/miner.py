@@ -24,3 +24,6 @@ class Miner(Role):
                     queue.push(cmd)
                 queue.push(f"Take {stone}")
                 break
+        else:
+            queue.push("Forward")
+            queue.push("Right")
