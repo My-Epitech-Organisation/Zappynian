@@ -34,12 +34,15 @@ SRCS	=	src/main.c				\
 			src/player.c 			\
 			src/elevation.c 		\
 			src/team.c 				\
+			src/look_cmd.c 			\
+			src/look_vision_tiles.c \
+			src/look_current_tile.c \
 
 OBJS	=	$(SRCS:.c=.o)
 
 TESTS	=	$(wildcard ../tests/server/*.c)
 
-CFLAGS	= 	-I./includes -Wall -Wextra -Werror
+CFLAGS	= 	-I./include -Wall -Wextra -Werror
 LDFLAGS	=  -lcriterion --coverage
 
 NO_COLOR=\033[0m
@@ -54,7 +57,7 @@ all: $(NAME)
 	@echo -e "$(GREEN)Compilation réussie, le binaire :$(ORANGE) $(NAME) \
 	$(GREEN)générée $(NO_COLOR)"
 
-%.o: %.c includes/server.h
+%.o: %.c include/server.h
 	@echo -e "$(VIOLET)Compilation de $< en $@...$(NO_COLOR)"
 	$(CC) $(CFLAGS) -c $< -o $@
 
