@@ -17,7 +17,7 @@ LIB_DIR = ../../libzappy_net
 OBJ_DIR = obj
 
 # Library
-LIB_NAME = $(LIB_DIR)/libzappy_net.a
+LIB_NAME = $(LIB_DIR)/libzappy_net.so
 
 # Source files
 SRC_FILES = test_socket_creation.c \
@@ -47,7 +47,7 @@ all: $(NAME)
 
 $(NAME): create_directories $(OBJ_FILES) $(LIB_NAME)
 	@echo "Linking test executable $(NAME)"
-	@$(CC) $(OBJ_FILES) $(LIB_NAME) $(LDFLAGS) -o $(NAME)
+	@$(CC) $(OBJ_FILES) -L$(LIB_DIR) -lzappy_net $(LDFLAGS) -o $(NAME)
 	@echo "$(NAME) created successfully!"
 
 $(LIB_NAME):
