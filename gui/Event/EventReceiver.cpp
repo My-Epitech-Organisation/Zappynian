@@ -27,6 +27,9 @@ bool EventReceiver::OnEvent(const irr::SEvent &event) {
   if (event.EventType == irr::EET_MOUSE_INPUT_EVENT) {
     return handleMouseInput(event.MouseInput);
   }
+  if (event.EventType == irr::EET_GUI_EVENT) {
+    return handleGUIEvent(event.GUIEvent);
+  }
   return false;
 }
 
@@ -158,6 +161,18 @@ bool EventReceiver::handleMouseInput(
 
   case irr::EMIE_MOUSE_WHEEL:
     return handleMouseWheelMovement(mouseInput.Wheel);
+  }
+  return false;
+}
+
+bool EventReceiver::handleGUIEvent(const irr::SEvent::SGUIEvent &guiEvent) {
+  if (guiEvent.EventType == irr::gui::EGET_BUTTON_CLICKED) {
+    if (guiEvent.Caller->getID() == 9999) {
+      if (device) {
+        device->closeDevice();
+        return true;
+      }
+    }
   }
   return false;
 }

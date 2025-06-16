@@ -51,6 +51,7 @@ public:
 
   bool handleKeyInput(const irr::SEvent::SKeyInput &keyInput);
   bool handleMouseInput(const irr::SEvent::SMouseInput &mouseInput);
+  bool handleGUIEvent(const irr::SEvent::SGUIEvent &guiEvent);
   bool handleCameraMovement(int deltaX, int deltaY);
   bool handleMouseWheelMovement(float wheel);
   bool handleNodeSelection(const irr::SEvent::SMouseInput &mouseInput);
