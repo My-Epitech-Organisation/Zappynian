@@ -16,8 +16,3 @@ void cleanup_network_integration(void)
 {
     zn_cleanup();
 }
-
-zn_socket_t setup_zappy_server_socket(int port)
-{
-    return zn_server_listen(port);
-}
