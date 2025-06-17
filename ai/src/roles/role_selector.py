@@ -1,6 +1,7 @@
 from ai.src.roles.survivor import Survivor
 from ai.src.roles.miner import Miner
 from ai.src.roles.scout import Scout
+from ai.src.roles.breeder import Breeder
 
 GOALS = {
     "linemate": 2,
@@ -13,12 +14,12 @@ GOALS = {
 
 def select_role(world, vision) -> object:
 
-    if world.get_food_count() <= 3:
+    if world.get_food_count() < 5:
         return Survivor()
-
     for resource, goal in GOALS.items():
         current = world.inventory.get(resource, 0)
         if current < goal:
             return Miner()
-
+    if world.get_food_count() > 10:
+        return Breeder()
     return Scout()
