@@ -65,7 +65,7 @@ static client_t *create_new_client(zn_socket_t zn_sock)
     return client;
 }
 
-void accept_client(server_connection_t *connection, client_t *unused)
+void accept_client(server_connection_t *connection, server_args_t *unused)
 {
     int slot = find_free_client_slot(connection->clients, MAX_CLIENTS);
     zn_socket_t new_sock = NULL;
@@ -92,105 +92,30 @@ void accept_client(server_connection_t *connection, client_t *unused)
 }
 
 static void process_server_events(server_connection_t *connection)
+    __attribute__((unused));
+    
+static void process_server_events(server_connection_t *connection)
 {
-    if (connection->client_count < MAX_CLIENTS) {
-        accept_client(connection, NULL);
-    }
+    // This function is now a no-op since polling is done in server_loop.c
+    (void)connection; // Avoid unused parameter warning
 }
 
-static void setup_poll_events(server_connection_t *connection,
-                             zn_socket_t *sockets, short *events, int *count)
-{
-    *count = 0;
+// Removed setup_poll_events - this functionality is now in server_loop.c
 
-    // Add server socket for accepting new clients
-    if (connection->client_count < MAX_CLIENTS) {
-        sockets[*count] = connection->zn_server;
-        events[*count] = POLLIN;
-        (*count)++;
-    }
-
-    // Add client sockets for reading and writing
-    for (int i = 0; i < connection->client_count && *count < ZN_POLL_MAX_SOCKETS; i++) {
-        if (connection->clients[i] != NULL && connection->clients[i]->fd != -1) {
-            sockets[*count] = connection->clients[i]->zn_sock;
-            events[*count] = POLLIN;
-
-            // If client has pending data to write, also check for write readiness
-            if (connection->clients[i]->write_total > 0) {
-                events[*count] |= POLLOUT;
-            }
-
-            (*count)++;
-        }
-    }
-}
-
-static void process_poll_results(server_connection_t *connection,
-                               zn_socket_t *sockets, zn_poll_result_t *result, int count)
-{
-    // Check server socket for new connections
-    if (count > 0 && (result->readable & 1) && connection->client_count < MAX_CLIENTS) {
-        accept_client(connection, NULL);
-    }
-
-    // Check client sockets for read/write events
-    int client_offset = (connection->client_count < MAX_CLIENTS) ? 1 : 0;
-    int client_idx = 0;
-
-    for (int i = client_offset; i < count; i++) {
-        // Find the client index for this socket
-        for (client_idx = 0; client_idx < connection->client_count; client_idx++) {
-            if (connection->clients[client_idx] != NULL &&
-                connection->clients[client_idx]->zn_sock == sockets[i]) {
-                break;
-            }
-        }
-
-        if (client_idx >= connection->client_count) {
-            continue; // Couldn't find client for this socket
-        }
-
-        // Check for readable sockets
-        if (result->readable & (1ULL << i)) {
-            handle_client_read(connection, client_idx);
-        }
-
-        // Check for writable sockets
-        if (result->writable & (1ULL << i)) {
-            handle_client_write(connection, client_idx);
-        }
-
-        // Check for error condition
-        if (result->error & (1ULL << i)) {
-            disconnect_client(connection, client_idx);
-        }
-    }
-}
+// Removed process_poll_results - this functionality is now in server_loop.c
 
 static void process_client_events(server_connection_t *connection)
+    __attribute__((unused));
+    
+static void process_client_events(server_connection_t *connection)
 {
-    zn_socket_t sockets[ZN_POLL_MAX_SOCKETS];
-    short events[ZN_POLL_MAX_SOCKETS];
-    int count = 0;
-    zn_poll_result_t poll_result;
-
-    // Setup the poll arrays
-    setup_poll_events(connection, sockets, events, &count);
-
-    if (count == 0) {
-        return; // Nothing to poll
-    }
-
-    // Poll with a small timeout (10ms)
-    poll_result = zn_poll(sockets, events, count, 10);
-
-    // Process poll results
-    if (poll_result.ready_count > 0) {
-        process_poll_results(connection, sockets, &poll_result, count);
-    }
+    // This function is now a no-op since polling is done in server_loop.c
+    (void)connection; // Avoid unused parameter warning
 }
 
+static void initialize_client_array(server_connection_t *connection)
+    __attribute__((unused));
+    
 static void initialize_client_array(server_connection_t *connection)
 {
     connection->clients = calloc(MAX_CLIENTS, sizeof(client_t *));
@@ -203,11 +128,11 @@ static void initialize_client_array(server_connection_t *connection)
 
 void handle_clients(server_t *server)
 {
-    static bool initialized = false;
-    if (!initialized) {
-        initialize_client_array(server->connection);
-        initialized = true;
-    }
-    process_server_events(server->connection);
-    process_client_events(server->connection);
+    // This function is kept for backward compatibility but is now a no-op
+    // The actual network handling is done in server_loop.c
+    (void)server; // Avoid unused parameter warning
+    
+    // Note: We've kept this function in case there are external calls to it
+    // that we don't want to break, but it no longer does anything since
+    // the functionality has been moved to server_loop.c
 }
