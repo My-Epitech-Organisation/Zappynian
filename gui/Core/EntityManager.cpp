@@ -50,6 +50,8 @@ void EntityManager::createPlayers(int id, int x, int y, Direction direction,
       texturesArcher, level, mediaPath_ + "archer.b3d"));
 
   entity_.back()->createNode(smgr_, driver_);
+  entity_.back()->getNode()->setRotation(
+      irr::core::vector3df(0.0f, static_cast<float>(direction) * 90.0f, 0.0f));
   receiver_.setAnimatedNode(entity_.back()->getNode());
 }
 
@@ -156,4 +158,29 @@ EntityManager::createPaperPlane(irr::core::vector3df position) {
   paperPlane->createNode(smgr_, driver_);
   entity_.push_back(paperPlane);
   return paperPlane;
+}
+
+void EntityManager::createEgg(int id) {
+  for (const auto& entities : entity_) {
+    auto player = std::dynamic_pointer_cast<PlayerEntity>(entities);
+    if (player && player->getId() == id) {
+      irr::core::vector3df pos = player->getNode()->getPosition();
+      std::vector<irr::io::path> eggTextures = {mediaPath_ + "egg_texture/egg_texture.png"};
+      auto egg = std::make_shared<Egg>(
+          -1, pos, irr::core::vector3df(20.f, 20.f, 20.f),
+          eggTextures, mediaPath_ + "Egg.b3d");
+      entity_.push_back(egg);
+      egg->createNode(smgr_, driver_);
+      auto tile = getTileByName("Cube info: row " + std::to_string(
+          static_cast<int>(pos.X / 20)) + " col " +
+          std::to_string(static_cast<int>(pos.Z / 20)));
+      if (tile) {
+          tile->getInventory().addItem("egg", 1);
+      } else {
+          std::cerr << "Error: Tile not found for player " << id
+                    << " at position (" << pos.X << ", " << pos.Z << ")." << std::endl;
+      }
+      break;
+    }
+  }
 }
