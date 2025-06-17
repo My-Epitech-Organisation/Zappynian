@@ -27,3 +27,13 @@ class CommandQueue:
     def reset(self):
         self.queue.clear()
         self.pending = 0
+
+    def send_and_wait(self, command: str) -> str:
+        self.push(command)
+        self.flush()
+        while True:
+            line = self.connection.read_line()
+            if not line:
+                continue
+            self.handle_response(line)
+            return line
