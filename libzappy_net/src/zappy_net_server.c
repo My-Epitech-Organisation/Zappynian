@@ -8,6 +8,8 @@
 #include "zappy_net_internal.h"
 
 #include <sys/socket.h>
+#include <string.h>
+#include <unistd.h>
 
 static int setup_server_socket(zn_socket_t sock, int port)
 {
@@ -68,4 +70,49 @@ zn_socket_t zn_server_listen(int port)
         return NULL;
     }
     return sock;
+}
+
+static void setup_default_addr_params(struct sockaddr **addr,
+    socklen_t **len, struct sockaddr_in *client_addr, socklen_t *addr_len)
+{
+    if (*addr == NULL || *len == NULL) {
+        *addr = (struct sockaddr *)client_addr;
+        *addr_len = sizeof(*client_addr);
+        *len = addr_len;
+    }
+}
+
+static zn_socket_t create_client_socket(int client_fd,
+    struct sockaddr *addr, socklen_t addr_len)
+{
+    zn_socket_t client_sock;
+
+    client_sock = zn_socket_create();
+    if (client_sock == NULL) {
+        close(client_fd);
+        return NULL;
+    }
+    client_sock->fd = client_fd;
+    client_sock->initialized = 1;
+    client_sock->type = 0;
+    memcpy(&client_sock->addr, addr, addr_len);
+    return client_sock;
+}
+
+zn_socket_t zn_accept(zn_socket_t server_sock,
+    struct sockaddr *addr, socklen_t *len)
+{
+    int client_fd;
+    socklen_t addr_len;
+    struct sockaddr_in client_addr;
+
+    if (server_sock == NULL || server_sock->fd < 0) {
+        return NULL;
+    }
+    setup_default_addr_params(&addr, &len, &client_addr, &addr_len);
+    client_fd = accept(server_sock->fd, addr, len);
+    if (client_fd < 0) {
+        return NULL;
+    }
+    return create_client_socket(client_fd, addr, *len);
 }

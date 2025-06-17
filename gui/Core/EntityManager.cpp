@@ -11,14 +11,31 @@
 
 void EntityManager::createPlayers(int id, int x, int y, Direction direction,
                                   int level, std::string team) {
+  std::vector<irr::io::path> texturesTeams = {
+      mediaPath_ + "archer_texture/archer_red.png",
+      mediaPath_ + "archer_texture/archer_blue.png",
+      mediaPath_ + "archer_texture/archer_green.png",
+      mediaPath_ + "archer_texture/archer_yellow.png",
+      mediaPath_ + "archer_texture/archer_orange.png",
+      mediaPath_ + "archer_texture/archer_purple.png"};
+
+  size_t teamIndex = 0;
+  for (size_t i = 0; i < teams_.size(); ++i) {
+    if (teams_[i] == team) {
+      team = teams_[i];
+      teamIndex = i;
+      break;
+    }
+  }
+
   std::vector<irr::io::path> texturesArcher = {
       mediaPath_ + "archer_texture/DarkBrown_CrossBow01.png",
       mediaPath_ + "archer_texture/Black_CrossBow01.png",
       mediaPath_ + "archer_texture/Brown_CrossBow01.png",
       mediaPath_ + "archer_texture/ay_head.png",
-      mediaPath_ + "archer_texture/RedTeam_Archer_Armor_Red.png",
+      texturesTeams[teamIndex],
       mediaPath_ + "archer_texture/BlueTeam_Archer_Helmet_Black.png",
-      mediaPath_ + "archer_texture/RedTeam_Archer_Armor_Red.png",
+      texturesTeams[teamIndex],
       mediaPath_ + "archer_texture/RedTeam_Archer_Armor_DarkBrown.png",
       mediaPath_ + "archer_texture/RedTeam_Archer_Armor_Brown.png",
       mediaPath_ + "archer_texture/RedTeam_Archer_Gloves_DarkRed.png",
@@ -33,6 +50,8 @@ void EntityManager::createPlayers(int id, int x, int y, Direction direction,
       texturesArcher, level, mediaPath_ + "archer.b3d"));
 
   entity_.back()->createNode(smgr_, driver_);
+  entity_.back()->getNode()->setRotation(
+      irr::core::vector3df(0.0f, static_cast<float>(direction) * 90.0f, 0.0f));
   receiver_.setAnimatedNode(entity_.back()->getNode());
 }
 
