@@ -6,7 +6,6 @@
 */
 
 #include "AEntity.hpp"
-#include "Event/EventReceiver.hpp"
 #include "irrlicht/irrlicht.h"
 #include <string>
 #include <vector>
