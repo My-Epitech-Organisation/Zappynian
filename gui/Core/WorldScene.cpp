@@ -397,7 +397,8 @@ void WorldScene::endGame(std::string winner) {
   int buttonHeight = 100;
   int centerX = (screenSize.Width - buttonWidth) / 2;
   int centerY = (screenSize.Height - buttonHeight) / 2;
-  std::wstring winnerW = L"Winner: " + std::wstring(winner.begin(), winner.end()) + L"\nQuit";
+  std::wstring winnerW =
+      L"Winner: " + std::wstring(winner.begin(), winner.end()) + L"\nQuit";
   irr::gui::IGUIButton *quitButton = smgr_->getGUIEnvironment()->addButton(
       irr::core::rect<irr::s32>(centerX, centerY, centerX + buttonWidth,
                                 centerY + buttonHeight),
