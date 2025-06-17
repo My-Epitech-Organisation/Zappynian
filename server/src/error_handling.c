@@ -13,11 +13,24 @@ void close_connection(server_connection_t *connection)
         fprintf(stderr, "Connection is NULL.\n");
         return;
     }
-    if (connection->fd != -1) {
-        close(connection->fd);
+
+    if (connection->zn_server != NULL) {
+        zn_close(connection->zn_server);
     }
-    free(connection->clients);
-    free(connection->fds);
+
+    if (connection->clients != NULL) {
+        for (int i = 0; i < connection->client_count; i++) {
+            if (connection->clients[i] != NULL) {
+                if (connection->clients[i]->zn_sock != NULL) {
+                    zn_close(connection->clients[i]->zn_sock);
+                }
+                free(connection->clients[i]->team_name);
+                free(connection->clients[i]);
+            }
+        }
+        free(connection->clients);
+    }
+
     free(connection);
 }
 
