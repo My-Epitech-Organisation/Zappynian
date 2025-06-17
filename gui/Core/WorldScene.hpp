@@ -92,6 +92,8 @@ public:
 
   void addTeam(const std::string &team) { teams_.push_back(team); }
 
+  void clearElements();
+
   void endGame(std::string winner);
 
 protected:

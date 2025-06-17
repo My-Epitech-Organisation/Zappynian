@@ -367,12 +367,44 @@ void WorldScene::updatePaperPlaneMovements() {
   }
 }
 
-void WorldScene::endGame(std::string winner) {
-  addChatMessage("Game Over! Winner: " + winner);
-  irr::gui::IGUIButton *quitButton = smgr_->getGUIEnvironment()->addButton(
-    irr::core::rect<irr::s32>(20, 20, 120, 60), 0, -1, L"Quit");
+void WorldScene::clearElements() {
+  std::queue<Movement> emptyQueue;
+  std::swap(movementQueue_, emptyQueue);
+  for (auto &plane : paperPlaneMovements_)
+    if (plane.paperPlane && plane.paperPlane->getNode())
+      plane.paperPlane->getNode()->remove();
+  paperPlaneMovements_.clear();
+  actualPos_ = irr::core::vector3df();
+  planeSize_ = {0, 0};
+  isIncanting_.clear();
+  incantationData_.clear();
+  teams_.clear();
+  receiver_.clearAllEntities();
+  for (auto &entity : entity_) {
+    if (entity->getId() == -5)
+      continue;
+    if (entity && entity->getNode())
+      entity->getNode()->remove();
+  }
+}
 
-  quitButton->setOverrideFont(smgr_->getGUIEnvironment()->getFont(mediaPath_ + "fonthaettenschweiler.bmp"));
+void WorldScene::endGame(std::string winner) {
+  clearElements();
+
+  addChatMessage("Game Over! Winner: " + winner);
+  irr::core::dimension2du screenSize = smgr_->getVideoDriver()->getScreenSize();
+  int buttonWidth = 300;
+  int buttonHeight = 100;
+  int centerX = (screenSize.Width - buttonWidth) / 2;
+  int centerY = (screenSize.Height - buttonHeight) / 2;
+  std::wstring winnerW = L"Winner: " + std::wstring(winner.begin(), winner.end()) + L"\nQuit";
+  irr::gui::IGUIButton *quitButton = smgr_->getGUIEnvironment()->addButton(
+      irr::core::rect<irr::s32>(centerX, centerY, centerX + buttonWidth,
+                                centerY + buttonHeight),
+      0, -1, winnerW.c_str());
+
+  quitButton->setOverrideFont(smgr_->getGUIEnvironment()->getFont(
+      mediaPath_ + "fonthaettenschweiler.bmp"));
   quitButton->setUseAlphaChannel(true);
   quitButton->setDrawBorder(true);
   quitButton->setIsPushButton(true);
