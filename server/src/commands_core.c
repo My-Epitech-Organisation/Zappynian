@@ -10,28 +10,43 @@
 #include "../include/commands.h"
 #include "../include/server.h"
 
-static const command_t command_table[] = {
-    {"forward", 7, cmd_forward},
-    {"right", 7, cmd_right},
-    {"left", 7, cmd_left},
-    {"look", 7, cmd_look},
-    {"inventory", 1, cmd_inventory},
-    {"broadcast", 7, cmd_broadcast},
-    {"connect_nbr", 0, cmd_connect_nbr},
-    {"fork", 42, cmd_fork},
-    {"eject", 7, cmd_eject},
-    {"take", 7, cmd_take},
-    {"set", 7, cmd_set},
-    {"incantation", 300, cmd_incantation}
-};
-
 const command_t *get_command_table(void)
 {
+    static const command_t command_table[] = {
+        {"forward", 7, cmd_forward},
+        {"right", 7, cmd_right},
+        {"left", 7, cmd_left},
+        {"look", 7, cmd_look},
+        {"inventory", 1, cmd_inventory},
+        {"broadcast", 7, cmd_broadcast},
+        {"connect_nbr", 0, cmd_connect_nbr},
+        {"fork", 42, cmd_fork},
+        {"eject", 7, cmd_eject},
+        {"take", 7, cmd_take},
+        {"set", 7, cmd_set},
+        {"incantation", 300, cmd_incantation}
+    };
+
     return command_table;
 }
 
 size_t get_command_table_size(void)
 {
+    static const command_t command_table[] = {
+        {"forward", 7, cmd_forward},
+        {"right", 7, cmd_right},
+        {"left", 7, cmd_left},
+        {"look", 7, cmd_look},
+        {"inventory", 1, cmd_inventory},
+        {"broadcast", 7, cmd_broadcast},
+        {"connect_nbr", 0, cmd_connect_nbr},
+        {"fork", 42, cmd_fork},
+        {"eject", 7, cmd_eject},
+        {"take", 7, cmd_take},
+        {"set", 7, cmd_set},
+        {"incantation", 300, cmd_incantation}
+    };
+
     return sizeof(command_table) / sizeof(command_t);
 }
 
@@ -53,7 +68,7 @@ bool commands_add(player_t *player, const char *command_name)
     return false;
 }
 
-void commands_execute_next(player_t *player, server_t *server)
+static void commands_execute_next(player_t *player, server_t *server)
 {
     if (player->command_count == 0)
         return;
@@ -78,4 +93,11 @@ void process_commands(server_t *server)
             commands_execute_next(player, server);
         }
     }
+}
+
+char *get_player_current_command(player_t *player)
+{
+    if (player->command_count == 0)
+        return NULL;
+    return player->commands[0]->name;
 }
