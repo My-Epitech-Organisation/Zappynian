@@ -15,6 +15,7 @@ Inventory::Inventory() {
   items_["mendiane"] = 0;
   items_["phiras"] = 0;
   items_["thystame"] = 0;
+  items_["egg"] = 0;
 }
 
 Inventory::~Inventory() {}
