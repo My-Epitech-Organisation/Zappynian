@@ -37,6 +37,7 @@ SRCS	=	src/main.c				\
 			src/network_integration.c \
 			src/client_adapters.c 	\
 			src/write_to_client.c 	\
+			src/server_loop.c 		\
 
 OBJS	=	$(SRCS:.c=.o)
 
