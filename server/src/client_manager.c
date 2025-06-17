@@ -89,7 +89,6 @@ void handle_client_read(server_connection_t *connection, int idx)
     line = zn_readline(client->zn_sock);
     if (line == NULL) {
         if (errno != EAGAIN && errno != EWOULDBLOCK) {
-            // Error or client disconnect
             disconnect_client(connection, idx);
         }
         return;
@@ -98,10 +97,9 @@ void handle_client_read(server_connection_t *connection, int idx)
     printf("Command received: %s\n", line);
 
     if (line[0] != '\0') {
-        strncpy(client->read_buffer, line, BUFFER_SIZE - 1);
-        client->read_buffer[BUFFER_SIZE - 1] = '\0';
-        free(line);
+        printf("Processing command: %s\n", line);
     }
+    free(line);
 }
 
 void disconnect_client(server_connection_t *connection, int client_idx)
