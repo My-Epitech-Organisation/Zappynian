@@ -32,7 +32,6 @@ class ZappyAI:
             inv_line = self.queue.send_and_wait("Inventory")
             if inv_line.startswith("[") and any(char.isdigit() for char in inv_line):
                 self.world.parse_inventory(inv_line)
-                print("[DEBUG] Inventory:", self.world)
             look_line = self.queue.send_and_wait("Look")
             if look_line.startswith("[") and not any(char.isdigit() for char in look_line):
                 self.vision.parse_look(look_line)

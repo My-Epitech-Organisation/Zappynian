@@ -8,7 +8,6 @@ class Scout(Role):
 
     def decide(self, queue, world, vision):
         tile = random.randint(1, 8)
-
         path = route_to(tile)
         for cmd in path:
             queue.send_and_wait(cmd)
