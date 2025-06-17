@@ -26,8 +26,12 @@ int handle_free(server_t *server)
         handle_free_args(server->args);
     }
     if (server->connection->clients != NULL) {
-        for (int i = 0; i < server->connection->client_count; i++)
-            close(server->connection->clients[i]->fd);
+        for (int i = 0; i < server->connection->client_count; i++) {
+            if (server->connection->clients[i] && server->connection->clients[i]->zn_sock) {
+                zn_close(server->connection->clients[i]->zn_sock);
+            }
+            free(server->connection->clients[i]);
+        }
         free(server->connection->clients);
     }
     free(server);
