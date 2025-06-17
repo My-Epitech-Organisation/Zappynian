@@ -57,13 +57,12 @@ void Game::updatePlayerMovement(irr::u32 currentTime, NetworkClient &scene) {
   }
 
   float elapsedTime = (currentTime - receiver_.getMoveStartTime()) / 1000.0f;
-  
-  auto* node = currentEntity->getNode();
+  auto *node = currentEntity->getNode();
   if (!node || !node->getParent()) {
     receiver_.setIsMoving(false);
     return;
   }
-  
+
   if (elapsedTime >= 0.4f) {
     irr::core::vector3df pos;
     float angle = receiver_.getCurrentRotationY() * M_PI / 180.0f;
@@ -77,7 +76,8 @@ void Game::updatePlayerMovement(irr::u32 currentTime, NetworkClient &scene) {
     }
     node->setPosition(pos);
     receiver_.setIsMoving(false);
-    if (auto* animatedNode = dynamic_cast<irr::scene::IAnimatedMeshSceneNode*>(node))
+    if (auto *animatedNode =
+            dynamic_cast<irr::scene::IAnimatedMeshSceneNode *>(node))
       animatedNode->setAnimationSpeed(0.0f);
     scene.updateMovements();
   } else {
