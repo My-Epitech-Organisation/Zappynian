@@ -11,25 +11,35 @@ NAME_TESTS	=	unit_tests
 CC		=	gcc
 RM		=	rm -f
 
-SRCS	=	src/main.c \
-            src/display_help.c \
-            src/display_infos.c \
-            src/fill_n_c_f.c \
-            src/fill_p_x_y.c \
-			src/handle_free.c \
-			src/parsing.c \
-			src/set_server.c \
-			src/error_handling.c \
-			src/handle_client.c \
-			src/client_manager.c \
-			src/manage_teams.c \
-			src/write_to_client.c \
+SRCS	=	src/main.c				\
+            src/display_help.c 		\
+            src/display_infos.c 	\
+            src/fill_n_c_f.c 		\
+            src/fill_p_x_y.c 		\
+			src/handle_free.c 		\
+			src/parsing.c 			\
+			src/set_server.c 		\
+			src/error_handling.c 	\
+			src/handle_client.c 	\
+			src/client_manager.c 	\
+			src/commands_movement.c	\
+			src/commands_actions.c 	\
+			src/commands_communication.c \
+			src/commands_core.c 	\
+			src/death.c 			\
+			src/win.c 				\
+			src/game_loop.c 		\
+			src/resource.c 			\
+			src/world.c 			\
+			src/player.c 			\
+			src/elevation.c 		\
+			src/team.c 				\
 
 OBJS	=	$(SRCS:.c=.o)
 
 TESTS	=	$(wildcard ../tests/server/*.c)
 
-CFLAGS	=	-I./include -Wall -Wextra -Werror
+CFLAGS	= 	-I./includes -Wall -Wextra -Werror
 LDFLAGS	=  -lcriterion --coverage
 
 NO_COLOR=\033[0m

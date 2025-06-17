@@ -26,6 +26,8 @@ public:
 
   void addEntity(std::shared_ptr<IEntity> entity);
 
+  void removeEntity(int id);
+
   void setText(irr::gui::IGUIStaticText *t);
   void setPlayerText(irr::gui::IGUIStaticText *t) { textPlayer = t; }
 

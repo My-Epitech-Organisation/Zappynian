@@ -35,6 +35,8 @@ public:
 
   void createTiles(int x, int y);
 
+  std::shared_ptr<IEntity> createPaperPlane(irr::core::vector3df position);
+
   void createEgg(int id);
 
   const std::vector<std::shared_ptr<IEntity>> &getEntities() const {
@@ -50,6 +52,8 @@ public:
     return nullptr;
   }
 
+  void addTeams(std::vector<std::string> teams) { teams_ = teams; }
+
 protected:
   std::vector<std::shared_ptr<IEntity>> entity_;
   irr::scene::ISceneManager *smgr_;
@@ -57,6 +61,7 @@ protected:
   EventReceiver &receiver_;
   irr::io::path mediaPath_;
   std::vector<std::shared_ptr<TileEntity>> tiles_;
+  std::vector<std::string> teams_;
 
 private:
 };

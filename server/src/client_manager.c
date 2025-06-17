@@ -6,6 +6,7 @@
 */
 
 #include "../includes/server.h"
+#include "../includes/team.h"
 
 void assign_client_type(client_t *client, server_connection_t *connection,
     int idx)
@@ -17,16 +18,14 @@ void assign_client_type(client_t *client, server_connection_t *connection,
     if (strcmp(client->read_buffer, "GRAPHIC") == 0) {
         client->type = CLIENT_GUI;
         client->team_name = strdup("GRAPHIC");
-        put_str_fd(client->fd, "WELCOME GRAPHIC\n");
         printf("Client %d is a GUI client.\n", client->fd);
         return;
     }
     team = get_team_by_name(args, team_name);
-    if (team && team->current_players < team->max_players) {
+    if (team && team->current_players < team->max_slots) {
         client->type = CLIENT_IA;
         client->team_name = strdup(team_name);
         team->current_players++;
-        put_str_fd(client->fd, "WELCOME IA\n");
         printf("Client %d is an IA client %s.\n", client->fd, team_name);
     } else
         disconnect_client(connection, idx);

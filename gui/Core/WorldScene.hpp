@@ -17,6 +17,16 @@ struct Movement {
   Direction direction;
 };
 
+struct PaperPlaneMovement {
+  std::shared_ptr<IEntity> paperPlane;
+  int targetPlayerId;
+  irr::core::vector3df startPosition;
+  irr::core::vector3df targetPosition;
+  irr::u32 startTime;
+  float duration; // sec
+  bool isActive;
+};
+
 struct EdgePositionResult {
   bool isEdge;
   float offsetX;
@@ -42,6 +52,8 @@ public:
 
   void setPlayerLevel(int id, int level);
 
+  void changeHeadLevel(std::shared_ptr<IEntity> &entity, int level);
+
   void createEntities(int x, int y, int q0, int q1, int q2, int q3, int q4,
                       int q5, int q6, int nbTiles);
 
@@ -55,6 +67,8 @@ public:
                                     Direction direction, int nextX, int nextY);
 
   void updateMovements();
+
+  void updatePaperPlaneMovements();
 
   void createLights();
 
@@ -74,6 +88,14 @@ public:
 
   std::vector<std::shared_ptr<IEntity>> getEntities() const { return entity_; }
 
+  void killPlayer(int id);
+
+  void addChatMessage(const std::string &message);
+
+  void broadcast(int id, const std::string &message);
+
+  void addTeam(const std::string &team) { teams_.push_back(team); }
+
 protected:
   irr::IrrlichtDevice *device_;
   irr::scene::ISceneManager *smgr_;
@@ -83,10 +105,16 @@ protected:
   EntityManager entityManager_;
   std::vector<std::shared_ptr<IEntity>> entity_;
   std::queue<Movement> movementQueue_;
+  std::vector<PaperPlaneMovement> paperPlaneMovements_;
   irr::core::vector3df actualPos_;
   std::pair<int, int> planeSize_;
   std::unordered_map<int, bool> isIncanting_;
   std::vector<std::tuple<int, int, int>> incantationData_; // x, y, id
+  irr::gui::IGUIStaticText *textChat_;
+  std::vector<std::string> chatMessages_;
+  static const size_t MAX_CHAT_MESSAGES = 20;
+  std::vector<std::string> teams_;
 
 private:
+  void updateChatDisplay();
 };
