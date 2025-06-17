@@ -59,18 +59,17 @@
  * The Makefile provides the following targets:
  *
  * ```bash
- * make          # Compiles the project and creates the raytracer executable
+ * make          # Compiles all components
+ * make server   # Compiles only the server
+ * make ai       # Compiles only the AI client
+ * make gui      # Compiles only the GUI
  * make clean    # Removes object files
- * make fclean   # Removes all compiled files, build directory, and documentation
- * make re       # Completely rebuilds the project (fclean + all)
- * make normalize # Applies clang-format to all C++ files
- * make check_normalize # Checks if code follows clang-format style without modifying
- * make tests_run # Compiles and runs unit tests
- * make cov      # Generates code coverage report (requires lcov)
+ * make fclean   # Complete cleanup
+ * make re       # Rebuild everything
+ * make tests_run # Run test suite
  * make doc      # Generates documentation using Doxygen and opens it
  * ```
  *
- * ---
  * ## 🔗 Navigation
  * 
  * - 🏠 [Main Page](index.html)
