@@ -21,14 +21,16 @@ EventReceiver::EventReceiver()
 EventReceiver::~EventReceiver() = default;
 
 bool EventReceiver::OnEvent(const irr::SEvent &event) {
+  if (event.EventType == irr::EET_GUI_EVENT) {
+    if (handleGUIEvent(event.GUIEvent)) {
+      return true;
+    }
+  }
   if (event.EventType == irr::EET_KEY_INPUT_EVENT) {
     return handleKeyInput(event.KeyInput);
   }
   if (event.EventType == irr::EET_MOUSE_INPUT_EVENT) {
     return handleMouseInput(event.MouseInput);
-  }
-  if (event.EventType == irr::EET_GUI_EVENT) {
-    return handleGUIEvent(event.GUIEvent);
   }
   return false;
 }
@@ -317,6 +319,12 @@ void EventReceiver::removeEntity(int id) {
   if (it != entity_.end()) {
     entity_.erase(it, entity_.end());
   }
+}
+
+void EventReceiver::clearAllEntities() {
+  entity_.clear();
+  cubes.clear();
+  animatedNode = nullptr;
 }
 
 void EventReceiver::setText(irr::gui::IGUIStaticText *t) { textCube = t; }

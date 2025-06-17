@@ -28,6 +28,8 @@ public:
 
   void removeEntity(int id);
 
+  void clearAllEntities();
+
   void setText(irr::gui::IGUIStaticText *t);
   void setPlayerText(irr::gui::IGUIStaticText *t) { textPlayer = t; }
 
