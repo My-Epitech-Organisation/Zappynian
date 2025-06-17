@@ -68,6 +68,11 @@ void WorldScene::createEntities(int x, int y, int q0, int q1, int q2, int q3,
   entity_ = entityManager_.getEntities();
 }
 
+void WorldScene::createEntities(int id) {
+  entityManager_.createEgg(id);
+  entity_ = entityManager_.getEntities();
+}
+
 void WorldScene::changePlayerPos(int id, int x, int y, Direction direction) {
   Movement movement = {id, x, y, direction};
   movementQueue_.push(movement);

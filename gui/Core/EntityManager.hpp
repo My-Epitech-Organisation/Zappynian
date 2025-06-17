@@ -6,6 +6,7 @@
 */
 #include "../Entities/PlayerEntity.hpp"
 #include "../Entities/Stone.hpp"
+#include "../Entities/Egg.hpp"
 #include "../Entities/TileEntity.hpp"
 #include "../Event/EventReceiver.hpp"
 #include <iostream>
@@ -35,6 +36,8 @@ public:
   void createTiles(int x, int y);
 
   std::shared_ptr<IEntity> createPaperPlane(irr::core::vector3df position);
+
+  void createEgg(int id);
 
   const std::vector<std::shared_ptr<IEntity>> &getEntities() const {
     return entity_;
