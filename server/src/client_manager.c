@@ -80,26 +80,30 @@ void assign_client_type(client_t *client, server_connection_t *connection,
 void handle_client_read(server_connection_t *connection, int idx)
 {
     client_t *client = connection->clients[idx];
-    char tmp_buffer[1024] = {0};
-    ssize_t bytes_read = read(client->fd, tmp_buffer, sizeof(tmp_buffer));
+    char *line = NULL;
 
-    if (check_correct_read(connection, idx, bytes_read, client) == 84)
-        return;
     if (client->type == CLIENT_UNKNOWN) {
         return;
     }
-    if (memcpy(client->read_buffer + client->read_index, tmp_buffer,
-        bytes_read) == NULL)
-        return perror("memcpy");
-    client->read_index += bytes_read;
-    for (int i = 0; i < client->read_index; i++) {
-        if (client->read_buffer[i] == '\n') {
-            client->read_buffer[i] = '\0';
-            printf("Command from client %d: %s\n", client->fd,
-                client->read_buffer);
-            client->read_index = 0;
-            break;
+
+    line = zn_readline(client->zn_sock);
+    if (line == NULL) {
+        if (errno != EAGAIN && errno != EWOULDBLOCK) {
+            // Error or client disconnect
+            disconnect_client(connection, idx);
         }
+        return;
+    }
+
+    printf("Command from client %d: %s\n", client->fd, line);
+
+    // Process the received command
+    if (line[0] != '\0') {
+        strncpy(client->read_buffer, line, BUFFER_SIZE - 1);
+        client->read_buffer[BUFFER_SIZE - 1] = '\0';
+        // Process command here
+        // Don't forget to free the line allocated by zn_readline
+        free(line);
     }
 }
 
