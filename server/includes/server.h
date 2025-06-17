@@ -103,11 +103,10 @@ int set_server_socket(server_connection_t *connection);
 
 void handle_clients(server_t *server);
 void handle_client_read(server_connection_t *connection, int client_idx);
+void handle_client_write(server_connection_t *connection, int client_idx);
 void disconnect_client(server_connection_t *connection, int client_idx);
 void assign_client_type(client_t *client, server_connection_t *connection,
     int idx);
-int check_correct_read(server_connection_t *connection, int idx,
-    ssize_t bytes_read, client_t *client);
 
 void put_str_fd(int fd, char *str);
 int strlen_fd(char *str);
