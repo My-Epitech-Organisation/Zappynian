@@ -107,6 +107,11 @@ void handle_client_write(server_connection_t *connection, int client_idx);
 void disconnect_client(server_connection_t *connection, int client_idx);
 void assign_client_type(client_t *client, server_connection_t *connection,
     int idx);
+void accept_client(server_connection_t *connection, server_args_t *args);
+
+/* Server loop functions */
+void server_loop(server_t *server);
+void stop_server_loop(void);
 
 void put_str_fd(int fd, char *str);
 int strlen_fd(char *str);
