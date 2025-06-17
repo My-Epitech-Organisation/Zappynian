@@ -27,5 +27,6 @@ void resource_init(map_t *map);
 void resource_respawn(map_t *map);
 void resource_add(tile_t *tile, int resource_type, int amount);
 bool resource_remove(tile_t *tile, int resource_type, int amount);
+char *get_resource_name(int resource_type);
 
 #endif // RESOURCE_H
