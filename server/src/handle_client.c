@@ -88,6 +88,7 @@ void accept_client(server_connection_t *connection, client_t *unused)
     if (slot >= connection->client_count) {
         connection->client_count = slot + 1;
     }
+    assign_client_type(new_client, connection, slot);
 }
 
 static void process_server_events(server_connection_t *connection)
