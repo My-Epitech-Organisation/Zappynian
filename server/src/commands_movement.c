@@ -28,7 +28,7 @@ void cmd_forward(player_t *player, server_t *server)
             move_player(player, player->x - 1, player->y, server->map);
             break;
     }
-    printf("Forward\n");
+    zn_send_message(server->connection->fd, "Forward");
 }
 
 void cmd_right(player_t *player, server_t *server)

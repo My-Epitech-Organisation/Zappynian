@@ -45,6 +45,7 @@ size_t get_command_table_size(void);
 
 char *get_player_vision(player_t *player, map_t *map);
 void add_current_tile(char *result, player_t *player, map_t *map);
-void add_other_tiles(char *result, player_t *player, map_t *map, int vision_range);
+void add_other_tiles(char *result, player_t *player, map_t *map,
+    int vision_range);
 
 #endif // COMMANDS_H
