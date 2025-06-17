@@ -31,14 +31,8 @@ void game_loop_run(server_t *server)
     game_loop_init(server);
     if (!server->game_running)
         return;
-    while (server->game_running) {
-        game_loop_tick(server);
-        handle_clients(server);
-        process_commands(server);
-        decrement_food_for_all_players(server);
-        death_check(server->players, server->player_count, server->map,
-            server);
-        check_victory(server);
-        usleep(10000);
-    }
+
+    // The new server_loop function now handles the main loop with polling
+    // as well as calling the game logic functions
+    server_loop(server);
 }
