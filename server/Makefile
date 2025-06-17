@@ -37,6 +37,8 @@ SRCS	=	src/main.c				\
 			src/look_cmd.c 			\
 			src/look_vision_tiles.c \
 			src/look_current_tile.c \
+			src/inventory_cmd.c 	\
+			src/broadcast_cmd.c 	\
 
 OBJS	=	$(SRCS:.c=.o)
 
