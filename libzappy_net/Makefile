@@ -5,7 +5,7 @@
 ## Makefile for libzappy_net
 ##
 
-NAME = libzappy_net.a
+NAME = libzappy_net.so
 
 CC = clang
 CXX = clang++
@@ -13,8 +13,8 @@ AR = ar
 ARFLAGS = rcs
 RM = rm -f
 
-CFLAGS = -Wall -Wextra -pedantic -std=c11 -O2
-CXXFLAGS = -Wall -Wextra -pedantic -std=c++17 -O2
+CFLAGS = -Wall -Wextra -pedantic -std=c11 -O2 -fPIC
+CXXFLAGS = -Wall -Wextra -pedantic -std=c++17 -O2 -fPIC
 
 DEBUG_FLAGS = -g3 -DDEBUG
 SANITIZE_FLAGS = -fsanitize=address,undefined
@@ -26,11 +26,13 @@ OBJ_DIR = obj
 
 HEADERS = $(INC_DIR)/libzappy_net.h \
           $(INC_DIR)/zappy_net.h \
-          $(INC_DIR)/zappy_net_ringbuf.h
+          $(INC_DIR)/zappy_net_ringbuf.h \
+          $(INC_DIR)/zappy_net_error.h
 
 SRC_C = $(SRC_DIR)/libzappy_net.c \
         $(SRC_DIR)/zappy_net_core.c \
         $(SRC_DIR)/zappy_net_socket.c \
+        $(SRC_DIR)/zappy_net_socket_ops.c \
         $(SRC_DIR)/zappy_net_server.c \
         $(SRC_DIR)/zappy_net_client.c \
         $(SRC_DIR)/zappy_net_poll.c \
@@ -42,7 +44,11 @@ SRC_C = $(SRC_DIR)/libzappy_net.c \
         $(SRC_DIR)/zappy_net_ringbuf_flush.c \
         $(SRC_DIR)/zappy_net_ringbuf_read_fd.c \
         $(SRC_DIR)/zappy_net_io.c \
-        $(SRC_DIR)/zappy_net_readline.c
+        $(SRC_DIR)/zappy_net_readline.c \
+        $(SRC_DIR)/zappy_net_handshake_client.c \
+        $(SRC_DIR)/zappy_net_handshake_server.c \
+        $(SRC_DIR)/zappy_net_handshake_utils.c \
+        $(SRC_DIR)/zappy_net_error.c
 SRC_CPP =
 
 SRC_FILES = $(SRC_C) $(SRC_CPP)
@@ -57,8 +63,8 @@ INC_FLAGS = -I$(INC_DIR)
 all: $(NAME)
 
 $(NAME): create_directories $(OBJ_FILES)
-	@echo "Creating library $(NAME)"
-	@$(AR) $(ARFLAGS) $(NAME) $(OBJ_FILES)
+	@echo "Creating shared library $(NAME)"
+	@$(CC) -shared -o $(NAME) $(OBJ_FILES)
 	@echo "$(NAME) created successfully!"
 
 create_directories:
@@ -84,12 +90,12 @@ fclean: clean
 
 re: fclean all
 
-debug: CFLAGS += $(DEBUG_FLAGS)
-debug: CXXFLAGS += $(DEBUG_FLAGS)
+debug: CFLAGS += $(DEBUG_FLAGS) -fPIC
+debug: CXXFLAGS += $(DEBUG_FLAGS) -fPIC
 debug: re
 
-sanitize: CFLAGS += $(DEBUG_FLAGS) $(SANITIZE_FLAGS)
-sanitize: CXXFLAGS += $(DEBUG_FLAGS) $(SANITIZE_FLAGS)
+sanitize: CFLAGS += $(DEBUG_FLAGS) $(SANITIZE_FLAGS) -fPIC
+sanitize: CXXFLAGS += $(DEBUG_FLAGS) $(SANITIZE_FLAGS) -fPIC
 sanitize: re
 
 tests_run: $(NAME)

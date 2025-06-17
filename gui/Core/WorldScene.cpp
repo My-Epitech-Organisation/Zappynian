@@ -16,6 +16,7 @@
 
 void WorldScene::createEntities(int id, int x, int y, Direction direction,
                                 int level, std::string team) {
+  entityManager_.addTeams(teams_);
   auto tile = entityManager_.getTileByName(
       "Cube info: row " + std::to_string(x) + " col " + std::to_string(y));
   if (!tile) {
@@ -25,6 +26,10 @@ void WorldScene::createEntities(int id, int x, int y, Direction direction,
   entityManager_.createPlayers(id, pos.X, pos.Z, direction, level, team);
   entity_ = entityManager_.getEntities();
   receiver_.addEntity(entity_.back());
+  addChatMessage(
+      "Player " + std::to_string(id) + " created at (" + std::to_string(x) +
+      ", " + std::to_string(y) + ") with direction " +
+      std::to_string(static_cast<int>(direction)) + " and team " + team);
 }
 
 void WorldScene::setPlayerInventory(int id, int x, int y, int q0, int q1,
@@ -181,11 +186,17 @@ void WorldScene::createText() {
               smgr_->getVideoDriver()->getScreenSize().Width - 10, 200),
           false);
 
+  irr::core::dimension2du screenSize = smgr_->getVideoDriver()->getScreenSize();
+  textChat_ = smgr_->getGUIEnvironment()->addStaticText(
+      L"Chat:\n",
+      irr::core::rect<irr::s32>(10, 700, 400, screenSize.Height - 10), false);
+
   irr::gui::IGUIFont *font = smgr_->getGUIEnvironment()->getFont(
       mediaPath_ + "fonthaettenschweiler.bmp");
   if (font) {
     text->setOverrideFont(font);
     playerText->setOverrideFont(font);
+    textChat_->setOverrideFont(font);
   }
 
   receiver_.setText(text);
@@ -196,9 +207,27 @@ void WorldScene::setPlayerLevel(int id, int level) {
   for (auto &entity : entity_) {
     if (entity->getId() == id) {
       entity->setLevel(level);
+      changeHeadLevel(entity, level);
       return;
     }
   }
+}
+
+void WorldScene::changeHeadLevel(std::shared_ptr<IEntity> &entity, int level) {
+
+  std::vector<irr::io::path> texturesHead = {
+      mediaPath_ + "archer_texture/santi_head.png",
+      mediaPath_ + "archer_texture/santi_head.png",
+      mediaPath_ + "archer_texture/eliott_head.png",
+      mediaPath_ + "archer_texture/pierrick_head.png",
+      mediaPath_ + "archer_texture/matheo_head.png",
+      mediaPath_ + "archer_texture/tom_head.png",
+      mediaPath_ + "archer_texture/hugo_head.png",
+      mediaPath_ + "archer_texture/napoli_head.png",
+      mediaPath_ + "archer_texture/ay_head.png"};
+
+  entity->getNode()->getMaterial(3).setTexture(
+      0, driver_->getTexture(texturesHead[level]));
 }
 
 void WorldScene::startIncantation(int x, int y, int level,
@@ -208,6 +237,8 @@ void WorldScene::startIncantation(int x, int y, int level,
       if (entity->getId() == id) {
         incantationData_.push_back(std::make_tuple(x, y, id));
         isIncanting_[id] = true;
+        addChatMessage("Player " + std::to_string(id) + " is incanting at (" +
+                       std::to_string(x) + ", " + std::to_string(y) + ")");
         break;
       }
     }
@@ -224,6 +255,10 @@ void WorldScene::stopIncantation(int x, int y, bool result) {
         for (auto &entity : entity_) {
           if (entity->getId() == entityId) {
             entity->setLevel(entity->getLevel() + 1);
+            addChatMessage(
+                "Player " + std::to_string(entityId) + " has leveled up to " +
+                std::to_string(entity->getLevel()) +
+                " (result: " + std::string(result ? "true" : "false") + ")");
             break;
           }
         }
@@ -242,10 +277,60 @@ void WorldScene::killPlayer(int id) {
         player->getNode()->remove();
       it = entity_.erase(it);
       receiver_.removeEntity(id);
+      addChatMessage("Player " + std::to_string(id) + " has been killed.");
     } else {
       ++it;
     }
   }
+}
+
+void WorldScene::addChatMessage(const std::string &message) {
+  std::string fullMessage = "Action: " + message;
+  chatMessages_.push_back(fullMessage);
+
+  if (chatMessages_.size() > MAX_CHAT_MESSAGES) {
+    chatMessages_.erase(chatMessages_.begin());
+  }
+
+  updateChatDisplay();
+}
+
+void WorldScene::broadcast(int id, const std::string &message) {
+  std::shared_ptr<IEntity> broadcaster = nullptr;
+  for (const auto &entity : entity_) {
+    if (entity->getId() == id) {
+      broadcaster = entity;
+      break;
+    }
+  }
+  if (!broadcaster)
+    return;
+
+  std::string fullMessage = "Player " + std::to_string(id) + ": " + message;
+  addChatMessage(fullMessage);
+
+  irr::core::vector3df broadcasterPos = broadcaster->getNode()->getPosition();
+  irr::u32 currentTime = device_->getTimer()->getTime();
+
+  for (const auto &entity : entity_) {
+    if (entity->getId() == id || entity->getId() < 0)
+      continue;
+
+    auto paperPlane = entityManager_.createPaperPlane(broadcasterPos);
+    if (paperPlane) {
+      irr::core::vector3df targetPos = entity->getNode()->getPosition();
+      PaperPlaneMovement movement;
+      movement.paperPlane = paperPlane;
+      movement.targetPlayerId = entity->getId();
+      movement.startPosition = broadcasterPos;
+      movement.targetPosition = targetPos;
+      movement.startTime = currentTime;
+      movement.duration = 1.5f;
+      movement.isActive = true;
+      paperPlaneMovements_.push_back(movement);
+    }
+  }
+  entity_ = entityManager_.getEntities();
 }
 
 void WorldScene::resourceDroping(int id, const std::string &item) {
@@ -309,3 +394,59 @@ void WorldScene::createDroppedResource(int x, int y, const std::string &item) {
 }
 
 void WorldScene::createWorld() {}
+
+void WorldScene::updateChatDisplay() {
+  if (!textChat_)
+    return;
+
+  irr::core::stringw chatText = L"Chat:\n";
+  for (const auto &message : chatMessages_) {
+    chatText += irr::core::stringw(message.c_str());
+    chatText += L"\n";
+  }
+  textChat_->setText(chatText.c_str());
+}
+
+void WorldScene::updatePaperPlaneMovements() {
+  if (paperPlaneMovements_.empty())
+    return;
+  irr::u32 currentTime = device_->getTimer()->getTime();
+  for (auto it = paperPlaneMovements_.begin();
+       it != paperPlaneMovements_.end();) {
+    if (!it->isActive) {
+      ++it;
+      continue;
+    }
+
+    float elapsedTime = (currentTime - it->startTime) / 1000.0f;
+    if (elapsedTime >= it->duration) {
+      auto paperPlane = it->paperPlane;
+      if (paperPlane && paperPlane->getNode())
+        paperPlane->getNode()->remove();
+      for (auto entityIt = entity_.begin(); entityIt != entity_.end();
+           ++entityIt) {
+        if (*entityIt == paperPlane) {
+          entity_.erase(entityIt);
+          break;
+        }
+      }
+      it = paperPlaneMovements_.erase(it);
+    } else {
+      float progress = elapsedTime / it->duration;
+      progress = std::min(1.0f, std::max(0.0f, progress));
+      irr::core::vector3df currentPos = it->startPosition.getInterpolated(
+          it->targetPosition, 1.0f - progress);
+      float arcHeight = 15.0f;
+      float arcProgress = sin(progress * M_PI);
+      currentPos.Y += arcHeight * arcProgress;
+      if (it->paperPlane && it->paperPlane->getNode()) {
+        it->paperPlane->getNode()->setPosition(currentPos);
+        irr::core::vector3df direction =
+            (it->targetPosition - it->startPosition).normalize();
+        float yaw = atan2(direction.X, direction.Z) * 180.0f / M_PI;
+        it->paperPlane->getNode()->setRotation(irr::core::vector3df(0, yaw, 0));
+      }
+      ++it;
+    }
+  }
+}

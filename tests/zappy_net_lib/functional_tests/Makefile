@@ -17,11 +17,12 @@ LIB_DIR = ../../../libzappy_net
 OBJ_DIR = obj
 
 # Library
-LIB_NAME = $(LIB_DIR)/libzappy_net.a
+LIB_NAME = $(LIB_DIR)/libzappy_net.so
 
 # Source files
 SRC_FILES = test_simple_functional.c \
-            functional_test_helpers.c
+            functional_test_helpers.c \
+            test_functional_api_extensions.c
 
 OBJ_FILES = $(patsubst %.c,$(OBJ_DIR)/%.o,$(SRC_FILES))
 
@@ -36,7 +37,7 @@ $(LIB_NAME):
 	$(MAKE) -C $(LIB_DIR)
 
 $(NAME): $(OBJ_FILES)
-	$(CC) -o $@ $^ $(LIB_NAME) $(LDFLAGS)
+	$(CC) -o $@ $^ -L$(LIB_DIR) -lzappy_net $(LDFLAGS)
 	@echo "$(NAME) created successfully!"
 
 $(OBJ_DIR)/%.o: %.c

@@ -6,6 +6,9 @@
 */
 
 #include "../includes/server.h"
+#include "../includes/player.h"
+#include "../includes/death.h"
+#include "../includes/game_loop.h"
 
 int main(int argc, char **argv)
 {
@@ -24,7 +27,8 @@ int main(int argc, char **argv)
     }
     if (args_result == 1)
         return handle_free(server);
-    display_infos(server->args);
     set_server(server->connection);
-    handle_clients(server);
+    game_loop_run(server);
+    handle_free(server);
+    return 0;
 }

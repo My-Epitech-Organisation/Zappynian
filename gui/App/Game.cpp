@@ -108,6 +108,7 @@ void Game::gameLoop() {
 
     updatePlayerMovement(currentTime, scene);
     updateIncantingPlayers(scene);
+    scene.updatePaperPlaneMovements();
 
     driver_->beginScene(true, true, irr::video::SColor(255, 255, 128, 0));
 
