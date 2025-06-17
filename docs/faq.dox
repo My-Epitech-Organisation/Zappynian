@@ -1,0 +1,327 @@
+/**
+ * @page faq FAQ
+ *
+ * # ❓ Frequently Asked Questions
+ *
+ * ## 🚀 Let's start!
+ *
+ * ### Q: What is Zappy?
+ * **A:** Zappy is a multi-client network game where AI clients (called Zappynians) compete for resources on a shared world. The project consists of a server managing the game logic and multiple AI clients that can connect and play autonomously.
+ *
+ * ### Q: What are the system requirements?
+ * **A:** 
+ * - **OS**: Linux, macOS, or Windows (with WSL)
+ * - **Compiler**: GCC 8+ or Clang 10+
+ * - **Dependencies**: libconfig++, pthread, and standard C++ libraries
+ * - **Build Tools**: Make or CMake
+ * - **Memory**: At least 512MB RAM for basic gameplay
+ * - **Network**: TCP/IP connectivity
+ *
+ * ### Q: How do I compile the project?
+ * **A:** Simply run `make` in the project root directory. This will compile all components (server, AI client, and GUI if available). For specific components:
+ * ```bash
+ * make server   # Server only
+ * make ai       # AI client only
+ * make gui      # GUI only
+ * ```
+ *
+ * ### Q: How do I start a basic game?
+ * **A:** 
+ * 1. Start the server: `./zappy_server -p 4242 -x 10 -y 10 -n team1 team2 -c 6 -f 100`
+ * 2. Connect AI clients: `./zappy_ai -p 4242 -n team1 -h localhost`
+ * 3. Optionally start GUI: `./zappy_gui -p 4242 -h localhost`
+ *
+ * ---
+ *
+ * ## 🎮 Gameplay
+ *
+ * ### Q: What is the goal of the game?
+ * **A:** Teams of Zappynians compete to reach the highest level by collecting resources, performing incantations, and surviving in the shared world. The first team to have 6 players reach level 8 wins.
+ *
+ * ### Q: What resources are available in the game?
+ * **A:** There are 7 types of resources:
+ * - **Food**: Essential for survival (players die without food)
+ * - **Linemate**: Required for leveling up
+ * - **Deraumere**: Required for higher level incantations
+ * - **Sibur**: Used in level advancement rituals
+ * - **Mendiane**: Needed for advanced incantations
+ * - **Phiras**: Required for high-level progression
+ * - **Thystame**: The rarest resource, needed for final levels
+ *
+ * ### Q: How does the leveling system work?
+ * **A:** Players advance through 8 levels by:
+ * 1. Collecting specific resources for their current level
+ * 2. Gathering with the required number of same-level teammates
+ * 3. Performing an incantation ritual
+ * 4. Successfully completing the incantation to advance
+ *
+ * ### Q: How many players are needed for incantations?
+ * **A:** The number of players required depends on the level:
+ * - Level 1→2: 1 player
+ * - Level 2→3: 2 players
+ * - Level 3→4: 2 players
+ * - Level 4→5: 4 players
+ * - Level 5→6: 4 players
+ * - Level 6→7: 6 players
+ * - Level 7→8: 6 players
+ *
+ * ### Q: What happens when a player dies?
+ * **A:** When a player runs out of food, they die and are removed from the game. A new player from the same team can join if there are available slots.
+ *
+ * ---
+ *
+ * ## 🤖 AI Development
+ *
+ * ### Q: How do I create a custom AI strategy?
+ * **A:** 
+ * 1. Create a class inheriting from `IAIStrategy`
+ * 2. Implement the required methods (`getNextAction`, `updateStrategy`)
+ * 3. Register your strategy in the AI client
+ * 4. Test with different scenarios
+ *
+ * See the [User Guide](user_guide.html#extending-zappy) for detailed examples.
+ *
+ * ### Q: What AI behaviors are available by default?
+ * **A:** The default AI includes:
+ * - Resource collection and management
+ * - Team coordination for incantations
+ * - Survival and food management
+ * - Basic exploration and movement
+ * - Adaptive strategy based on game state
+ *
+ * ### Q: Can I make my AI learn and adapt?
+ * **A:** Yes! The AI framework supports:
+ * - Strategy adaptation based on success/failure
+ * - Learning from other team members
+ * - Dynamic behavior switching
+ * - Performance optimization over time
+ *
+ * ### Q: How do I debug my AI?
+ * **A:** Use these debugging techniques:
+ * ```bash
+ * # Enable debug logging
+ * ./zappy_ai -p 4242 -n team1 -h localhost --debug
+ * 
+ * # Use GDB for step-by-step debugging
+ * gdb ./zappy_ai
+ * 
+ * # Monitor network traffic
+ * tcpdump -i lo port 4242
+ * ```
+ *
+ * ---
+ *
+ * ## 🌐 Network & Protocol
+ *
+ * ### Q: What network protocol does Zappy use?
+ * **A:** Zappy uses TCP/IP with a custom text-based protocol. Commands and responses are sent as plain text strings over TCP connections.
+ *
+ * ### Q: Can I connect clients from different machines?
+ * **A:** Yes! Use the `-h` parameter to specify the server's IP address:
+ * ```bash
+ * ./zappy_ai -p 4242 -n team1 -h 192.168.1.100
+ * ```
+ *
+ * ### Q: What happens if the network connection is lost?
+ * **A:** 
+ * - **Server**: Removes disconnected clients and continues the game
+ * - **AI Client**: Can implement reconnection logic or gracefully exit
+ * - **GUI**: Should handle disconnection and allow reconnection
+ *
+ * ### Q: Is there a maximum number of clients?
+ * **A:** Yes, the maximum is set by the `-c` parameter when starting the server. This includes both AI clients and GUI connections.
+ *
+ * ### Q: Can I monitor network traffic for debugging?
+ * **A:** Yes, use tools like:
+ * ```bash
+ * # Monitor all traffic on port 4242
+ * tcpdump -A -i any port 4242
+ * 
+ * # Use Wireshark for GUI monitoring
+ * wireshark -i lo -f "port 4242"
+ * ```
+ *
+ * ---
+ *
+ * ## 🔧 Troubleshooting
+ *
+ * ### Q: The server won't start - "Address already in use"
+ * **A:** Another process is using the port. Try:
+ * ```bash
+ * # Find and kill the process using the port
+ * lsof -ti:4242 | xargs kill -9
+ * 
+ * # Or use a different port
+ * ./zappy_server -p 4243 ...
+ * ```
+ *
+ * ### Q: AI clients can't connect to the server
+ * **A:** Check these common issues:
+ * 1. **Server running**: Ensure the server is started and listening
+ * 2. **Correct port**: Verify both server and client use the same port
+ * 3. **Team name**: Ensure the team name exists on the server
+ * 4. **Firewall**: Check if firewall is blocking connections
+ * 5. **Network**: Test with `telnet localhost 4242`
+ *
+ * ### Q: The game runs too slowly/quickly
+ * **A:** Adjust the frequency parameter:
+ * ```bash
+ * # Slower game (50 time units per second)
+ * ./zappy_server -p 4242 -x 10 -y 10 -n team1 -c 6 -f 50
+ * 
+ * # Faster game (200 time units per second)
+ * ./zappy_server -p 4242 -x 10 -y 10 -n team1 -c 6 -f 200
+ * ```
+ *
+ * ### Q: Compilation fails with missing dependencies
+ * **A:** Install required dependencies:
+ * ```bash
+ * # Ubuntu/Debian
+ * sudo apt-get install build-essential libconfig++-dev
+ * 
+ * # Fedora/RHEL
+ * sudo dnf install gcc-c++ libconfig-devel
+ * 
+ * # macOS
+ * brew install libconfig
+ * ```
+ *
+ * ### Q: Memory leaks detected
+ * **A:** Use debugging tools to identify leaks:
+ * ```bash
+ * # Check for memory leaks
+ * valgrind --leak-check=full ./zappy_server <args>
+ * 
+ * # For more detailed analysis
+ * valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes ./zappy_ai <args>
+ * ```
+ *
+ * ### Q: AI client crashes unexpectedly
+ * **A:** Debug the crash:
+ * ```bash
+ * # Enable core dumps
+ * ulimit -c unlimited
+ * 
+ * # Run with GDB
+ * gdb ./zappy_ai
+ * (gdb) run -p 4242 -n team1 -h localhost
+ * 
+ * # Analyze core dump
+ * gdb ./zappy_ai core
+ * ```
+ *
+ * ---
+ *
+ * ## 🏗️ Development
+ *
+ * ### Q: Which design patterns are used in the project?
+ * **A:** The project implements several design patterns:
+ * - **Factory**: For creating commands and clients
+ * - **Observer**: For game state notifications
+ * - **Builder**: For world and AI strategy construction
+ * - **Strategy**: For AI decision-making algorithms
+ * - **Mediator**: For component communication
+ *
+ * ### Q: How do I add a new command to the protocol?
+ * **A:** 
+ * 1. Define the command in the protocol enum
+ * 2. Create a command handler class
+ * 3. Register it in the CommandFactory
+ * 4. Update protocol documentation
+ * 5. Implement client-side handling
+ *
+ * ### Q: Can I extend the project with plugins?
+ * **A:** Yes! The architecture supports plugins for:
+ * - Custom AI behaviors
+ * - New game mechanics
+ * - Additional commands
+ * - GUI extensions
+ *
+ * ### Q: How do I contribute to the project?
+ * **A:** 
+ * 1. Fork the repository
+ * 2. Create a feature branch
+ * 3. Follow the coding standards
+ * 4. Add tests for new features
+ * 5. Submit a pull request
+ * 6. Ensure CI/CD passes
+ *
+ * ### Q: What testing frameworks are used?
+ * **A:** The project uses:
+ * - **Unit Tests**: Custom testing framework
+ * - **Integration Tests**: Shell scripts
+ * - **Performance Tests**: Custom benchmarking
+ * - **Memory Tests**: Valgrind integration
+ *
+ * ---
+ *
+ * ## 📊 Performance
+ *
+ * ### Q: How many clients can the server handle?
+ * **A:** Performance depends on hardware, but typical limits are:
+ * - **Development**: 10-50 clients
+ * - **Production**: 100-500 clients
+ * - **High-performance**: 1000+ clients (with optimizations)
+ *
+ * ### Q: How can I optimize server performance?
+ * **A:** 
+ * - Use release builds (`make RELEASE=1`)
+ * - Optimize world size for your use case
+ * - Tune the frequency parameter
+ * - Consider using epoll instead of select
+ * - Profile with tools like `perf` or `gprof`
+ *
+ * ### Q: My AI is too slow - how can I optimize it?
+ * **A:** 
+ * - Cache expensive calculations
+ * - Reduce unnecessary network requests
+ * - Optimize pathfinding algorithms
+ * - Use efficient data structures
+ * - Profile your AI code
+ *
+ * ---
+ *
+ * ## 🔍 Advanced Topics
+ *
+ * ### Q: How does the time management system work?
+ * **A:** The server uses a tick-based system where:
+ * - Each action takes a specific number of time units
+ * - The frequency parameter controls ticks per second
+ * - Actions are queued and executed based on timing
+ * - Food consumption is time-based
+ *
+ * ### Q: Can I run multiple games simultaneously?
+ * **A:** Yes, start multiple servers on different ports:
+ * ```bash
+ * ./zappy_server -p 4242 -x 10 -y 10 -n team1 team2 -c 6 -f 100 &
+ * ./zappy_server -p 4243 -x 15 -y 15 -n red blue -c 8 -f 150 &
+ * ```
+ *
+ * ### Q: How is randomness handled in the game?
+ * **A:** The server uses deterministic pseudo-random number generation for:
+ * - Resource spawning
+ * - Player spawn positions
+ * - Some game mechanics
+ * This ensures reproducible behavior for testing.
+ *
+ * ### Q: Can I create custom world configurations?
+ * **A:** Currently, world parameters are set via command-line arguments. For more complex configurations, you would need to extend the WorldBuilder class.
+ *
+ * ---
+ *
+ * ## 🔗 Navigation
+ * 
+ * - 🏠 [Main Page](index.html)
+ * - 📖 \ref user_guide "User Guide" - Complete setup and gameplay instructions
+ * - ❓ \ref faq "FAQ" - Frequently asked questions and troubleshooting
+ * - 📡 \ref protocol "Network Protocol" - Technical communication specifications
+ * - 🛠️ [GitHub](https://github.com/My-Epitech-Organisation/Raytracer)
+ *
+ * ---
+ *
+ * **Still have questions?** 
+ * 
+ * Check our [GitHub Issues](https://github.com/My-Epitech-Organisation/Zappynian/issues) or create a new issue for technical problems and feature requests.
+ *
+ * ---
+ */
