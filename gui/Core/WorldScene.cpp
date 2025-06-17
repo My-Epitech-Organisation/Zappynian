@@ -63,7 +63,6 @@ void WorldScene::createEntities(int x, int y, int q0, int q1, int q2, int q3,
 }
 
 void WorldScene::createEntities(int id) {
-  entity_ = entityManager_.getEntities();
   entityManager_.createEgg(id);
   entity_ = entityManager_.getEntities();
 }
