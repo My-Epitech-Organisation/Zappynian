@@ -3,11 +3,9 @@ from typing import Dict
 class WorldState:
 
     def __init__(self):
-        # Initialise l'inventaire comme un dictionnaire vide
         self.inventory: Dict[str, int] = {}
 
     def parse_inventory(self, line: str):
-        # Analyse une ligne d'inventaire et met à jour l'inventaire interne
         if not line.startswith("[") or not line.endswith("]"):
             return
         content = line[1:-1].strip()
@@ -25,9 +23,7 @@ class WorldState:
                     continue
 
     def get_food_count(self) -> int:
-        # Retourne la quantité de nourriture dans l'inventaire
         return self.inventory.get("food", 0)
 
     def __str__(self):
-        # Retourne une représentation chaîne de l'inventaire
         return str(self.inventory)

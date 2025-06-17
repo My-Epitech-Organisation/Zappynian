@@ -1,27 +1,14 @@
 from ai.src.roles.base_role import Role
+from ai.src.utils.route_factory import route_to
 
 class Survivor(Role):
     def __init__(self):
         super().__init__("Survivor")
 
     def decide(self, queue, world, vision):
-        tile = vision.find_nearest("food")
-
-        if tile == 0:
-            queue.push("Take food")
-            queue.push("Forward")
-        elif tile == 1:
-            queue.push("Forward")
-            queue.push("Take food")
-        elif tile in [2, 3]:
-            queue.push("Right")
-            queue.push("Forward")
-            queue.push("Take food")
-        elif tile in [4, 5]:
-            queue.push("Left")
-            queue.push("Forward")
-            queue.push("Take food")
-        else:
-            queue.push("Right")
-            queue.push("Forward")
-            queue.push("Look")
+        food_tile = vision.find_nearest("food")
+        if food_tile != -1:
+            path = route_to(food_tile)
+            for cmd in path:
+                queue.send_and_wait(cmd)
+            queue.send_and_wait("Take food")

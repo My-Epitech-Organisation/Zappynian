@@ -6,13 +6,13 @@ from ai.src.connection import Connection
 from ai.src.command_queue import CommandQueue
 from ai.src.inventory_parser import WorldState
 from ai.src.vision_parser import Vision
-from ai.src.roles.survivor import Survivor
+from ai.src.roles.scout import Scout
+from ai.src.roles.role_selector import select_role
 
 
 class ZappyAI:
 
     def __init__(self, host: str, port: int, team_name: str):
-        # Initialise l'IA avec les paramètres de connexion et le nom d'équipe.
         self.host = host
         self.port = port
         self.team_name = team_name
@@ -20,33 +20,24 @@ class ZappyAI:
         self.queue = None
         self.world = WorldState()
         self.vision = Vision()
-        self.role = Survivor()
+        self.role = Scout()
 
     def run(self):
-        # Lance la connexion, effectue le handshake et démarre la logique principale de l'IA.
         print(f"[INFO] Starting AI for team '{self.team_name}' on {self.host}:{self.port}")
         self.conn.connect()
         self.conn.handshake()
         self.queue = CommandQueue(self.conn)
-        self.queue.push("Inventory")
-        self.queue.push("Look")
+
         while True:
-            self.queue.flush()
-            line = self.conn.read_line()
-            if not line:
-                continue
-            print("[RECV]", line)
-            self.queue.handle_response(line)
-            if line.startswith("["):
-                if any(char.isdigit() for char in line):
-                    self.world.parse_inventory(line)
-                    print("[DEBUG] Inventory:", self.world)
-                else:
-                    self.vision.parse_look(line)
-                    print("[DEBUG] Vision:", self.vision)
+            inv_line = self.queue.send_and_wait("Inventory")
+            if inv_line.startswith("[") and any(char.isdigit() for char in inv_line):
+                self.world.parse_inventory(inv_line)
+            look_line = self.queue.send_and_wait("Look")
+            if look_line.startswith("[") and not any(char.isdigit() for char in look_line):
+                self.vision.parse_look(look_line)
+            self.role = select_role(self.world, self.vision)
             self.role.decide(self.queue, self.world, self.vision)
-            self.queue.push("Inventory")
-            self.queue.push("Look")
+            self.queue.flush()
 
 
 def parse_args():
@@ -65,7 +56,6 @@ def parse_args():
 
 
 def main():
-    # Point d'entrée principal du programme, gère les exceptions et lance l'IA.
     args = parse_args()
     try:
         ai = ZappyAI(args.host, args.port, args.team)
