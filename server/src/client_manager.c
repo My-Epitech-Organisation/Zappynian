@@ -70,10 +70,10 @@ void assign_client_type(client_t *client, server_connection_t *connection,
         team_t *team = get_team_by_name(args, team_name);
         team->current_players++;
         client->team_name = strdup(team_name);
-        printf("Client %d is an IA client %s.\n", client->fd, team_name);
+        printf("Client is an IA client: %s\n", team_name);
     } else {
         client->team_name = strdup("GRAPHIC");
-        printf("Client %d is a GUI client.\n", client->fd);
+        printf("Client is a GUI client.\n");
     }
 }
 
@@ -95,14 +95,11 @@ void handle_client_read(server_connection_t *connection, int idx)
         return;
     }
 
-    printf("Command from client %d: %s\n", client->fd, line);
+    printf("Command received: %s\n", line);
 
-    // Process the received command
     if (line[0] != '\0') {
         strncpy(client->read_buffer, line, BUFFER_SIZE - 1);
         client->read_buffer[BUFFER_SIZE - 1] = '\0';
-        // Process command here
-        // Don't forget to free the line allocated by zn_readline
         free(line);
     }
 }
@@ -117,13 +114,11 @@ void disconnect_client(server_connection_t *connection, int client_idx)
         team = get_team_by_name(args, client->team_name);
         if (team && team->current_players > 0) {
             team->current_players--;
-            printf("Client %d disco from team %s.\n", client->fd, team->name);
+            printf("Client disconnected from team %s.\n", team->name);
         }
     }
     if (client->zn_sock != NULL) {
         zn_close(client->zn_sock);
-    } else if (client->fd != -1) {
-        close(client->fd);
     }
     free(client->team_name);
     free(client);
