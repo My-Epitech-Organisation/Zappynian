@@ -11,4 +11,5 @@ class Scout(Role):
 
         path = route_to(tile)
         for cmd in path:
-            queue.push(cmd)
+            queue.send_and_wait(cmd)
+        queue.send_and_wait("Take food")

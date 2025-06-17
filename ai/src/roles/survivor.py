@@ -6,9 +6,9 @@ class Survivor(Role):
         super().__init__("Survivor")
 
     def decide(self, queue, world, vision):
-        tile = vision.find_nearest("food")
-
-        path = route_to(tile)
-        for cmd in path:
-            queue.push(cmd)
-        queue.push("Take food")
+        food_tile = vision.find_nearest("food")
+        if food_tile != -1:
+            path = route_to(food_tile)
+            for cmd in path:
+                queue.send_and_wait(cmd)
+            queue.send_and_wait("Take food")

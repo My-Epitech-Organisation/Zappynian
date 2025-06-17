@@ -14,16 +14,21 @@ class Miner(Role):
             "phiras": 1,
             "thystame": 1,
         }
-
-        for stone in goals:
+        vision_data = queue.send_and_wait("Look")
+        vision.parse_look(vision_data)
+        inv_data = queue.send_and_wait("Inventory")
+        world.parse_inventory(inv_data)
+        for stone, goal in goals.items():
             current = world.inventory.get(stone, 0)
-            if current < goals[stone]:
+            if current < goal:
                 tile = vision.find_nearest(stone)
-                path = route_to(tile)
-                for cmd in path:
-                    queue.push(cmd)
-                queue.push(f"Take {stone}")
-                break
-        else:
-            queue.push("Forward")
-            queue.push("Right")
+                if tile is not None:
+                    path = route_to(tile)
+                    for cmd in path:
+                        queue.send_and_wait(cmd)
+                    queue.send_and_wait(f"Take {stone}")
+                else:
+                    queue.send_and_wait("Forward")
+                    queue.send_and_wait("Forward")
+                    queue.send_and_wait("Forward")
+                return
