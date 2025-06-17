@@ -32,11 +32,6 @@ typedef enum {
 
 typedef struct client_s {
     zn_socket_t zn_sock;
-    char read_buffer[BUFFER_SIZE];
-    int read_index;
-    char write_buffer[BUFFER_SIZE];
-    int write_index;
-    int write_total;
     client_type_t type;
     char *team_name;
 } client_t;
@@ -104,14 +99,9 @@ void accept_client(server_connection_t *connection, server_args_t *args);
 void server_loop(server_t *server);
 void stop_server_loop(void);
 
-// String utilities
-void send_string_to_client(client_t *client, char *str);
-int strlen_custom(char *str);
-
 /* Network integration functions */
 int init_network_integration(void);
 void cleanup_network_integration(void);
-zn_socket_t setup_zappy_server_socket(int port);
 
 /* Client socket management */
 void init_client_zappy_socket(client_t *client, zn_socket_t zn_sock);
