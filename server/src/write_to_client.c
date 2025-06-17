@@ -9,15 +9,19 @@
 
 void send_to_client(client_t *client, const char *msg)
 {
-    // We'll use the client's write_buffer as a staging area
-    // before calling zn_write in handle_client_write
     int len = strlen(msg);
 
-    if (len > BUFFER_SIZE)
-        len = BUFFER_SIZE;
-    memcpy(client->write_buffer, msg, len);
-    client->write_total = len;
-    client->write_index = 0;
+    if (len > 0) {
+        if (zn_write(client->zn_sock, msg, len) < len) {
+            int remaining = len - client->write_index;
+            if (remaining > BUFFER_SIZE)
+                remaining = BUFFER_SIZE;
+            memcpy(client->write_buffer, msg + client->write_index, remaining);
+            client->write_total = remaining;
+            client->write_index = 0;
+        }
+        zn_flush(client->zn_sock);
+    }
 }
 
 void handle_client_write(server_connection_t *connection, int client_idx)
@@ -25,7 +29,6 @@ void handle_client_write(server_connection_t *connection, int client_idx)
     client_t *client = connection->clients[client_idx];
     ssize_t bytes;
 
-    // First, write any pending data to the socket's internal buffer
     if (client->write_total > 0) {
         bytes = zn_write(client->zn_sock,
             client->write_buffer + client->write_index,
@@ -45,7 +48,6 @@ void handle_client_write(server_connection_t *connection, int client_idx)
         }
     }
 
-    // Then flush the data to the network
     bytes = zn_flush(client->zn_sock);
     if (bytes < 0 && errno != EAGAIN && errno != EWOULDBLOCK) {
         disconnect_client(connection, client_idx);
