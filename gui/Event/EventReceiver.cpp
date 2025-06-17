@@ -223,7 +223,7 @@ bool EventReceiver::handleNodeSelection(
           irr::core::stringw(L"Selected Cube: ") + c->getName().c_str();
       std::vector<std::string> stoneNames = {"food",    "linemate", "deraumere",
                                              "sibur",   "mendiane", "phiras",
-                                             "thystame"};
+                                             "thystame", "egg"};
       for (std::size_t i = 0; i < stoneNames.size(); ++i) {
         selectedText += L"\n: ";
         selectedText += irr::core::stringw(stoneNames[i].c_str());
