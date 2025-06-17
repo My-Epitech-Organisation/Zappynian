@@ -142,6 +142,10 @@ void EntityManager::createEgg(int id) {
           eggTextures, mediaPath_ + "Egg.b3d");
       entity_.push_back(egg);
       egg->createNode(smgr_, driver_);
+      getTileByName("Cube info: row " + std::to_string(
+          static_cast<int>(pos.X / 20)) + " col " +
+          std::to_string(static_cast<int>(pos.Z / 20)))->getInventory().addItem(
+          "egg", 1);
       break;
     }
   }
