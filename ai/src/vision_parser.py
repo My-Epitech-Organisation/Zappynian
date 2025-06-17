@@ -3,11 +3,9 @@ from typing import List
 class Vision:
 
     def __init__(self):
-        # Initialise la liste des tuiles visibles
         self.tiles: List[List[str]] = []
 
     def parse_look(self, line: str):
-        # Analyse une ligne de vision et met à jour les tuiles visibles
         if not line.startswith("[") or not line.endswith("]"):
             return
         content = line[1:-1].strip()
@@ -20,18 +18,15 @@ class Vision:
             self.tiles.append(items)
 
     def get_tile(self, index: int) -> List[str]:
-        # Retourne la liste des objets sur la tuile à l'index donné
         if 0 <= index < len(self.tiles):
             return self.tiles[index]
         return []
 
     def find_nearest(self, target: str) -> int:
-        # Trouve l'index de la tuile la plus proche contenant la cible
         for i, tile in enumerate(self.tiles):
             if target in tile:
                 return i
         return -1
 
     def __str__(self):
-        # Retourne une représentation chaîne des tuiles visibles
         return str(self.tiles)
