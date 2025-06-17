@@ -2,9 +2,9 @@ from ai.src.roles.base_role import Role
 from ai.src.utils.route_factory import route_to
 
 GOALS = {
-    "linemate": 2,
-    "deraumere": 2,
-    "sibur": 2,
+    "linemate": 1,
+    "deraumere": 1,
+    "sibur": 1,
     "mendiane": 1,
     "phiras": 1,
     "thystame": 1,
@@ -15,7 +15,6 @@ class Miner(Role):
         super().__init__("Miner")
 
     def decide(self, queue, world, vision):
-        print("[Miner]")
         vision_data = queue.send_and_wait("Look")
         vision.parse_look(vision_data)
         inv_data = queue.send_and_wait("Inventory")

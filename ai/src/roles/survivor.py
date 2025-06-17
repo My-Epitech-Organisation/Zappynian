@@ -6,7 +6,6 @@ class Survivor(Role):
         super().__init__("Survivor")
 
     def decide(self, queue, world, vision):
-        print("[Survivor]")
         food_tile = vision.find_nearest("food")
         if food_tile != -1:
             path = route_to(food_tile)
