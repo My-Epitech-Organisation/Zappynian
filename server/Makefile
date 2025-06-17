@@ -34,13 +34,15 @@ SRCS	=	src/main.c				\
 			src/player.c 			\
 			src/elevation.c 		\
 			src/team.c 				\
+			src/network_integration.c \
+			src/client_adapters.c 	\
 
 OBJS	=	$(SRCS:.c=.o)
 
 TESTS	=	$(wildcard ../tests/server/*.c)
 
-CFLAGS	= 	-I./includes -Wall -Wextra -Werror
-LDFLAGS	=  -lcriterion --coverage
+CFLAGS	= 	-I./includes -I../libzappy_net/include -Wall -Wextra -Werror
+LDFLAGS	=  -L../libzappy_net -lzappy_net -lcriterion --coverage
 
 NO_COLOR=\033[0m
 RED=\033[0;31m

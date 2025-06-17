@@ -15,27 +15,23 @@
     #include <string.h>
     #include <unistd.h>
     #include <getopt.h>
-    #include <arpa/inet.h>
-    #include <sys/types.h>
-    #include <sys/socket.h>
-    #include <netinet/in.h>
-    #include <errno.h>
-    #include <poll.h>
     #include <stdbool.h>
     #include "world.h"
     #include "player.h"
     #include "resource.h"
     #include "commands.h"
+    #include "../../libzappy_net/include/zappy_net.h"
 
 typedef struct team_s team_t;
 
 typedef enum {
-    CLIENT_UNKNOWN,
-    CLIENT_IA,
-    CLIENT_GUI
+    CLIENT_UNKNOWN = ZN_ROLE_UNKNOWN,
+    CLIENT_IA = ZN_ROLE_AI,
+    CLIENT_GUI = ZN_ROLE_GUI
 } client_type_t;
 
 typedef struct client_s {
+    zn_socket_t zn_sock;
     int fd;
     struct sockaddr_in addr;
     socklen_t addr_len;
@@ -61,6 +57,7 @@ typedef struct server_args_s {
 } server_args_t;
 
 typedef struct server_connection_s {
+    zn_socket_t zn_server;
     int fd;
     int nfds;
     struct sockaddr_in addr;
@@ -112,5 +109,12 @@ int check_correct_read(server_connection_t *connection, int idx,
 
 void put_str_fd(int fd, char *str);
 int strlen_fd(char *str);
+
+int init_network_integration(void);
+void cleanup_network_integration(void);
+zn_socket_t setup_zappy_server_socket(int port);
+
+void init_client_zappy_socket(client_t *client, zn_socket_t zn_sock);
+void cleanup_client_zappy_socket(client_t *client);
 
 #endif /* SERVER_H */
