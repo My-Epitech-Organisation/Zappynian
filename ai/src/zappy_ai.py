@@ -27,25 +27,18 @@ class ZappyAI:
         self.conn.connect()
         self.conn.handshake()
         self.queue = CommandQueue(self.conn)
-        self.queue.push("Inventory")
-        self.queue.push("Look")
+
         while True:
-            self.queue.flush()
-            line = self.conn.read_line()
-            if not line:
-                continue
-            print("[RECV]", line)
-            self.queue.handle_response(line)
-            if line.startswith("["):
-                if any(char.isdigit() for char in line):
-                    self.world.parse_inventory(line)
-                    print("[DEBUG] Inventory:", self.world)
-                else:
-                    self.vision.parse_look(line)
+            inv_line = self.queue.send_and_wait("Inventory")
+            if inv_line.startswith("[") and any(char.isdigit() for char in inv_line):
+                self.world.parse_inventory(inv_line)
+                print("[DEBUG] Inventory:", self.world)
+            look_line = self.queue.send_and_wait("Look")
+            if look_line.startswith("[") and not any(char.isdigit() for char in look_line):
+                self.vision.parse_look(look_line)
             self.role = select_role(self.world, self.vision)
             self.role.decide(self.queue, self.world, self.vision)
-            self.queue.push("Inventory")
-            self.queue.push("Look")
+            self.queue.flush()
 
 
 def parse_args():
