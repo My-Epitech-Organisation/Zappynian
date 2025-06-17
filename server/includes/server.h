@@ -32,9 +32,6 @@ typedef enum {
 
 typedef struct client_s {
     zn_socket_t zn_sock;
-    int fd;
-    struct sockaddr_in addr;
-    socklen_t addr_len;
     char read_buffer[BUFFER_SIZE];
     int read_index;
     char write_buffer[BUFFER_SIZE];
@@ -58,10 +55,6 @@ typedef struct server_args_s {
 
 typedef struct server_connection_s {
     zn_socket_t zn_server;
-    int fd;
-    int nfds;
-    struct sockaddr_in addr;
-    struct pollfd *fds;
     client_t **clients;
     int client_count;
     int port;
@@ -96,12 +89,10 @@ void display_infos(server_args_t *server);
 int handle_free(server_t *server);
 void handle_error_connection(char *msg, server_connection_t *connection);
 
+// Simplified network setup function
 void set_server(server_connection_t *connection);
-void set_bind(server_connection_t *connection);
-void set_listen(server_connection_t *connection);
-int set_server_socket(server_connection_t *connection);
 
-void handle_clients(server_t *server);
+// Client handling functions
 void handle_client_read(server_connection_t *connection, int client_idx);
 void handle_client_write(server_connection_t *connection, int client_idx);
 void disconnect_client(server_connection_t *connection, int client_idx);
@@ -113,13 +104,16 @@ void accept_client(server_connection_t *connection, server_args_t *args);
 void server_loop(server_t *server);
 void stop_server_loop(void);
 
-void put_str_fd(int fd, char *str);
-int strlen_fd(char *str);
+// String utilities
+void send_string_to_client(client_t *client, char *str);
+int strlen_custom(char *str);
 
+/* Network integration functions */
 int init_network_integration(void);
 void cleanup_network_integration(void);
 zn_socket_t setup_zappy_server_socket(int port);
 
+/* Client socket management */
 void init_client_zappy_socket(client_t *client, zn_socket_t zn_sock);
 void cleanup_client_zappy_socket(client_t *client);
 
