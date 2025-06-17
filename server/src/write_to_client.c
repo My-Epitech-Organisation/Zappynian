@@ -52,7 +52,7 @@ void handle_client_write(server_connection_t *connection, int client_idx)
     }
 }
 
-int strlen_fd(char *str)
+int strlen_custom(char *str)
 {
     int len = 0;
 
@@ -63,40 +63,16 @@ int strlen_fd(char *str)
     return len;
 }
 
-/**
- * Helper function to find a client from fd
- * Note: this is currently unused as we're still transitioning
- * from direct fd usage to using zn_socket_t.
- */
-static client_t *find_client_by_fd(server_connection_t *connection, int fd)
-    __attribute__((unused));
-
-static client_t *find_client_by_fd(server_connection_t *connection, int fd)
+void send_string_to_client(client_t *client, char *str)
 {
-    for (int i = 0; i < connection->client_count; i++) {
-        if (connection->clients[i] && connection->clients[i]->fd == fd) {
-            return connection->clients[i];
-        }
-    }
-    return NULL;
-}
-
-void put_str_fd(int fd, char *str)
-{
-    // Note: This function is now less efficient as we have to look up
-    // the zn_socket_t by fd. In production code, we might want to
-    // change the function signature to accept zn_socket_t directly.
-
     int len = 0;
     ssize_t write_ret = 0;
 
-    if (!str)
+    if (!str || !client || !client->zn_sock)
         return;
-    len = strlen_fd(str);
 
-    // We'll continue using write() for now since we don't have access to
-    // the server_connection_t here to find the client by fd
-    write_ret = write(fd, str, len);
+    len = strlen_custom(str);
+    write_ret = zn_write(client->zn_sock, str, len);
     if (write_ret < 0) {
         perror("write");
         return;
@@ -106,5 +82,7 @@ void put_str_fd(int fd, char *str)
         return;
     }
     if (write_ret < len)
-        put_str_fd(fd, str + write_ret);
+        send_string_to_client(client, str + write_ret);
+
+    zn_flush(client->zn_sock);
 }
