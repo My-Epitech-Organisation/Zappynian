@@ -1,0 +1,83 @@
+/**
+ * @page getting_started Getting Started
+ *
+ * ## 🚀 Getting Started
+ * 
+ * ### Step 1: Build the Project
+ * ```bash
+ * make
+ * ```
+ * This builds all three binaries: `zappy_server`, `zappy_gui`, and `zappy_ai`.
+ * 
+ * ### Step 2: Start the Server
+ * ```bash
+ * ./zappy_server -p 4242 -x 10 -y 10 -n team1 team2 -c 3 -f 100
+ * ```
+ * 
+ * ### Step 3: Launch the GUI
+ * ```bash
+ * ./zappy_gui -p 4242 -h localhost
+ * ```
+ * 
+ * ### Step 4: Connect AI Clients
+ * ```bash
+ * ./zappy_ai -p 4242 -n team1 -h localhost
+ * ```
+ * 
+ * ---
+ * 
+ * ## 📋 Server Command Options
+ * 
+ * | Option | Description |
+ * |--------|-------------|
+ * | `-p port` | Port number for server |
+ * | `-x width` | Width of the world |
+ * | `-y height` | Height of the world |
+ * | `-n name1 name2 ...` | Team names |
+ * | `-c clientsNb` | Number of authorized clients per team |
+ * | `-f freq` | Reciprocal of time unit for execution |
+ * 
+ * ## 🎮 GUI Command Options
+ * 
+ * | Option | Description |
+ * |--------|-------------|
+ * | `-p port` | Port number |
+ * | `-h machine` | Hostname of the server |
+ * 
+ * ## 🤖 AI Command Options
+ * 
+ * | Option | Description |
+ * |--------|-------------|
+ * | `-p port` | Port number |
+ * | `-n name` | Name of the team |
+ * | `-h machine` | Hostname (default: localhost) |
+ *
+ * ---
+ *
+ * ## ⚙️ Makefile
+ * 
+ * The Makefile provides the following targets:
+ *
+ * ```bash
+ * make          # Compiles the project and creates the raytracer executable
+ * make clean    # Removes object files
+ * make fclean   # Removes all compiled files, build directory, and documentation
+ * make re       # Completely rebuilds the project (fclean + all)
+ * make normalize # Applies clang-format to all C++ files
+ * make check_normalize # Checks if code follows clang-format style without modifying
+ * make tests_run # Compiles and runs unit tests
+ * make cov      # Generates code coverage report (requires lcov)
+ * make doc      # Generates documentation using Doxygen and opens it
+ * ```
+ *
+ * ---
+ * ## 🔗 Navigation
+ * 
+ * - 🏠 \ref getting_started "Getting Started" - Quick setup and launch instructions
+ * - 📖 \ref user_guide "User Guide" - Complete setup and gameplay instructions
+ * - ❓ \ref faq "FAQ" - Frequently asked questions and troubleshooting
+ * - 🎮 \ref gameplay "Gameplay Guide" - Strategies and game mechanics
+ * - 📡 \ref protocol "Network Protocol" - Technical communication specifications
+ * - 🛠️ [GitHub](https://github.com/My-Epitech-Organisation/Raytracer)
+ *
+ */
