@@ -52,11 +52,15 @@ public:
 
   void setPlayerLevel(int id, int level);
 
+  void changeHeadLevel(std::shared_ptr<IEntity> &entity, int level);
+
   void createEntities(int x, int y, int q0, int q1, int q2, int q3, int q4,
                       int q5, int q6, int nbTiles);
 
   void createEntities(int x, int y, int q0, int q1, int q2, int q3, int q4,
                       int q5, int q6);
+
+  void createEntities(int id);
 
   void changePlayerPos(int id, int x, int y, Direction direction);
   EdgePositionResult isEdgePosition(const irr::core::vector3df &position,
@@ -91,6 +95,10 @@ public:
   void broadcast(int id, const std::string &message);
 
   void addTeam(const std::string &team) { teams_.push_back(team); }
+
+  void clearElements();
+
+  void endGame(std::string winner);
 
 protected:
   irr::IrrlichtDevice *device_;

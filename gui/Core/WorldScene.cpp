@@ -62,6 +62,11 @@ void WorldScene::createEntities(int x, int y, int q0, int q1, int q2, int q3,
   entity_ = entityManager_.getEntities();
 }
 
+void WorldScene::createEntities(int id) {
+  entityManager_.createEgg(id);
+  entity_ = entityManager_.getEntities();
+}
+
 void WorldScene::changePlayerPos(int id, int x, int y, Direction direction) {
   Movement movement = {id, x, y, direction};
   movementQueue_.push(movement);
@@ -201,9 +206,27 @@ void WorldScene::setPlayerLevel(int id, int level) {
   for (auto &entity : entity_) {
     if (entity->getId() == id) {
       entity->setLevel(level);
+      changeHeadLevel(entity, level);
       return;
     }
   }
+}
+
+void WorldScene::changeHeadLevel(std::shared_ptr<IEntity> &entity, int level) {
+
+  std::vector<irr::io::path> texturesHead = {
+      mediaPath_ + "archer_texture/santi_head.png",
+      mediaPath_ + "archer_texture/santi_head.png",
+      mediaPath_ + "archer_texture/eliott_head.png",
+      mediaPath_ + "archer_texture/pierrick_head.png",
+      mediaPath_ + "archer_texture/matheo_head.png",
+      mediaPath_ + "archer_texture/tom_head.png",
+      mediaPath_ + "archer_texture/hugo_head.png",
+      mediaPath_ + "archer_texture/napoli_head.png",
+      mediaPath_ + "archer_texture/ay_head.png"};
+
+  entity->getNode()->getMaterial(3).setTexture(
+      0, driver_->getTexture(texturesHead[level]));
 }
 
 void WorldScene::startIncantation(int x, int y, int level,
@@ -301,7 +324,7 @@ void WorldScene::broadcast(int id, const std::string &message) {
       movement.startPosition = broadcasterPos;
       movement.targetPosition = targetPos;
       movement.startTime = currentTime;
-      movement.duration = 1.5f;
+      movement.duration = 1.7f;
       movement.isActive = true;
       paperPlaneMovements_.push_back(movement);
     }
@@ -352,7 +375,7 @@ void WorldScene::updatePaperPlaneMovements() {
       progress = std::min(1.0f, std::max(0.0f, progress));
       irr::core::vector3df currentPos = it->startPosition.getInterpolated(
           it->targetPosition, 1.0f - progress);
-      float arcHeight = 15.0f;
+      float arcHeight = 30.0f;
       float arcProgress = sin(progress * M_PI);
       currentPos.Y += arcHeight * arcProgress;
       if (it->paperPlane && it->paperPlane->getNode()) {
@@ -365,4 +388,51 @@ void WorldScene::updatePaperPlaneMovements() {
       ++it;
     }
   }
+}
+
+void WorldScene::clearElements() {
+  std::queue<Movement> emptyQueue;
+  std::swap(movementQueue_, emptyQueue);
+  for (auto &plane : paperPlaneMovements_)
+    if (plane.paperPlane && plane.paperPlane->getNode())
+      plane.paperPlane->getNode()->remove();
+  paperPlaneMovements_.clear();
+  actualPos_ = irr::core::vector3df();
+  planeSize_ = {0, 0};
+  isIncanting_.clear();
+  incantationData_.clear();
+  teams_.clear();
+  receiver_.clearAllEntities();
+  for (auto &entity : entity_) {
+    if (!entity || !entity->getNode())
+      continue;
+    if (entity->getId() == -5 || entity->getId() == -6)
+      continue;
+    entity->getNode()->setVisible(false);
+  }
+}
+
+void WorldScene::endGame(std::string winner) {
+  clearElements();
+
+  addChatMessage("Game Over! Winner: " + winner);
+  irr::core::dimension2du screenSize = smgr_->getVideoDriver()->getScreenSize();
+  int buttonWidth = 300;
+  int buttonHeight = 100;
+  int centerX = (screenSize.Width - buttonWidth) / 2;
+  int centerY = (screenSize.Height - buttonHeight) / 2;
+  std::wstring winnerW =
+      L"Winner: " + std::wstring(winner.begin(), winner.end()) + L"\nQuit";
+  irr::gui::IGUIButton *quitButton = smgr_->getGUIEnvironment()->addButton(
+      irr::core::rect<irr::s32>(centerX, centerY, centerX + buttonWidth,
+                                centerY + buttonHeight),
+      0, -1, winnerW.c_str());
+
+  quitButton->setOverrideFont(smgr_->getGUIEnvironment()->getFont(
+      mediaPath_ + "fonthaettenschweiler.bmp"));
+  quitButton->setUseAlphaChannel(true);
+  quitButton->setDrawBorder(true);
+  quitButton->setIsPushButton(true);
+  quitButton->setPressed(false);
+  quitButton->setID(9999);
 }
