@@ -45,11 +45,9 @@ TESTS	=	$(wildcard ../tests/server/*.c)
 
 CFLAGS	= 	-I./includes -I../libzappy_net/include -Wall -Wextra -Werror
 
-# Bibliothèque libzappy_net
 LIBZAPPY_NET_DIR = ../libzappy_net
 LIBZAPPY_NET_LIB = $(LIBZAPPY_NET_DIR)/libzappy_net.so
 
-# LDFLAGS avec RPATH pour hardcoder le chemin de la bibliothèque
 LDFLAGS	=  -L$(LIBZAPPY_NET_DIR) -lzappy_net -lcriterion --coverage \
 		   -Wl,-rpath='$$ORIGIN/libzappy_net'
 
@@ -76,8 +74,6 @@ build_libzappy_net:
 $(NAME): $(OBJS) $(LIBZAPPY_NET_LIB)
 	@echo -e "$(BLUE)Liaison des fichiers objets en $(NAME)...$(NO_COLOR)"
 	$(CC) $(OBJS) -o $(NAME) $(LDFLAGS)
-	@echo -e "$(GREEN)Copie de l'exécutable vers la racine du projet...$(NO_COLOR)"
-	cp $(NAME) ../$(NAME)
 
 clean:
 	@echo -e "$(RED)Suppression des fichiers objets (.o)...$(NO_COLOR)"
