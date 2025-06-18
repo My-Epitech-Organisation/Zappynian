@@ -16,7 +16,7 @@ Game::~Game() {}
 
 std::shared_ptr<IEntity> Game::findEntityById(int id) {
   for (auto &entity : entity_) {
-    if (entity->getId() == id) {
+    if (entity && entity->getId() == id) {
       return entity;
     }
   }
@@ -60,15 +60,28 @@ void Game::updatePlayerMovement(irr::u32 currentTime, NetworkClient &scene) {
   }
 
   float elapsedTime = (currentTime - receiver_.getMoveStartTime()) / 1000.0f;
+  auto *node = currentEntity->getNode();
+  if (!node || !node->getParent()) {
+    receiver_.setIsMoving(false);
+    return;
+  }
+
   if (elapsedTime >= 0.4f) {
     irr::core::vector3df pos;
     float angle = receiver_.getCurrentRotationY() * M_PI / 180.0f;
     pos.X = receiver_.getMoveStartX() - 20.0f * sin(angle);
     pos.Z = receiver_.getMoveStartZ() - 20.0f * cos(angle);
-    pos.Y = currentEntity->getNode()->getPosition().Y;
-    currentEntity->getNode()->setPosition(pos);
+    try {
+      pos.Y = node->getPosition().Y;
+    } catch (...) {
+      receiver_.setIsMoving(false);
+      return;
+    }
+    node->setPosition(pos);
     receiver_.setIsMoving(false);
-    currentEntity->getNode()->setAnimationSpeed(0.0f);
+    if (auto *animatedNode =
+            dynamic_cast<irr::scene::IAnimatedMeshSceneNode *>(node))
+      animatedNode->setAnimationSpeed(0.0f);
     scene.updateMovements();
   } else {
     float progress = elapsedTime / 0.4f;
@@ -76,13 +89,21 @@ void Game::updatePlayerMovement(irr::u32 currentTime, NetworkClient &scene) {
     float angle = receiver_.getCurrentRotationY() * M_PI / 180.0f;
     pos.X = receiver_.getMoveStartX() - (20.0f * progress * sin(angle));
     pos.Z = receiver_.getMoveStartZ() - (20.0f * progress * cos(angle));
-    pos.Y = currentEntity->getNode()->getPosition().Y;
-    currentEntity->getNode()->setPosition(pos);
+    try {
+      pos.Y = node->getPosition().Y;
+      node->setPosition(pos);
+    } catch (...) {
+      receiver_.setIsMoving(false);
+      return;
+    }
   }
 }
 
 void Game::updateIncantingPlayers(NetworkClient &scene) {
   for (auto &entity : entity_) {
+    if (!entity || !entity->getNode()) {
+      continue;
+    }
     if (scene.isPlayerIncanting(entity->getId())) {
       if (auto *node = dynamic_cast<irr::scene::IAnimatedMeshSceneNode *>(
               entity->getNode())) {
