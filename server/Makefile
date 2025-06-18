@@ -48,8 +48,14 @@ CFLAGS	= 	-I./includes -I../libzappy_net/include -Wall -Wextra -Werror
 LIBZAPPY_NET_DIR = ../libzappy_net
 LIBZAPPY_NET_LIB = $(LIBZAPPY_NET_DIR)/libzappy_net.so
 
-LDFLAGS	=  -L$(LIBZAPPY_NET_DIR) -lzappy_net -lcriterion --coverage \
-		   -Wl,-rpath='$$ORIGIN/libzappy_net'
+LDFLAGS_PROD = -L$(LIBZAPPY_NET_DIR) -lzappy_net \
+			   -Wl,-rpath='$$ORIGIN/libzappy_net'
+
+CFLAGS_DEBUG = $(CFLAGS) -g
+LDFLAGS_DEBUG = $(LDFLAGS_PROD) -g
+
+CFLAGS_TEST = $(CFLAGS) --coverage
+LDFLAGS_TEST = $(LDFLAGS_PROD) -lcriterion --coverage
 
 NO_COLOR=\033[0m
 RED=\033[0;31m
@@ -63,6 +69,12 @@ all: build_libzappy_net $(NAME)
 	@echo -e "$(GREEN)Compilation réussie, le binaire :$(ORANGE) $(NAME) \
 	$(GREEN)générée $(NO_COLOR)"
 
+debug: CFLAGS := $(CFLAGS_DEBUG)
+debug: LDFLAGS_BUILD := $(LDFLAGS_DEBUG)
+debug: build_libzappy_net $(NAME)
+	@echo -e "$(GREEN)Compilation debug réussie, le binaire :$(ORANGE) $(NAME) \
+	$(GREEN)générée avec symboles de debug$(NO_COLOR)"
+
 build_libzappy_net:
 	@echo -e "$(BLUE)Construction de libzappy_net...$(NO_COLOR)"
 	$(MAKE) -C $(LIBZAPPY_NET_DIR)
@@ -73,7 +85,7 @@ build_libzappy_net:
 
 $(NAME): $(OBJS) $(LIBZAPPY_NET_LIB)
 	@echo -e "$(BLUE)Liaison des fichiers objets en $(NAME)...$(NO_COLOR)"
-	$(CC) $(OBJS) -o $(NAME) $(LDFLAGS)
+	$(CC) $(OBJS) -o $(NAME) $(or $(LDFLAGS_BUILD),$(LDFLAGS_PROD))
 
 clean:
 	@echo -e "$(RED)Suppression des fichiers objets (.o)...$(NO_COLOR)"
@@ -94,8 +106,8 @@ re: fclean all
 tests_run:
 	@echo "Running tests..."
 	@echo -e "$(BLUE)Compilation des tests...$(NO_COLOR)"
-	$(CC) $(CFLAGS) $(filter-out src/main.c, $(SRCS)) $(TESTS) \
-	-o ../$(NAME_TESTS) $(LDFLAGS)
+	$(CC) $(CFLAGS_TEST) $(filter-out src/main.c, $(SRCS)) $(TESTS) \
+	-o ../$(NAME_TESTS) $(LDFLAGS_TEST)
 	@echo -e "$(GREEN)Tests compilés: ./$(NAME_TESTS)$(NO_COLOR)"
 	@echo "Exécution des tests..."
 	../$(NAME_TESTS)
@@ -105,4 +117,4 @@ coverage : tests_run
 	cd .. && gcovr --exclude tests/server/ --branches
 	cd .. && gcovr --exclude tests/server/
 
-.PHONY: all build_libzappy_net clean fclean re tests_run coverage
+.PHONY: all debug build_libzappy_net clean fclean re tests_run coverage
