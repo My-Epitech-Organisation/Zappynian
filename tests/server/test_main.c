@@ -49,7 +49,7 @@ Test(main, check_handle_args_missing_arguments)
 
 Test(main, check_handle_args_help_flag)
 {
-    char *argv[] = {"./zappy_server", "-h"};
+    char *argv[] = {"./zappy_server", "-help"};
     int argc = sizeof(argv) / sizeof(argv[0]);
     server_t server;
     int result = handle_args(argc, argv, &server);
