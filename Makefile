@@ -10,6 +10,7 @@
 		fclean re		\
 		tests_run		\
 		coverage		\
+		doc 		    \
         libzappy_net    \
         zappy_server	\
 		zappy_gui		\
@@ -69,6 +70,8 @@ fclean: clean \
 		fclean_zappy_gui \
 		fclean_zappy_ai
 	@echo "Removing all generated files..."
+	@echo "Cleaning up generated documentation..."
+	@rm -rf docs/html docs/latex
 
 re: fclean all
 
@@ -81,3 +84,17 @@ coverage:
 # Format check rule
 check_normalize:
 	@echo "Checking code format..."
+
+doc:
+	@echo "Generating documentation..."
+	@doxygen Doxyfile
+	@# Cross-platform open command - uses appropriate opener by OS
+	@if [ "$(shell uname)" = "Darwin" ]; then \
+		open docs/html/index.html; \
+	elif [ "$(shell uname)" = "Linux" ]; then \
+		xdg-open docs/html/index.html 2>/dev/null || \
+		echo "Documentation generated at: docs/html/index.html"; \
+	else \
+		echo "Documentation generated at: docs/html/index.html"; \
+	fi
+	@echo "Documentation generated successfully."
