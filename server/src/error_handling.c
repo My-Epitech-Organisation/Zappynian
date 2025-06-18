@@ -13,11 +13,9 @@ void close_connection(server_connection_t *connection)
         fprintf(stderr, "Connection is NULL.\n");
         return;
     }
-
     if (connection->zn_server != NULL) {
         zn_close(connection->zn_server);
     }
-
     if (connection->clients != NULL) {
         for (int i = 0; i < connection->client_count; i++) {
             if (connection->clients[i] != NULL) {
@@ -30,7 +28,6 @@ void close_connection(server_connection_t *connection)
         }
         free(connection->clients);
     }
-
     free(connection);
 }
 

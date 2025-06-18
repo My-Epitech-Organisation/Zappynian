@@ -85,7 +85,6 @@ void handle_client_read(server_connection_t *connection, int idx)
     if (client->type == CLIENT_UNKNOWN) {
         return;
     }
-
     line = zn_readline(client->zn_sock);
     if (line == NULL) {
         if (errno != EAGAIN && errno != EWOULDBLOCK) {
@@ -93,9 +92,7 @@ void handle_client_read(server_connection_t *connection, int idx)
         }
         return;
     }
-
     printf("Command received: %s\n", line);
-
     if (line[0] != '\0') {
         printf("Processing command: %s\n", line);
     }

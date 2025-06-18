@@ -31,8 +31,5 @@ void game_loop_run(server_t *server)
     game_loop_init(server);
     if (!server->game_running)
         return;
-
-    // The new server_loop function now handles the main loop with polling
-    // as well as calling the game logic functions
     server_loop(server);
 }

@@ -11,7 +11,7 @@
 static volatile bool running = true;
 
 static void setup_socket_array(server_connection_t *connection,
-                              zn_socket_t *sockets, int *count)
+    zn_socket_t *sockets, int *count)
 {
     *count = 0;
     sockets[0] = connection->zn_server;
@@ -25,7 +25,7 @@ static void setup_socket_array(server_connection_t *connection,
 }
 
 static int find_client_by_socket(server_connection_t *connection,
-                                zn_socket_t socket)
+    zn_socket_t socket)
 {
     for (int j = 0; j < connection->client_count; j++) {
         if (connection->clients[j] != NULL &&
@@ -37,7 +37,7 @@ static int find_client_by_socket(server_connection_t *connection,
 }
 
 static void handle_socket_events(server_connection_t *connection,
-                                zn_poll_result_t *result, int i, int client_idx)
+    zn_poll_result_t *result, int i, int client_idx)
 {
     if (result->readable & (1ULL << i)) {
         handle_client_read(connection, client_idx);
@@ -51,8 +51,7 @@ static void handle_socket_events(server_connection_t *connection,
 }
 
 static void handle_ready_sockets(server_connection_t *connection,
-                               zn_poll_result_t *result,
-                               zn_socket_t *sockets, int count)
+    zn_poll_result_t *result, zn_socket_t *sockets, int count)
 {
     int client_idx;
 
@@ -95,7 +94,8 @@ static void process_game_tick(server_t *server)
     game_loop_tick(server);
     process_commands(server);
     decrement_food_for_all_players(server);
-    death_check(server->players, server->player_count, server->map, server);
+    death_check(server->players, server->player_count,
+        server->map, server);
     check_victory(server);
 }
 
