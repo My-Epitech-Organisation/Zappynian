@@ -77,6 +77,12 @@ public:
       std::cerr << "Failed to create server socket on port " << port_ << "\n";
       return nullptr;
     }
+    sock_ = zn_client_connect(host_.c_str(), port_);
+    if (sock_ == nullptr) {
+      std::cerr << "Failed to connect to server at " << host_ << ":" << port_
+                << "\n";
+      return nullptr;
+    }
     return sock_;
   }
 
