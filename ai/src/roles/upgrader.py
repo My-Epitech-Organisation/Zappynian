@@ -4,10 +4,10 @@ from ai.src.utils.route_factory import route_to
 UPGRADEGOALS = {
     "linemate": 2,
     "deraumere": 2,
-    "sibur": 2,
-    "mendiane": 2,
+    "sibur": 3,
+    "mendiane": 3,
     "phiras": 2,
-    "thystame": 2,
+    "thystame": 1,
 }
 
 class Upgrader(Role):

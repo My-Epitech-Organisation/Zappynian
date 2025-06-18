@@ -4,10 +4,10 @@ from ai.src.utils.route_factory import route_to
 GOALS = {
     "linemate": 1,
     "deraumere": 1,
-    "sibur": 1,
-    "mendiane": 1,
+    "sibur": 2,
+    "mendiane": 2,
     "phiras": 1,
-    "thystame": 1,
+    "thystame": 0,
 }
 
 class Miner(Role):
