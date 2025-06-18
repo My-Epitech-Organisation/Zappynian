@@ -7,6 +7,27 @@
 
 #include "../includes/server.h"
 
+static void cleanup_single_client(client_t *client)
+{
+    if (client == NULL)
+        return;
+    if (client->zn_sock != NULL) {
+        zn_close(client->zn_sock);
+    }
+    free(client->team_name);
+    free(client);
+}
+
+static void cleanup_client_connections(server_connection_t *connection)
+{
+    if (connection->clients == NULL)
+        return;
+    for (int i = 0; i < connection->client_count; i++) {
+        cleanup_single_client(connection->clients[i]);
+    }
+    free(connection->clients);
+}
+
 void close_connection(server_connection_t *connection)
 {
     if (connection == NULL) {
@@ -16,18 +37,7 @@ void close_connection(server_connection_t *connection)
     if (connection->zn_server != NULL) {
         zn_close(connection->zn_server);
     }
-    if (connection->clients != NULL) {
-        for (int i = 0; i < connection->client_count; i++) {
-            if (connection->clients[i] != NULL) {
-                if (connection->clients[i]->zn_sock != NULL) {
-                    zn_close(connection->clients[i]->zn_sock);
-                }
-                free(connection->clients[i]->team_name);
-                free(connection->clients[i]);
-            }
-        }
-        free(connection->clients);
-    }
+    cleanup_client_connections(connection);
     free(connection);
 }
 
