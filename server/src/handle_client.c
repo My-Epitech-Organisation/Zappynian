@@ -48,6 +48,16 @@ static client_t *create_new_client(zn_socket_t zn_sock)
     return client;
 }
 
+static void finalize_client_connection(server_connection_t *connection,
+    int slot, client_t *new_client)
+{
+    connection->clients[slot] = new_client;
+    if (slot >= connection->client_count) {
+        connection->client_count = slot + 1;
+    }
+    assign_client_type(new_client, connection, slot);
+}
+
 void accept_client(server_connection_t *connection, server_args_t *unused)
 {
     int slot = find_free_client_slot(connection->clients, MAX_CLIENTS);
@@ -67,9 +77,5 @@ void accept_client(server_connection_t *connection, server_args_t *unused)
         zn_close(new_sock);
         return;
     }
-    connection->clients[slot] = new_client;
-    if (slot >= connection->client_count) {
-        connection->client_count = slot + 1;
-    }
-    assign_client_type(new_client, connection, slot);
+    finalize_client_connection(connection, slot, new_client);
 }
