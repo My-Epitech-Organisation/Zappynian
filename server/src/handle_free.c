@@ -6,16 +6,41 @@
 */
 
 #include "../includes/server.h"
+#include "../includes/team.h"
+
+static void free_team_names(server_args_t *server)
+{
+    for (int i = 0; server->team_names[i]; i++)
+        free(server->team_names[i]);
+    free(server->team_names);
+}
+
+static void free_teams(server_args_t *server)
+{
+    for (int i = 0; i < server->team_count; i++) {
+        if (server->teams[i].name != NULL)
+            free(server->teams[i].name);
+    }
+    free(server->teams);
+}
 
 int handle_free_args(server_args_t *server)
 {
-    if (server->team_names != NULL) {
-        for (int i = 0; server->team_names[i]; i++)
-            free(server->team_names[i]);
-        free(server->team_names);
-    }
+    if (server->team_names != NULL)
+        free_team_names(server);
+    if (server->teams != NULL)
+        free_teams(server);
     free(server);
     return 0;
+}
+
+static void free_single_client(client_t *client)
+{
+    if (client->zn_sock)
+        zn_close(client->zn_sock);
+    if (client->team_name)
+        free(client->team_name);
+    free(client);
 }
 
 static void free_clients_array(server_connection_t *connection)
@@ -23,10 +48,8 @@ static void free_clients_array(server_connection_t *connection)
     if (connection->clients == NULL)
         return;
     for (int i = 0; i < connection->client_count; i++) {
-        if (connection->clients[i] && connection->clients[i]->zn_sock) {
-            zn_close(connection->clients[i]->zn_sock);
-        }
-        free(connection->clients[i]);
+        if (connection->clients[i])
+            free_single_client(connection->clients[i]);
     }
     free(connection->clients);
 }
@@ -40,6 +63,7 @@ int handle_free(server_t *server)
     }
     if (server->connection != NULL) {
         free_clients_array(server->connection);
+        free(server->connection);
     }
     free(server);
     return 0;
