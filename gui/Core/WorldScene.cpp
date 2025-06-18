@@ -262,9 +262,14 @@ void WorldScene::stopIncantation(int x, int y, bool result) {
                 "Player " + std::to_string(entityId) + " has leveled up to " +
                 std::to_string(entity->getLevel()) +
                 " (result: " + std::string(result ? "true" : "false") + ")");
+            setPlayerLevel(entityId, entity->getLevel());
             break;
           }
         }
+      } else {
+        addChatMessage("Incantation at (" + std::to_string(x) + ", " +
+                       std::to_string(y) + ") failed for player " +
+                       std::to_string(entityId));
       }
     } else {
       ++it;
