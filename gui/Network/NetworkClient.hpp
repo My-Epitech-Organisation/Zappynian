@@ -64,8 +64,8 @@ public:
     return WorldScene::isPlayerIncanting(id);
   }
 
-  void createEgg(int id) {
-    WorldScene::createEntities(id);
+  void createEgg(int eggid, int id, int x, int y) {
+    WorldScene::createEntities(eggid, id, x, y);
   }
 
   void createWorld() override {
@@ -141,6 +141,7 @@ public:
     // killPlayer(3);
     broadcast(1, "Hello from player 1!");
     broadcast(2, "Hello from player 2!");
+    parseMessage("enw 1 1 0 0");
   }
 
   std::vector<std::shared_ptr<IEntity>> getEntities() {

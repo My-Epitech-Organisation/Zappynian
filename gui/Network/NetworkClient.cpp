@@ -11,9 +11,10 @@
 #include <string>
 #include <vector>
 
-void NetworkClient::parseMessage(const std::string &message) {
+void NetworkClient::parseMessage(const std::string &message)
+{
   int id = 0, x = 0, y = 0, level = 0, q0 = 0, q1 = 0, q2 = 0, q3 = 0, q4 = 0,
-      q5 = 0, q6 = 0, nbTiles = 0, nbArgs = 0;
+      q5 = 0, q6 = 0, nbTiles = 0, nbArgs = 0, eggid = 0;
   std::string team;
   Direction direction;
   std::istringstream iss(message);
@@ -24,14 +25,17 @@ void NetworkClient::parseMessage(const std::string &message) {
   std::string tmp;
   iss_args >> tmp;
 
-  while (iss_args >> tmp) {
+  while (iss_args >> tmp)
+  {
     nbArgs++;
   }
-  if (command == "pnw") {
+  if (command == "pnw")
+  {
     std::string dirStr;
     std::istringstream iss2(message);
     iss2 >> command;
-    if (!(iss2 >> id >> x >> y >> dirStr >> level >> team)) {
+    if (!(iss2 >> id >> x >> y >> dirStr >> level >> team))
+    {
       std::cerr << "Invalid arguments for pnw command\n";
       return;
     }
@@ -46,22 +50,39 @@ void NetworkClient::parseMessage(const std::string &message) {
     else
       direction = Direction::NORTH;
     createPlayer(id, x, y, direction, level, team);
-  } else if (command == "bct" && nbArgs == 10) {
+  }
+  else if (command == "bct" && nbArgs == 10)
+  {
     std::istringstream iss2(message);
     iss2 >> command;
     if (!(iss2 >> x >> y >> q0 >> q1 >> q2 >> q3 >> q4 >> q5 >> q6 >>
-          nbTiles)) {
+          nbTiles))
+    {
       std::cerr << "Invalid arguments for bct (map) command\n";
       return;
     }
     contentMap(x, y, q0, q1, q2, q3, q4, q5, q6, nbTiles);
-  } else if (command == "bct" && nbArgs == 9) {
+  }
+  else if (command == "bct" && nbArgs == 9)
+  {
     std::istringstream iss2(message);
     iss2 >> command;
-    if (!(iss2 >> x >> y >> q0 >> q1 >> q2 >> q3 >> q4 >> q5 >> q6)) {
+    if (!(iss2 >> x >> y >> q0 >> q1 >> q2 >> q3 >> q4 >> q5 >> q6))
+    {
       std::cerr << "Invalid arguments for bct (tile) command\n";
       return;
     }
     contentTiles(x, y, q0, q1, q2, q3, q4, q5, q6);
+  }
+  else if (command == "enw")
+  {
+    std::istringstream iss2(message);
+    iss2 >> command;
+    if (!(iss2 >> eggid >> id >> x >> y))
+    {
+      std::cerr << "Invalid arguments for enw command\n";
+      return;
+    }
+    createEgg(eggid, id, x, y);
   }
 }
