@@ -404,10 +404,11 @@ void WorldScene::clearElements() {
   teams_.clear();
   receiver_.clearAllEntities();
   for (auto &entity : entity_) {
-    if (entity->getId() == -5)
+    if (!entity || !entity->getNode())
       continue;
-    if (entity && entity->getNode())
-      entity->getNode()->remove();
+    if (entity->getId() == -5 || entity->getId() == -6)
+      continue;
+    entity->getNode()->setVisible(false);
   }
 }
 
