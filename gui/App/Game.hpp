@@ -19,7 +19,7 @@
 
 class Game {
 public:
-  Game();
+  Game(const std::string &host, int port);
   ~Game();
 
   void initWindow();
@@ -36,4 +36,6 @@ private:
   EventReceiver receiver_;
   irr::io::path mediaPath_;
   std::vector<std::shared_ptr<IEntity>> entity_;
+  std::string host_;
+  int port_;
 };

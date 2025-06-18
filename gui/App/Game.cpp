@@ -7,7 +7,10 @@
 
 #include "Game.hpp"
 
-Game::Game() { initWindow(); }
+Game::Game(const std::string &host, int port)
+    : host_(host), port_(port) {
+  initWindow();
+}
 
 Game::~Game() {}
 
@@ -96,12 +99,11 @@ void Game::updateIncantingPlayers(NetworkClient &scene) {
 void Game::gameLoop() {
   irr::u32 frames = 0;
 
-  NetworkClient scene(device_, smgr_, driver_, receiver_, mediaPath_);
+  NetworkClient scene(device_, smgr_, driver_, receiver_, mediaPath_, host_, port_);
   scene.createWorld();
   entity_ = scene.getEntities();
-  if (entity_.empty() || !entity_[0] || !entity_[0]->getNode()) {
+  if (entity_.empty() || !entity_[0] || !entity_[0]->getNode())
     return;
-  }
 
   while (device_->run()) {
     irr::u32 currentTime = device_->getTimer()->getTime();
