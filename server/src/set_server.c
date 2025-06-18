@@ -23,6 +23,10 @@ void set_server(server_connection_t *connection)
         fprintf(stderr, "Server connection is NULL.\n");
         exit(84);
     }
-    initialize_server_connection(connection);
+    if (initialize_server_connection(connection) == -1) {
+        fprintf(stderr,
+            "Failed to initialize server connection.\n");
+        exit(84);
+    }
     connection->clients = NULL;
 }
