@@ -111,10 +111,10 @@ static int init_server_memory(server_t *server)
 static int validate_arguments(int argc, char **argv, server_t *server)
 {
     if (argc < 2) {
-        fprintf(stderr, "For the usage, check: %s -help\n", argv[0]);
+        fprintf(stderr, "For the usage, check: %s -h\n", argv[0]);
         return 84;
     }
-    if (argc == 2 && strcmp(argv[1], "-help") == 0)
+    if (argc == 2 && strcmp(argv[1], "-h") == 0)
         return display_help();
     if (check_args(argc, argv, server->args) == 84) {
         fprintf(stderr, "Invalid arguments.\n");
