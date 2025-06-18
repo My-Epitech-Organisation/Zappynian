@@ -3,6 +3,8 @@
  *
  * Welcome to the official documentation of the **Zappy Project**! 🎉
  * 
+ * \image html test.png "Zappy test" width=600px
+ *
  * Zappy is a network-based multiplayer strategy game where teams of AI-controlled players compete 
  * on the mystical planet **Trantor** to achieve the ultimate goal: having at least 6 players 
  * reach the maximum elevation level (level 8).
