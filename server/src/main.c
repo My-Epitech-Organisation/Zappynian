@@ -24,6 +24,7 @@ static server_t *init_server(void)
         return NULL;
     }
     memset(server, 0, sizeof(server_t));
+    server->server_running = true;
     return server;
 }
 
