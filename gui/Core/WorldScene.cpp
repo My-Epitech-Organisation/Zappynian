@@ -6,6 +6,7 @@
 */
 
 #include "WorldScene.hpp"
+#include <algorithm>
 #include <cmath>
 
 void WorldScene::createEntities(int id, int x, int y, Direction direction,
@@ -67,8 +68,9 @@ void WorldScene::createEntities(int id) {
   entity_ = entityManager_.getEntities();
 }
 
-void WorldScene::changePlayerPos(int id, int x, int y, Direction direction) {
-  Movement movement = {id, x, y, direction};
+void WorldScene::changePlayerPos(int id, int x, int y, Direction direction,
+                                 Direction directionBefore) {
+  Movement movement = {id, x, y, direction, directionBefore};
   movementQueue_.push(movement);
   if (!receiver_.getIsMoving()) {
     updateMovements();
@@ -140,7 +142,7 @@ void WorldScene::updateMovements() {
       if (auto *animatedNode =
               dynamic_cast<irr::scene::IAnimatedMeshSceneNode *>(node)) {
         animatedNode->setFrameLoop(1, 13);
-        animatedNode->setAnimationSpeed(15.0f);
+        animatedNode->setAnimationSpeed(30.0f);
         receiver_.setMoveStartX(node->getPosition().X);
         receiver_.setMoveStartZ(node->getPosition().Z);
         receiver_.setCurrentRotationY(static_cast<float>(movement.direction) *
@@ -148,6 +150,8 @@ void WorldScene::updateMovements() {
         receiver_.setIsMoving(true);
         receiver_.setMoveStartTime(device_->getTimer()->getTime());
       }
+      node->setRotation(irr::core::vector3df(
+          0, static_cast<float>(movement.directionBefore) * 90.0f, 0));
       return;
     }
   }
@@ -435,4 +439,63 @@ void WorldScene::endGame(std::string winner) {
   quitButton->setIsPushButton(true);
   quitButton->setPressed(false);
   quitButton->setID(9999);
+}
+
+std::vector<std::shared_ptr<IEntity>>
+WorldScene::getPlayersEggAtPosition(irr::core::vector3df position) {
+  std::vector<std::shared_ptr<IEntity>> entitiesAtPosition;
+  for (const auto &entity : entity_) {
+    if (entity->getId() < 0 && entity->getId() != -7)
+      continue;
+    if (entity->getPosition() == position) {
+      entitiesAtPosition.push_back(entity);
+    }
+  }
+  return entitiesAtPosition;
+}
+
+void WorldScene::expulsionMove(int id, irr::f32 direction,
+                               Direction directionEnum,
+                               irr::core::vector3df pos) {
+  auto expulsion = getPlayersEggAtPosition(pos);
+  for (auto &entity : expulsion) {
+    if (entity->getId() != id) {
+      if (entity->getId() == -7) {
+        irr::core::vector3df eggPos = entity->getPosition();
+        auto tile = entityManager_.getTileByName(
+            "Cube info: row " +
+            std::to_string(static_cast<int>(eggPos.X / 20)) + " col " +
+            std::to_string(static_cast<int>(eggPos.Z / 20)));
+        if (tile)
+          tile->getInventory().removeItem("egg", 1);
+        if (entity->getNode())
+          entity->getNode()->remove();
+        receiver_.removeEntity(-7);
+        continue;
+      }
+      auto actualDir = entity->getDirection();
+      changePlayerPos(
+          entity->getId(),
+          static_cast<int>(pos.X - 20 * sin(direction * M_PI / 180)),
+          static_cast<int>(pos.Z - 20 * cos(direction * M_PI / 180)),
+          directionEnum, actualDir);
+    }
+  }
+}
+
+void WorldScene::expulsion(int id) {
+  for (auto it = entity_.begin(); it != entity_.end();) {
+    if ((*it)->getId() < 0)
+      continue;
+    if ((*it)->getId() == id) {
+      auto direction = (*it)->getNode()->getRotation().Y;
+      auto directionEnum =
+          static_cast<Direction>(static_cast<int>(direction / 90) % 4);
+      irr::core::vector3df pos = (*it)->getNode()->getPosition();
+      expulsionMove(id, direction, directionEnum, pos);
+      break;
+    } else {
+      ++it;
+    }
+  }
 }
