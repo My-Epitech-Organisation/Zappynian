@@ -5,7 +5,6 @@
 ** Movement command implementations
 */
 
-#include <stdio.h>
 #include "../include/commands.h"
 #include "../include/server.h"
 
@@ -27,7 +26,7 @@ void cmd_forward(player_t *player, server_t *server)
             move_player(player, player->x - 1, player->y, server->map);
             break;
     }
-    // zn_send_message(server->connection->fd, "Forward");
+    zn_send_message(server->connection->zn_server, "Forward");
 }
 
 void cmd_right(player_t *player, server_t *server)
@@ -36,7 +35,7 @@ void cmd_right(player_t *player, server_t *server)
     if (player->dead || player->in_elevation)
         return;
     player->orientation = (player->orientation + 1) % 4;
-    // zn_send_message(server->connection->fd, "Right");
+    zn_send_message(server->connection->zn_server, "Right");
 }
 
 void cmd_left(player_t *player, server_t *server)
@@ -45,7 +44,7 @@ void cmd_left(player_t *player, server_t *server)
     if (player->dead || player->in_elevation)
         return;
     player->orientation = (player->orientation + 3) % 4;
-    // zn_send_message(server->connection->fd, "Left");
+    zn_send_message(server->connection->zn_server, "Left");
 }
 
 void cmd_look(player_t *player, server_t *server)
@@ -56,8 +55,8 @@ void cmd_look(player_t *player, server_t *server)
         return;
     look_result = get_player_vision(player, server->map);
     if (look_result != NULL) {
-        // zn_send_message(server->connection->fd, look_result);
+        zn_send_message(server->connection->zn_server, look_result);
         free(look_result);
     }
-    // zn_send_message(server->connection->fd, "Look");
+    zn_send_message(server->connection->zn_server, "Look");
 }
