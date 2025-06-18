@@ -64,12 +64,10 @@ typedef struct server_s {
     size_t player_count;
     int tick_count;
     bool game_running;
+    volatile bool server_running;
 } server_t;
 
-int check_args(int argc, char **argv, server_args_t *server);
 int handle_args(int argc, char **argv, server_t *server);
-int handle_options(int opt, char **argv, int argc, server_args_t *server);
-int parse_options(int argc, char **argv, server_args_t *server);
 
 void fill_port(server_args_t *server, char *optarg);
 void fill_witdh(server_args_t *server, char *optarg);
@@ -97,7 +95,7 @@ void accept_client(server_connection_t *connection, server_args_t *args);
 
 /* Server loop functions */
 void server_loop(server_t *server);
-void stop_server_loop(void);
+void stop_server_loop(server_t *server);
 
 /* Network integration functions */
 int init_network_integration(void);
