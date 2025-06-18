@@ -71,17 +71,6 @@ public:
     WorldScene::createEntities(id);
   }
 
-  zn_socket_t initialiseSocket() {
-    sock_ = zn_server_listen(port_);
-    if (sock_ == nullptr) {
-      std::cerr << "Failed to create server socket on port " << port_ << "\n";
-      return nullptr;
-    }
-    return sock_;
-  }
-
-  const std::string readLine(zn_socket_t sock);
-
   // void createWorld() override {
   //   createPlane(5, 5);
   //   createLights();
