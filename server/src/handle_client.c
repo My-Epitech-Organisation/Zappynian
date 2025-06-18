@@ -2,73 +2,80 @@
 ** EPITECH PROJECT, 2025
 ** Jetpack
 ** File description:
-** Client connection handling
+** Client connection handling with libzappy_net integration
 */
 
 #include "../include/server.h"
 
-void accept_client(server_connection_t *connection)
+static int configure_client_properties(client_t *client)
 {
-    client_t *new_client = malloc(sizeof(client_t));
-
-    if (!new_client)
-        handle_error_connection("malloc", connection);
-    memset(new_client, 0, sizeof(client_t));
-    new_client->addr_len = sizeof(new_client->addr);
-    new_client->fd = accept(connection->fd,
-        (struct sockaddr *) &new_client->addr,
-        &new_client->addr_len);
-    if (new_client->fd == -1) {
-        perror("accept");
-        free(new_client);
-        return;
+    if (zn_set_nonblocking(client->zn_sock, 1) == -1) {
+        return -1;
     }
-    connection->clients = realloc(connection->clients,
-        (connection->client_count + 1) * sizeof(client_t *));
-    connection->clients[connection->client_count] = new_client;
-    connection->fds[connection->nfds].fd = new_client->fd;
-    connection->fds[connection->nfds].events = POLLIN;
-    connection->nfds++;
+    client->type = CLIENT_UNKNOWN;
+    return 0;
 }
 
-void check_read_client(server_connection_t *connection, int current_idx)
+static void cleanup_failed_client(client_t *client)
 {
-    int client_fd = connection->fds[current_idx].fd;
+    cleanup_client_zappy_socket(client);
+}
 
-    for (int i = 0; i < connection->client_count; i++) {
-        if (connection->clients[i]->fd == client_fd) {
-            handle_client_read(connection, i);
-            break;
+static int find_free_client_slot(client_t **clients, int max_clients)
+{
+    for (int i = 0; i < max_clients; i++) {
+        if (clients[i] == NULL || clients[i]->zn_sock == NULL) {
+            return i;
         }
     }
+    return -1;
 }
 
-void loop_clients(server_connection_t *connection, int current_idx)
+static client_t *create_new_client(zn_socket_t zn_sock)
 {
-    if (connection->fds[current_idx].revents & POLLIN) {
-        if (connection->fds[current_idx].fd == connection->fd &&
-            connection->client_count < MAX_CLIENTS) {
-            accept_client(connection);
-            connection->client_count++;
-        } else
-            check_read_client(connection, current_idx);
+    client_t *client = malloc(sizeof(client_t));
+
+    if (client == NULL) {
+        return NULL;
     }
+    memset(client, 0, sizeof(client_t));
+    init_client_zappy_socket(client, zn_sock);
+    if (configure_client_properties(client) == -1) {
+        cleanup_failed_client(client);
+        free(client);
+        return NULL;
+    }
+    return client;
 }
 
-void handle_clients(server_t *server)
+static void finalize_client_connection(server_connection_t *connection,
+    int slot, client_t *new_client)
 {
-    server->connection->clients = calloc(MAX_CLIENTS, sizeof(client_t *));
-    server->connection->client_count = 0;
-    server->connection->fds = malloc(sizeof(struct pollfd) *
-        (MAX_CLIENTS + 1));
-    server->connection->nfds = 1;
-    server->connection->fds[0].fd = server->connection->fd;
-    server->connection->fds[0].events = POLLIN;
-    while (1) {
-        if (poll(server->connection->fds, server->connection->nfds, -1) == -1)
-            handle_error_connection("poll", server->connection);
-        for (int current_idx = 0;
-            current_idx < server->connection->nfds; current_idx++)
-            loop_clients(server->connection, current_idx);
+    connection->clients[slot] = new_client;
+    if (slot >= connection->client_count) {
+        connection->client_count = slot + 1;
     }
+    assign_client_type(new_client, connection, slot);
+}
+
+void accept_client(server_connection_t *connection, server_args_t *unused)
+{
+    int slot = find_free_client_slot(connection->clients, MAX_CLIENTS);
+    zn_socket_t new_sock = NULL;
+    client_t *new_client = NULL;
+
+    (void)unused;
+    if (slot == -1) {
+        return;
+    }
+    new_sock = zn_accept(connection->zn_server, NULL, NULL);
+    if (new_sock == NULL) {
+        return;
+    }
+    new_client = create_new_client(new_sock);
+    if (new_client == NULL) {
+        zn_close(new_sock);
+        return;
+    }
+    finalize_client_connection(connection, slot, new_client);
 }

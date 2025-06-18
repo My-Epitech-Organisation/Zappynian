@@ -39,13 +39,22 @@ SRCS	=	src/main.c				\
 			src/look_current_tile.c \
 			src/inventory_cmd.c 	\
 			src/broadcast_cmd.c 	\
+			src/network_integration.c \
+			src/client_adapters.c 	\
+			src/write_to_client.c 	\
+			src/server_loop.c 		\
 
 OBJS	=	$(SRCS:.c=.o)
 
 TESTS	=	$(wildcard ../tests/server/*.c)
 
-CFLAGS	= 	-I./include -Wall -Wextra -Werror
-LDFLAGS	=  -lcriterion --coverage
+CFLAGS	= 	-I./includes -I../libzappy_net/include -Wall -Wextra -Werror
+
+LIBZAPPY_NET_DIR = ../libzappy_net
+LIBZAPPY_NET_LIB = $(LIBZAPPY_NET_DIR)/libzappy_net.so
+
+LDFLAGS	=  -L$(LIBZAPPY_NET_DIR) -lzappy_net -lcriterion --coverage \
+		   -Wl,-rpath='$$ORIGIN/libzappy_net'
 
 NO_COLOR=\033[0m
 RED=\033[0;31m
@@ -55,28 +64,35 @@ ORANGE=\033[0;33m
 VIOLET=\033[0;35m
 ROSE=\033[0;36m
 
-all: $(NAME)
+all: build_libzappy_net $(NAME)
 	@echo -e "$(GREEN)Compilation réussie, le binaire :$(ORANGE) $(NAME) \
 	$(GREEN)générée $(NO_COLOR)"
 
-%.o: %.c include/server.h
+build_libzappy_net:
+	@echo -e "$(BLUE)Construction de libzappy_net...$(NO_COLOR)"
+	$(MAKE) -C $(LIBZAPPY_NET_DIR)
+
+%.o: %.c includes/server.h
 	@echo -e "$(VIOLET)Compilation de $< en $@...$(NO_COLOR)"
 	$(CC) $(CFLAGS) -c $< -o $@
 
-$(NAME): $(OBJS)
+$(NAME): $(OBJS) $(LIBZAPPY_NET_LIB)
 	@echo -e "$(BLUE)Liaison des fichiers objets en $(NAME)...$(NO_COLOR)"
 	$(CC) $(OBJS) -o $(NAME) $(LDFLAGS)
 
 clean:
 	@echo -e "$(RED)Suppression des fichiers objets (.o)...$(NO_COLOR)"
 	$(RM) $(OBJS)
+	$(MAKE) -C $(LIBZAPPY_NET_DIR) clean
 
 fclean: clean
 	@echo -e "$(RED)Suppression des tests...$(NO_COLOR)"
 	@echo -e "$(RED)Suppression des fichiers de couverture...$(NO_COLOR)"
 	$(RM) -f ../$(NAME_TESTS)
+	$(RM) -f $(NAME)
 	$(RM) -f ../*.gcda
 	$(RM) -f ../*.gcno
+	$(MAKE) -C $(LIBZAPPY_NET_DIR) fclean
 
 re: fclean all
 
@@ -94,4 +110,4 @@ coverage : tests_run
 	cd .. && gcovr --exclude tests/server/ --branches
 	cd .. && gcovr --exclude tests/server/
 
-.PHONY: all clean fclean re tests_run coverage
+.PHONY: all build_libzappy_net clean fclean re tests_run coverage

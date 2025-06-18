@@ -43,7 +43,8 @@ static int process_option_n_c_f(int opt, char **argv, int argc,
     }
 }
 
-int handle_options(int opt, char **argv, int argc, server_args_t *server)
+static int handle_options(int opt, char **argv, int argc,
+    server_args_t *server)
 {
     if (process_option_p_x_y(opt, server) == 0)
         return (server->error_code == 84) ? 84 : 0;
@@ -53,7 +54,7 @@ int handle_options(int opt, char **argv, int argc, server_args_t *server)
     return 84;
 }
 
-int parse_options(int argc, char **argv, server_args_t *server)
+static int parse_options(int argc, char **argv, server_args_t *server)
 {
     int opt = 0;
     char *opt_string = "p:x:y:n:c:f:";
@@ -73,7 +74,7 @@ int parse_options(int argc, char **argv, server_args_t *server)
     return 0;
 }
 
-int verify_config(server_args_t *server)
+static int verify_config(server_args_t *server)
 {
     if (server->port == 0 || server->width == 0 || server->height == 0 ||
         server->team_count == 0 || server->clients_per_team == 0 ||
@@ -84,7 +85,7 @@ int verify_config(server_args_t *server)
     return 0;
 }
 
-int check_args(int argc, char **argv, server_args_t *server)
+static int check_args(int argc, char **argv, server_args_t *server)
 {
     server->team_names = NULL;
     server->team_count = 0;
@@ -95,7 +96,7 @@ int check_args(int argc, char **argv, server_args_t *server)
     return init_teams(server);
 }
 
-int handle_args(int argc, char **argv, server_t *server)
+static int init_server_memory(server_t *server)
 {
     server->connection = malloc(sizeof(server_connection_t));
     server->args = malloc(sizeof(server_args_t));
@@ -104,6 +105,11 @@ int handle_args(int argc, char **argv, server_t *server)
         return 84;
     }
     memset(server->args, 0, sizeof(server_args_t));
+    return 0;
+}
+
+static int validate_arguments(int argc, char **argv, server_t *server)
+{
     if (argc < 2) {
         fprintf(stderr, "For the usage, check: %s -help\n", argv[0]);
         return 84;
@@ -114,6 +120,18 @@ int handle_args(int argc, char **argv, server_t *server)
         fprintf(stderr, "Invalid arguments.\n");
         return 84;
     }
+    return 0;
+}
+
+int handle_args(int argc, char **argv, server_t *server)
+{
+    int result;
+
+    if (init_server_memory(server) == 84)
+        return 84;
+    result = validate_arguments(argc, argv, server);
+    if (result != 0)
+        return result;
     server->connection->port = server->args->port;
     return 0;
 }

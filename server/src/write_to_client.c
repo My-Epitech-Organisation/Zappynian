@@ -7,63 +7,25 @@
 
 #include "../include/server.h"
 
-// void send_to_client(client_t *client, const char *msg)
-// {
-//     int len = strlen(msg);
+void send_to_client(client_t *client, const char *msg)
+{
+    int len = strlen(msg);
 
-//     if (len > BUFFER_SIZE)
-//         len = BUFFER_SIZE;
-//     memcpy(client->write_buffer, msg, len);
-//     client->write_total = len;
-//     client->write_index = 0;
-// }
+    if (len > 0 && client && client->zn_sock) {
+        zn_write(client->zn_sock, msg, len);
+        zn_flush(client->zn_sock);
+    }
+}
 
 void handle_client_write(server_connection_t *connection, int client_idx)
 {
     client_t *client = connection->clients[client_idx];
-    int bytes = write(client->fd,
-        client->write_buffer + client->write_index,
-        client->write_total - client->write_index);
+    ssize_t bytes = 0;
 
-    if (bytes <= 0) {
-        disconnect_client(connection, client_idx);
-        return;
-    }
-    client->write_index += bytes;
-    if (client->write_index >= client->write_total) {
-        client->write_index = 0;
-        client->write_total = 0;
+    if (client && client->zn_sock) {
+        bytes = zn_flush(client->zn_sock);
+        if (bytes < 0 && errno != EAGAIN && errno != EWOULDBLOCK) {
+            disconnect_client(connection, client_idx);
+        }
     }
 }
-
-// int strlen_fd(char *str)
-// {
-//     int len = 0;
-
-//     if (!str)
-//         return 0;
-//     while (str[len] != '\0')
-//         len++;
-//     return len;
-// }
-
-// void put_str_fd(int fd, char *str)
-// {
-//     int len = 0;
-//     int write_ret = 0;
-
-//     if (!str)
-//         return;
-//     len = strlen_fd(str);
-//     write_ret = write(fd, str, len);
-//     if (write_ret < 0) {
-//         perror("write");
-//         return;
-//     }
-//     if (write_ret == 0) {
-//         fprintf(stderr, "Write returned 0, nothing written.\n");
-//         return;
-//     }
-//     if (write_ret < len)
-//         put_str_fd(fd, str + write_ret);
-// }
