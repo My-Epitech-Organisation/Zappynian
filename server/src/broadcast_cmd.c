@@ -74,7 +74,7 @@ void broadcast_to_all_players(player_t *sender, server_t *server,
         direction = calculate_broadcast_direction(receiver, sender,
             server->map);
         snprintf(buffer, sizeof(buffer), "message %d, %s", direction, message);
-        // zn_send_message(receiver->connection->fd, formatted_message);
+        zn_send_message(server->connection->zn_server, buffer);
     }
 }
 
