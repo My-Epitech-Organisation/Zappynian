@@ -74,6 +74,7 @@ fclean: clean
 	@echo -e "$(RED)Suppression des tests...$(NO_COLOR)"
 	@echo -e "$(RED)Suppression des fichiers de couverture...$(NO_COLOR)"
 	$(RM) -f ../$(NAME_TESTS)
+	$(RM) -f $(NAME)
 	$(RM) -f ../*.gcda
 	$(RM) -f ../*.gcno
 
