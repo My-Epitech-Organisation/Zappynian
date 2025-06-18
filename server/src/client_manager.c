@@ -40,34 +40,49 @@ static int validate_team_assignment(server_args_t *args, const char *team_name)
     return 0;
 }
 
-void assign_client_type(client_t *client, server_connection_t *connection,
-    int idx)
+static int setup_client_handshake(client_t *client,
+    server_connection_t *connection, int idx, char *team_name)
 {
-    server_args_t *args = connection->args;
-    char team_name[256];
     zn_role_t role;
 
     if (zn_send_welcome(client->zn_sock) != 0) {
         disconnect_client(connection, idx);
-        return;
+        return -1;
     }
     role = zn_receive_team_name(client->zn_sock, team_name, sizeof(team_name));
     if (role == ZN_ROLE_UNKNOWN) {
         disconnect_client(connection, idx);
-        return;
+        return -1;
     }
     client->type = (client_type_t)role;
+    return 0;
+}
+
+static int validate_and_respond(client_t *client,
+    server_connection_t *connection, int idx, const char *team_name)
+{
+    server_args_t *args = connection->args;
+
     if (client->type == CLIENT_IA &&
         validate_team_assignment(args, team_name) == -1) {
         disconnect_client(connection, idx);
-        return;
+        return -1;
     }
     if (send_handshake_response(client, args, team_name) != 0) {
         disconnect_client(connection, idx);
-        return;
+        return -1;
     }
+    return 0;
+}
+
+static void finalize_client_assignment(client_t *client,
+    server_connection_t *connection, const char *team_name)
+{
+    server_args_t *args = connection->args;
+    team_t *team;
+
     if (client->type == CLIENT_IA) {
-        team_t *team = get_team_by_name(args, team_name);
+        team = get_team_by_name(args, team_name);
         team->current_players++;
         client->team_name = strdup(team_name);
         printf("Client is an IA client: %s\n", team_name);
@@ -75,6 +90,18 @@ void assign_client_type(client_t *client, server_connection_t *connection,
         client->team_name = strdup("GRAPHIC");
         printf("Client is a GUI client.\n");
     }
+}
+
+void assign_client_type(client_t *client, server_connection_t *connection,
+    int idx)
+{
+    char team_name[256];
+
+    if (setup_client_handshake(client, connection, idx, team_name) == -1)
+        return;
+    if (validate_and_respond(client, connection, idx, team_name) == -1)
+        return;
+    finalize_client_assignment(client, connection, team_name);
 }
 
 void handle_client_read(server_connection_t *connection, int idx)
