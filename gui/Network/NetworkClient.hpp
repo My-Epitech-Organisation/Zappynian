@@ -121,9 +121,10 @@ public:
     }
     setPlayerLevel(8, 8);
 
-    contentTiles(2, 4, 0, 32, 32, 32, 32, 32, 32);
+    contentTiles(2, 4, 32, 32, 32, 32, 32, 32, 32);
     contentTiles(4, 4, 32, 32, 32, 0, 32, 32, 32);
-    contentTiles(3, 3, 0, 0, 32, 0, 32, 0, 32);
+    contentTiles(2, 3, 32, 32, 32, 0, 32, 32, 32);
+    contentTiles(3, 3, 32, 0, 32, 0, 32, 0, 32);
     movePlayer(1, 2, 2, Direction::NORTH);
     movePlayer(1, 2, 1, Direction::NORTH);
     movePlayer(1, 2, 0, Direction::NORTH);
@@ -136,14 +137,18 @@ public:
     movePlayer(1, 4, 2, Direction::SOUTH);
     movePlayer(1, 0, 2, Direction::WEST);
     movePlayer(2, 4, 2, Direction::NORTH);
+    createEgg(1);
     PlayerInventory(1, 0, 2, 1, 1, 1, 14, 1, 1, 1);
     PlayerInventory(3, 0, 0, 10, 10, 10, 10, 10, 10, 10);
     startIncantation(4, 2, 2, {2});
     // stopIncantation(4, 2, true);
     // killPlayer(3);
     resourceDroping(3, "mendiane");
-    resourceDroping(3, "mendiane");
-    resourceDroping(3, "mendiane");
+    resourceDroping(3, "deraumere");
+    // resourceDroping(3, "linemate");
+    // resourceDroping(3, "sibur");
+    // resourceDroping(3, "phiras");
+    // resourceDroping(3, "thystame");
     broadcast(1, "Hello from player 1!");
     broadcast(2, "Hello from player 2!");
   }
