@@ -104,25 +104,33 @@ void assign_client_type(client_t *client, server_connection_t *connection,
     finalize_client_assignment(client, connection, team_name);
 }
 
+void catch_command(char *line, client_t *client,
+    server_connection_t *connection, player_t *player)
+{
+    if (client->type == CLIENT_IA && line[0] != '\0') {
+        player = find_player_by_client(connection, client);
+        if (player != NULL) {
+            player_found(player, line, client);
+        }
+    }
+}
+
 void handle_client_read(server_connection_t *connection, int idx)
 {
     client_t *client = connection->clients[idx];
     char *line = NULL;
+    player_t *player = NULL;
 
-    if (client->type == CLIENT_UNKNOWN) {
+    if (client->type == CLIENT_UNKNOWN)
         return;
-    }
     line = zn_readline(client->zn_sock);
     if (line == NULL) {
-        if (errno != EAGAIN && errno != EWOULDBLOCK) {
+        if (errno != EAGAIN && errno != EWOULDBLOCK)
             disconnect_client(connection, idx);
-        }
         return;
     }
     printf("Command received: %s\n", line);
-    if (line[0] != '\0') {
-        printf("Processing command: %s\n", line);
-    }
+    catch_command(line, client, connection, player);
     free(line);
 }
 
