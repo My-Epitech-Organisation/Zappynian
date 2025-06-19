@@ -43,6 +43,20 @@ public:
   void setLevel(int level) override { level_ = level; }
   int getLevel() const override { return level_; }
 
+  void setDirection(Direction direction) override {
+    if (node_) {
+      node_->setRotation(
+          irr::core::vector3df(0, static_cast<float>(direction) * 90.0f, 0));
+    }
+  }
+  Direction getDirection() const override {
+    if (node_) {
+      return static_cast<Direction>(
+          static_cast<int>(node_->getRotation().Y / 90) % 4);
+    }
+    return Direction::NORTH;
+  }
+
   Inventory &getInventory() { return inventory_; }
 
 protected:

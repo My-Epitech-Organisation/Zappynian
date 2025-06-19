@@ -5,14 +5,13 @@
 ** PlayerEntity
 */
 #include "AEntity.hpp"
+#include "Direction.hpp"
 #include "Event/EventReceiver.hpp"
 #include "irrlicht/irrlicht.h"
 #include <string>
 #include <vector>
 
 #pragma once
-
-enum class Direction { NORTH, EAST, SOUTH, WEST };
 
 class PlayerEntity : public AEntity {
 public:
