@@ -65,8 +65,10 @@ void broadcast_to_all_players(player_t *sender, server_t *server,
     int direction = 0;
     char buffer[256];
 
-    if (server == NULL || server->players == NULL || message == NULL)
+    if (server == NULL || server->players == NULL || message == NULL) {
+        free(buffer);
         return;
+    }
     for (size_t i = 0; i < server->player_count; i++) {
         receiver = server->players[i];
         if (receiver == NULL || receiver->dead)
@@ -76,6 +78,7 @@ void broadcast_to_all_players(player_t *sender, server_t *server,
         snprintf(buffer, sizeof(buffer), "message %d, %s", direction, message);
         zn_send_message(server->connection->zn_server, buffer);
     }
+    free(buffer);
 }
 
 char *get_broadcast_message(player_t *player)
