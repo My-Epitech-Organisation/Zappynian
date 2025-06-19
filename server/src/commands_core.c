@@ -77,14 +77,15 @@ static char *put_good_format(const char *command_name)
 bool commands_add(player_t *player, const char *command_name)
 {
     const command_t *table = get_command_table();
-    size_t table_size = get_command_table_size();
     size_t i;
     char *formatted_command_name;
 
     if (player->command_count >= MAX_PLAYER_COMMANDS)
         return false;
     formatted_command_name = put_good_format(command_name);
-    for (i = 0; i < table_size; i++) {
+    if (formatted_command_name == NULL)
+        return false;
+    for (i = 0; i < get_command_table_size(); i++) {
         if (strcmp(table[i].name, formatted_command_name) == 0) {
             player->commands[player->command_count] = &table[i];
             player->command_timers[player->command_count] = table[i].duration;
