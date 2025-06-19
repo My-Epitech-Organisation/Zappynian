@@ -89,60 +89,61 @@ public:
   const std::string readLine(zn_socket_t sock);
 
   void createWorld() override {
-    createPlane(5, 5);
+    // createPlane(5, 5);
+    parseMessage();
     createLights();
     createCamera();
     createText();
-    addTeam("Red");
-    addTeam("Blue");
-    addTeam("Yellow");
-    addTeam("Purple");
-    addTeam("Orange");
-    addTeam("Green");
-    try {
-      createPlayer(1, 0, 0, Direction::NORTH, 0, "Red");
-    } catch (const std::exception &e) {
-    }
-    setPlayerLevel(1, 1);
-    try {
-      createPlayer(2, 1, 0, Direction::NORTH, 0, "Blue");
-    } catch (const std::exception &e) {
-    }
-    setPlayerLevel(2, 2);
-    try {
-      createPlayer(3, 2, 0, Direction::NORTH, 0, "Red");
-    } catch (const std::exception &e) {
-    }
-    setPlayerLevel(3, 3);
+    // addTeam("Red");
+    // addTeam("Blue");
+    // addTeam("Yellow");
+    // addTeam("Purple");
+    // addTeam("Orange");
+    // addTeam("Green");
+    // try {
+    //   createPlayer(1, 0, 0, Direction::NORTH, 0, "Red");
+    // } catch (const std::exception &e) {
+    // }
+    // setPlayerLevel(1, 1);
+    // try {
+    //   createPlayer(2, 1, 0, Direction::NORTH, 0, "Blue");
+    // } catch (const std::exception &e) {
+    // }
+    // setPlayerLevel(2, 2);
+    // try {
+    //   createPlayer(3, 2, 0, Direction::NORTH, 0, "Red");
+    // } catch (const std::exception &e) {
+    // }
+    // setPlayerLevel(3, 3);
 
-    try {
-      createPlayer(4, 3, 0, Direction::NORTH, 0, "Yellow");
-    } catch (const std::exception &e) {
-    }
-    setPlayerLevel(4, 4);
-    try {
-      createPlayer(5, 4, 0, Direction::NORTH, 0, "Purple");
-    } catch (const std::exception &e) {
-    }
-    setPlayerLevel(5, 5);
-    try {
-      createPlayer(6, 0, 1, Direction::NORTH, 0, "Orange");
-    } catch (const std::exception &e) {
-    }
-    setPlayerLevel(6, 6);
-    try {
-      createPlayer(7, 0, 2, Direction::NORTH, 0, "Green");
-    } catch (const std::exception &e) {
-    }
-    setPlayerLevel(7, 7);
-    try {
-      createPlayer(8, 0, 3, Direction::NORTH, 0, "Green");
-    } catch (const std::exception &e) {
-    }
-    setPlayerLevel(8, 8);
+    // try {
+    //   createPlayer(4, 3, 0, Direction::NORTH, 0, "Yellow");
+    // } catch (const std::exception &e) {
+    // }
+    // setPlayerLevel(4, 4);
+    // try {
+    //   createPlayer(5, 4, 0, Direction::NORTH, 0, "Purple");
+    // } catch (const std::exception &e) {
+    // }
+    // setPlayerLevel(5, 5);
+    // try {
+    //   createPlayer(6, 0, 1, Direction::NORTH, 0, "Orange");
+    // } catch (const std::exception &e) {
+    // }
+    // setPlayerLevel(6, 6);
+    // try {
+    //   createPlayer(7, 0, 2, Direction::NORTH, 0, "Green");
+    // } catch (const std::exception &e) {
+    // }
+    // setPlayerLevel(7, 7);
+    // try {
+    //   createPlayer(8, 0, 3, Direction::NORTH, 0, "Green");
+    // } catch (const std::exception &e) {
+    // }
+    // setPlayerLevel(8, 8);
 
-    contentTiles(2, 4, 32, 32, 32, 32, 32, 32, 32);
-    contentTiles(4, 4, 32, 32, 32, 32, 32, 32, 32);
+    // contentTiles(2, 4, 32, 32, 32, 32, 32, 32, 32);
+    // contentTiles(4, 4, 32, 32, 32, 32, 32, 32, 32);
     // movePlayer(1, 2, 2, Direction::NORTH);
     // movePlayer(1, 2, 1, Direction::NORTH);
     // movePlayer(1, 2, 0, Direction::NORTH);

@@ -69,6 +69,62 @@ void NetworkClient::parseMessage() {
       return;
     }
     contentTiles(x, y, q0, q1, q2, q3, q4, q5, q6);
+  } else if (command == "msz") {
+    std::istringstream iss2(message);
+    iss2 >> command;
+    if (!(iss2 >> x >> y)) {
+      std::cerr << "Invalid arguments for msz command\n";
+      return;
+    }
+    createPlane(x, y);
+  } else if (command == "tna") {
+    std::istringstream iss2(message);
+    iss2 >> command;
+    while (iss2 >> token) {
+      addTeam(token);
+    }
+  } else if (command == "ppo") {
+    std::string dirStr;
+    std::istringstream iss2(message);
+    iss2 >> command;
+    if (!(iss2 >> id >> x >> y >> dirStr)) {
+      std::cerr << "Invalid arguments for ppo command\n";
+      return;
+    }
+    if (dirStr == "NORTH")
+      direction = Direction::NORTH;
+    else if (dirStr == "EAST")
+      direction = Direction::EAST;
+    else if (dirStr == "SOUTH")
+      direction = Direction::SOUTH;
+    else if (dirStr == "WEST")
+      direction = Direction::WEST;
+    else
+      direction = Direction::NORTH;
+    changePlayerPos(id, x, y, direction);
+  } else if (command == "pin") {
+    std::istringstream iss2(message);
+    iss2 >> command;
+    if (!(iss2 >> id >> x >> y >> q0 >> q1 >> q2 >> q3 >> q4 >> q5 >> q6)) {
+      std::cerr << "Invalid arguments for pin command\n";
+      return;
+    }
+    setPlayerInventory(id, x, y, q0, q1, q2, q3, q4, q5, q6);
+  } else if (command == "sgt") {
+    std::istringstream iss2(message);
+    iss2 >> command;
+    if (!(iss2 >> level)) {
+      std::cerr << "Invalid arguments for sgt command\n";
+      return;
+    }
+  } else if (command == "sst") {
+    std::istringstream iss2(message);
+    iss2 >> command;
+  } else if (command == "smg") {
+    std::istringstream iss2(message);
+    iss2 >> command;
+  } else if (command == "enw") {
+    std::istringstream iss2(message);
   }
 }
 
