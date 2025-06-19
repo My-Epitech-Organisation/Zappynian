@@ -490,8 +490,10 @@ void WorldScene::expulsionMove(int id, irr::f32 direction,
 
 void WorldScene::expulsion(int id) {
   for (auto it = entity_.begin(); it != entity_.end();) {
-    if ((*it)->getId() < 0)
+    if ((*it)->getId() < 0) {
+      ++it;
       continue;
+    }
     if ((*it)->getId() == id) {
       auto direction = (*it)->getNode()->getRotation().Y;
       auto directionEnum =

@@ -79,7 +79,7 @@ public:
     addTeam("Orange");
     addTeam("Green");
     try {
-      createPlayer(1, 2, 2, Direction::SOUTH, 0, "Red");
+      createPlayer(1, 2, 2, Direction::WEST, 0, "Red");
     } catch (const std::exception &e) {
     }
     setPlayerLevel(1, 1);
