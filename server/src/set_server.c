@@ -5,7 +5,7 @@
 ** Server socket setup functions with libzappy_net integration
 */
 
-#include "../includes/server.h"
+#include "../include/server.h"
 
 static int initialize_server_connection(server_connection_t *connection)
 {

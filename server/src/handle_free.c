@@ -5,8 +5,8 @@
 ** handle_free
 */
 
-#include "../includes/server.h"
-#include "../includes/team.h"
+#include "../include/server.h"
+#include "../include/team.h"
 
 static void free_team_names(server_args_t *server)
 {

@@ -5,7 +5,7 @@
 ** Client adapters for network integration
 */
 
-#include "../includes/server.h"
+#include "../include/server.h"
 
 void init_client_zappy_socket(client_t *client, zn_socket_t zn_sock)
 {

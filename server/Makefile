@@ -34,6 +34,11 @@ SRCS	=	src/main.c				\
 			src/player.c 			\
 			src/elevation.c 		\
 			src/team.c 				\
+			src/look_cmd.c 			\
+			src/look_vision_tiles.c \
+			src/look_current_tile.c \
+			src/inventory_cmd.c 	\
+			src/broadcast_cmd.c 	\
 			src/network_integration.c \
 			src/client_adapters.c 	\
 			src/write_to_client.c 	\
@@ -72,8 +77,8 @@ all: build_libzappy_net $(NAME)
 debug: CFLAGS := $(CFLAGS_DEBUG)
 debug: LDFLAGS_BUILD := $(LDFLAGS_DEBUG)
 debug: build_libzappy_net $(NAME)
-	@echo -e "$(GREEN)Compilation debug réussie, le binaire :$(ORANGE) $(NAME) \
-	$(GREEN)générée avec symboles de debug$(NO_COLOR)"
+	@echo -e "$(GREEN)Compilation debug réussie, le binaire :$(ORANGE) \
+	$(NAME) $(GREEN)générée avec symboles de debug$(NO_COLOR)"
 
 build_libzappy_net:
 	@echo -e "$(BLUE)Construction de libzappy_net...$(NO_COLOR)"

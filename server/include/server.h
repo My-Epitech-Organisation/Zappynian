@@ -105,4 +105,7 @@ void cleanup_network_integration(void);
 void init_client_zappy_socket(client_t *client, zn_socket_t zn_sock);
 void cleanup_client_zappy_socket(client_t *client);
 
+/* Client communication */
+void send_to_client(client_t *client, const char *msg);
+
 #endif /* SERVER_H */
