@@ -10,6 +10,7 @@
 
     #include <stdbool.h>
     #include "world.h"
+    #include "resource.h"
 
     #define MAX_PLAYER_COMMANDS 10
     #define NORTH 0
@@ -28,6 +29,7 @@ typedef struct player_s {
     int level;
     int orientation;
     int food;
+    int resources[RESOURCE_COUNT];
     bool dead;
     bool in_elevation;
     int slot_id;

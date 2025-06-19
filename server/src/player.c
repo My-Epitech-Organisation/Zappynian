@@ -5,9 +5,9 @@
 ** player
 */
 
-#include "../includes/player.h"
-#include "../includes/server.h"
-#include "../includes/commands.h"
+#include "../include/player.h"
+#include "../include/server.h"
+#include "../include/commands.h"
 
 player_t *create_player(int id, const char *team_name, int x, int y)
 {

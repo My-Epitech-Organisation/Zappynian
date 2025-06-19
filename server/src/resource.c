@@ -5,9 +5,9 @@
 ** resource
 */
 
-#include "../includes/resource.h"
+#include "../include/resource.h"
 
-void fill_resource(tile_t *tile, bool random)
+static void fill_resource(tile_t *tile, bool random)
 {
     if (!random) {
         for (int i = 0; i < RESOURCE_COUNT; i++)
@@ -65,4 +65,26 @@ bool resource_remove(tile_t *tile, int resource_type, int amount)
     }
     tile->resources[resource_type] -= amount;
     return true;
+}
+
+char *get_resource_name(int resource_type)
+{
+    switch (resource_type) {
+        case RESOURCE_FOOD:
+            return "food";
+        case RESOURCE_LINEMATE:
+            return "linemate";
+        case RESOURCE_DERAUMERE:
+            return "deraumere";
+        case RESOURCE_SIBUR:
+            return "sibur";
+        case RESOURCE_MENDIANE:
+            return "mendiane";
+        case RESOURCE_PHIRAS:
+            return "phiras";
+        case RESOURCE_THYSTAME:
+            return "thystame";
+        default:
+            return "unknown";
+    }
 }

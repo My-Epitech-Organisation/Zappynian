@@ -11,6 +11,13 @@
 
 void WorldScene::createEntities(int id, int x, int y, Direction direction,
                                 int level, std::string team) {
+    if (!smgr_ || !driver_ || !device_) {
+    std::cerr << "Error: Uninitialized dependencies detected. "
+              << "smgr_: " << (smgr_ ? "initialized" : "uninitialized") << ", "
+              << "driver_: " << (driver_ ? "initialized" : "uninitialized") << ", "
+              << "device_: " << (device_ ? "initialized" : "uninitialized") << std::endl;
+    return;
+  }
   entityManager_.addTeams(teams_);
   auto tile = entityManager_.getTileByName(
       "Cube info: row " + std::to_string(x) + " col " + std::to_string(y));
@@ -44,6 +51,8 @@ void WorldScene::setPlayerInventory(int id, int x, int y, int q0, int q1,
 
 void WorldScene::createEntities(int x, int y, int q0, int q1, int q2, int q3,
                                 int q4, int q5, int q6, int nbTiles) {
+  if (!smgr_ || !driver_ || !device_)
+    return;
   int countTiles = 0;
   for (int i = 0; i < x; i++) {
     for (int j = 0; j < y; j++) {
@@ -59,11 +68,15 @@ void WorldScene::createEntities(int x, int y, int q0, int q1, int q2, int q3,
 
 void WorldScene::createEntities(int x, int y, int q0, int q1, int q2, int q3,
                                 int q4, int q5, int q6) {
+  if (!smgr_ || !driver_ || !device_)
+    return;
   entityManager_.createStones(x, y, q0, q1, q2, q3, q4, q5, q6);
   entity_ = entityManager_.getEntities();
 }
 
 void WorldScene::createEntities(int id) {
+  if (!smgr_ || !driver_ || !device_)
+    return;
   entityManager_.createEgg(id);
   entity_ = entityManager_.getEntities();
 }
@@ -158,6 +171,8 @@ void WorldScene::updateMovements() {
 }
 
 void WorldScene::createLights() {
+  if (!smgr_)
+    return;
   smgr_->addLightSceneNode(0, irr::core::vector3df(0, 100, -100),
                            irr::video::SColorf(1.0f, 1.0f, 1.0f), 800.0f);
   smgr_->addLightSceneNode(0, irr::core::vector3df(-100, 100, -100),
@@ -167,17 +182,23 @@ void WorldScene::createLights() {
 }
 
 void WorldScene::createCamera() {
+  if (!smgr_)
+    return;
   smgr_->addCameraSceneNode(0, irr::core::vector3df(0, 50, -100),
                             irr::core::vector3df(0, 30, 0));
 }
 
 void WorldScene::createPlane(int x, int y) {
+  if (!smgr_ || !driver_ || !device_)
+    return;
   planeSize_ = {x, y};
   entityManager_.createTiles(x, y);
   entity_ = entityManager_.getEntities();
 }
 
 void WorldScene::createText() {
+  if (!smgr_ || !driver_)
+    return;
   irr::gui::IGUIStaticText *text = smgr_->getGUIEnvironment()->addStaticText(
       L"Tile Info:", irr::core::rect<irr::s32>(10, 10, 220, 200), false);
 
@@ -217,7 +238,8 @@ void WorldScene::setPlayerLevel(int id, int level) {
 }
 
 void WorldScene::changeHeadLevel(std::shared_ptr<IEntity> &entity, int level) {
-
+  if (!driver_)
+    return;
   std::vector<irr::io::path> texturesHead = {
       mediaPath_ + "archer_texture/santi_head.png",
       mediaPath_ + "archer_texture/santi_head.png",
@@ -304,6 +326,8 @@ void WorldScene::addChatMessage(const std::string &message) {
 }
 
 void WorldScene::broadcast(int id, const std::string &message) {
+  if (!device_)
+    return;
   std::shared_ptr<IEntity> broadcaster = nullptr;
   for (const auto &entity : entity_) {
     if (entity->getId() == id) {
@@ -346,7 +370,6 @@ void WorldScene::createWorld() {}
 void WorldScene::updateChatDisplay() {
   if (!textChat_)
     return;
-
   irr::core::stringw chatText = L"Chat:\n";
   for (const auto &message : chatMessages_) {
     chatText += irr::core::stringw(message.c_str());
@@ -356,6 +379,8 @@ void WorldScene::updateChatDisplay() {
 }
 
 void WorldScene::updatePaperPlaneMovements() {
+  if (!device_)
+    return;
   if (paperPlaneMovements_.empty())
     return;
   irr::u32 currentTime = device_->getTimer()->getTime();
@@ -365,7 +390,6 @@ void WorldScene::updatePaperPlaneMovements() {
       ++it;
       continue;
     }
-
     float elapsedTime = (currentTime - it->startTime) / 1000.0f;
     if (elapsedTime >= it->duration) {
       auto paperPlane = it->paperPlane;
@@ -400,6 +424,8 @@ void WorldScene::updatePaperPlaneMovements() {
 }
 
 void WorldScene::clearElements() {
+  if (!device_)
+    return;
   std::queue<Movement> emptyQueue;
   std::swap(movementQueue_, emptyQueue);
   for (auto &plane : paperPlaneMovements_)
@@ -422,8 +448,9 @@ void WorldScene::clearElements() {
 }
 
 void WorldScene::endGame(std::string winner) {
+  if (!smgr_ || !driver_)
+    return;
   clearElements();
-
   addChatMessage("Game Over! Winner: " + winner);
   irr::core::dimension2du screenSize = smgr_->getVideoDriver()->getScreenSize();
   int buttonWidth = 300;
@@ -506,3 +533,4 @@ void WorldScene::expulsion(int id) {
     }
   }
 }
+

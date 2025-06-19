@@ -5,7 +5,7 @@
 ** death
 */
 
-#include "death.h"
+#include "../include/death.h"
 
 void death_handle(player_t *player, map_t *map, server_t *server)
 {

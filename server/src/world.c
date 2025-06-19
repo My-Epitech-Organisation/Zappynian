@@ -5,12 +5,12 @@
 ** world
 */
 
-#include "../includes/world.h"
+#include "../include/world.h"
 #include <time.h>
 #include <stdbool.h>
-#include "../includes/server.h"
-#include "../includes/player.h"
-#include "../includes/resource.h"
+#include "../include/server.h"
+#include "../include/player.h"
+#include "../include/resource.h"
 
 static int set_tiles(map_t *map, size_t width, size_t height, size_t y)
 {
