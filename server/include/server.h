@@ -23,6 +23,7 @@
     #include "../../libzappy_net/include/zappy_net.h"
 
 typedef struct team_s team_t;
+typedef struct egg_s egg_t;
 
 typedef enum {
     CLIENT_UNKNOWN = ZN_ROLE_UNKNOWN,
@@ -65,6 +66,7 @@ typedef struct server_s {
     int tick_count;
     bool game_running;
     volatile bool server_running;
+    egg_t *eggs;
 } server_t;
 
 int handle_args(int argc, char **argv, server_t *server);
