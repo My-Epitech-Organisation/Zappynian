@@ -10,6 +10,10 @@
 Game::Game(const std::string &host, int port)
     : host_(host), port_(port) {
   initWindow();
+  if (!device_) {
+    std::cerr << "Failed to create Irrlicht device\n";
+    return;
+  }
 }
 
 Game::~Game() {}
@@ -33,7 +37,7 @@ void Game::initWindow() {
   smgr_ = device_->getSceneManager();
   guienv_ = device_->getGUIEnvironment();
   receiver_.setDevice(device_);
-  mediaPath_ = "assets/";
+  mediaPath_ = "gui/assets/";
   device_->setWindowCaption(L"Zappy FPS: 0");
 
   driver_->setTextureCreationFlag(irr::video::ETCF_CREATE_MIP_MAPS, false);
@@ -45,7 +49,6 @@ void Game::initWindow() {
       driver_->getTexture(mediaPath_ + "sky_texture/skymidright.png"),
       driver_->getTexture(mediaPath_ + "sky_texture/skymidleft.png"),
       driver_->getTexture(mediaPath_ + "sky_texture/skyleft.png"));
-
   driver_->setTextureCreationFlag(irr::video::ETCF_CREATE_MIP_MAPS, true);
 }
 
@@ -123,10 +126,18 @@ void Game::gameLoop() {
   NetworkClient scene(device_, smgr_, driver_, receiver_, mediaPath_, host_, port_);
   scene.createWorld();
   entity_ = scene.getEntities();
-  if (entity_.empty() || !entity_[0] || !entity_[0]->getNode())
+  if (entity_.empty()) {
     return;
+  }
+  if (!entity_[0]) {
+    return;
+  }
+  if (!entity_[0]->getNode()) {
+    return;
+  }
 
   while (device_->run()) {
+
     irr::u32 currentTime = device_->getTimer()->getTime();
 
     updatePlayerMovement(currentTime, scene);
@@ -149,6 +160,5 @@ void Game::gameLoop() {
       frames = 0;
     }
   }
-
   device_->drop();
 }
