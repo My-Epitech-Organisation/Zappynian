@@ -10,8 +10,13 @@
 
 void WorldScene::createEntities(int id, int x, int y, Direction direction,
                                 int level, std::string team) {
-  if (!smgr_ || !driver_ || !device_)
+    if (!smgr_ || !driver_ || !device_) {
+    std::cerr << "Error: Uninitialized dependencies detected. "
+              << "smgr_: " << (smgr_ ? "initialized" : "uninitialized") << ", "
+              << "driver_: " << (driver_ ? "initialized" : "uninitialized") << ", "
+              << "device_: " << (device_ ? "initialized" : "uninitialized") << std::endl;
     return;
+  }
   entityManager_.addTeams(teams_);
   auto tile = entityManager_.getTileByName(
       "Cube info: row " + std::to_string(x) + " col " + std::to_string(y));
