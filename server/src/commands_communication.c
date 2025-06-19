@@ -8,6 +8,7 @@
 #include <stdio.h>
 #include "../include/commands.h"
 #include "../include/server.h"
+#include "../include/egg.h"
 
 void cmd_inventory(player_t *player, server_t *server)
 {
@@ -45,12 +46,36 @@ void cmd_broadcast(player_t *player, server_t *server)
 
 void cmd_connect_nbr(player_t *player, server_t *server)
 {
-    (void) server;
-    printf("Player %d executed connect_nbr command\n", player->id);
+    char *response = NULL;
+
+    if (player->dead || player->in_elevation) {
+        zn_send_message(server->connection->zn_server, "ko");
+        return;
+    }
+    response = malloc(20 * sizeof(char));
+    if (response == NULL) {
+        zn_send_message(server->connection->zn_server, "ko");
+        return;
+    }
+    snprintf(response, 20, "%d",
+        server->args->clients_per_team - player->slot_id);
+    zn_send_message(server->connection->zn_server, response);
+    free(response);
 }
 
 void cmd_fork(player_t *player, server_t *server)
 {
-    (void) server;
-    printf("Player %d executed fork command\n", player->id);
+    egg_t *new_egg = NULL;
+
+    if (player->dead || player->in_elevation) {
+        zn_send_message(server->connection->zn_server, "ko");
+        return;
+    }
+    new_egg = create_egg(player->x, player->y, player->team_name);
+    if (new_egg == NULL) {
+        zn_send_message(server->connection->zn_server, "ko");
+        return;
+    }
+    add_egg_to_server(server, new_egg);
+    zn_send_message(server->connection->zn_server, "ok");
 }
