@@ -56,6 +56,7 @@ static char *put_good_format(const char *command_name)
     char *formatted_command_name = strdup(command_name);
     char *start = NULL;
     char *end = NULL;
+    char *trimmed_command_name = NULL;
 
     if (formatted_command_name == NULL)
         return NULL;
@@ -68,7 +69,9 @@ static char *put_good_format(const char *command_name)
     while (end > start && *end == ' ')
         end--;
     *(end + 1) = '\0';
-    return start;
+    trimmed_command_name = strdup(start);
+    free(formatted_command_name);
+    return trimmed_command_name;
 }
 
 bool commands_add(player_t *player, const char *command_name)
