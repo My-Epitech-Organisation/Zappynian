@@ -140,6 +140,7 @@ void Game::gameLoop() {
 
     irr::u32 currentTime = device_->getTimer()->getTime();
 
+    scene.parseMessage();
     updatePlayerMovement(currentTime, scene);
     updateIncantingPlayers(scene);
     scene.updatePaperPlaneMovements();
