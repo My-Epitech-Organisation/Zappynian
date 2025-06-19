@@ -77,8 +77,8 @@ all: build_libzappy_net $(NAME)
 debug: CFLAGS := $(CFLAGS_DEBUG)
 debug: LDFLAGS_BUILD := $(LDFLAGS_DEBUG)
 debug: build_libzappy_net $(NAME)
-	@echo -e "$(GREEN)Compilation debug réussie, le binaire :$(ORANGE) $(NAME) \
-	$(GREEN)générée avec symboles de debug$(NO_COLOR)"
+	@echo -e "$(GREEN)Compilation debug réussie, le binaire :$(ORANGE) \
+	$(NAME) $(GREEN)générée avec symboles de debug$(NO_COLOR)"
 
 build_libzappy_net:
 	@echo -e "$(BLUE)Construction de libzappy_net...$(NO_COLOR)"
