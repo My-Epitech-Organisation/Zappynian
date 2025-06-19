@@ -85,7 +85,7 @@ bool commands_add(player_t *player, const char *command_name)
         return false;
     formatted_command_name = put_good_format(command_name);
     for (i = 0; i < table_size; i++) {
-        if (strcmp(table[i].name, command_name) == 0) {
+        if (strcmp(table[i].name, formatted_command_name) == 0) {
             player->commands[player->command_count] = &table[i];
             player->command_timers[player->command_count] = table[i].duration;
             player->command_count++;
