@@ -8,11 +8,9 @@
 #include "../include/elevation.h"
 #include <stdio.h>
 
-elevation_requirement_t requirements[MAX_LEVEL];
-
-void elevation_init_requirements(void)
+void elevation_init_requirements(elevation_requirement_t *requirements)
 {
-    memset(requirements, 0, sizeof(requirements));
+    memset(requirements, 0, sizeof(elevation_requirement_t) * MAX_LEVEL);
     requirements[0] = (elevation_requirement_t) {1, {1, 0, 0, 0, 0, 0, 0}};
     requirements[1] = (elevation_requirement_t) {2, {1, 1, 1, 0, 0, 0, 0}};
     requirements[2] = (elevation_requirement_t) {2, {2, 0, 1, 0, 2, 0, 0}};
@@ -22,7 +20,8 @@ void elevation_init_requirements(void)
     requirements[6] = (elevation_requirement_t) {6, {2, 2, 2, 2, 2, 1, 0}};
 }
 
-static bool can_start_incantation(tile_t *tile, int player_level)
+static bool can_start_incantation(tile_t *tile, int player_level,
+    const elevation_requirement_t *requirements)
 {
     elevation_requirement_t req;
 
@@ -41,9 +40,10 @@ static bool can_start_incantation(tile_t *tile, int player_level)
     return true;
 }
 
-void start_incantation(tile_t *tile, int player_level)
+void start_incantation(tile_t *tile, int player_level,
+    const elevation_requirement_t *requirements)
 {
-    if (!can_start_incantation(tile, player_level)) {
+    if (!can_start_incantation(tile, player_level, requirements)) {
         fprintf(stderr, "Cannot start incantation: requirements not met.\n");
         return;
     }
@@ -52,7 +52,8 @@ void start_incantation(tile_t *tile, int player_level)
     }
 }
 
-bool complete_incantation(tile_t *tile, int player_level)
+bool complete_incantation(tile_t *tile, int player_level,
+    const elevation_requirement_t *requirements)
 {
     elevation_requirement_t req;
 
@@ -71,11 +72,11 @@ bool complete_incantation(tile_t *tile, int player_level)
     return true;
 }
 
-void apply_elevation(tile_t *tile, int player_level)
+void apply_elevation(tile_t *tile, int player_level,
+    const elevation_requirement_t *requirements)
 {
-    if (!complete_incantation(tile, player_level)) {
+    if (!complete_incantation(tile, player_level, requirements))
         return;
-    }
     for (size_t i = 0; i < tile->player_count; i++) {
         tile->players[i]->level++;
         tile->players[i]->in_elevation = false;
