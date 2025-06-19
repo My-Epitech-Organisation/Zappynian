@@ -25,29 +25,19 @@ UPGRADERGOALS = {
 }
 
 def select_role(world, vision) -> object:
-
-    if world.get_food_count() < 5:
+    if world.get_food_count() < 10:
         return Survivor()
     for resource, goal in MINERGOALS.items():
-        current = world.inventory.get(resource, 0)
-        if current < goal:
+        if world.inventory.get(resource, 0) < goal:
             return Miner()
     for resource, goal in UPGRADERGOALS.items():
-        current = world.inventory.get(resource, 0)
-        if current < goal:
+        if world.inventory.get(resource, 0) < goal:
             return Upgrader()
-    level = world.inventory.get("level", 1)
+    level = world.level
     reqs = INCANTATION_REQUIREMENTS.get(level)
     if reqs:
-        enough = True
-        for res, amount in reqs.items():
-            if res == "players":
-                continue
-            if world.inventory.get(res, 0) < amount:
-                enough = False
-                break
-        if enough:
+        if all(world.inventory.get(res, 0) >= amount for res, amount in reqs.items() if res != "players"):
             return Leader()
-    if world.get_food_count() > 10:
+    if world.get_food_count() > 8:
         return Breeder()
     return Scout()
