@@ -21,6 +21,11 @@ EventReceiver::EventReceiver()
 EventReceiver::~EventReceiver() = default;
 
 bool EventReceiver::OnEvent(const irr::SEvent &event) {
+  if (event.EventType == irr::EET_GUI_EVENT) {
+    if (handleGUIEvent(event.GUIEvent)) {
+      return true;
+    }
+  }
   if (event.EventType == irr::EET_KEY_INPUT_EVENT) {
     return handleKeyInput(event.KeyInput);
   }
@@ -162,6 +167,18 @@ bool EventReceiver::handleMouseInput(
   return false;
 }
 
+bool EventReceiver::handleGUIEvent(const irr::SEvent::SGUIEvent &guiEvent) {
+  if (guiEvent.EventType == irr::gui::EGET_BUTTON_CLICKED) {
+    if (guiEvent.Caller->getID() == 9999) {
+      if (device) {
+        device->closeDevice();
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
 bool EventReceiver::handleCameraMovement(int deltaX, int deltaY) {
   if (!smgr)
     return false;
@@ -224,7 +241,7 @@ bool EventReceiver::handleNodeSelection(
           irr::core::stringw(L"Selected Cube: ") + c->getName().c_str();
       std::vector<std::string> stoneNames = {"food",    "linemate", "deraumere",
                                              "sibur",   "mendiane", "phiras",
-                                             "thystame"};
+                                             "thystame", "egg"};
       for (std::size_t i = 0; i < stoneNames.size(); ++i) {
         selectedText += L"\n: ";
         selectedText += irr::core::stringw(stoneNames[i].c_str());
@@ -302,6 +319,12 @@ void EventReceiver::removeEntity(int id) {
   if (it != entity_.end()) {
     entity_.erase(it, entity_.end());
   }
+}
+
+void EventReceiver::clearAllEntities() {
+  entity_.clear();
+  cubes.clear();
+  animatedNode = nullptr;
 }
 
 void EventReceiver::setText(irr::gui::IGUIStaticText *t) { textCube = t; }

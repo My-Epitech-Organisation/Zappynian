@@ -22,6 +22,4 @@ public:
 
 protected:
   std::map<std::string, size_t> items_;
-
-private:
 };

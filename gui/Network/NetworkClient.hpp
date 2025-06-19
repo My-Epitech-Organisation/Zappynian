@@ -52,6 +52,22 @@ public:
     WorldScene::setPlayerInventory(id, x, y, q0, q1, q2, q3, q4, q5, q6);
   }
 
+  void startIncantation(int x, int y, int level, std::vector<int> ids) {
+    WorldScene::startIncantation(x, y, level, ids);
+  }
+
+  void stopIncantation(int x, int y, bool result) {
+    WorldScene::stopIncantation(x, y, result);
+  }
+
+  bool isPlayerIncanting(int id) const {
+    return WorldScene::isPlayerIncanting(id);
+  }
+
+  void createEgg(int id) {
+    WorldScene::createEntities(id);
+  }
+
   void createWorld() override {
     createPlane(5, 5);
     createLights();
@@ -125,6 +141,7 @@ public:
     // killPlayer(3);
     broadcast(1, "Hello from player 1!");
     broadcast(2, "Hello from player 2!");
+    // endGame("Red");
   }
 
   std::vector<std::shared_ptr<IEntity>> getEntities() {

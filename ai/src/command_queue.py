@@ -5,28 +5,35 @@ from ai.src.connection import Connection
 class CommandQueue:
 
     def __init__(self, connection: Connection):
-        # Initialise la file de commandes avec une connexion donnée
         self.connection = connection
         self.queue = deque()
         self.pending = 0
 
     def push(self, command: str):
-        # Ajoute une commande à la file d'attente
+        if not isinstance(command, str):
+            raise TypeError(f"[ERROR] Command must be a string, got: {type(command)} with value {command}")
         self.queue.append(command)
 
     def flush(self):
-        # Envoie les commandes tant que la limite de commandes en attente n'est pas atteinte
         while self.queue:
             cmd = self.queue.popleft()
             self.connection.send_command(cmd)
             self.pending += 1
 
     def handle_response(self, line: str):
-        # Gère la réponse du serveur et met à jour le nombre de commandes en attente
         if line in ("ok", "ko", "dead") or line.startswith("message") or line.startswith("["):
             self.pending = max(0, self.pending - 1)
 
     def reset(self):
-        # Réinitialise la file de commandes et le compteur de commandes en attente
         self.queue.clear()
         self.pending = 0
+
+    def send_and_wait(self, command: str) -> str:
+        self.push(command)
+        self.flush()
+        while True:
+            line = self.connection.read_line()
+            if not line:
+                continue
+            self.handle_response(line)
+            return line

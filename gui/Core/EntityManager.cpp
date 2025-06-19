@@ -98,7 +98,7 @@ void EntityManager::createStones(int x, int y, int q0, int q1, int q2, int q3,
       ++numStones;
   for (int i = 0; i < quantities[0]; ++i) {
     entity_.push_back(std::make_shared<Stone>(
-        -1, position, qScale[0], stoneTextures[0], qB3D[0], stoneNames[0]));
+        -2, position, qScale[0], stoneTextures[0], qB3D[0], stoneNames[0]));
     entity_.back()->createNode(smgr_, driver_);
   }
   if (numStones == 0)
@@ -114,7 +114,7 @@ void EntityManager::createStones(int x, int y, int q0, int q1, int q2, int q3,
       objPos.X += std::cos(angle) * radius;
       objPos.Z += std::sin(angle) * radius;
       entity_.push_back(std::make_shared<Stone>(
-          -1, objPos, qScale[i], stoneTextures[i], qB3D[i], stoneNames[i]));
+          -3, objPos, qScale[i], stoneTextures[i], qB3D[i], stoneNames[i]));
       entity_.back()->createNode(smgr_, driver_);
       ++placed;
     }
@@ -134,7 +134,7 @@ void EntityManager::createTiles(int x, int y) {
       name += " col ";
       name += j;
       auto tile = std::make_shared<TileEntity>(
-          -1, irr::core::vector3df(cubeX, 0, cubeY),
+          -4, irr::core::vector3df(cubeX, 0, cubeY),
           irr::core::vector3df(1.0f, 0.5f, 1.0f),
           std::vector<irr::io::path>{mediaPath_ + "grass.png"},
           mediaPath_ + "cube.b3d", image2, name);
@@ -151,11 +151,36 @@ void EntityManager::createTiles(int x, int y) {
 std::shared_ptr<IEntity>
 EntityManager::createPaperPlane(irr::core::vector3df position) {
   auto paperPlane = std::make_shared<TileEntity>(
-      -1, position, irr::core::vector3df(1.0f, 1.0f, 1.0f),
+      -5, position, irr::core::vector3df(1.0f, 1.0f, 1.0f),
       std::vector<irr::io::path>{mediaPath_ +
                                  "plane_texture/plane_texture.jpg"},
       mediaPath_ + "plane.b3d", nullptr, "Paper Plane");
   paperPlane->createNode(smgr_, driver_);
   entity_.push_back(paperPlane);
   return paperPlane;
+}
+
+void EntityManager::createEgg(int id) {
+  for (const auto& entities : entity_) {
+    auto player = std::dynamic_pointer_cast<PlayerEntity>(entities);
+    if (player && player->getId() == id) {
+      irr::core::vector3df pos = player->getNode()->getPosition();
+      std::vector<irr::io::path> eggTextures = {mediaPath_ + "egg_texture/egg_texture.png"};
+      auto egg = std::make_shared<Egg>(
+          -1, pos, irr::core::vector3df(20.f, 20.f, 20.f),
+          eggTextures, mediaPath_ + "Egg.b3d");
+      entity_.push_back(egg);
+      egg->createNode(smgr_, driver_);
+      auto tile = getTileByName("Cube info: row " + std::to_string(
+          static_cast<int>(pos.X / 20)) + " col " +
+          std::to_string(static_cast<int>(pos.Z / 20)));
+      if (tile) {
+          tile->getInventory().addItem("egg", 1);
+      } else {
+          std::cerr << "Error: Tile not found for player " << id
+                    << " at position (" << pos.X << ", " << pos.Z << ")." << std::endl;
+      }
+      break;
+    }
+  }
 }

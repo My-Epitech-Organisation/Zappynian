@@ -1,0 +1,95 @@
+/**
+ * @page getting_started Getting Started
+ *
+ * # 🚀 Getting Started
+ * 
+ * ## Overview
+ * This guide provides a quick setup and launch instructions for the Zappy project, which includes a server, GUI, and AI clients.
+ * The project is structured to allow easy compilation and execution of its components.
+ *
+ * ---
+ *
+ * ## Cloning the Repository
+ * Clone the repository to your local machine:
+ * ```bash
+ * git clone git@github.com:EpitechPromo2028/B-YEP-400-NAN-4-1-zappy-paul-antoine.salmon.git
+ * ```
+ *
+ * ## Launch Instructions
+ *
+ * ### Step 1: Build the Project
+ * ```bash
+ * make
+ * ```
+ * This builds all three binaries: `zappy_server`, `zappy_gui`, and `zappy_ai`.
+ * 
+ * ### Step 2: Start the Server
+ * ```bash
+ * ./zappy_server -p 4242 -x 10 -y 10 -n team1 team2 -c 3 -f 100
+ * ```
+ * 
+ * ### Step 3: Launch the GUI
+ * ```bash
+ * ./zappy_gui -p 4242 -h localhost
+ * ```
+ * 
+ * ### Step 4: Connect AI Clients
+ * ```bash
+ * ./zappy_ai -p 4242 -n team1 -h localhost
+ * ```
+ * 
+ * ---
+ * 
+ * ## 📋 Server Command Options
+ * 
+ * | Option | Description |
+ * |--------|-------------|
+ * | `-p port` | Port number for server |
+ * | `-x width` | Width of the world |
+ * | `-y height` | Height of the world |
+ * | `-n name1 name2 ...` | Team names |
+ * | `-c clientsNb` | Number of authorized clients per team |
+ * | `-f freq` | Reciprocal of time unit for execution |
+ * 
+ * ## 🎮 GUI Command Options
+ * 
+ * | Option | Description |
+ * |--------|-------------|
+ * | `-p port` | Port number |
+ * | `-h machine` | Hostname of the server |
+ * 
+ * ## 🤖 AI Command Options
+ * 
+ * | Option | Description |
+ * |--------|-------------|
+ * | `-p port` | Port number |
+ * | `-n name` | Name of the team |
+ * | `-h machine` | Hostname (default: localhost) |
+ *
+ * ---
+ *
+ * ## ⚙️ Makefile
+ * 
+ * The Makefile provides the following targets:
+ *
+ * ```bash
+ * make          # Compiles all components
+ * make server   # Compiles only the server
+ * make ai       # Compiles only the AI client
+ * make gui      # Compiles only the GUI
+ * make clean    # Removes object files
+ * make fclean   # Complete cleanup
+ * make re       # Rebuild everything
+ * make tests_run # Run test suite
+ * make doc      # Generates documentation using Doxygen and opens it
+ * ```
+ *
+ * ## 🔗 Navigation
+ * 
+ * - 🏠 [Main Page](index.html)
+ * - 📖 \ref user_guide "User Guide" - Complete setup and gameplay instructions
+ * - ❓ \ref faq "FAQ" - Frequently asked questions and troubleshooting
+ * - 📡 \ref protocol "Network Protocol" - Technical communication specifications
+ * - 🛠️ [GitHub](https://github.com/My-Epitech-Organisation/Raytracer)
+ *
+ */
