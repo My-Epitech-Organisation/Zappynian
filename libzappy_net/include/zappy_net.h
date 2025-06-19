@@ -328,6 +328,33 @@
         int world_x, int world_y);
 
     /**
+    * @brief Send a message with automatic newline termination
+    *
+    * Sends a string message followed by a newline character to the socket.
+    * This is a convenience function that combines zn_write() and zn_flush()
+    * for sending complete text messages in the Zappy protocol.
+    *
+    * @param sock The socket handle
+    * @param message The message string to send (null-terminated)
+    * @return 0 on success, -1 on failure
+    */
+    int zn_send_message(zn_socket_t sock, const char *message);
+
+    /**
+    * @brief Receive a complete message line from socket
+    *
+    * Receives a complete newline-terminated message from the socket.
+    * This is a convenience function that uses zn_readline() and returns
+    * a dynamically allocated string. The caller is responsible for freeing
+    * the returned string.
+    *
+    * @param sock The socket handle
+    * @return Dynamically allocated message string (caller must free),
+    *         or NULL if no message available or on error
+    */
+    char *zn_receive_message(zn_socket_t sock);
+
+    /**
     * @brief Maximum number of sockets supported by zn_poll()
     */
     #define ZN_POLL_MAX_SOCKETS 64

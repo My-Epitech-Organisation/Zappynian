@@ -15,35 +15,23 @@
     #include <string.h>
     #include <unistd.h>
     #include <getopt.h>
-    #include <arpa/inet.h>
-    #include <sys/types.h>
-    #include <sys/socket.h>
-    #include <netinet/in.h>
-    #include <errno.h>
-    #include <poll.h>
     #include <stdbool.h>
     #include "world.h"
     #include "player.h"
     #include "resource.h"
     #include "commands.h"
+    #include "../../libzappy_net/include/zappy_net.h"
 
 typedef struct team_s team_t;
 
 typedef enum {
-    CLIENT_UNKNOWN,
-    CLIENT_IA,
-    CLIENT_GUI
+    CLIENT_UNKNOWN = ZN_ROLE_UNKNOWN,
+    CLIENT_IA = ZN_ROLE_AI,
+    CLIENT_GUI = ZN_ROLE_GUI
 } client_type_t;
 
 typedef struct client_s {
-    int fd;
-    struct sockaddr_in addr;
-    socklen_t addr_len;
-    char read_buffer[BUFFER_SIZE];
-    int read_index;
-    char write_buffer[BUFFER_SIZE];
-    int write_index;
-    int write_total;
+    zn_socket_t zn_sock;
     client_type_t type;
     char *team_name;
 } client_t;
@@ -61,10 +49,7 @@ typedef struct server_args_s {
 } server_args_t;
 
 typedef struct server_connection_s {
-    int fd;
-    int nfds;
-    struct sockaddr_in addr;
-    struct pollfd *fds;
+    zn_socket_t zn_server;
     client_t **clients;
     int client_count;
     int port;
@@ -79,12 +64,10 @@ typedef struct server_s {
     size_t player_count;
     int tick_count;
     bool game_running;
+    volatile bool server_running;
 } server_t;
 
-int check_args(int argc, char **argv, server_args_t *server);
 int handle_args(int argc, char **argv, server_t *server);
-int handle_options(int opt, char **argv, int argc, server_args_t *server);
-int parse_options(int argc, char **argv, server_args_t *server);
 
 void fill_port(server_args_t *server, char *optarg);
 void fill_witdh(server_args_t *server, char *optarg);
@@ -99,18 +82,27 @@ void display_infos(server_args_t *server);
 int handle_free(server_t *server);
 void handle_error_connection(char *msg, server_connection_t *connection);
 
+// Simplified network setup function
 void set_server(server_connection_t *connection);
-void set_bind(server_connection_t *connection);
-void set_listen(server_connection_t *connection);
-int set_server_socket(server_connection_t *connection);
 
-void handle_clients(server_t *server);
+// Client handling functions
 void handle_client_read(server_connection_t *connection, int client_idx);
+void handle_client_write(server_connection_t *connection, int client_idx);
 void disconnect_client(server_connection_t *connection, int client_idx);
-int check_correct_read(server_connection_t *connection, int idx,
-    ssize_t bytes_read, client_t *client);
+void assign_client_type(client_t *client, server_connection_t *connection,
+    int idx);
+void accept_client(server_connection_t *connection, server_args_t *args);
 
-void put_str_fd(int fd, char *str);
-int strlen_fd(char *str);
+/* Server loop functions */
+void server_loop(server_t *server);
+void stop_server_loop(server_t *server);
+
+/* Network integration functions */
+int init_network_integration(void);
+void cleanup_network_integration(void);
+
+/* Client socket management */
+void init_client_zappy_socket(client_t *client, zn_socket_t zn_sock);
+void cleanup_client_zappy_socket(client_t *client);
 
 #endif /* SERVER_H */
