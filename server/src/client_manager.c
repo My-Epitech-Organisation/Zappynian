@@ -121,7 +121,6 @@ void handle_client_read(server_connection_t *connection, int idx)
 {
     client_t *client = connection->clients[idx];
     char *line = NULL;
-    player_t *player = NULL;
 
     if (client->type == CLIENT_UNKNOWN)
         return;
