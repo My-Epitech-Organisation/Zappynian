@@ -105,8 +105,10 @@ void assign_client_type(client_t *client, server_connection_t *connection,
 }
 
 void catch_command(char *line, client_t *client,
-    server_connection_t *connection, player_t *player)
+    server_connection_t *connection)
 {
+    player_t *player = NULL;
+
     if (client->type == CLIENT_IA && line[0] != '\0') {
         player = find_player_by_client(connection, client);
         if (player != NULL) {
@@ -130,7 +132,7 @@ void handle_client_read(server_connection_t *connection, int idx)
         return;
     }
     printf("Command received: %s\n", line);
-    catch_command(line, client, connection, player);
+    catch_command(line, client, connection);
     free(line);
 }
 
