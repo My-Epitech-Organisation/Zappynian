@@ -16,6 +16,7 @@ class Upgrader(Role):
         self.target_direction = None
 
     def decide(self, queue, world, vision):
+        print("Upgrader")
         if self.target_direction is not None:
             path = route_to(self.target_direction)
             for cmd in path:
