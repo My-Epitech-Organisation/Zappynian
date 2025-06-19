@@ -2,6 +2,7 @@
 
 import argparse
 import sys
+import os
 from ai.src.connection import Connection
 from ai.src.command_queue import CommandQueue
 from ai.src.inventory_parser import WorldState
@@ -22,6 +23,18 @@ class ZappyAI:
         self.vision = Vision()
         self.role = Scout()
 
+    def spawn_player(self):
+        pid = os.fork()
+        if pid == 0:
+            print("[INFO] Spawning new player...")
+            os.execv(sys.executable, [
+                sys.executable, __file__,
+                "-p", str(self.port),
+                "-n", self.team_name,
+                "-h", self.host
+            ])
+            sys.exit(1)
+
     def read_passive_messages(self):
         while True:
             line = self.conn.read_line()
@@ -30,7 +43,6 @@ class ZappyAI:
             if line.startswith("message"):
                 if hasattr(self.role, "on_broadcast"):
                     self.role.on_broadcast(line, self.queue, self.world, self.vision)
-
 
     def run(self):
         print(f"[INFO] Starting AI for team '{self.team_name}' on {self.host}:{self.port}")
@@ -47,6 +59,10 @@ class ZappyAI:
                 self.vision.parse_look(look_line)
             self.read_passive_messages()
             self.role = select_role(self.world, self.vision)
+            connect_nbr = self.queue.send_and_wait("Connect_nbr")
+            nbr = int(connect_nbr.split()[0])
+            if nbr > 0:
+                self.spawn_player()
             self.role.decide(self.queue, self.world, self.vision)
             self.queue.flush()
 
