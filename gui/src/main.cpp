@@ -39,7 +39,6 @@ int main(int argc, char **argv) {
   std::string host = argv[4];
   int port = std::stoi(argv[2]);
   Game game(host, port);
-
   game.gameLoop();
   return 0;
 }
