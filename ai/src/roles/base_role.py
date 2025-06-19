@@ -10,3 +10,6 @@ class Role(ABC):
     @abstractmethod
     def decide(self, queue: CommandQueue, world: WorldState, vision: Vision):
         pass
+
+    def on_broadcast(self, message: str, queue: CommandQueue, world: WorldState, vision: Vision):
+        pass
