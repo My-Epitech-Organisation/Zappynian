@@ -151,6 +151,7 @@ public:
     // resourceDroping(3, "thystame");
     broadcast(1, "Hello from player 1!");
     broadcast(2, "Hello from player 2!");
+    // endGame("Red");
   }
 
   std::vector<std::shared_ptr<IEntity>> getEntities() {

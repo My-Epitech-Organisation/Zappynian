@@ -5,7 +5,7 @@
 ** display_help
 */
 
-#include "../includes/server.h"
+#include "../include/server.h"
 
 int display_help(void)
 {

@@ -1,0 +1,330 @@
+/**
+ * @page user_guide User Guide
+ *
+ * # 🌈 Welcome to Zappy: Multi-Client Network Game Engine! 🎮
+ *
+ * Zappy is a multi-client network game where AI clients (Zappynians) compete for resources
+ * on a shared world. The project consists of a server managing the game logic and multiple
+ * AI clients that can connect and play autonomously. ✨✨
+ *
+ * ---
+ *
+ * ## 🚀 Quick Start
+ *
+ * Check the [Getting Started Guide](getting_started.html) for a step-by-step setup and launch instructions.
+ *
+ * ---
+ *
+ * ## 🎯 Current Features
+ *
+ * ### 🖥️ Server Features
+ * ✅ **Network Management**:
+ * - Multi-client TCP connections
+ * - Non-blocking I/O using select/poll
+ * - Robust connection handling and cleanup
+ * - Protocol validation and error handling
+ *
+ * ✅ **Game Logic**:
+ * - World simulation with configurable dimensions
+ * - Resource management (food, stones, etc.)
+ * - Team-based gameplay
+ * - Player leveling system
+ * - Real-time game state updates
+ *
+ * ✅ **Resource Management**:
+ * - Dynamic resource spawning
+ * - Inventory system for players
+ * - Resource collection and consumption
+ * - Balanced resource distribution
+ *
+ * ✅ **Time Management**:
+ * - Configurable game frequency
+ * - Action queuing and execution
+ * - Time-based events and cooldowns
+ *
+ * ### 🤖 AI Client Features
+ * ✅ **Basic AI Behaviors**:
+ * - Resource collection strategies
+ * - Movement and exploration
+ * - Team coordination protocols
+ * - Survival mechanisms
+ *
+ * ✅ **Communication**:
+ * - Server protocol implementation
+ * - Command parsing and execution
+ * - State synchronization
+ * - Error recovery mechanisms
+ *
+ * ✅ **Strategy Systems**:
+ * - Modular behavior trees
+ * - Decision-making algorithms
+ * - Adaptive strategies
+ * - Learning capabilities
+ *
+ * ### 🎨 GUI Features (if implemented)
+ * ✅ **Visualization**:
+ * - Real-time world display
+ * - Player and resource visualization
+ * - Team status monitoring
+ * - Interactive controls
+ *
+ * ✅ **Monitoring**:
+ * - Game statistics
+ * - Performance metrics
+ * - Debug information display
+ *
+ * ---
+ *
+ * ## 🛠️ How to Extend Zappy
+ *
+ * ### 🔧 Adding New AI Behaviors
+ *
+ * 1. **Create a New Behavior Class**:
+ *    ```cpp
+ *    class MyNewBehavior : public IBehavior {
+ *    public:
+ *        ActionResult execute(const GameState& state) override;
+ *        bool canExecute(const GameState& state) const override;
+ *        int getPriority() const override;
+ *    };
+ *    ```
+ *
+ * 2. **Register in BehaviorManager**:
+ *    ```cpp
+ *    behaviorManager.registerBehavior(
+ *        std::make_unique<MyNewBehavior>()
+ *    );
+ *    ```
+ *
+ * 3. **Implementation Example**:
+ *    ```cpp
+ *    ActionResult MyNewBehavior::execute(const GameState& state) {
+ *        // Your behavior logic here
+ *        return ActionResult::SUCCESS;
+ *    }
+ *    ```
+ *
+ * ### 🌐 Adding New Server Commands
+ *
+ * 1. **Define Command in Protocol**:
+ *    ```cpp
+ *    enum class CommandType {
+ *        // ...existing commands...
+ *        MY_NEW_COMMAND
+ *    };
+ *    ```
+ *
+ * 2. **Implement Command Handler**:
+ *    ```cpp
+ *    class MyNewCommandHandler : public ICommandHandler {
+ *    public:
+ *        void execute(Client& client, const std::vector<std::string>& args) override;
+ *        bool validate(const std::vector<std::string>& args) const override;
+ *    };
+ *    ```
+ *
+ * 3. **Register in CommandFactory**:
+ *    ```cpp
+ *    commandFactory.registerHandler("my_command", 
+ *        std::make_unique<MyNewCommandHandler>());
+ *    ```
+ *
+ * ### 🎮 Adding New Game Mechanics
+ *
+ * 1. **Extend GameState**:
+ *    ```cpp
+ *    class GameState {
+ *        // ...existing members...
+ *        MyNewMechanic newMechanic;
+ *    };
+ *    ```
+ *
+ * 2. **Create Update Logic**:
+ *    ```cpp
+ *    class MyNewMechanic {
+ *    public:
+ *        void update(float deltaTime);
+ *        void handlePlayerAction(Player& player, Action action);
+ *    };
+ *    ```
+ *
+ * 3. **Integrate in Game Loop**:
+ *    ```cpp
+ *    void GameEngine::update() {
+ *        // ...existing updates...
+ *        gameState.newMechanic.update(deltaTime);
+ *    }
+ *    ```
+ *
+ * ### 🔌 Plugin System Extensions
+ *
+ * 1. **Create Plugin Interface**:
+ *    ```cpp
+ *    class IPlugin {
+ *    public:
+ *        virtual ~IPlugin() = default;
+ *        virtual void initialize() = 0;
+ *        virtual void shutdown() = 0;
+ *        virtual std::string getName() const = 0;
+ *    };
+ *    ```
+ *
+ * 2. **Implement Your Plugin**:
+ *    ```cpp
+ *    class MyPlugin : public IPlugin {
+ *    public:
+ *        void initialize() override;
+ *        void shutdown() override;
+ *        std::string getName() const override { return "MyPlugin"; }
+ *    };
+ *    ```
+ *
+ * 3. **Plugin Registration**:
+ *    ```cpp
+ *    extern "C" IPlugin* createPlugin() {
+ *        return new MyPlugin();
+ *    }
+ *    ```
+ *
+ * ---
+ *
+ * ## 🏗️ Design Patterns Used
+ *
+ * ### 🏭 Factory Pattern
+ * **Location**: `src/factory/`
+ * **Usage**: 
+ * - `CommandFactory` - Creates command handlers based on input
+ * - `ClientFactory` - Manages client creation and initialization
+ * - `BehaviorFactory` - Instantiates AI behaviors
+ *
+ * **Example**:
+ * ```cpp
+ * class CommandFactory {
+ * public:
+ *     std::unique_ptr<ICommand> createCommand(const std::string& type);
+ * private:
+ *     std::map<std::string, std::function<std::unique_ptr<ICommand>()>> creators;
+ * };
+ * ```
+ *
+ * ### 👁️ Observer Pattern
+ * **Location**: `src/observer/`
+ * **Usage**:
+ * - Game state changes notification
+ * - Client event broadcasting
+ * - GUI updates from server events
+ *
+ * **Example**:
+ * ```cpp
+ * class GameStateObserver {
+ * public:
+ *     virtual void onPlayerJoined(const Player& player) = 0;
+ *     virtual void onResourceCollected(const Resource& resource) = 0;
+ * };
+ * ```
+ *
+ * ### 🏗️ Builder Pattern
+ * **Location**: `src/builder/`
+ * **Usage**:
+ * - World generation with configurable parameters
+ * - AI strategy construction
+ * - Server configuration setup
+ *
+ * **Example**:
+ * ```cpp
+ * class WorldBuilder {
+ * public:
+ *     WorldBuilder& setDimensions(int width, int height);
+ *     WorldBuilder& setResourceDensity(float density);
+ *     WorldBuilder& addTeam(const std::string& name);
+ *     std::unique_ptr<World> build();
+ * };
+ * ```
+ *
+ * ### 🎯 Strategy Pattern
+ * **Location**: `src/ai/strategies/`
+ * **Usage**:
+ * - AI decision-making algorithms
+ * - Resource collection strategies
+ * - Movement patterns
+ *
+ * **Example**:
+ * ```cpp
+ * class IAIStrategy {
+ * public:
+ *     virtual Action getNextAction(const GameState& state) = 0;
+ *     virtual void updateStrategy(const GameResult& result) = 0;
+ * };
+ * ```
+ *
+ * ### 🌉 Mediator Pattern
+ * **Location**: `src/mediator/`
+ * **Usage**:
+ * - Communication between AI components
+ * - Server-client message routing
+ * - GUI event coordination
+ *
+ * **Example**:
+ * ```cpp
+ * class GameMediator {
+ * public:
+ *     void notify(Component* sender, const Event& event);
+ *     void registerComponent(Component* component);
+ * };
+ * ```
+ *
+ * ---
+ *
+ * ## 🧪 Testing
+ *
+ * ### Unit Tests
+ * ```bash
+ * make tests_run          # Run all tests
+ * ./tests/unit_tests      # Run specific test suite
+ * ```
+ *
+ * ### Integration Tests
+ * ```bash
+ * ./scripts/integration_test.sh
+ * ```
+ *
+ * ### Performance Testing
+ * ```bash
+ * ./scripts/performance_test.sh <num_clients>
+ * ```
+ *
+ * ---
+ *
+ * ## 🐛 Debugging
+ *
+ * ### Debug Builds
+ * ```bash
+ * make DEBUG=1
+ * ```
+ *
+ * ### Logging Levels
+ * ```bash
+ * ./zappy_server --log-level=DEBUG
+ * ```
+ *
+ * ### Memory Debugging
+ * ```bash
+ * valgrind --leak-check=full ./zappy_server <args>
+ * ```
+ *
+ * ---
+ *
+ * ## 🔗 Navigation
+ * 
+ * - 🏠 \ref getting_started "Getting Started" - Quick setup and launch instructions
+ * - 📖 \ref user_guide "User Guide" - Complete setup and gameplay instructions
+ * - ❓ \ref faq "FAQ" - Frequently asked questions and troubleshooting
+ * - 📡 \ref protocol "Network Protocol" - Technical communication specifications
+ * - 🛠️ [GitHub](https://github.com/My-Epitech-Organisation/Raytracer)
+ *
+ * ---
+ *
+ * 💖 Enjoy building with Zappy! The more features you add, the more intelligent your Zappynians become! 🌟
+ *
+ * ---
+ */

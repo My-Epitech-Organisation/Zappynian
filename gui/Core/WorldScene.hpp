@@ -96,6 +96,10 @@ public:
 
   void addTeam(const std::string &team) { teams_.push_back(team); }
 
+  void clearElements();
+
+  void endGame(std::string winner);
+
   void resourceDroping(int id, const std::string &item);
 
   void createDroppedResource(int x, int y, const std::string &item);

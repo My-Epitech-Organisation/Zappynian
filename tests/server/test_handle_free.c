@@ -7,7 +7,7 @@
 
 #include <criterion/criterion.h>
 #include <criterion/redirect.h>
-#include "../../server/includes/server.h"
+#include "../../server/include/server.h"
 
 Test(handle_free, free_server_with_team_names)
 {

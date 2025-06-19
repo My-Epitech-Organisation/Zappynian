@@ -5,7 +5,7 @@
 ** display_infos
 */
 
-#include "../includes/server.h"
+#include "../include/server.h"
 
 void display_infos(server_args_t *server)
 {

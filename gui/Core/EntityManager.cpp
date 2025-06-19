@@ -108,7 +108,7 @@ void EntityManager::createTiles(int x, int y) {
       name += " col ";
       name += j;
       auto tile = std::make_shared<TileEntity>(
-          -1, irr::core::vector3df(cubeX, 0, cubeY),
+          -4, irr::core::vector3df(cubeX, 0, cubeY),
           irr::core::vector3df(1.0f, 0.5f, 1.0f),
           std::vector<irr::io::path>{mediaPath_ + "grass.png"},
           mediaPath_ + "cube.b3d", image2, name);
@@ -125,7 +125,7 @@ void EntityManager::createTiles(int x, int y) {
 std::shared_ptr<IEntity>
 EntityManager::createPaperPlane(irr::core::vector3df position) {
   auto paperPlane = std::make_shared<TileEntity>(
-      -1, position, irr::core::vector3df(1.0f, 1.0f, 1.0f),
+      -5, position, irr::core::vector3df(1.0f, 1.0f, 1.0f),
       std::vector<irr::io::path>{mediaPath_ +
                                  "plane_texture/plane_texture.jpg"},
       mediaPath_ + "plane.b3d", nullptr, "Paper Plane");
@@ -182,7 +182,7 @@ void EntityManager::placeStoneEntities(const irr::core::vector3df& position, con
           }
           std::cout << std::endl;
           this->entity_.push_back(std::make_shared<Stone>(
-              -1, objPos, qScale[i], stoneTextures[i], qB3D[i], stoneNames[i]));
+              -2, objPos, qScale[i], stoneTextures[i], qB3D[i], stoneNames[i]));
           this->entity_.back()->createNode(this->smgr_, this->driver_);
           ++placed;
       }
