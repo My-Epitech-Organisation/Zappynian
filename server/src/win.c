@@ -5,7 +5,7 @@
 ** win
 */
 
-#include "../includes/win.h"
+#include "../include/win.h"
 
 bool win_check(const char *team_name, player_t **players, int player_count)
 {

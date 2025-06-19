@@ -5,7 +5,7 @@
 ** Client connection handling with libzappy_net integration
 */
 
-#include "../includes/server.h"
+#include "../include/server.h"
 
 static int configure_client_properties(client_t *client)
 {

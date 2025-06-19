@@ -7,7 +7,7 @@
 
 #include <criterion/criterion.h>
 #include <criterion/redirect.h>
-#include "../../server/includes/server.h"
+#include "../../server/include/server.h"
 
 Test(display_help, check_correct_return_value)
 {

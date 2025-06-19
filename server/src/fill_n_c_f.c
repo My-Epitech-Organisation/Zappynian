@@ -5,7 +5,7 @@
 ** fill_n_c_f
 */
 
-#include "../includes/server.h"
+#include "../include/server.h"
 
 static int init_team_names_array(server_args_t *server, int argc)
 {

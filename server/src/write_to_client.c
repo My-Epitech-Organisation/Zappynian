@@ -5,7 +5,7 @@
 ** write_to_client
 */
 
-#include "../includes/server.h"
+#include "../include/server.h"
 
 void send_to_client(client_t *client, const char *msg)
 {

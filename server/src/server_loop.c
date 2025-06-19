@@ -5,8 +5,8 @@
 ** Server main loop with libzappy_net integration
 */
 
-#include "../includes/server.h"
-#include "../includes/game_loop.h"
+#include "../include/server.h"
+#include "../include/game_loop.h"
 
 static void setup_socket_array(server_connection_t *connection,
     zn_socket_t *sockets, int *count)

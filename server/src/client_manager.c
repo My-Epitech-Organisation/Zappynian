@@ -5,8 +5,8 @@
 ** client_manager
 */
 
-#include "../includes/server.h"
-#include "../includes/team.h"
+#include "../include/server.h"
+#include "../include/team.h"
 
 static int get_available_slots(server_args_t *args, const char *team_name)
 {

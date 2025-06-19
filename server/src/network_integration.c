@@ -5,7 +5,7 @@
 ** Network integration adapters
 */
 
-#include "../includes/server.h"
+#include "../include/server.h"
 
 int init_network_integration(void)
 {
