@@ -4,6 +4,7 @@ class WorldState:
 
     def __init__(self):
         self.inventory: Dict[str, int] = {}
+        self.level = 1
 
     def parse_inventory(self, line: str):
         if not line.startswith("[") or not line.endswith("]"):

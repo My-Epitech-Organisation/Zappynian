@@ -1,22 +1,22 @@
 from ai.src.roles.base_role import Role
 from ai.src.utils.route_factory import route_to
 
-GOALS = {
-    "linemate": 1,
-    "deraumere": 1,
-    "sibur": 2,
-    "mendiane": 2,
-    "phiras": 1,
-    "thystame": 0,
+UPGRADEGOALS = {
+    "linemate": 2,
+    "deraumere": 2,
+    "sibur": 3,
+    "mendiane": 3,
+    "phiras": 2,
+    "thystame": 1,
 }
 
-class Miner(Role):
+class Upgrader(Role):
     def __init__(self):
-        super().__init__("Miner")
+        super().__init__("Upgrader")
         self.target_direction = None
 
     def decide(self, queue, world, vision):
-        print("Miner")
+        print("Upgrader")
         if self.target_direction is not None:
             path = route_to(self.target_direction)
             for cmd in path:
@@ -29,7 +29,7 @@ class Miner(Role):
         world.parse_inventory(inv_data)
         if world.get_food_count() < 5:
             return
-        for stone, goal in GOALS.items():
+        for stone, goal in UPGRADEGOALS.items():
             if world.inventory.get(stone, 0) < goal:
                 tile = vision.find_nearest(stone)
                 if tile == -1:
