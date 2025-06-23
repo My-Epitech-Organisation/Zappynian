@@ -7,6 +7,14 @@
 
 #include "../include/egg.h"
 
+static int get_id(void)
+{
+    static int id = 0;
+
+    id++;
+    return id;
+}
+
 egg_t *create_egg(int x, int y, char *team_name)
 {
     egg_t *new_egg = malloc(sizeof(egg_t));
@@ -20,7 +28,7 @@ egg_t *create_egg(int x, int y, char *team_name)
         free(new_egg);
         return NULL;
     }
-    new_egg->id = -1;
+    new_egg->id = get_id();
     new_egg->is_hatched = false;
     new_egg->next = NULL;
     return new_egg;
