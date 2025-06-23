@@ -9,6 +9,7 @@
 #include "../include/server.h"
 #include "../include/world.h"
 #include "../include/team.h"
+#include "../include/egg.h"
 
 void cmd_eject(player_t *player, server_t *server)
 {
@@ -26,7 +27,7 @@ void cmd_eject(player_t *player, server_t *server)
         return (void)zn_send_message(ejecting_client->zn_sock, "ko");
     players_to_eject_count = get_nb_player(current_tile, player);
     if (players_to_eject_count == 0) {
-        destroy_eggs_on_tile(current_tile, server);
+        destroy_eggs_at_position(player->x, player->y, server);
         return (void)zn_send_message(ejecting_client->zn_sock, "ok");
     }
     if (make_player_array(current_tile, player, server, ejecting_client) == -1)

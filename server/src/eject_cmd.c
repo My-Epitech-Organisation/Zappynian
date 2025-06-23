@@ -9,6 +9,7 @@
 #include "../include/server.h"
 #include "../include/world.h"
 #include "../include/team.h"
+#include "../include/egg.h"
 
 client_t *find_client_by_player(server_t *server,
     player_t *target_player)
@@ -69,12 +70,6 @@ static int get_dir(player_t *ejected_player,
     return 0;
 }
 
-void destroy_eggs_on_tile(tile_t *tile, server_t *server)
-{
-    (void)tile;
-    (void)server;
-}
-
 size_t get_nb_player(tile_t *tile, player_t *player)
 {
     size_t count = 0;
@@ -127,7 +122,7 @@ int make_player_array(tile_t *current_tile, player_t *player, server_t *server,
         }
     }
     ejection(player, server, players_to_eject, current_tile);
-    destroy_eggs_on_tile(current_tile, server);
+    destroy_eggs_at_position(player->x, player->y, server);
     zn_send_message(ejecting_client->zn_sock, "ok");
     free(players_to_eject);
     return 0;
