@@ -23,6 +23,11 @@ void AEntity::createNode(irr::scene::ISceneManager *smgr,
     node_->getMaterial(i).setFlag(irr::video::EMF_BACK_FACE_CULLING, false);
     node_->getMaterial(i).Lighting = true;
     node_->getMaterial(i).NormalizeNormals = true;
-    node_->getMaterial(i).setTexture(0, driver->getTexture(textures_[i]));
+    if (i < textures_.size()) {
+      node_->getMaterial(i).setTexture(0, driver->getTexture(textures_[i]));
+    } else {
+      if (!textures_.empty())
+        node_->getMaterial(i).setTexture(0, driver->getTexture(textures_[0]));
+    }
   }
 }
