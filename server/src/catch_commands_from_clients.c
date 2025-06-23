@@ -18,7 +18,8 @@ player_t *find_player_by_client(server_connection_t *connection,
     if (team == NULL)
         return NULL;
     for (int i = 0; i < args->clients_per_team; i++) {
-        if (team->players[i] != NULL) {
+        if (team->players[i] != NULL && team->players[i]->slot_id !=
+            (int)client->type) {
             player = team->players[i];
             break;
         }
