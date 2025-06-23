@@ -55,7 +55,12 @@ public:
 
   void addTeams(std::vector<std::string> teams) { teams_ = teams; }
 
-  void placeStoneEntities(const irr::core::vector3df& position, const std::vector<int>& quantities, const std::vector<std::vector<irr::io::path>>& stoneTextures, const std::vector<irr::io::path>& qB3D, const std::vector<std::string>& stoneNames, const std::vector<irr::core::vector3df>& qScale);
+  void placeStoneEntities(
+      const irr::core::vector3df &position, const std::vector<int> &quantities,
+      const std::vector<std::vector<irr::io::path>> &stoneTextures,
+      const std::vector<irr::io::path> &qB3D,
+      const std::vector<std::string> &stoneNames,
+      const std::vector<irr::core::vector3df> &qScale);
 
 protected:
   std::vector<std::shared_ptr<IEntity>> entity_;

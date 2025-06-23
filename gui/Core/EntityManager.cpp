@@ -92,7 +92,8 @@ void EntityManager::createStones(int x, int y, int q0, int q1, int q2, int q3,
     }
   }
   std::vector<int> quantities = {q0, q1, q2, q3, q4, q5, q6};
-  placeStoneEntities(position, quantities, stoneTextures, qB3D, stoneNames, qScale);
+  placeStoneEntities(position, quantities, stoneTextures, qB3D, stoneNames,
+                     qScale);
 }
 
 void EntityManager::createTiles(int x, int y) {
@@ -156,8 +157,12 @@ void EntityManager::createEgg(int id) {
   }
 }
 
-void EntityManager::placeStoneEntities(const irr::core::vector3df& position, const std::vector<int>& quantities, const std::vector<std::vector<irr::io::path>>& stoneTextures, const std::vector<irr::io::path>& qB3D, const std::vector<std::string>& stoneNames, const std::vector<irr::core::vector3df>& qScale)
-{
+void EntityManager::placeStoneEntities(
+    const irr::core::vector3df &position, const std::vector<int> &quantities,
+    const std::vector<std::vector<irr::io::path>> &stoneTextures,
+    const std::vector<irr::io::path> &qB3D,
+    const std::vector<std::string> &stoneNames,
+    const std::vector<irr::core::vector3df> &qScale) {
   int numStones = 0;
   for (size_t i = 0; i < quantities.size(); ++i)
     if (quantities[i] > 0)
@@ -168,20 +173,15 @@ void EntityManager::placeStoneEntities(const irr::core::vector3df& position, con
   float angleStep = 2.0f * M_PI / numStones;
   int placed = 0;
   for (size_t i = 0; i < quantities.size(); ++i) {
-      if (quantities[i] > 0) {
-          float angle = placed * angleStep;
-          irr::core::vector3df objPos = position;
-          objPos.X += std::cos(angle) * radius;
-          objPos.Z += std::sin(angle) * radius;
-          std::cout << "Placing stone " << stoneNames[i] << " at " << objPos.X << ", " << objPos.Z << " textures: ";
-          for (const auto& tex : stoneTextures[i]) {
-              std::cout << tex.c_str() << " ";
-          }
-          std::cout << std::endl;
-          this->entity_.push_back(std::make_shared<Stone>(
-              -2, objPos, qScale[i], stoneTextures[i], qB3D[i], stoneNames[i]));
-          this->entity_.back()->createNode(this->smgr_, this->driver_);
-          ++placed;
-      }
+    if (quantities[i] > 0) {
+      float angle = placed * angleStep;
+      irr::core::vector3df objPos = position;
+      objPos.X += std::cos(angle) * radius;
+      objPos.Z += std::sin(angle) * radius;
+      entity_.push_back(std::make_shared<Stone>(
+          -2, objPos, qScale[i], stoneTextures[i], qB3D[i], stoneNames[i]));
+      entity_.back()->createNode(smgr_, driver_);
+      ++placed;
+    }
   }
 }
