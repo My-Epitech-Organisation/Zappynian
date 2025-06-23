@@ -36,6 +36,6 @@ void player_found(player_t *player, const char *line, client_t *client)
     newline = strchr(line, '\n');
     if (newline != NULL)
         *newline = '\0';
-    if (!commands_add(player, line))
+    if (!commands_add(player, newline))
         zn_send_message(client->zn_sock, "ko");
 }
