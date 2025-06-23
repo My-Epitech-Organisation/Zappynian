@@ -23,6 +23,7 @@
     #include "../../libzappy_net/include/zappy_net.h"
 
 typedef struct team_s team_t;
+typedef struct egg_s egg_t;
 
 typedef enum {
     CLIENT_UNKNOWN = ZN_ROLE_UNKNOWN,
@@ -34,6 +35,7 @@ typedef struct client_s {
     zn_socket_t zn_sock;
     client_type_t type;
     char *team_name;
+    int id;
 } client_t;
 
 typedef struct server_args_s {
@@ -65,6 +67,7 @@ typedef struct server_s {
     int tick_count;
     bool game_running;
     volatile bool server_running;
+    egg_t *eggs;
 } server_t;
 
 int handle_args(int argc, char **argv, server_t *server);
@@ -105,7 +108,8 @@ void cleanup_network_integration(void);
 void init_client_zappy_socket(client_t *client, zn_socket_t zn_sock);
 void cleanup_client_zappy_socket(client_t *client);
 
-/* Client communication */
-void send_to_client(client_t *client, const char *msg);
+player_t *find_player_by_client(server_connection_t *connection,
+    client_t *client);
+void player_found(player_t *player, const char *line, client_t *client);
 
 #endif /* SERVER_H */

@@ -4,6 +4,7 @@
 ** File description:
 ** WorldScene
 */
+#include "../Entities/Direction.hpp"
 #include "EntityManager.hpp"
 #include <iostream>
 #include <queue>
@@ -15,6 +16,7 @@ struct Movement {
   int x;
   int y;
   Direction direction;
+  Direction directionBefore;
 };
 
 struct PaperPlaneMovement {
@@ -62,7 +64,9 @@ public:
 
   void createEntities(int id);
 
-  void changePlayerPos(int id, int x, int y, Direction direction);
+  void changePlayerPos(int id, int x, int y, Direction direction,
+                       Direction directionBefore);
+
   EdgePositionResult isEdgePosition(const irr::core::vector3df &position,
                                     Direction direction, int nextX, int nextY);
 
@@ -99,6 +103,14 @@ public:
   void clearElements();
 
   void endGame(std::string winner);
+
+  std::vector<std::shared_ptr<IEntity>>
+  getPlayersEggAtPosition(irr::core::vector3df position);
+
+  void expulsionMove(int id, irr::f32 direction, Direction directionEnum,
+                     irr::core::vector3df pos);
+
+  void expulsion(int id);
 
   void resourceDroping(int id, const std::string &item);
 

@@ -43,8 +43,9 @@ public:
 
   void createText() { WorldScene::createText(); }
 
-  void movePlayer(int id, int x, int y, Direction direction) {
-    WorldScene::changePlayerPos(id, x, y, direction);
+  void movePlayer(int id, int x, int y, Direction direction,
+                  Direction directionBefore) {
+    WorldScene::changePlayerPos(id, x, y, direction, directionBefore);
   }
 
   void PlayerInventory(int id, int x, int y, int q0, int q1, int q2, int q3,
@@ -64,9 +65,7 @@ public:
     return WorldScene::isPlayerIncanting(id);
   }
 
-  void createEgg(int id) {
-    WorldScene::createEntities(id);
-  }
+  void createEgg(int id) { WorldScene::createEntities(id); }
 
   void createWorld() override {
     createPlane(5, 5);
@@ -80,68 +79,77 @@ public:
     addTeam("Orange");
     addTeam("Green");
     try {
-      createPlayer(1, 0, 0, Direction::NORTH, 0, "Red");
+      createPlayer(1, 2, 2, Direction::WEST, 0, "Red");
     } catch (const std::exception &e) {
     }
     setPlayerLevel(1, 1);
     try {
-      createPlayer(2, 1, 0, Direction::NORTH, 0, "Blue");
+      createPlayer(2, 2, 2, Direction::EAST, 0, "Blue");
     } catch (const std::exception &e) {
     }
     setPlayerLevel(2, 2);
     try {
-      createPlayer(3, 2, 0, Direction::NORTH, 0, "Red");
+      createPlayer(3, 2, 2, Direction::EAST, 0, "Red");
     } catch (const std::exception &e) {
     }
     setPlayerLevel(3, 3);
 
     try {
-      createPlayer(4, 3, 0, Direction::NORTH, 0, "Yellow");
+      createPlayer(4, 0, 0, Direction::WEST, 0, "Yellow");
     } catch (const std::exception &e) {
     }
     setPlayerLevel(4, 4);
     try {
-      createPlayer(5, 4, 0, Direction::NORTH, 0, "Purple");
+      createPlayer(5, 0, 1, Direction::WEST, 0, "Purple");
     } catch (const std::exception &e) {
     }
     setPlayerLevel(5, 5);
     try {
-      createPlayer(6, 0, 1, Direction::NORTH, 0, "Orange");
+      createPlayer(6, 0, 2, Direction::WEST, 0, "Orange");
     } catch (const std::exception &e) {
     }
     setPlayerLevel(6, 6);
     try {
-      createPlayer(7, 0, 2, Direction::NORTH, 0, "Green");
+      createPlayer(7, 0, 3, Direction::WEST, 0, "Green");
     } catch (const std::exception &e) {
     }
     setPlayerLevel(7, 7);
     try {
-      createPlayer(8, 0, 3, Direction::NORTH, 0, "Green");
+      createPlayer(8, 0, 4, Direction::WEST, 0, "Green");
     } catch (const std::exception &e) {
     }
     setPlayerLevel(8, 8);
 
+    try {
+      createPlayer(9, 4, 4, Direction::WEST, 0, "Red");
+    } catch (const std::exception &e) {
+    }
+    setPlayerLevel(9, 5);
+
     contentTiles(2, 4, 32, 32, 32, 32, 32, 32, 32);
-    contentTiles(4, 4, 32, 32, 32, 0, 32, 32, 32);
-    contentTiles(2, 3, 32, 32, 32, 0, 32, 32, 32);
-    contentTiles(3, 3, 32, 0, 32, 0, 32, 0, 32);
-    movePlayer(1, 2, 2, Direction::NORTH);
-    movePlayer(1, 2, 1, Direction::NORTH);
-    movePlayer(1, 2, 0, Direction::NORTH);
-    movePlayer(1, 2, 4, Direction::NORTH);
-    movePlayer(1, 1, 4, Direction::EAST);
-    movePlayer(1, 0, 4, Direction::EAST);
-    movePlayer(1, 4, 4, Direction::EAST);
-    movePlayer(1, 4, 0, Direction::SOUTH);
-    movePlayer(1, 4, 1, Direction::SOUTH);
-    movePlayer(1, 4, 2, Direction::SOUTH);
-    movePlayer(1, 0, 2, Direction::WEST);
-    movePlayer(2, 4, 2, Direction::NORTH);
-    createEgg(1);
+    contentTiles(4, 4, 32, 32, 32, 32, 32, 32, 32);
+    movePlayer(4, 1, 0, Direction::WEST, Direction::WEST);
+    movePlayer(5, 1, 1, Direction::WEST, Direction::WEST);
+    movePlayer(6, 1, 2, Direction::WEST, Direction::WEST);
+    movePlayer(7, 1, 3, Direction::WEST, Direction::WEST);
+    movePlayer(8, 1, 4, Direction::WEST, Direction::WEST);
+    movePlayer(1, 2, 3, Direction::WEST, Direction::WEST);
+    // movePlayer(1, 2, 2, Direction::NORTH);
+    // movePlayer(1, 2, 1, Direction::NORTH);
+    // movePlayer(1, 2, 0, Direction::NORTH);
+    // movePlayer(1, 2, 4, Direction::NORTH);
+    // movePlayer(1, 1, 4, Direction::EAST);
+    // movePlayer(1, 0, 4, Direction::EAST);
+    // movePlayer(1, 4, 4, Direction::EAST);
+    // movePlayer(1, 4, 0, Direction::SOUTH);
+    // movePlayer(1, 4, 1, Direction::SOUTH);
+    // movePlayer(1, 4, 2, Direction::SOUTH);
+    // movePlayer(1, 0, 2, Direction::WEST);
+    // movePlayer(2, 4, 2, Direction::NORTH);
     PlayerInventory(1, 0, 2, 1, 1, 1, 14, 1, 1, 1);
     PlayerInventory(3, 0, 0, 10, 10, 10, 10, 10, 10, 10);
-    startIncantation(4, 2, 2, {2});
-    // stopIncantation(4, 2, true);
+    startIncantation(4, 4, 6, {9});
+    // stopIncantation(4, 4, true);
     // killPlayer(3);
     resourceDroping(3, "mendiane");
     resourceDroping(3, "deraumere");
@@ -151,6 +159,13 @@ public:
     // resourceDroping(3, "thystame");
     broadcast(1, "Hello from player 1!");
     broadcast(2, "Hello from player 2!");
+    createEgg(4);
+    createEgg(5);
+    createEgg(1);
+    createEgg(6);
+    createEgg(7);
+    createEgg(8);
+    expulsion(1);
     // endGame("Red");
   }
 

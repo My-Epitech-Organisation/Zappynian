@@ -6,6 +6,7 @@
 */
 
 #pragma once
+#include "Direction.hpp"
 #include "Inventory.hpp"
 #include <irrlicht/irrlicht.h>
 #include <string>
@@ -36,6 +37,9 @@ public:
 
   virtual void setLevel(int level) = 0;
   virtual int getLevel() const = 0;
+
+  virtual void setDirection(Direction direction) = 0;
+  virtual Direction getDirection() const = 0;
 
   virtual Inventory &getInventory() = 0;
 

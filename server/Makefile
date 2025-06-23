@@ -43,6 +43,8 @@ SRCS	=	src/main.c				\
 			src/client_adapters.c 	\
 			src/write_to_client.c 	\
 			src/server_loop.c 		\
+			src/catch_commands_from_clients.c \
+			src/egg.c 			\
 
 OBJS	=	$(SRCS:.c=.o)
 
