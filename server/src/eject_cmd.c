@@ -122,8 +122,8 @@ int make_player_array(tile_t *current_tile, player_t *player, server_t *server,
         return -1;
     for (size_t i = 0; i < current_tile->player_count; i++) {
         if (current_tile->players[i] != player) {
-            idx++;
             players_to_eject[idx] = current_tile->players[i];
+            idx++;
         }
     }
     ejection(player, server, players_to_eject, current_tile);
