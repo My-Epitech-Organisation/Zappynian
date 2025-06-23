@@ -112,4 +112,6 @@ player_t *find_player_by_client(server_connection_t *connection,
     client_t *client);
 void player_found(player_t *player, const char *line, client_t *client);
 
+const char **get_resource_names(void);
+
 #endif /* SERVER_H */

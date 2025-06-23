@@ -26,6 +26,7 @@ typedef struct command_s {
 bool commands_add(player_t *player, const char *command_name);
 void process_commands(server_t *server);
 char *get_player_current_command(player_t *player);
+char *get_command_argument(player_t *player);
 
 void cmd_forward(player_t *player, server_t *server);
 void cmd_right(player_t *player, server_t *server);
@@ -39,9 +40,6 @@ void cmd_eject(player_t *player, server_t *server);
 void cmd_take(player_t *player, server_t *server);
 void cmd_set(player_t *player, server_t *server);
 void cmd_incantation(player_t *player, server_t *server);
-
-const command_t *get_command_table(void);
-size_t get_command_table_size(void);
 
 char *get_player_vision(player_t *player, map_t *map);
 void add_current_tile(char *result, player_t *player, map_t *map);
