@@ -149,10 +149,8 @@ int handle_args(int argc, char **argv, server_t *server)
 {
     int result;
 
-    if (server == NULL) {
-        fprintf(stderr, "Server pointer is null.\n");
+    if (server == NULL)
         return 84;
-    }
     if (init_server_memory(server) == 84)
         return 84;
     result = validate_arguments(argc, argv, server);
@@ -161,6 +159,8 @@ int handle_args(int argc, char **argv, server_t *server)
     server->map = create_map(server->args->width, server->args->height);
     if (server->map == NULL || server->connection == NULL) {
         fprintf(stderr, "Failed to create map or connection.\n");
+        free(server->args);
+        free(server->connection);
         return 84;
     }
     server->connection->port = server->args->port;
