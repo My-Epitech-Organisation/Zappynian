@@ -16,14 +16,14 @@ void cmd_eject(player_t *player, server_t *server)
     size_t players_to_eject_count = 0;
     client_t *ejecting_client;
 
-    if (player->dead || player->in_elevation)
-        return (void)zn_send_message(server->connection->zn_server, "ko");
-    current_tile = get_tile(server->map, player->x, player->y);
-    if (!current_tile)
-        return (void)zn_send_message(server->connection->zn_server, "ko");
     ejecting_client = find_client_by_player(server, player);
     if (!ejecting_client)
-        return (void)zn_send_message(server->connection->zn_server, "ko");
+        return;
+    if (player->dead || player->in_elevation)
+        return (void)zn_send_message(ejecting_client->zn_sock, "ko");
+    current_tile = get_tile(server->map, player->x, player->y);
+    if (!current_tile)
+        return (void)zn_send_message(ejecting_client->zn_sock, "ko");
     players_to_eject_count = get_nb_player(current_tile, player);
     if (players_to_eject_count == 0) {
         destroy_eggs_on_tile(current_tile, server);
