@@ -10,7 +10,6 @@
 #include <cmath>
 #include <cstdlib>
 #include <map>
-#include <algorithm>
 
 #ifndef M_PI
 #define M_PI 3.14159265358979323846
@@ -18,11 +17,13 @@
 
 void WorldScene::createEntities(int id, int x, int y, Direction direction,
                                 int level, std::string team) {
-    if (!smgr_ || !driver_ || !device_) {
+  if (!smgr_ || !driver_ || !device_) {
     std::cerr << "Error: Uninitialized dependencies detected. "
               << "smgr_: " << (smgr_ ? "initialized" : "uninitialized") << ", "
-              << "driver_: " << (driver_ ? "initialized" : "uninitialized") << ", "
-              << "device_: " << (device_ ? "initialized" : "uninitialized") << std::endl;
+              << "driver_: " << (driver_ ? "initialized" : "uninitialized")
+              << ", "
+              << "device_: " << (device_ ? "initialized" : "uninitialized")
+              << std::endl;
     return;
   }
   entityManager_.addTeams(teams_);
@@ -421,13 +422,13 @@ void WorldScene::createDroppedResource(int x, int y, const std::string &item) {
   if (resourceTextures.find(item) == resourceTextures.end())
     return;
 
-  // DEBUG: Print tile coordinates and item to drop
-  std::cout << "[DEBUG] Dropping resource '" << item << "' at tile (" << x << ", " << y << ")" << std::endl;
-
-  auto tile = entityManager_.getTileByName("Cube info: row " + std::to_string(x) + " col " + std::to_string(y));
-  std::vector<std::string> stoneNames = {"food", "linemate", "deraumere", "sibur", "mendiane", "phiras", "thystame"};
+  auto tile = entityManager_.getTileByName(
+      "Cube info: row " + std::to_string(x) + " col " + std::to_string(y));
+  std::vector<std::string> stoneNames = {"food",    "linemate", "deraumere",
+                                         "sibur",   "mendiane", "phiras",
+                                         "thystame"};
   std::vector<int> quantities;
-  for (const auto& name : stoneNames) {
+  for (const auto &name : stoneNames) {
     int qty = static_cast<int>(tile->getInventory().getItemQuantity(name));
     quantities.push_back(qty);
   }
@@ -435,35 +436,32 @@ void WorldScene::createDroppedResource(int x, int y, const std::string &item) {
   std::vector<std::vector<irr::io::path>> stoneTextures;
   std::vector<irr::io::path> qB3D;
   std::vector<irr::core::vector3df> qScale;
-  for (const auto& name : stoneNames) {
+  for (const auto &name : stoneNames) {
     if (!resourceTextures[name].empty())
-      stoneTextures.push_back({resourceTextures[name][0]});
+      stoneTextures.push_back(resourceTextures[name]);
     else
       stoneTextures.push_back({});
     qB3D.push_back(resourceB3D[name]);
     qScale.push_back(resourceScale[name]);
   }
   float radius = 6.0f;
-  entity_.erase(std::remove_if(entity_.begin(), entity_.end(), [&](const std::shared_ptr<IEntity>& e) {
-    if (e->getName() != "Stone")
-      return false;
-    float dist = std::sqrt(std::pow(e->getPosition().X - position.X, 2) + std::pow(e->getPosition().Z - position.Z, 2));
-    return dist <= radius;
-  }), entity_.end());
-  for (size_t i = 0; i < stoneTextures.size(); ++i) {
-    if (!stoneTextures[i].empty()) {
-      std::cout << "[DEBUG] Texture for " << stoneNames[i] << ": " << stoneTextures[i][0].c_str() << std::endl;
-    }
-  }
-  // Check arguments before calling placeStoneEntities
-    std::cout
-        << "quantities=" << quantities.size()
-        << ", stoneTextures=" << stoneTextures.size()
-        << ", qB3D=" << qB3D.size()
-        << ", stoneNames=" << stoneNames.size()
-        << ", qScale=" << qScale.size() << std::endl;
-  entityManager_.placeStoneEntities(position, quantities, stoneTextures, qB3D, stoneNames, qScale);
-  std::cout << "[DEBUG] Called placeStoneEntities at position (" << position.X << ", " << position.Y << ", " << position.Z << ")" << std::endl;
+  auto it = std::remove_if(
+      entity_.begin(), entity_.end(), [&](const std::shared_ptr<IEntity> &e) {
+        if (e->getName() != "Stone")
+          return false;
+        float dist = std::sqrt(std::pow(e->getPosition().X - position.X, 2) +
+                               std::pow(e->getPosition().Z - position.Z, 2));
+        if (dist <= radius) {
+          if (e->getNode()) {
+            e->getNode()->remove();
+          }
+          return true;
+        }
+        return false;
+      });
+  entity_.erase(it, entity_.end());
+  entityManager_.placeStoneEntities(position, quantities, stoneTextures, qB3D,
+                                    stoneNames, qScale);
 }
 
 void WorldScene::createWorld() {}
@@ -634,4 +632,3 @@ void WorldScene::expulsion(int id) {
     }
   }
 }
-
