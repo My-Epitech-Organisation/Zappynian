@@ -126,6 +126,16 @@ public:
     }
     setPlayerLevel(9, 5);
 
+    try {
+      createPlayer(10, 3, 0, Direction::WEST, 0, "Red");
+    } catch (const std::exception &e) {
+    }
+    setPlayerLevel(8, 5);
+    setPlayerInventory(10, 3, 0, 1, 1, 1, 1, 1, 1, 1);
+    contentTiles(3, 0, 10, 0, 10, 10, 10, 10, 10);
+    resourceDroping(10, "linemate");
+    movePlayer(10, 4, 0, Direction::WEST, Direction::WEST);
+
     contentTiles(2, 4, 32, 32, 32, 32, 32, 32, 32);
     contentTiles(4, 4, 32, 32, 32, 32, 32, 32, 32);
     movePlayer(4, 1, 0, Direction::WEST, Direction::WEST);
@@ -151,8 +161,6 @@ public:
     startIncantation(4, 4, 6, {9});
     // stopIncantation(4, 4, true);
     // killPlayer(3);
-    resourceDroping(3, "mendiane");
-    resourceDroping(3, "deraumere");
     // resourceDroping(3, "linemate");
     // resourceDroping(3, "sibur");
     // resourceDroping(3, "phiras");
@@ -166,6 +174,8 @@ public:
     createEgg(7);
     createEgg(8);
     expulsion(1);
+    // resourceDroping(3, "mendiane");
+    // resourceDroping(3, "deraumere");
     // endGame("Red");
   }
 
