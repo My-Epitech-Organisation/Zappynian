@@ -11,7 +11,7 @@
 #include "../include/commands.h"
 #include "../include/server.h"
 
-const command_t *get_command_table(void)
+static const command_t *get_command_table(void)
 {
     static const command_t command_table[] = {
         {"forward", 7, cmd_forward},
@@ -31,7 +31,7 @@ const command_t *get_command_table(void)
     return command_table;
 }
 
-size_t get_command_table_size(void)
+static size_t get_command_table_size(void)
 {
     static const command_t command_table[] = {
         {"forward", 7, cmd_forward},
@@ -92,24 +92,35 @@ char *get_command_argument(player_t *player)
     return argument;
 }
 
-bool commands_add(player_t *player, const char *command_name)
+static char *extract_and_format_command(const char *command_name,
+    player_t *player)
 {
-    const command_t *table = get_command_table();
-    char *formatted_command_name;
-    size_t command_table_size = get_command_table_size();
     char *command_only;
     char *space_pos;
+    char *formatted_command_name;
 
-    if (player->command_count >= MAX_PLAYER_COMMANDS)
-        return false;
     free(player->current_command_line);
     player->current_command_line = strdup(command_name);
     command_only = strdup(command_name);
+    if (!command_only)
+        return NULL;
     space_pos = strchr(command_only, ' ');
     if (space_pos)
         *space_pos = '\0';
     formatted_command_name = put_good_format(command_only);
     free(command_only);
+    return formatted_command_name;
+}
+
+bool commands_add(player_t *player, const char *command_name)
+{
+    const command_t *table = get_command_table();
+    char *formatted_command_name;
+    size_t command_table_size = get_command_table_size();
+
+    if (player->command_count >= MAX_PLAYER_COMMANDS)
+        return false;
+    formatted_command_name = extract_and_format_command(command_name, player);
     if (formatted_command_name == NULL)
         return false;
     for (size_t i = 0; i < command_table_size; i++) {
