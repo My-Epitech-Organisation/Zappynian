@@ -6,13 +6,11 @@
 */
 
 #include "../include/world.h"
+#include "../include/server.h"
 
 int get_resource_type_from_name(const char *resource_name)
 {
-    char *resource_names[RESOURCE_COUNT] = {
-        "food", "linemate", "deraumere", "sibur", "mendiane", "phiras",
-        "thystame"
-    };
+    const char **resource_names = get_resource_names();
 
     if (!resource_name)
         return -1;
