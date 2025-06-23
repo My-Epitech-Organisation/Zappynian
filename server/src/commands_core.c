@@ -74,15 +74,42 @@ static char *put_good_format(const char *command_name)
     return trimmed_command_name;
 }
 
+char *get_command_argument(player_t *player)
+{
+    char *space_pos;
+    char *argument;
+
+    if (!player || !player->current_command_line)
+        return NULL;
+    space_pos = strchr(player->current_command_line, ' ');
+    if (!space_pos)
+        return NULL;
+    argument = space_pos + 1;
+    while (*argument == ' ')
+        argument++;
+    if (*argument == '\0')
+        return NULL;
+    return argument;
+}
+
 bool commands_add(player_t *player, const char *command_name)
 {
     const command_t *table = get_command_table();
     char *formatted_command_name;
     size_t command_table_size = get_command_table_size();
+    char *command_only;
+    char *space_pos;
 
     if (player->command_count >= MAX_PLAYER_COMMANDS)
         return false;
-    formatted_command_name = put_good_format(command_name);
+    free(player->current_command_line);
+    player->current_command_line = strdup(command_name);
+    command_only = strdup(command_name);
+    space_pos = strchr(command_only, ' ');
+    if (space_pos)
+        *space_pos = '\0';
+    formatted_command_name = put_good_format(command_only);
+    free(command_only);
     if (formatted_command_name == NULL)
         return false;
     for (size_t i = 0; i < command_table_size; i++) {
@@ -105,6 +132,8 @@ static void commands_execute_next(player_t *player, server_t *server)
     player->command_timers[0]--;
     if (player->command_timers[0] <= 0) {
         player->commands[0]->execute(player, server);
+        free(player->current_command_line);
+        player->current_command_line = NULL;
         for (int i = 1; i < player->command_count; i++) {
             player->commands[i - 1] = player->commands[i];
             player->command_timers[i - 1] = player->command_timers[i];

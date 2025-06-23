@@ -26,6 +26,7 @@ typedef struct command_s {
 bool commands_add(player_t *player, const char *command_name);
 void process_commands(server_t *server);
 char *get_player_current_command(player_t *player);
+char *get_command_argument(player_t *player);
 
 void cmd_forward(player_t *player, server_t *server);
 void cmd_right(player_t *player, server_t *server);
