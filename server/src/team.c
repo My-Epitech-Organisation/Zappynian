@@ -68,6 +68,7 @@ void increment_team_player_slots(server_args_t *server, const char *team_name)
 
     if (team) {
         team->current_players += 1;
-        team->remaining_slots -= 1;
+        if (team->remaining_slots > 0)
+            team->remaining_slots -= 1;
     }
 }
