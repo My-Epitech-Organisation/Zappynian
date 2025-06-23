@@ -46,21 +46,15 @@ void cmd_broadcast(player_t *player, server_t *server)
 
 void cmd_connect_nbr(player_t *player, server_t *server)
 {
-    char *response = NULL;
+    char response[20];
 
     if (player->dead || player->in_elevation) {
         zn_send_message(server->connection->zn_server, "ko");
         return;
     }
-    response = malloc(20 * sizeof(char));
-    if (response == NULL) {
-        zn_send_message(server->connection->zn_server, "ko");
-        return;
-    }
-    snprintf(response, 20, "%d",
+    snprintf(response, sizeof(response), "%d",
         server->args->clients_per_team - player->slot_id);
     zn_send_message(server->connection->zn_server, response);
-    free(response);
 }
 
 void cmd_fork(player_t *player, server_t *server)
