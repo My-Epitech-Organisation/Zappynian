@@ -45,6 +45,7 @@ SRCS	=	src/main.c				\
 			src/server_loop.c 		\
 			src/catch_commands_from_clients.c \
 			src/egg.c 			\
+			src/world_utils.c \
 
 OBJS	=	$(SRCS:.c=.o)
 
