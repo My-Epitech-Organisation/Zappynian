@@ -35,6 +35,7 @@ typedef struct client_s {
     zn_socket_t zn_sock;
     client_type_t type;
     char *team_name;
+    int id;
 } client_t;
 
 typedef struct server_args_s {
