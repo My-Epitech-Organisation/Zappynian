@@ -314,6 +314,23 @@ void WorldScene::killPlayer(int id) {
   }
 }
 
+void WorldScene::killEgg(int id) {
+  for (auto it = entity_.begin(); it != entity_.end();) {
+    std::cout << "Checking entity with ID: " << (*it)->getId() << std::endl;
+    if ((*it)->getId() == -7) {
+      std::cout << "Killing egg with ID: " << id << std::endl;
+      auto egg = std::dynamic_pointer_cast<Egg>(*it);
+      if (egg)
+        egg->getNode()->remove();
+      it = entity_.erase(it);
+      receiver_.removeEntity(id);
+      addChatMessage("Egg " + std::to_string(id) + " has been killed.");
+    } else {
+      ++it;
+    }
+  }
+}
+
 void WorldScene::addChatMessage(const std::string &message) {
   std::string fullMessage = "Action: " + message;
   chatMessages_.push_back(fullMessage);
@@ -533,4 +550,3 @@ void WorldScene::expulsion(int id) {
     }
   }
 }
-
