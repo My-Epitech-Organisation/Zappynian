@@ -148,8 +148,8 @@ public:
     // movePlayer(2, 4, 2, Direction::NORTH);
     PlayerInventory(1, 0, 2, 1, 1, 1, 14, 1, 1, 1);
     startIncantation(4, 4, 6, {9});
-    // stopIncantation(4, 4, true);
-    // killPlayer(3);
+    stopIncantation(4, 4, true);
+    killPlayer(3);
     broadcast(1, "Hello from player 1!");
     broadcast(2, "Hello from player 2!");
     createEgg(4);
@@ -158,7 +158,14 @@ public:
     createEgg(6);
     createEgg(7);
     createEgg(8);
-    expulsion(1);
+    killEgg(4);
+    killEgg(5);
+    killEgg(1);
+    killEgg(6);
+    killEgg(7);
+    killEgg(8);
+    // killPlayer(1);
+    // expulsion(1);
     // endGame("Red");
   }
 
