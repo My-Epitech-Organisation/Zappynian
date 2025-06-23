@@ -16,6 +16,8 @@
 
 struct server_s;
 typedef struct server_s server_t;
+struct client_s;
+typedef struct client_s client_t;
 
 typedef struct command_s {
     char *name;
@@ -53,5 +55,11 @@ char *get_player_inventory(player_t *player);
 char *get_broadcast_message(player_t *player);
 void broadcast_to_all_players(player_t *sender, server_t *server,
     const char *message);
+
+int make_player_array(tile_t *current_tile, player_t *player,
+    server_t *server, client_t *ejecting_client);
+void destroy_eggs_on_tile(tile_t *tile, server_t *server);
+client_t *find_client_by_player(server_t *server, player_t *player);
+size_t get_nb_player(tile_t *tile, player_t *player);
 
 #endif // COMMANDS_H
