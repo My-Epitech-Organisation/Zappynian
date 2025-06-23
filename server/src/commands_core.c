@@ -63,10 +63,10 @@ static char *put_good_format(const char *command_name)
     for (size_t i = 0; formatted_command_name[i]; i++)
         formatted_command_name[i] = tolower(formatted_command_name[i]);
     start = formatted_command_name;
-    while (*start == ' ')
+    while (isspace((unsigned char)*start))
         start++;
     end = formatted_command_name + strlen(formatted_command_name) - 1;
-    while (end > start && *end == ' ')
+    while (end > start && isspace((unsigned char)*end))
         end--;
     *(end + 1) = '\0';
     trimmed_command_name = strdup(start);
@@ -77,15 +77,15 @@ static char *put_good_format(const char *command_name)
 bool commands_add(player_t *player, const char *command_name)
 {
     const command_t *table = get_command_table();
-    size_t i;
     char *formatted_command_name;
+    size_t command_table_size = get_command_table_size();
 
     if (player->command_count >= MAX_PLAYER_COMMANDS)
         return false;
     formatted_command_name = put_good_format(command_name);
     if (formatted_command_name == NULL)
         return false;
-    for (i = 0; i < get_command_table_size(); i++) {
+    for (size_t i = 0; i < command_table_size; i++) {
         if (strcmp(table[i].name, formatted_command_name) == 0) {
             player->commands[player->command_count] = &table[i];
             player->command_timers[player->command_count] = table[i].duration;
