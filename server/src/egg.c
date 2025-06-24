@@ -6,6 +6,7 @@
 */
 
 #include "../include/egg.h"
+#include "../include/world.h"
 
 static int get_id(void)
 {
@@ -58,5 +59,23 @@ void add_egg_to_server(server_t *server, egg_t *egg)
     } else {
         egg->next = server->eggs;
         server->eggs = egg;
+    }
+}
+
+void destroy_eggs_at_position(int x, int y, server_t *server)
+{
+    egg_t **current;
+    egg_t *to_delete;
+
+    if (server == NULL)
+        return;
+    current = &server->eggs;
+    while (*current != NULL) {
+        if ((*current)->x == x && (*current)->y == y) {
+            to_delete = *current;
+            *current = (*current)->next;
+            free_egg(to_delete);
+        } else
+            current = &(*current)->next;
     }
 }
