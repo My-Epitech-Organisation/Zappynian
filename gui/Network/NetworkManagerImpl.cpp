@@ -200,9 +200,7 @@ std::string NetworkManagerImpl::receiveMessage() {
 
     zn_socket_t sockets[1] = { socket_ };
     short events[1] = { 1 };
-    short events[1] = { 1 };
 
-    zn_poll_result_t poll_result = zn_poll(sockets, events, 1, 100);
     zn_poll_result_t poll_result = zn_poll(sockets, events, 1, 100);
 
     if (!(poll_result.readable & 1)) {
@@ -355,7 +353,6 @@ void NetworkManagerImpl::processIncomingMessages() {
     }
 
     int maxAttempts = 50;
-    int maxAttempts = 50;
     int attempts = 0;
 
     while (hasData() && attempts < maxAttempts) {
@@ -364,7 +361,6 @@ void NetworkManagerImpl::processIncomingMessages() {
             std::cout << "DEBUG: Processing new message: '" << message << "'" << std::endl;
             parser_->parseMessage(message);
         } else {
-            break;
             break;
         }
         attempts++;
