@@ -82,10 +82,7 @@ public:
   void createEgg(int id) { WorldScene::createEntities(id); }
 
   bool initialiseSocket() {
-    // Pour le nouveau constructeur, le NetworkManager est déjà connecté
-    // Pas besoin de refaire la connexion
     if (&networkManager_ == &ownNetworkManager_) {
-      // Cas de l'ancien constructeur - faire la connexion
       if (!networkManager_.connect(host_, port_)) {
         std::cerr << "Failed to connect to server at " << host_ << ":" << port_
                   << " - " << networkManager_.getLastError() << "\n";
