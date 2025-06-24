@@ -70,10 +70,12 @@ void cmd_set(player_t *player, server_t *server)
         return;
     }
     current_tile = get_tile(server->map, player->x, player->y);
-    if (set_resource_on_tile(current_tile, resource_type)) {
-        if (player->resources[resource_type] > 0)
+    if (player->resources[resource_type] > 0) {
+        if (set_resource_on_tile(current_tile, resource_type)) {
             player->resources[resource_type]--;
-        zn_send_message(server->connection->zn_server, "ok");
+            zn_send_message(server->connection->zn_server, "ok");
+        } else
+            zn_send_message(server->connection->zn_server, "ko");
     } else
         zn_send_message(server->connection->zn_server, "ko");
 }
