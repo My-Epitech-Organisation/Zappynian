@@ -43,6 +43,9 @@ public:
   void setLevel(int level) override { level_ = level; }
   int getLevel() const override { return level_; }
 
+  void setTeam(const std::string &team) override { team_ = team; }
+  std::string getTeam() const override { return team_; }
+
   void setDirection(Direction direction) override {
     if (node_) {
       node_->setRotation(
@@ -62,6 +65,7 @@ public:
 protected:
   int id_;
   std::string name_;
+  std::string team_;
   irr::core::vector3df pos_;
   irr::core::vector3df scale_;
   irr::scene::IAnimatedMeshSceneNode *node_;
