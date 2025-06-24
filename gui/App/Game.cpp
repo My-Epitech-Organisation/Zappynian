@@ -67,10 +67,10 @@ void Game::processNetworkMessages() {
 
   // Phase 3: Utiliser la synchronisation automatique
   networkManager_->updateFromServer();
-  
+
   // Obtenir l'état du jeu synchronisé
   const auto& gameState = networkManager_->getGameState();
-  
+
   // Afficher des informations de debug si l'état a changé
   static bool firstSync = true;
   if (networkManager_->isGameStateSynchronized() && firstSync) {
@@ -190,16 +190,16 @@ void Game::gameLoop() {
 
   // Phase 3: Créer une scène WorldScene directement (pas NetworkClient)
   WorldScene scene(device_, smgr_, driver_, receiver_, mediaPath_);
-  
+
   // Créer la scène initiale basique
   scene.createLights();
   scene.createCamera();
   scene.createText();
-  
+
   // Flags pour la synchronisation
   bool mapInitialized = false;
   bool resourcesInitialized = false;
-  
+
   std::cout << "Game loop started, waiting for synchronization..." << std::endl;
 
   while (device_->run()) {
@@ -207,29 +207,29 @@ void Game::gameLoop() {
 
     // Phase 3: Traiter les messages réseau et synchroniser
     processNetworkMessages();
-    
+
     // Si l'état du jeu est synchronisé, mettre à jour la scène
     if (networkManager_->isGameStateSynchronized()) {
       const auto& gameState = networkManager_->getGameState();
-      
+
       // Initialiser la map si nécessaire
       if (!mapInitialized && gameState.getMapSize().x > 0) {
         auto mapSize = gameState.getMapSize();
         std::cout << "Creating plane with size: " << mapSize.x << "x" << mapSize.y << std::endl;
         scene.createPlane(mapSize.x, mapSize.y);
-        
+
         // Ajouter les équipes
         for (const auto& teamName : gameState.getAllTeamNames()) {
           scene.addTeam(teamName);
           std::cout << "Added team: " << teamName << std::endl;
         }
-        
+
         mapInitialized = true;
-        
+
         // Mettre à jour la liste des entités après création de la map
         entity_ = scene.getEntities();
       }
-      
+
       // Synchroniser les joueurs
       auto players = gameState.getAllPlayers();
       for (const auto* player : players) {
@@ -241,43 +241,43 @@ void Game::gameLoop() {
             break;
           }
         }
-        
+
         if (!playerExists) {
           // Créer le nouveau joueur
-          scene.createEntities(player->id, player->pos.x, player->pos.y, 
-                             static_cast<Direction>(player->direction), 
+          scene.createEntities(player->id, player->pos.x, player->pos.y,
+                             static_cast<Direction>(player->direction),
                              player->level, player->team);
-          std::cout << "Created player " << player->id << " at (" 
+          std::cout << "Created player " << player->id << " at ("
                     << player->pos.x << "," << player->pos.y << ")" << std::endl;
-          
+
           // Mettre à jour la liste des entités
           entity_ = scene.getEntities();
         }
       }
-      
+
       // Synchroniser les ressources sur les tiles (une seule fois après l'initialisation de la map)
       if (mapInitialized && !resourcesInitialized) {
         std::cout << "=== SYNCHRONIZING RESOURCES ===" << std::endl;
         auto tiles = gameState.getAllTiles();
         std::cout << "Found " << tiles.size() << " tiles with resources to synchronize" << std::endl;
-        
+
         for (const auto* tile : tiles) {
           // Vérifier si cette tile a des ressources
-          int totalResources = tile->resources.food + tile->resources.linemate + 
-                             tile->resources.deraumere + tile->resources.sibur + 
-                             tile->resources.mendiane + tile->resources.phiras + 
+          int totalResources = tile->resources.food + tile->resources.linemate +
+                             tile->resources.deraumere + tile->resources.sibur +
+                             tile->resources.mendiane + tile->resources.phiras +
                              tile->resources.thystame;
-          
+
           if (totalResources > 0) {
-            std::cout << "Creating resources at tile (" << tile->pos.x << "," << tile->pos.y 
-                      << ") - food:" << tile->resources.food 
+            std::cout << "Creating resources at tile (" << tile->pos.x << "," << tile->pos.y
+                      << ") - food:" << tile->resources.food
                       << " linemate:" << tile->resources.linemate
                       << " deraumere:" << tile->resources.deraumere
                       << " sibur:" << tile->resources.sibur
                       << " mendiane:" << tile->resources.mendiane
                       << " phiras:" << tile->resources.phiras
                       << " thystame:" << tile->resources.thystame << std::endl;
-            
+
             // Utiliser createEntities pour créer les ressources sur cette tile
             scene.createEntities(tile->pos.x, tile->pos.y,
                                tile->resources.food,
@@ -291,7 +291,7 @@ void Game::gameLoop() {
         }
         resourcesInitialized = true;
         std::cout << "=== RESOURCES SYNCHRONIZED ===" << std::endl;
-        
+
         // Mettre à jour la liste des entités après création des ressources
         entity_ = scene.getEntities();
       }

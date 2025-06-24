@@ -9,7 +9,7 @@
  * **A:** Zappy is a multi-client network game where AI clients (called Zappynians) compete for resources on a shared world. The project consists of a server managing the game logic and multiple AI clients that can connect and play autonomously.
  *
  * ### Q: What are the system requirements?
- * **A:** 
+ * **A:**
  * - **OS**: Linux, macOS, or Windows (with WSL)
  * - **Compiler**: GCC 8+ or Clang 10+
  * - **Dependencies**: libconfig++, pthread, and standard C++ libraries
@@ -26,7 +26,7 @@
  * ```
  *
  * ### Q: How do I start a basic game?
- * **A:** 
+ * **A:**
  * 1. Start the server: `./zappy_server -p 4242 -x 10 -y 10 -n team1 team2 -c 6 -f 100`
  * 2. Connect AI clients: `./zappy_ai -p 4242 -n team1 -h localhost`
  * 3. Optionally start GUI: `./zappy_gui -p 4242 -h localhost`
@@ -73,7 +73,7 @@
  * ## 🤖 AI Development
  *
  * ### Q: How do I create a custom AI strategy?
- * **A:** 
+ * **A:**
  * 1. Create a class inheriting from `IAIStrategy`
  * 2. Implement the required methods (`getNextAction`, `updateStrategy`)
  * 3. Register your strategy in the AI client
@@ -101,10 +101,10 @@
  * ```bash
  * # Enable debug logging
  * ./zappy_ai -p 4242 -n team1 -h localhost --debug
- * 
+ *
  * # Use GDB for step-by-step debugging
  * gdb ./zappy_ai
- * 
+ *
  * # Monitor network traffic
  * tcpdump -i lo port 4242
  * ```
@@ -123,7 +123,7 @@
  * ```
  *
  * ### Q: What happens if the network connection is lost?
- * **A:** 
+ * **A:**
  * - **Server**: Removes disconnected clients and continues the game
  * - **AI Client**: Can implement reconnection logic or gracefully exit
  * - **GUI**: Should handle disconnection and allow reconnection
@@ -136,7 +136,7 @@
  * ```bash
  * # Monitor all traffic on port 4242
  * tcpdump -A -i any port 4242
- * 
+ *
  * # Use Wireshark for GUI monitoring
  * wireshark -i lo -f "port 4242"
  * ```
@@ -150,7 +150,7 @@
  * ```bash
  * # Find and kill the process using the port
  * lsof -ti:4242 | xargs kill -9
- * 
+ *
  * # Or use a different port
  * ./zappy_server -p 4243 ...
  * ```
@@ -168,7 +168,7 @@
  * ```bash
  * # Slower game (50 time units per second)
  * ./zappy_server -p 4242 -x 10 -y 10 -n team1 -c 6 -f 50
- * 
+ *
  * # Faster game (200 time units per second)
  * ./zappy_server -p 4242 -x 10 -y 10 -n team1 -c 6 -f 200
  * ```
@@ -178,10 +178,10 @@
  * ```bash
  * # Ubuntu/Debian
  * sudo apt-get install build-essential libconfig++-dev
- * 
+ *
  * # Fedora/RHEL
  * sudo dnf install gcc-c++ libconfig-devel
- * 
+ *
  * # macOS
  * brew install libconfig
  * ```
@@ -191,7 +191,7 @@
  * ```bash
  * # Check for memory leaks
  * valgrind --leak-check=full ./zappy_server <args>
- * 
+ *
  * # For more detailed analysis
  * valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes ./zappy_ai <args>
  * ```
@@ -201,11 +201,11 @@
  * ```bash
  * # Enable core dumps
  * ulimit -c unlimited
- * 
+ *
  * # Run with GDB
  * gdb ./zappy_ai
  * (gdb) run -p 4242 -n team1 -h localhost
- * 
+ *
  * # Analyze core dump
  * gdb ./zappy_ai core
  * ```
@@ -223,7 +223,7 @@
  * - **Mediator**: For component communication
  *
  * ### Q: How do I add a new command to the protocol?
- * **A:** 
+ * **A:**
  * 1. Define the command in the protocol enum
  * 2. Create a command handler class
  * 3. Register it in the CommandFactory
@@ -238,7 +238,7 @@
  * - GUI extensions
  *
  * ### Q: How do I contribute to the project?
- * **A:** 
+ * **A:**
  * 1. Fork the repository
  * 2. Create a feature branch
  * 3. Follow the coding standards
@@ -264,7 +264,7 @@
  * - **High-performance**: 1000+ clients (with optimizations)
  *
  * ### Q: How can I optimize server performance?
- * **A:** 
+ * **A:**
  * - Use release builds (`make RELEASE=1`)
  * - Optimize world size for your use case
  * - Tune the frequency parameter
@@ -272,7 +272,7 @@
  * - Profile with tools like `perf` or `gprof`
  *
  * ### Q: My AI is too slow - how can I optimize it?
- * **A:** 
+ * **A:**
  * - Cache expensive calculations
  * - Reduce unnecessary network requests
  * - Optimize pathfinding algorithms
@@ -310,7 +310,7 @@
  * ---
  *
  * ## 🔗 Navigation
- * 
+ *
  * - 🏠 [Main Page](index.html)
  * - 📖 \ref user_guide "User Guide" - Complete setup and gameplay instructions
  * - ❓ \ref faq "FAQ" - Frequently asked questions and troubleshooting
@@ -319,8 +319,8 @@
  *
  * ---
  *
- * **Still have questions?** 
- * 
+ * **Still have questions?**
+ *
  * Check our [GitHub Issues](https://github.com/My-Epitech-Organisation/Zappynian/issues) or create a new issue for technical problems and feature requests.
  *
  * ---

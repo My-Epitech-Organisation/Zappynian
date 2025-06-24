@@ -33,12 +33,12 @@ int main(int argc, char **argv) {
     std::cerr << "Too many arguments provided.\n";
     return -1;
   }
-  
+
   std::string host = argv[4];
   int port = std::stoi(argv[2]);
-  
+
   std::cout << "Starting GUI - connecting to " << host << ":" << port << std::endl;
-  
+
   Game game(host, port);
   game.gameLoop();
   return 0;

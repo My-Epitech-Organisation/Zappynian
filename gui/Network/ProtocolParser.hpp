@@ -16,7 +16,7 @@ namespace Zappy {
 
     /**
      * @brief Parser pour tous les messages du protocole Zappy
-     * 
+     *
      * Cette classe parse les messages reçus du serveur et met à jour
      * l'état du jeu en conséquence.
      */

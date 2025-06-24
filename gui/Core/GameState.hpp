@@ -128,7 +128,7 @@ namespace Zappy {
 
     /**
      * @brief Modèle complet de l'état du jeu Zappy
-     * 
+     *
      * Cette classe maintient une synchronisation en temps réel avec le serveur.
      * Elle est mise à jour par les messages du protocole reçus du serveur.
      */
@@ -192,7 +192,7 @@ namespace Zappy {
     private:
         Position mapSize_{0, 0};
         int timeUnit_ = 100;
-        
+
         std::map<int, std::unique_ptr<Tile>> tilesById_;
         std::map<int, std::unique_ptr<Player>> players_;
         std::map<std::string, std::unique_ptr<Team>> teams_;

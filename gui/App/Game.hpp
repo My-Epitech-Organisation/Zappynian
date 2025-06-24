@@ -40,16 +40,15 @@ private:
   std::vector<std::shared_ptr<IEntity>> entity_;
   std::string host_;
   int port_;
-  
-  // Nouveau: gestionnaire réseau
+
   NetworkManager* networkManager_;
-  
+
   /**
    * @brief Initialiser la connexion réseau
    * @return true si connexion réussie
    */
   bool initNetwork();
-  
+
   /**
    * @brief Traiter les messages réseau
    */

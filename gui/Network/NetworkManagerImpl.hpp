@@ -35,18 +35,18 @@ public:
     bool connect(const std::string& host, int port);
     void disconnect();
     bool performHandshake();
-    
+
     // Méthodes de communication
     bool sendMessage(const std::string& message);
     std::string receiveMessage();
     bool hasData() const;
-    
+
     // Phase 3: Accès au modèle synchronisé
     const Zappy::GameState& getGameState() const { return gameState_; }
     Zappy::GameState& getGameState() { return gameState_; }
     void updateFromServer(); // Force la mise à jour depuis le serveur
     bool isGameStateSynchronized() const; // Vérifie si l'état initial est complet
-    
+
     // Getters pour l'état
     ConnectionState getState() const;
     std::string getLastError() const;

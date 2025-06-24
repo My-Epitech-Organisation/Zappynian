@@ -31,7 +31,7 @@ enum class ConnectionState {
 
 /**
  * @brief Gestionnaire réseau principal utilisant libzappy_net
- * 
+ *
  * Cette classe encapsule toutes les interactions avec libzappy_net
  * et fournit une interface thread-safe pour le GUI.
  */
@@ -41,7 +41,7 @@ public:
      * @brief Constructeur
      */
     NetworkManager();
-    
+
     /**
      * @brief Destructeur - nettoie automatiquement les ressources
      */
@@ -104,19 +104,19 @@ public:
     bool isConnected() const;
 
     // ========== Phase 3: Synchronisation de l'état du jeu ==========
-    
+
     /**
      * @brief Accéder à l'état du jeu synchronisé (lecture seule)
      * @return Référence constante vers l'état du jeu
      */
     const Zappy::GameState& getGameState() const;
-    
+
     /**
      * @brief Forcer la mise à jour depuis le serveur
      * Cette méthode traite tous les messages en attente et met à jour l'état du jeu
      */
     void updateFromServer();
-    
+
     /**
      * @brief Vérifier si l'état initial du jeu est complètement synchronisé
      * @return true si l'état initial (map, teams, players) est reçu et traité

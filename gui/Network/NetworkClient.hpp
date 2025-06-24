@@ -91,13 +91,13 @@ public:
                   << " - " << networkManager_.getLastError() << "\n";
         return false;
       }
-      
+
       if (!networkManager_.performHandshake()) {
         std::cerr << "Failed to perform handshake - " << networkManager_.getLastError() << "\n";
         return false;
       }
     }
-    
+
     return true;
   }
 

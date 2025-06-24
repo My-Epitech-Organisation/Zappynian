@@ -100,7 +100,7 @@ namespace Zappy {
         try {
             int x = std::stoi(args[0]);
             int y = std::stoi(args[1]);
-            
+
             Inventory resources;
             resources.food = std::stoi(args[2]);
             resources.linemate = std::stoi(args[3]);
@@ -109,7 +109,7 @@ namespace Zappy {
             resources.mendiane = std::stoi(args[6]);
             resources.phiras = std::stoi(args[7]);
             resources.thystame = std::stoi(args[8]);
-            
+
             gameState_.updateTile(Position(x, y), resources);
             return true;
         } catch (const std::exception& e) {
@@ -143,13 +143,13 @@ namespace Zappy {
             Direction dir = parseDirection(args[3]);
             int level = std::stoi(args[4]);
             std::string team = args[5];
-            
+
             gameState_.addPlayer(id, Position(x, y), dir, level, team);
-            
+
             if (onPlayerConnected_) {
                 onPlayerConnected_("Player " + std::to_string(id) + " connected");
             }
-            
+
             return true;
         } catch (const std::exception& e) {
             std::cerr << "ERROR: Failed to parse pnw: " << e.what() << std::endl;
@@ -169,7 +169,7 @@ namespace Zappy {
             int x = std::stoi(args[1]);
             int y = std::stoi(args[2]);
             Direction dir = parseDirection(args[3]);
-            
+
             gameState_.updatePlayerPosition(id, Position(x, y), dir);
             return true;
         } catch (const std::exception& e) {
@@ -188,7 +188,7 @@ namespace Zappy {
         try {
             int id = std::stoi(args[0]);
             int level = std::stoi(args[1]);
-            
+
             gameState_.updatePlayerLevel(id, level);
             return true;
         } catch (const std::exception& e) {
@@ -208,7 +208,7 @@ namespace Zappy {
             int id = std::stoi(args[0]);
             int x = std::stoi(args[1]);
             int y = std::stoi(args[2]);
-            
+
             Inventory inventory = parseInventoryArgs(args, 3);
             gameState_.updatePlayerInventory(id, Position(x, y), inventory);
             return true;
@@ -250,11 +250,11 @@ namespace Zappy {
             for (size_t i = 2; i < args.size(); ++i) {
                 message += " " + args[i];
             }
-            
+
             if (onBroadcast_) {
                 onBroadcast_("Player " + std::to_string(id) + ": " + message);
             }
-            
+
             std::cout << "DEBUG: Player " << id << " broadcast: '" << message << "'" << std::endl;
             return true;
         } catch (const std::exception& e) {
@@ -274,7 +274,7 @@ namespace Zappy {
             int x = std::stoi(args[0]);
             int y = std::stoi(args[1]);
             int level = std::stoi(args[2]);
-            
+
             std::vector<int> playerIds = parsePlayerIds(args, 3);
             gameState_.startIncantation(Position(x, y), level, playerIds);
             return true;
@@ -295,7 +295,7 @@ namespace Zappy {
             int x = std::stoi(args[0]);
             int y = std::stoi(args[1]);
             bool success = (args[2] == "1");
-            
+
             gameState_.endIncantation(Position(x, y), success);
             return true;
         } catch (const std::exception& e) {
@@ -368,11 +368,11 @@ namespace Zappy {
         try {
             int id = std::stoi(args[0]);
             gameState_.removePlayer(id);
-            
+
             if (onPlayerDisconnected_) {
                 onPlayerDisconnected_("Player " + std::to_string(id) + " died");
             }
-            
+
             return true;
         } catch (const std::exception& e) {
             std::cerr << "ERROR: Failed to parse pdi: " << e.what() << std::endl;
@@ -396,7 +396,7 @@ namespace Zappy {
             } else {
                 eggId = std::stoi(eggIdStr);
             }
-            
+
             // Parse player ID (peut commencer par # et être -1 pour "server spawn")
             std::string playerIdStr = args[1];
             int playerId = -1; // Par défaut pour les œufs du serveur
@@ -408,10 +408,10 @@ namespace Zappy {
             } else {
                 playerId = std::stoi(playerIdStr);
             }
-            
+
             int x = std::stoi(args[2]);
             int y = std::stoi(args[3]);
-            
+
             // Get team from player or use "unknown" for server eggs
             std::string team = "unknown";
             if (playerId >= 0) {
@@ -420,7 +420,7 @@ namespace Zappy {
                     team = player->team;
                 }
             }
-            
+
             gameState_.addEgg(eggId, Position(x, y), team);
             return true;
         } catch (const std::exception& e) {
@@ -444,7 +444,7 @@ namespace Zappy {
             } else {
                 eggId = std::stoi(eggIdStr);
             }
-            
+
             gameState_.setEggHatching(eggId, true);
             return true;
         } catch (const std::exception& e) {
@@ -468,7 +468,7 @@ namespace Zappy {
             } else {
                 eggId = std::stoi(eggIdStr);
             }
-            
+
             gameState_.removeEgg(eggId);
             return true;
         } catch (const std::exception& e) {
@@ -519,7 +519,7 @@ namespace Zappy {
             if (i > 0) message += " ";
             message += args[i];
         }
-        
+
         std::cout << "SERVER MESSAGE: " << message << std::endl;
         return true;
     }
@@ -533,11 +533,11 @@ namespace Zappy {
 
         std::string winningTeam = args[0];
         std::cout << "GAME ENDED: Team '" << winningTeam << "' won!" << std::endl;
-        
+
         if (onGameEnd_) {
             onGameEnd_("Game ended - Team " + winningTeam + " won!");
         }
-        
+
         return true;
     }
 
@@ -546,11 +546,11 @@ namespace Zappy {
         std::vector<std::string> tokens;
         std::istringstream iss(message);
         std::string token;
-        
+
         while (iss >> token) {
             tokens.push_back(token);
         }
-        
+
         return tokens;
     }
 
@@ -559,7 +559,7 @@ namespace Zappy {
         if (dirStr == "EAST" || dirStr == "2") return Direction::EAST;
         if (dirStr == "SOUTH" || dirStr == "3") return Direction::SOUTH;
         if (dirStr == "WEST" || dirStr == "4") return Direction::WEST;
-        
+
         std::cerr << "WARNING: Unknown direction '" << dirStr << "', defaulting to NORTH" << std::endl;
         return Direction::NORTH;
     }
@@ -572,14 +572,14 @@ namespace Zappy {
         if (resourceStr == "mendiane") return ResourceType::MENDIANE;
         if (resourceStr == "phiras") return ResourceType::PHIRAS;
         if (resourceStr == "thystame") return ResourceType::THYSTAME;
-        
+
         std::cerr << "WARNING: Unknown resource '" << resourceStr << "'" << std::endl;
         return ResourceType::FOOD;
     }
 
     Inventory ProtocolParser::parseInventoryArgs(const std::vector<std::string>& args, size_t startIndex) const {
         Inventory inventory;
-        
+
         if (args.size() >= startIndex + 7) {
             inventory.food = std::stoi(args[startIndex]);
             inventory.linemate = std::stoi(args[startIndex + 1]);
@@ -589,13 +589,13 @@ namespace Zappy {
             inventory.phiras = std::stoi(args[startIndex + 5]);
             inventory.thystame = std::stoi(args[startIndex + 6]);
         }
-        
+
         return inventory;
     }
 
     std::vector<int> ProtocolParser::parsePlayerIds(const std::vector<std::string>& args, size_t startIndex) const {
         std::vector<int> playerIds;
-        
+
         for (size_t i = startIndex; i < args.size(); ++i) {
             try {
                 playerIds.push_back(std::stoi(args[i]));
@@ -603,7 +603,7 @@ namespace Zappy {
                 std::cerr << "WARNING: Failed to parse player ID '" << args[i] << "'" << std::endl;
             }
         }
-        
+
         return playerIds;
     }
 
