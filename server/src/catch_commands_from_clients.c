@@ -15,6 +15,11 @@ player_t *find_player_by_client(server_connection_t *connection,
     team_t *team = get_team_by_name(args, client->team_name);
     player_t *player = NULL;
 
+    if (connection == NULL || client == NULL || args == NULL ||
+        args->clients_per_team <= 0) {
+        fprintf(stderr, "Invalid connection or client parameters.\n");
+        return NULL;
+    }
     if (team == NULL)
         return NULL;
     for (int i = 0; i < args->clients_per_team; i++) {
