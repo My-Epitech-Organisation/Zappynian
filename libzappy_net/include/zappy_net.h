@@ -100,20 +100,6 @@
     void zn_socket_cleanup(zn_socket_t socket);
 
     /**
-     * @brief Write data to the socket's send buffer
-     *
-     * This function writes data to the socket's internal send buffer.
-     * The data is not immediately sent over the network but queued for
-     * later transmission when zn_flush() is called.
-     *
-     * @param sock The socket handle
-     * @param data Pointer to data to write
-     * @param len Length of data in bytes
-     * @return Number of bytes written, -1 on error with errno set
-     */
-    ssize_t zn_write(zn_socket_t sock, const void *data, size_t len);
-
-    /**
      * @brief Flush the socket's send buffer to the network
      *
      * This function attempts to send all data in the socket's send buffer
