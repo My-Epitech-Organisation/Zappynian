@@ -5,7 +5,6 @@
 ** Handshake message handling utilities
 */
 
-#include "zappy_net.h"
 #include "zappy_net_internal.h"
 
 int zn_send_message(zn_socket_t sock, const char *message)
