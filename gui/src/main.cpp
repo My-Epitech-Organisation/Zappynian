@@ -14,11 +14,11 @@
 
 int main(int argc, char **argv) {
   if (argc < 5) {
-    std::cerr << "Usage: " << argv[0] << "-p <port> -h <host>\n";
+    std::cerr << "Usage: " << argv[0] << " -p <port> -h <host>\n";
     return -1;
   }
-  if (std::string(argv[3]) != "-h" || std::string(argv[1]) != "-p") {
-    std::cerr << "Usage: " << argv[0] << "-p <port> -h <host>\n";
+  if (std::string(argv[1]) != "-p" || std::string(argv[3]) != "-h") {
+    std::cerr << "Usage: " << argv[0] << " -p <port> -h <host>\n";
     return -1;
   }
   if (std::string(argv[2]).empty() || std::string(argv[4]).empty()) {
@@ -33,11 +33,12 @@ int main(int argc, char **argv) {
     std::cerr << "Too many arguments provided.\n";
     return -1;
   }
-  if (argc == 3 && std::string(argv[1]) == "-help") {
-    std::cout << "Usage: " << argv[0] << "-p port -h machine\n";
-  }
+  
   std::string host = argv[4];
   int port = std::stoi(argv[2]);
+  
+  std::cout << "Starting GUI - connecting to " << host << ":" << port << std::endl;
+  
   Game game(host, port);
   game.gameLoop();
   return 0;
