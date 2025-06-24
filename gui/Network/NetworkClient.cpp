@@ -100,7 +100,18 @@ void NetworkClient::parseMessage() {
       direction = Direction::WEST;
     else
       direction = Direction::NORTH;
-    changePlayerPos(id, x, y, direction);
+
+    // Get current direction before changing position
+    Direction currentDirection = Direction::NORTH; // default
+    const auto& entities = entityManager_.getEntities();
+    for (const auto& entity : entities) {
+      if (entity->getId() == id) {
+        currentDirection = entity->getDirection();
+        break;
+      }
+    }
+
+    movePlayer(id, x, y, direction, currentDirection);
   } else if (command == "pin") {
     std::istringstream iss2(message);
     iss2 >> command;
@@ -108,7 +119,7 @@ void NetworkClient::parseMessage() {
       std::cerr << "Invalid arguments for pin command\n";
       return;
     }
-    setPlayerInventory(id, x, y, q0, q1, q2, q3, q4, q5, q6);
+    PlayerInventory(id, x, y, q0, q1, q2, q3, q4, q5, q6);
   } else if (command == "sgt") {
     std::istringstream iss2(message);
     iss2 >> command;
