@@ -6,10 +6,12 @@
 */
 #include "../Core/EntityManager.hpp"
 #include "../Core/WorldScene.hpp"
+#include "../Core/GameState.hpp"
 #include "../Entities/PlayerEntity.hpp"
 #include "../Entities/Stone.hpp"
 #include "../Event/EventReceiver.hpp"
 #include "../Network/NetworkClient.hpp"
+#include "../Network/NetworkManager.hpp"
 #include <irrlicht/irrlicht.h>
 #include <memory>
 #include <string>
@@ -25,8 +27,8 @@ public:
   void initWindow();
   void gameLoop();
   std::shared_ptr<IEntity> findEntityById(int id);
-  void updatePlayerMovement(irr::u32 currentTime, NetworkClient &scene);
-  void updateIncantingPlayers(NetworkClient &scene);
+  void updatePlayerMovement(irr::u32 currentTime, WorldScene &scene);
+  void updateIncantingPlayers(WorldScene &scene);
 
 private:
   irr::IrrlichtDevice *device_;
@@ -38,4 +40,18 @@ private:
   std::vector<std::shared_ptr<IEntity>> entity_;
   std::string host_;
   int port_;
+  
+  // Nouveau: gestionnaire réseau
+  NetworkManager* networkManager_;
+  
+  /**
+   * @brief Initialiser la connexion réseau
+   * @return true si connexion réussie
+   */
+  bool initNetwork();
+  
+  /**
+   * @brief Traiter les messages réseau
+   */
+  void processNetworkMessages();
 };
