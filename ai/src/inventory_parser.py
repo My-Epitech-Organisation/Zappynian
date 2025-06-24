@@ -5,6 +5,8 @@ class WorldState:
     def __init__(self):
         self.inventory: Dict[str, int] = {}
         self.level = 1
+        self.team_name = ""
+        self.leader = False
 
     def parse_inventory(self, line: str):
         if not line.startswith("[") or not line.endswith("]"):
@@ -21,7 +23,9 @@ class WorldState:
                 try:
                     self.inventory[name] = int(count)
                 except ValueError:
+                    print(f"[WARN] Invalid count in inventory: '{count}' for '{name}'")
                     continue
+
 
     def get_food_count(self) -> int:
         return self.inventory.get("food", 0)
