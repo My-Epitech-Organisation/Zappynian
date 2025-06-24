@@ -1,5 +1,5 @@
 from ai.src.roles.base_role import Role
-from ai.src.utils.route_factory import route_to
+from ai.src.utils.route_factory import *
 
 class Breeder(Role):
     def __init__(self):
@@ -7,20 +7,27 @@ class Breeder(Role):
         self.target_direction = None
 
     def decide(self, queue, world, vision):
-        print("Breeder")
-        if self.target_direction is not None:
-            path = route_to(self.target_direction)
-            for cmd in path:
-                queue.send_and_wait(cmd)
-            queue.send_and_wait("Look")
-            self.target_direction = None
+        # if self.target_direction is not None:
+        #     print(f"Breeder : Moving to target direction: {self.target_direction}")
+        #     path = goal_to(self.target_direction)
+        #     for cmd in path:
+        #         queue.send_and_wait(cmd)
+        #     self.target_direction = None
+        #     return
         queue.send_and_wait("Fork")
 
     def on_broadcast(self, message, queue, world, vision):
-        parts = message.split(",", 1)
-        if len(parts) != 2:
-            return
-        direction = int(parts[0].split()[1])
-        content = parts[1].strip()
-        if "incantation" in content.lower():
-            self.target_direction = direction
+        return
+        # parts = message.split(",", 1)
+        # if len(parts) != 2:
+        #     return
+        # try:
+        #     tokens = parts[0].split()
+        #     if len(tokens) < 2 or not tokens[1].isdigit():
+        #         return
+        #     direction = int(tokens[1])
+        # except (IndexError, ValueError):
+        #     return
+        # content = parts[1].strip()
+        # if "incantation" in content.lower():
+        #     self.target_direction = direction
