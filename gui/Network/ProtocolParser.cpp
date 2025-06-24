@@ -27,8 +27,6 @@ namespace Zappy {
         const std::string& command = tokens[0];
         std::vector<std::string> args(tokens.begin() + 1, tokens.end());
 
-        logParsedMessage(command, args);
-
         if (command == "msz") return parseMapSize(args);
         else if (command == "mct") return parseMapContent(args);
         else if (command == "bct") return parseTileContent(args);
@@ -82,13 +80,11 @@ namespace Zappy {
     }
 
     bool ProtocolParser::parseMapContent(const std::vector<std::string>& args) {
-        std::cout << "DEBUG: Map content request received" << std::endl;
         return true;
     }
 
     bool ProtocolParser::parseTileContent(const std::vector<std::string>& args) {
         if (args.size() != 9) {
-            std::cerr << "ERROR: Invalid bct arguments count: " << args.size() << std::endl;
             return false;
         }
 
@@ -97,15 +93,14 @@ namespace Zappy {
             int y = std::stoi(args[1]);
 
             Inventory resources;
-            resources.food = std::stoi(args[2]);
-            resources.linemate = std::stoi(args[3]);
-            resources.deraumere = std::stoi(args[4]);
-            resources.sibur = std::stoi(args[5]);
-            resources.mendiane = std::stoi(args[6]);
-            resources.phiras = std::stoi(args[7]);
-            resources.thystame = std::stoi(args[8]);
-
-            gameState_.updateTile(Position(x, y), resources);
+            resources.addItem("food", std::stoi(args[2]));
+            resources.addItem("linemate", std::stoi(args[3]));
+            resources.addItem("deraumere", std::stoi(args[4]));
+            resources.addItem("sibur", std::stoi(args[5]));
+            resources.addItem("mendiane", std::stoi(args[6]));
+            resources.addItem("phiras", std::stoi(args[7]));
+            resources.addItem("thystame", std::stoi(args[8]));
+            gameState_.updateTile(irr::core::vector3df(x, y, 0), resources);
             return true;
         } catch (const std::exception& e) {
             std::cerr << "ERROR: Failed to parse bct: " << e.what() << std::endl;
@@ -137,7 +132,7 @@ namespace Zappy {
             int level = std::stoi(args[4]);
             std::string team = args[5];
 
-            gameState_.addPlayer(id, Position(x, y), dir, level, team);
+            gameState_.addPlayer(id, irr::core::vector3df(x, y, 0), dir, level, team);
 
             if (onPlayerConnected_) {
                 onPlayerConnected_("Player " + std::to_string(id) + " connected");
@@ -162,7 +157,7 @@ namespace Zappy {
             int y = std::stoi(args[2]);
             Direction dir = parseDirection(args[3]);
 
-            gameState_.updatePlayerPosition(id, Position(x, y), dir);
+            gameState_.updatePlayerPosition(id, irr::core::vector3df(x, y, 0), dir);
             return true;
         } catch (const std::exception& e) {
             std::cerr << "ERROR: Failed to parse ppo: " << e.what() << std::endl;
@@ -200,7 +195,7 @@ namespace Zappy {
             int y = std::stoi(args[2]);
 
             Inventory inventory = parseInventoryArgs(args, 3);
-            gameState_.updatePlayerInventory(id, Position(x, y), inventory);
+            gameState_.updatePlayerInventory(id, irr::core::vector3df(x, y, 0), inventory);
             return true;
         } catch (const std::exception& e) {
             std::cerr << "ERROR: Failed to parse pin: " << e.what() << std::endl;
@@ -216,7 +211,6 @@ namespace Zappy {
 
         try {
             int id = std::stoi(args[0]);
-            std::cout << "DEBUG: Player " << id << " was expelled" << std::endl;
             return true;
         } catch (const std::exception& e) {
             std::cerr << "ERROR: Failed to parse pex: " << e.what() << std::endl;
@@ -240,8 +234,6 @@ namespace Zappy {
             if (onBroadcast_) {
                 onBroadcast_("Player " + std::to_string(id) + ": " + message);
             }
-
-            std::cout << "DEBUG: Player " << id << " broadcast: '" << message << "'" << std::endl;
             return true;
         } catch (const std::exception& e) {
             std::cerr << "ERROR: Failed to parse pbc: " << e.what() << std::endl;
@@ -261,7 +253,7 @@ namespace Zappy {
             int level = std::stoi(args[2]);
 
             std::vector<int> playerIds = parsePlayerIds(args, 3);
-            gameState_.startIncantation(Position(x, y), level, playerIds);
+            gameState_.startIncantation(irr::core::vector3df(x, y, 0), level, playerIds);
             return true;
         } catch (const std::exception& e) {
             std::cerr << "ERROR: Failed to parse pic: " << e.what() << std::endl;
@@ -280,7 +272,7 @@ namespace Zappy {
             int y = std::stoi(args[1]);
             bool success = (args[2] == "1");
 
-            gameState_.endIncantation(Position(x, y), success);
+            gameState_.endIncantation(irr::core::vector3df(x, y, 0), success);
             return true;
         } catch (const std::exception& e) {
             std::cerr << "ERROR: Failed to parse pie: " << e.what() << std::endl;
@@ -296,7 +288,6 @@ namespace Zappy {
 
         try {
             int id = std::stoi(args[0]);
-            std::cout << "DEBUG: Player " << id << " is forking" << std::endl;
             return true;
         } catch (const std::exception& e) {
             std::cerr << "ERROR: Failed to parse pfk: " << e.what() << std::endl;
@@ -313,7 +304,6 @@ namespace Zappy {
         try {
             int id = std::stoi(args[0]);
             std::string resource = args[1];
-            std::cout << "DEBUG: Player " << id << " dropped " << resource << std::endl;
             return true;
         } catch (const std::exception& e) {
             std::cerr << "ERROR: Failed to parse pdr: " << e.what() << std::endl;
@@ -330,7 +320,6 @@ namespace Zappy {
         try {
             int id = std::stoi(args[0]);
             std::string resource = args[1];
-            std::cout << "DEBUG: Player " << id << " took " << resource << std::endl;
             return true;
         } catch (const std::exception& e) {
             std::cerr << "ERROR: Failed to parse pgt: " << e.what() << std::endl;
@@ -390,13 +379,13 @@ namespace Zappy {
 
             std::string team = "unknown";
             if (playerId >= 0) {
-                const Player* player = gameState_.getPlayer(playerId);
+                const PlayerEntity* player = gameState_.getPlayer(playerId);
                 if (player) {
-                    team = player->team;
+                    team = player->getTeam();
                 }
             }
 
-            gameState_.addEgg(eggId, Position(x, y), team);
+            gameState_.addEgg(eggId, irr::core::vector3df(x, y, 0), team);
             return true;
         } catch (const std::exception& e) {
             std::cerr << "ERROR: Failed to parse enw: " << e.what() << std::endl;
@@ -475,7 +464,6 @@ namespace Zappy {
         try {
             int timeUnit = std::stoi(args[0]);
             gameState_.setTimeUnit(timeUnit);
-            std::cout << "DEBUG: Server time unit set to " << timeUnit << std::endl;
             return true;
         } catch (const std::exception& e) {
             std::cerr << "ERROR: Failed to parse sst: " << e.what() << std::endl;
@@ -532,32 +520,17 @@ namespace Zappy {
         return Direction::NORTH;
     }
 
-    ResourceType ProtocolParser::parseResource(const std::string& resourceStr) const {
-        if (resourceStr == "food") return ResourceType::FOOD;
-        if (resourceStr == "linemate") return ResourceType::LINEMATE;
-        if (resourceStr == "deraumere") return ResourceType::DERAUMERE;
-        if (resourceStr == "sibur") return ResourceType::SIBUR;
-        if (resourceStr == "mendiane") return ResourceType::MENDIANE;
-        if (resourceStr == "phiras") return ResourceType::PHIRAS;
-        if (resourceStr == "thystame") return ResourceType::THYSTAME;
-
-        std::cerr << "WARNING: Unknown resource '" << resourceStr << "'" << std::endl;
-        return ResourceType::FOOD;
-    }
-
     Inventory ProtocolParser::parseInventoryArgs(const std::vector<std::string>& args, size_t startIndex) const {
         Inventory inventory;
-
         if (args.size() >= startIndex + 7) {
-            inventory.food = std::stoi(args[startIndex]);
-            inventory.linemate = std::stoi(args[startIndex + 1]);
-            inventory.deraumere = std::stoi(args[startIndex + 2]);
-            inventory.sibur = std::stoi(args[startIndex + 3]);
-            inventory.mendiane = std::stoi(args[startIndex + 4]);
-            inventory.phiras = std::stoi(args[startIndex + 5]);
-            inventory.thystame = std::stoi(args[startIndex + 6]);
+            inventory.addItem("food", std::stoi(args[startIndex]));
+            inventory.addItem("linemate", std::stoi(args[startIndex + 1]));
+            inventory.addItem("deraumere", std::stoi(args[startIndex + 2]));
+            inventory.addItem("sibur", std::stoi(args[startIndex + 3]));
+            inventory.addItem("mendiane", std::stoi(args[startIndex + 4]));
+            inventory.addItem("phiras", std::stoi(args[startIndex + 5]));
+            inventory.addItem("thystame", std::stoi(args[startIndex + 6]));
         }
-
         return inventory;
     }
 
@@ -578,13 +551,4 @@ namespace Zappy {
     bool ProtocolParser::isValidMessage(const std::string& message) const {
         return !message.empty() && !std::all_of(message.begin(), message.end(), ::isspace);
     }
-
-    void ProtocolParser::logParsedMessage(const std::string& command, const std::vector<std::string>& args) const {
-        std::cout << "DEBUG: Parsing '" << command << "'";
-        for (const auto& arg : args) {
-            std::cout << " '" << arg << "'";
-        }
-        std::cout << std::endl;
-    }
-
 }

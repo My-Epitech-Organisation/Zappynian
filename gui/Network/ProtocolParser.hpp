@@ -77,12 +77,9 @@ namespace Zappy {
 
         std::vector<std::string> tokenize(const std::string& message) const;
         Direction parseDirection(const std::string& dirStr) const;
-        ResourceType parseResource(const std::string& resourceStr) const;
         Inventory parseInventoryArgs(const std::vector<std::string>& args, size_t startIndex) const;
         std::vector<int> parsePlayerIds(const std::vector<std::string>& args, size_t startIndex) const;
         bool isValidMessage(const std::string& message) const;
-
-        void logParsedMessage(const std::string& command, const std::vector<std::string>& args) const;
     };
 
 }
