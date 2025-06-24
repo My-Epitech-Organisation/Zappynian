@@ -114,49 +114,6 @@
     ssize_t zn_write(zn_socket_t sock, const void *data, size_t len);
 
     /**
-     * @brief Read data from the socket's receive buffer
-     *
-     * This function reads data from the socket's internal receive buffer.
-     * If the buffer is empty, it attempts to read from the socket into
-     * the buffer first. This function does not block if no data is available.
-     *
-     * @param sock The socket handle
-     * @param data Buffer to store read data
-     * @param len Maximum amount of data to read
-     * @return Number of bytes read, -1 on error with errno set, 0 if no data
-     */
-    ssize_t zn_read(zn_socket_t sock, void *data, size_t len);
-
-    /**
-     * @brief Read a line from the socket's receive buffer
-     *
-     * This function reads a complete line (ending with '\n') from the socket's
-     * internal receive buffer. If no complete line is available, it attempts
-     * to read from the socket into the buffer first.
-     *
-     * @param sock The socket handle
-     * @param data Buffer to store read data
-     * @param len Maximum amount of data to read
-     * @return Number of bytes read (including newline), -1 on error or no line
-     */
-    ssize_t zn_readln(zn_socket_t sock, void *data, size_t len);
-
-    /**
-     * @brief Read a complete line from socket with partial segment support
-     *
-     * This function reads a complete newline-terminated line from the socket.
-     * It handles TCP fragmentation by accumulating partial segments until
-     * a complete line is available. Returns dynamically allocated string
-     * containing the complete line (without newline) or NULL if no complete
-     * line is available.
-     *
-     * @param sock The socket handle
-     * @return Dynamically allocated string with complete line (caller must
-     *         free), or NULL if no complete line available or on error
-     */
-    char *zn_readline(zn_socket_t sock);
-
-    /**
      * @brief Flush the socket's send buffer to the network
      *
      * This function attempts to send all data in the socket's send buffer
