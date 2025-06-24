@@ -94,6 +94,8 @@ public:
 
   void killPlayer(int id);
 
+  void killEgg(int id);
+
   void addChatMessage(const std::string &message);
 
   void broadcast(int id, const std::string &message);
