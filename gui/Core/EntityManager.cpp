@@ -168,8 +168,9 @@ void EntityManager::createEgg(int id) {
       std::vector<irr::io::path> eggTextures = {mediaPath_ +
                                                 "egg_texture/egg_texture.png"};
       auto egg =
-          std::make_shared<Egg>(-7, pos, irr::core::vector3df(20.f, 20.f, 20.f),
-                                eggTextures, mediaPath_ + "Egg.b3d");
+          std::make_shared<Egg>(-7, player->getId(), pos, irr::core::vector3df(15.f, 15.f, 15.f),
+                                eggTextures, mediaPath_ + "Egg.b3d",
+                                entity_, player->getDirection());
       entity_.push_back(egg);
       egg->createNode(smgr_, driver_);
       auto tile = getTileByName(
