@@ -50,7 +50,6 @@ bool NetworkManager::isConnected() const {
     return impl_->isConnected();
 }
 
-// Phase 3: Synchronisation de l'état du jeu
 const Zappy::GameState& NetworkManager::getGameState() const {
     return impl_->getGameState();
 }

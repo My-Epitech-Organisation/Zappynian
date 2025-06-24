@@ -11,11 +11,9 @@
 
 namespace Zappy {
 
-    // Map management
     void GameState::setMapSize(int width, int height) {
         mapSize_ = Position(width, height);
 
-        // Initialize all tiles
         tilesById_.clear();
         for (int y = 0; y < height; ++y) {
             for (int x = 0; x < width; ++x) {
@@ -32,7 +30,6 @@ namespace Zappy {
         return pos.x >= 0 && pos.x < mapSize_.x && pos.y >= 0 && pos.y < mapSize_.y;
     }
 
-    // Tile management
     void GameState::updateTile(const Position& pos, const Inventory& resources) {
         if (!isValidPosition(pos)) {
             std::cerr << "ERROR: Invalid position (" << pos.x << "," << pos.y << ")" << std::endl;
@@ -74,7 +71,6 @@ namespace Zappy {
         return tiles;
     }
 
-    // Player management
     void GameState::addPlayer(int id, const Position& pos, Direction dir, int level, const std::string& team) {
         if (!isValidPosition(pos)) {
             std::cerr << "ERROR: Cannot add player " << id << " at invalid position (" << pos.x << "," << pos.y << ")" << std::endl;
@@ -83,10 +79,8 @@ namespace Zappy {
 
         players_[id] = std::make_unique<Player>(id, pos, dir, level, team);
 
-        // Update tile player list
         updateTilePlayerList(pos);
 
-        // Add to team
         auto teamIt = teams_.find(team);
         if (teamIt != teams_.end()) {
             teamIt->second->playerIds.push_back(id);
@@ -112,7 +106,6 @@ namespace Zappy {
         it->second->pos = pos;
         it->second->direction = dir;
 
-        // Update tile player lists
         updateTilePlayerList(oldPos);
         updateTilePlayerList(pos);
 
@@ -139,7 +132,6 @@ namespace Zappy {
         }
 
         it->second->inventory = inventory;
-        // Also update position if provided
         if (isValidPosition(pos) && !(it->second->pos == pos)) {
             updatePlayerPosition(id, pos, it->second->direction);
         }
@@ -157,17 +149,14 @@ namespace Zappy {
         Position pos = it->second->pos;
         std::string team = it->second->team;
 
-        // Remove from team
         auto teamIt = teams_.find(team);
         if (teamIt != teams_.end()) {
             auto& playerIds = teamIt->second->playerIds;
             playerIds.erase(std::remove(playerIds.begin(), playerIds.end(), id), playerIds.end());
         }
 
-        // Remove player
         players_.erase(it);
 
-        // Update tile player list
         updateTilePlayerList(pos);
 
         std::cout << "DEBUG: Player " << id << " removed" << std::endl;

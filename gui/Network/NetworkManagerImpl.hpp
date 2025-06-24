@@ -41,7 +41,6 @@ public:
     std::string receiveMessage();
     bool hasData() const;
 
-    // Phase 3: Accès au modèle synchronisé
     const Zappy::GameState& getGameState() const { return gameState_; }
     Zappy::GameState& getGameState() { return gameState_; }
     void updateFromServer(); // Force la mise à jour depuis le serveur
@@ -53,7 +52,6 @@ public:
     bool isConnected() const;
 
 private:
-    // Tous les détails libzappy_net sont ici, cachés du monde extérieur
     zn_socket_t socket_;            ///< Socket libzappy_net
     ConnectionState state_;         ///< État actuel
     std::string lastError_;         ///< Dernière erreur
@@ -62,7 +60,6 @@ private:
     bool initialized_;              ///< Flag d'initialisation
     std::deque<std::string> initialMessages_;  ///< Messages initiaux stockés
 
-    // Phase 3: Modèle et parser pour la synchronisation
     Zappy::GameState gameState_;               ///< État du jeu synchronisé
     std::unique_ptr<Zappy::ProtocolParser> parser_;  ///< Parser de protocole
     bool gameStateSynchronized_;               ///< Flag de synchronisation complète

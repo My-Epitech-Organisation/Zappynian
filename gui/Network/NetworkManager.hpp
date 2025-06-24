@@ -103,8 +103,6 @@ public:
      */
     bool isConnected() const;
 
-    // ========== Phase 3: Synchronisation de l'état du jeu ==========
-
     /**
      * @brief Accéder à l'état du jeu synchronisé (lecture seule)
      * @return Référence constante vers l'état du jeu
