@@ -32,6 +32,7 @@ tile_t *get_tile(map_t *map, size_t x, size_t y);
 void add_player_to_tile(tile_t *tile, player_t *player);
 void remove_player_from_tile(tile_t *tile, player_t *player);
 bool take_resource_from_tile(tile_t *tile, int resource_type);
+bool set_resource_on_tile(tile_t *tile, int resource_type);
 int get_resource_type_from_name(const char *resource_name);
 
 #endif // WORLD_H
