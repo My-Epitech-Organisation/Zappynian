@@ -22,6 +22,8 @@ SRCS	=	src/main.c							\
 			src/error_handling.c 				\
 			src/handle_client.c 				\
 			src/client_manager.c 				\
+			src/client_handshake.c 				\
+			src/client_handshake_response.c 	\
 			src/commands_movement.c				\
 			src/commands_actions.c 				\
 			src/commands_communication.c 		\
