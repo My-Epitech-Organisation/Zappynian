@@ -28,14 +28,18 @@ class Connection:
         self.socket.sendall(command.encode("utf-8"))
 
     def read_line(self) -> str | None:
+        if not self.socket:
+            return None
         try:
-            ready_to_read, _, _ = select.select([self.socket], [], [], 0)
+            ready_to_read, _, _ = select.select([self.socket], [], [], 0.1)  # Timeout plus long
             if self.socket in ready_to_read:
                 data = self.socket.recv(4096)
                 if not data:
                     raise ConnectionAbortedError("Server closed the connection.")
                 self.buffer += data
-        except BlockingIOError:
+        except socket.error as e:
+            if hasattr(e, 'errno') and e.errno not in (socket.EAGAIN, socket.EWOULDBLOCK):
+                raise ConnectionError(f"Socket error: {e}")
             return None
         if b"\n" in self.buffer:
             line, self.buffer = self.buffer.split(b"\n", 1)

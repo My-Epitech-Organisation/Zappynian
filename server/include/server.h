@@ -96,6 +96,14 @@ void assign_client_type(client_t *client, server_connection_t *connection,
     int idx);
 void accept_client(server_connection_t *connection, server_args_t *args);
 
+/* Client handshake functions */
+int setup_client_handshake(client_t *client, server_connection_t *connection,
+    int idx, char *team_name);
+int validate_and_respond(client_t *client, server_connection_t *connection,
+    int idx, const char *team_name);
+void finalize_client_assignment(client_t *client,
+    server_connection_t *connection, const char *team_name);
+
 /* Server loop functions */
 void server_loop(server_t *server);
 void stop_server_loop(server_t *server);
