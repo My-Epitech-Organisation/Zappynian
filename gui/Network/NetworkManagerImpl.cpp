@@ -95,6 +95,7 @@ bool NetworkManagerImpl::performHandshake() {
         if (welcome.empty()) {
             std::cout << "Attempt " << (attempts + 1) << ": No message yet, waiting..." << std::endl;
             usleep(100000);
+            usleep(100000);
         }
     }
 
@@ -126,6 +127,7 @@ bool NetworkManagerImpl::performHandshake() {
 
     std::cout << "DEBUG: Waiting 2 seconds for server to prepare response..." << std::endl;
     sleep(2);
+    sleep(2);
 
     int messagesAvailable = 0;
     std::string message;
@@ -140,6 +142,7 @@ bool NetworkManagerImpl::performHandshake() {
             initialMessages.push_back(message);
             std::cout << "DEBUG: Initial message " << messagesAvailable << ": '" << message << "'" << std::endl;
 
+            usleep(10000);
             usleep(10000);
         } else {
             usleep(50000);
@@ -197,7 +200,9 @@ std::string NetworkManagerImpl::receiveMessage() {
 
     zn_socket_t sockets[1] = { socket_ };
     short events[1] = { 1 };
+    short events[1] = { 1 };
 
+    zn_poll_result_t poll_result = zn_poll(sockets, events, 1, 100);
     zn_poll_result_t poll_result = zn_poll(sockets, events, 1, 100);
 
     if (!(poll_result.readable & 1)) {
@@ -265,6 +270,7 @@ bool NetworkManagerImpl::hasData() const {
         return false;
     }
 
+    return true;
     return true;
 }
 
@@ -349,6 +355,7 @@ void NetworkManagerImpl::processIncomingMessages() {
     }
 
     int maxAttempts = 50;
+    int maxAttempts = 50;
     int attempts = 0;
 
     while (hasData() && attempts < maxAttempts) {
@@ -357,6 +364,7 @@ void NetworkManagerImpl::processIncomingMessages() {
             std::cout << "DEBUG: Processing new message: '" << message << "'" << std::endl;
             parser_->parseMessage(message);
         } else {
+            break;
             break;
         }
         attempts++;
