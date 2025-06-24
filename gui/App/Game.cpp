@@ -22,8 +22,6 @@ Game::Game(const std::string &host, int port)
     std::cerr << "Failed to initialize network connection\n";
     return;
   }
-
-  std::cout << "Game initialized successfully - Connected to " << host_ << ":" << port_ << std::endl;
 }
 
 Game::~Game() {
@@ -39,21 +37,12 @@ bool Game::initNetwork() {
     return false;
   }
 
-  std::cout << "Connecting to " << host_ << ":" << port_ << "..." << std::endl;
   if (!networkManager_->connect(host_, port_)) {
-    std::cerr << "Failed to connect: " << networkManager_->getLastError() << std::endl;
     return false;
   }
-
-  std::cout << "Connected successfully!" << std::endl;
-
-  std::cout << "Performing handshake..." << std::endl;
   if (!networkManager_->performHandshake()) {
-    std::cerr << "Handshake failed: " << networkManager_->getLastError() << std::endl;
     return false;
   }
-
-  std::cout << "Handshake completed successfully!" << std::endl;
   return true;
 }
 
@@ -69,11 +58,6 @@ void Game::processNetworkMessages() {
   static bool firstSync = true;
   if (networkManager_->isGameStateSynchronized() && firstSync) {
     firstSync = false;
-    std::cout << "=== ÉTAT SYNCHRONISÉ ===" << std::endl;
-    std::cout << "Map: " << gameState.getMapSize().x << "x" << gameState.getMapSize().y << std::endl;
-    std::cout << "Teams: " << gameState.getAllTeamNames().size() << std::endl;
-    std::cout << "Players: " << gameState.getAllPlayers().size() << std::endl;
-    std::cout << "========================" << std::endl;
   }
 }
 
@@ -83,7 +67,7 @@ std::shared_ptr<IEntity> Game::findEntityById(int id) {
       return entity;
     }
   }
-  return {};
+  return nullptr;
 }
 
 void Game::initWindow() {
@@ -191,8 +175,6 @@ void Game::gameLoop() {
   bool mapInitialized = false;
   bool resourcesInitialized = false;
 
-  std::cout << "Game loop started, waiting for synchronization..." << std::endl;
-
   while (device_->run()) {
     irr::u32 currentTime = device_->getTimer()->getTime();
 
@@ -201,14 +183,12 @@ void Game::gameLoop() {
     if (networkManager_->isGameStateSynchronized()) {
       const auto& gameState = networkManager_->getGameState();
 
-      if (!mapInitialized && gameState.getMapSize().x > 0) {
+      if (!mapInitialized && gameState.getMapSize().X > 0) {
         auto mapSize = gameState.getMapSize();
-        std::cout << "Creating plane with size: " << mapSize.x << "x" << mapSize.y << std::endl;
-        scene.createPlane(mapSize.x, mapSize.y);
+        scene.createPlane(mapSize.X, mapSize.Y);
 
         for (const auto& teamName : gameState.getAllTeamNames()) {
           scene.addTeam(teamName);
-          std::cout << "Added team: " << teamName << std::endl;
         }
 
         mapInitialized = true;
@@ -220,57 +200,43 @@ void Game::gameLoop() {
       for (const auto* player : players) {
         bool playerExists = false;
         for (auto& entity : entity_) {
-          if (entity && entity->getId() == player->id) {
+          if (entity && entity->getId() == player->getId()) {
             playerExists = true;
             break;
           }
         }
 
         if (!playerExists) {
-          scene.createEntities(player->id, player->pos.x, player->pos.y,
-                             static_cast<Direction>(player->direction),
-                             player->level, player->team);
-          std::cout << "Created player " << player->id << " at ("
-                    << player->pos.x << "," << player->pos.y << ")" << std::endl;
-
+          scene.createEntities(player->getId(), player->getPosition().X, player->getPosition().Y,
+                              player->getDirection(), player->getLevel(), player->getTeam());
           entity_ = scene.getEntities();
         }
       }
 
       if (mapInitialized && !resourcesInitialized) {
-        std::cout << "=== SYNCHRONIZING RESOURCES ===" << std::endl;
         auto tiles = gameState.getAllTiles();
-        std::cout << "Found " << tiles.size() << " tiles with resources to synchronize" << std::endl;
 
         for (const auto* tile : tiles) {
-          int totalResources = tile->resources.food + tile->resources.linemate +
-                             tile->resources.deraumere + tile->resources.sibur +
-                             tile->resources.mendiane + tile->resources.phiras +
-                             tile->resources.thystame;
+          int totalResources = tile->getInventory().getItemQuantity("food") +
+                              tile->getInventory().getItemQuantity("linemate") +
+                              tile->getInventory().getItemQuantity("deraumere") +
+                              tile->getInventory().getItemQuantity("sibur") +
+                              tile->getInventory().getItemQuantity("mendiane") +
+                              tile->getInventory().getItemQuantity("phiras") +
+                              tile->getInventory().getItemQuantity("thystame");
 
           if (totalResources > 0) {
-            std::cout << "Creating resources at tile (" << tile->pos.x << "," << tile->pos.y
-                      << ") - food:" << tile->resources.food
-                      << " linemate:" << tile->resources.linemate
-                      << " deraumere:" << tile->resources.deraumere
-                      << " sibur:" << tile->resources.sibur
-                      << " mendiane:" << tile->resources.mendiane
-                      << " phiras:" << tile->resources.phiras
-                      << " thystame:" << tile->resources.thystame << std::endl;
-
-            scene.createEntities(tile->pos.x, tile->pos.y,
-                               tile->resources.food,
-                               tile->resources.linemate,
-                               tile->resources.deraumere,
-                               tile->resources.sibur,
-                               tile->resources.mendiane,
-                               tile->resources.phiras,
-                               tile->resources.thystame);
+            scene.createEntities(tile->getPosition().X, tile->getPosition().Y,
+                                tile->getInventory().getItemQuantity("food"),
+                                tile->getInventory().getItemQuantity("linemate"),
+                                tile->getInventory().getItemQuantity("deraumere"),
+                                tile->getInventory().getItemQuantity("sibur"),
+                                tile->getInventory().getItemQuantity("mendiane"),
+                                tile->getInventory().getItemQuantity("phiras"),
+                                tile->getInventory().getItemQuantity("thystame"));
           }
         }
         resourcesInitialized = true;
-        std::cout << "=== RESOURCES SYNCHRONIZED ===" << std::endl;
-
         entity_ = scene.getEntities();
       }
     }

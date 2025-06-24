@@ -19,7 +19,8 @@
 
 #pragma once
 
-class Game {
+class Game
+{
 public:
   Game(const std::string &host, int port);
   ~Game();
@@ -41,16 +42,16 @@ private:
   std::string host_;
   int port_;
 
-  NetworkManager* networkManager_;
+  NetworkManager *networkManager_;
 
   /**
-   * @brief Initialiser la connexion réseau
-   * @return true si connexion réussie
+   * @brief Initialize the network connection
+   * @return true if the connection was successful
    */
   bool initNetwork();
 
   /**
-   * @brief Traiter les messages réseau
+   * @brief Process network messages
    */
   void processNetworkMessages();
 };
