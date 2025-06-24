@@ -11,11 +11,9 @@
 
 namespace Zappy {
 
-    // Map management
     void GameState::setMapSize(int width, int height) {
         mapSize_ = Position(width, height);
 
-        // Initialize all tiles
         tilesById_.clear();
         for (int y = 0; y < height; ++y) {
             for (int x = 0; x < width; ++x) {
@@ -23,16 +21,12 @@ namespace Zappy {
                 tilesById_[tileId] = std::make_unique<Tile>(Position(x, y));
             }
         }
-
-        std::cout << "DEBUG: Map size set to " << width << "x" << height
-                  << " (" << tilesById_.size() << " tiles)" << std::endl;
     }
 
     bool GameState::isValidPosition(const Position& pos) const {
         return pos.x >= 0 && pos.x < mapSize_.x && pos.y >= 0 && pos.y < mapSize_.y;
     }
 
-    // Tile management
     void GameState::updateTile(const Position& pos, const Inventory& resources) {
         if (!isValidPosition(pos)) {
             std::cerr << "ERROR: Invalid position (" << pos.x << "," << pos.y << ")" << std::endl;
@@ -43,7 +37,6 @@ namespace Zappy {
         auto it = tilesById_.find(tileId);
         if (it != tilesById_.end()) {
             it->second->resources = resources;
-            std::cout << "DEBUG: Tile (" << pos.x << "," << pos.y << ") updated with resources" << std::endl;
         } else {
             std::cerr << "ERROR: Tile not found at (" << pos.x << "," << pos.y << ")" << std::endl;
         }
@@ -74,7 +67,6 @@ namespace Zappy {
         return tiles;
     }
 
-    // Player management
     void GameState::addPlayer(int id, const Position& pos, Direction dir, int level, const std::string& team) {
         if (!isValidPosition(pos)) {
             std::cerr << "ERROR: Cannot add player " << id << " at invalid position (" << pos.x << "," << pos.y << ")" << std::endl;
@@ -83,17 +75,12 @@ namespace Zappy {
 
         players_[id] = std::make_unique<Player>(id, pos, dir, level, team);
 
-        // Update tile player list
         updateTilePlayerList(pos);
 
-        // Add to team
         auto teamIt = teams_.find(team);
         if (teamIt != teams_.end()) {
             teamIt->second->playerIds.push_back(id);
         }
-
-        std::cout << "DEBUG: Player " << id << " added at (" << pos.x << "," << pos.y
-                  << ") team=" << team << " level=" << level << std::endl;
     }
 
     void GameState::updatePlayerPosition(int id, const Position& pos, Direction dir) {
@@ -112,12 +99,9 @@ namespace Zappy {
         it->second->pos = pos;
         it->second->direction = dir;
 
-        // Update tile player lists
         updateTilePlayerList(oldPos);
         updateTilePlayerList(pos);
 
-        std::cout << "DEBUG: Player " << id << " moved from (" << oldPos.x << "," << oldPos.y
-                  << ") to (" << pos.x << "," << pos.y << ")" << std::endl;
     }
 
     void GameState::updatePlayerLevel(int id, int level) {
@@ -126,9 +110,7 @@ namespace Zappy {
             std::cerr << "ERROR: Player " << id << " not found for level update" << std::endl;
             return;
         }
-
         it->second->level = level;
-        std::cout << "DEBUG: Player " << id << " level updated to " << level << std::endl;
     }
 
     void GameState::updatePlayerInventory(int id, const Position& pos, const Inventory& inventory) {
@@ -139,12 +121,9 @@ namespace Zappy {
         }
 
         it->second->inventory = inventory;
-        // Also update position if provided
         if (isValidPosition(pos) && !(it->second->pos == pos)) {
             updatePlayerPosition(id, pos, it->second->direction);
         }
-
-        std::cout << "DEBUG: Player " << id << " inventory updated" << std::endl;
     }
 
     void GameState::removePlayer(int id) {
@@ -157,20 +136,13 @@ namespace Zappy {
         Position pos = it->second->pos;
         std::string team = it->second->team;
 
-        // Remove from team
         auto teamIt = teams_.find(team);
         if (teamIt != teams_.end()) {
             auto& playerIds = teamIt->second->playerIds;
             playerIds.erase(std::remove(playerIds.begin(), playerIds.end(), id), playerIds.end());
         }
-
-        // Remove player
         players_.erase(it);
-
-        // Update tile player list
         updateTilePlayerList(pos);
-
-        std::cout << "DEBUG: Player " << id << " removed" << std::endl;
     }
 
     const Player* GameState::getPlayer(int id) const {
@@ -203,11 +175,9 @@ namespace Zappy {
         return result;
     }
 
-    // Team management
     void GameState::addTeam(const std::string& name) {
         if (teams_.find(name) == teams_.end()) {
             teams_[name] = std::make_unique<Team>(name);
-            std::cout << "DEBUG: Team '" << name << "' added" << std::endl;
         }
     }
 
@@ -215,7 +185,6 @@ namespace Zappy {
         auto it = teams_.find(team);
         if (it != teams_.end()) {
             it->second->slotsAvailable = slots;
-            std::cout << "DEBUG: Team '" << team << "' slots updated to " << slots << std::endl;
         }
     }
 
@@ -232,28 +201,20 @@ namespace Zappy {
         return result;
     }
 
-    // Egg management
     void GameState::addEgg(int id, const Position& pos, const std::string& team) {
         if (!isValidPosition(pos)) {
             std::cerr << "ERROR: Cannot add egg " << id << " at invalid position (" << pos.x << "," << pos.y << ")" << std::endl;
             return;
         }
-
         eggs_[id] = std::make_unique<Egg>(id, pos, team);
-
-        // Update tile egg count
         Tile* tile = getTile(pos);
         if (tile) {
             tile->eggCount++;
         }
-
-        // Add to team
         auto teamIt = teams_.find(team);
         if (teamIt != teams_.end()) {
             teamIt->second->eggIds.push_back(id);
         }
-
-        std::cout << "DEBUG: Egg " << id << " added at (" << pos.x << "," << pos.y << ") team=" << team << std::endl;
     }
 
     void GameState::removeEgg(int id) {
@@ -262,32 +223,24 @@ namespace Zappy {
             std::cerr << "ERROR: Egg " << id << " not found for removal" << std::endl;
             return;
         }
-
         Position pos = it->second->pos;
         std::string team = it->second->team;
-
-        // Update tile egg count
         Tile* tile = getTile(pos);
         if (tile && tile->eggCount > 0) {
             tile->eggCount--;
         }
-
-        // Remove from team
         auto teamIt = teams_.find(team);
         if (teamIt != teams_.end()) {
             auto& eggIds = teamIt->second->eggIds;
             eggIds.erase(std::remove(eggIds.begin(), eggIds.end(), id), eggIds.end());
         }
-
         eggs_.erase(it);
-        std::cout << "DEBUG: Egg " << id << " removed" << std::endl;
     }
 
     void GameState::setEggHatching(int id, bool hatching) {
         auto it = eggs_.find(id);
         if (it != eggs_.end()) {
             it->second->isHatching = hatching;
-            std::cout << "DEBUG: Egg " << id << " hatching=" << hatching << std::endl;
         }
     }
 
@@ -306,7 +259,6 @@ namespace Zappy {
         return result;
     }
 
-    // Incantation management
     void GameState::startIncantation(const Position& pos, int level, const std::vector<int>& playerIds) {
         if (!isValidPosition(pos)) {
             std::cerr << "ERROR: Cannot start incantation at invalid position (" << pos.x << "," << pos.y << ")" << std::endl;
@@ -315,16 +267,12 @@ namespace Zappy {
 
         incantations_.push_back(std::make_unique<Incantation>(pos, level, playerIds));
 
-        // Mark players as incanting
         for (int playerId : playerIds) {
             Player* player = getPlayer(playerId);
             if (player) {
                 player->isIncanting = true;
             }
         }
-
-        std::cout << "DEBUG: Incantation started at (" << pos.x << "," << pos.y
-                  << ") level=" << level << " players=" << playerIds.size() << std::endl;
     }
 
     void GameState::endIncantation(const Position& pos, bool success) {
@@ -334,7 +282,6 @@ namespace Zappy {
                               });
 
         if (it != incantations_.end()) {
-            // Mark players as not incanting
             for (int playerId : (*it)->playerIds) {
                 Player* player = getPlayer(playerId);
                 if (player) {
@@ -344,12 +291,8 @@ namespace Zappy {
                     }
                 }
             }
-
             (*it)->isActive = false;
             incantations_.erase(it);
-
-            std::cout << "DEBUG: Incantation ended at (" << pos.x << "," << pos.y
-                      << ") success=" << success << std::endl;
         }
     }
 
@@ -371,7 +314,6 @@ namespace Zappy {
         return result;
     }
 
-    // State queries
     bool GameState::isEmpty() const {
         return mapSize_.x == 0 || mapSize_.y == 0;
     }
@@ -384,7 +326,6 @@ namespace Zappy {
         eggs_.clear();
         incantations_.clear();
         timeUnit_ = 100;
-        std::cout << "DEBUG: GameState cleared" << std::endl;
     }
 
     void GameState::printState() const {
@@ -403,7 +344,6 @@ namespace Zappy {
         std::cout << "==================" << std::endl;
     }
 
-    // Helper functions
     std::string GameState::positionKey(const Position& pos) const {
         return std::to_string(pos.x) + "," + std::to_string(pos.y);
     }
@@ -412,7 +352,6 @@ namespace Zappy {
         Tile* tile = getTile(pos);
         if (!tile) return;
 
-        // Rebuild player list for this tile
         tile->playerIds.clear();
         for (const auto& pair : players_) {
             if (pair.second->pos == pos && pair.second->isAlive) {
