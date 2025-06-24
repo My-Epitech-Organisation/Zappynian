@@ -32,3 +32,11 @@ bool take_resource_from_tile(tile_t *tile, int resource_type)
     }
     return false;
 }
+
+bool set_resource_on_tile(tile_t *tile, int resource_type)
+{
+    if (!tile || resource_type < 0 || resource_type >= RESOURCE_COUNT)
+        return false;
+    tile->resources[resource_type]++;
+    return true;
+}
