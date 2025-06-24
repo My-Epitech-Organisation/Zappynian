@@ -15,10 +15,10 @@
 namespace Zappy {
 
     /**
-     * @brief Parser pour tous les messages du protocole Zappy
+     * @brief Parser for all Zappy protocol messages.
      *
-     * Cette classe parse les messages reçus du serveur et met à jour
-     * l'état du jeu en conséquence.
+     * This class parses messages received from the server and updates
+     * the game state accordingly.
      */
     class ProtocolParser {
     public:
@@ -28,18 +28,17 @@ namespace Zappy {
         ~ProtocolParser() = default;
 
         /**
-         * @brief Parse un message du serveur et met à jour l'état du jeu
-         * @param message Le message à parser
-         * @return true si le message a été reconnu et traité
+         * @brief Parse a server message and update the game state.
+         * @param message The message to parse.
+         * @return true if the message was recognized and handled.
          */
         bool parseMessage(const std::string& message);
 
         /**
-         * @brief Parse plusieurs messages en lot
+         * @brief Parse multiple messages in batch.
          */
         void parseMessages(const std::vector<std::string>& messages);
 
-        // Callbacks pour les événements spéciaux (optionnel)
         void setOnPlayerConnected(MessageHandler handler) { onPlayerConnected_ = handler; }
         void setOnPlayerDisconnected(MessageHandler handler) { onPlayerDisconnected_ = handler; }
         void setOnBroadcast(MessageHandler handler) { onBroadcast_ = handler; }
@@ -52,7 +51,6 @@ namespace Zappy {
         MessageHandler onBroadcast_;
         MessageHandler onGameEnd_;
 
-        // Parsers pour chaque type de message
         bool parseMapSize(const std::vector<std::string>& args);           // msz X Y
         bool parseMapContent(const std::vector<std::string>& args);        // mct (multiple bct)
         bool parseTileContent(const std::vector<std::string>& args);       // bct X Y q0 q1 q2 q3 q4 q5 q6
@@ -77,7 +75,6 @@ namespace Zappy {
         bool parseServerMessage(const std::vector<std::string>& args);     // smg message
         bool parseServerEnd(const std::vector<std::string>& args);         // seg team_name
 
-        // Helper functions
         std::vector<std::string> tokenize(const std::string& message) const;
         Direction parseDirection(const std::string& dirStr) const;
         ResourceType parseResource(const std::string& resourceStr) const;
@@ -85,8 +82,7 @@ namespace Zappy {
         std::vector<int> parsePlayerIds(const std::vector<std::string>& args, size_t startIndex) const;
         bool isValidMessage(const std::string& message) const;
 
-        // Debug
         void logParsedMessage(const std::string& command, const std::vector<std::string>& args) const;
     };
 
-} // namespace Zappy
+}

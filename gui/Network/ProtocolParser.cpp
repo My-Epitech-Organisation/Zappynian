@@ -29,7 +29,6 @@ namespace Zappy {
 
         logParsedMessage(command, args);
 
-        // Route to appropriate parser based on command
         if (command == "msz") return parseMapSize(args);
         else if (command == "mct") return parseMapContent(args);
         else if (command == "bct") return parseTileContent(args);
@@ -65,7 +64,6 @@ namespace Zappy {
         }
     }
 
-    // Map size: msz X Y
     bool ProtocolParser::parseMapSize(const std::vector<std::string>& args) {
         if (args.size() != 2) {
             std::cerr << "ERROR: Invalid msz arguments count: " << args.size() << std::endl;
@@ -83,14 +81,11 @@ namespace Zappy {
         }
     }
 
-    // Map content: mct (followed by multiple bct messages)
     bool ProtocolParser::parseMapContent(const std::vector<std::string>& args) {
-        // mct is just a signal that bct messages will follow
         std::cout << "DEBUG: Map content request received" << std::endl;
         return true;
     }
 
-    // Tile content: bct X Y q0 q1 q2 q3 q4 q5 q6
     bool ProtocolParser::parseTileContent(const std::vector<std::string>& args) {
         if (args.size() != 9) {
             std::cerr << "ERROR: Invalid bct arguments count: " << args.size() << std::endl;
@@ -118,7 +113,6 @@ namespace Zappy {
         }
     }
 
-    // Team name: tna team_name
     bool ProtocolParser::parseTeamName(const std::vector<std::string>& args) {
         if (args.size() != 1) {
             std::cerr << "ERROR: Invalid tna arguments count: " << args.size() << std::endl;
@@ -129,7 +123,6 @@ namespace Zappy {
         return true;
     }
 
-    // Player new: pnw id X Y dir level team
     bool ProtocolParser::parsePlayerNew(const std::vector<std::string>& args) {
         if (args.size() != 6) {
             std::cerr << "ERROR: Invalid pnw arguments count: " << args.size() << std::endl;
@@ -157,7 +150,6 @@ namespace Zappy {
         }
     }
 
-    // Player position: ppo id X Y dir
     bool ProtocolParser::parsePlayerPosition(const std::vector<std::string>& args) {
         if (args.size() != 4) {
             std::cerr << "ERROR: Invalid ppo arguments count: " << args.size() << std::endl;
@@ -178,7 +170,6 @@ namespace Zappy {
         }
     }
 
-    // Player level: plv id level
     bool ProtocolParser::parsePlayerLevel(const std::vector<std::string>& args) {
         if (args.size() != 2) {
             std::cerr << "ERROR: Invalid plv arguments count: " << args.size() << std::endl;
@@ -197,7 +188,6 @@ namespace Zappy {
         }
     }
 
-    // Player inventory: pin id X Y q0 q1 q2 q3 q4 q5 q6
     bool ProtocolParser::parsePlayerInventory(const std::vector<std::string>& args) {
         if (args.size() != 10) {
             std::cerr << "ERROR: Invalid pin arguments count: " << args.size() << std::endl;
@@ -218,7 +208,6 @@ namespace Zappy {
         }
     }
 
-    // Player expulsion: pex id
     bool ProtocolParser::parsePlayerExpulsion(const std::vector<std::string>& args) {
         if (args.size() != 1) {
             std::cerr << "ERROR: Invalid pex arguments count: " << args.size() << std::endl;
@@ -227,7 +216,6 @@ namespace Zappy {
 
         try {
             int id = std::stoi(args[0]);
-            // Player expulsion doesn't remove the player, just indicates they were pushed
             std::cout << "DEBUG: Player " << id << " was expelled" << std::endl;
             return true;
         } catch (const std::exception& e) {
@@ -236,7 +224,6 @@ namespace Zappy {
         }
     }
 
-    // Player broadcast: pbc id message
     bool ProtocolParser::parsePlayerBroadcast(const std::vector<std::string>& args) {
         if (args.size() < 2) {
             std::cerr << "ERROR: Invalid pbc arguments count: " << args.size() << std::endl;
@@ -246,7 +233,6 @@ namespace Zappy {
         try {
             int id = std::stoi(args[0]);
             std::string message = args[1];
-            // Rebuild message from remaining args
             for (size_t i = 2; i < args.size(); ++i) {
                 message += " " + args[i];
             }
@@ -263,7 +249,6 @@ namespace Zappy {
         }
     }
 
-    // Player incantation start: pic X Y level id1 id2 ...
     bool ProtocolParser::parsePlayerIncantStart(const std::vector<std::string>& args) {
         if (args.size() < 4) {
             std::cerr << "ERROR: Invalid pic arguments count: " << args.size() << std::endl;
@@ -284,7 +269,6 @@ namespace Zappy {
         }
     }
 
-    // Player incantation end: pie X Y result [level]
     bool ProtocolParser::parsePlayerIncantEnd(const std::vector<std::string>& args) {
         if (args.size() < 3) {
             std::cerr << "ERROR: Invalid pie arguments count: " << args.size() << std::endl;
@@ -304,7 +288,6 @@ namespace Zappy {
         }
     }
 
-    // Player fork: pfk id
     bool ProtocolParser::parsePlayerFork(const std::vector<std::string>& args) {
         if (args.size() != 1) {
             std::cerr << "ERROR: Invalid pfk arguments count: " << args.size() << std::endl;
@@ -313,7 +296,6 @@ namespace Zappy {
 
         try {
             int id = std::stoi(args[0]);
-            // Fork just indicates a player will lay an egg
             std::cout << "DEBUG: Player " << id << " is forking" << std::endl;
             return true;
         } catch (const std::exception& e) {
@@ -322,7 +304,6 @@ namespace Zappy {
         }
     }
 
-    // Player resource drop: pdr id resource
     bool ProtocolParser::parsePlayerResourceDrop(const std::vector<std::string>& args) {
         if (args.size() != 2) {
             std::cerr << "ERROR: Invalid pdr arguments count: " << args.size() << std::endl;
@@ -340,7 +321,6 @@ namespace Zappy {
         }
     }
 
-    // Player resource take: pgt id resource
     bool ProtocolParser::parsePlayerResourceTake(const std::vector<std::string>& args) {
         if (args.size() != 2) {
             std::cerr << "ERROR: Invalid pgt arguments count: " << args.size() << std::endl;
@@ -358,7 +338,6 @@ namespace Zappy {
         }
     }
 
-    // Player death: pdi id
     bool ProtocolParser::parsePlayerDeath(const std::vector<std::string>& args) {
         if (args.size() != 1) {
             std::cerr << "ERROR: Invalid pdi arguments count: " << args.size() << std::endl;
@@ -380,7 +359,6 @@ namespace Zappy {
         }
     }
 
-    // Egg laid: enw egg_id player_id X Y
     bool ProtocolParser::parseEggLaid(const std::vector<std::string>& args) {
         if (args.size() != 4) {
             std::cerr << "ERROR: Invalid enw arguments count: " << args.size() << std::endl;
@@ -388,18 +366,16 @@ namespace Zappy {
         }
 
         try {
-            // Parse egg ID (peut commencer par #)
             std::string eggIdStr = args[0];
             int eggId;
             if (eggIdStr.front() == '#') {
-                eggId = std::stoi(eggIdStr.substr(1)); // Enlever le '#'
+                eggId = std::stoi(eggIdStr.substr(1));
             } else {
                 eggId = std::stoi(eggIdStr);
             }
 
-            // Parse player ID (peut commencer par # et être -1 pour "server spawn")
             std::string playerIdStr = args[1];
-            int playerId = -1; // Par défaut pour les œufs du serveur
+            int playerId = -1;
             if (playerIdStr.front() == '#') {
                 std::string idStr = playerIdStr.substr(1);
                 if (idStr != "-1") {
@@ -412,7 +388,6 @@ namespace Zappy {
             int x = std::stoi(args[2]);
             int y = std::stoi(args[3]);
 
-            // Get team from player or use "unknown" for server eggs
             std::string team = "unknown";
             if (playerId >= 0) {
                 const Player* player = gameState_.getPlayer(playerId);
@@ -429,7 +404,6 @@ namespace Zappy {
         }
     }
 
-    // Egg connection: eht egg_id
     bool ProtocolParser::parseEggConnection(const std::vector<std::string>& args) {
         if (args.size() != 1) {
             std::cerr << "ERROR: Invalid eht arguments count: " << args.size() << std::endl;
@@ -453,7 +427,6 @@ namespace Zappy {
         }
     }
 
-    // Egg death: edi egg_id
     bool ProtocolParser::parseEggDeath(const std::vector<std::string>& args) {
         if (args.size() != 1) {
             std::cerr << "ERROR: Invalid edi arguments count: " << args.size() << std::endl;
@@ -477,7 +450,6 @@ namespace Zappy {
         }
     }
 
-    // Server time: sgt time_unit
     bool ProtocolParser::parseServerTime(const std::vector<std::string>& args) {
         if (args.size() != 1) {
             std::cerr << "ERROR: Invalid sgt arguments count: " << args.size() << std::endl;
@@ -494,7 +466,6 @@ namespace Zappy {
         }
     }
 
-    // Server time set: sst time_unit
     bool ProtocolParser::parseServerTimeSet(const std::vector<std::string>& args) {
         if (args.size() != 1) {
             std::cerr << "ERROR: Invalid sst arguments count: " << args.size() << std::endl;
@@ -512,7 +483,6 @@ namespace Zappy {
         }
     }
 
-    // Server message: smg message
     bool ProtocolParser::parseServerMessage(const std::vector<std::string>& args) {
         std::string message;
         for (size_t i = 0; i < args.size(); ++i) {
@@ -524,7 +494,6 @@ namespace Zappy {
         return true;
     }
 
-    // Server end: seg team_name
     bool ProtocolParser::parseServerEnd(const std::vector<std::string>& args) {
         if (args.size() != 1) {
             std::cerr << "ERROR: Invalid seg arguments count: " << args.size() << std::endl;
@@ -541,7 +510,6 @@ namespace Zappy {
         return true;
     }
 
-    // Helper functions
     std::vector<std::string> ProtocolParser::tokenize(const std::string& message) const {
         std::vector<std::string> tokens;
         std::istringstream iss(message);
@@ -619,4 +587,4 @@ namespace Zappy {
         std::cout << std::endl;
     }
 
-} // namespace Zappy
+}
