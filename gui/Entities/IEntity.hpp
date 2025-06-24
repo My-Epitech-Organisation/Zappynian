@@ -38,6 +38,9 @@ public:
   virtual void setLevel(int level) = 0;
   virtual int getLevel() const = 0;
 
+  virtual void setTeam(const std::string &team) = 0;
+  virtual std::string getTeam() const = 0;
+
   virtual void setDirection(Direction direction) = 0;
   virtual Direction getDirection() const = 0;
 
