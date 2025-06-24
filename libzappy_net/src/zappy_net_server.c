@@ -28,19 +28,11 @@ static int setup_server_socket(zn_socket_t sock, int port)
 
 static int bind_and_listen(zn_socket_t sock)
 {
-    printf("sock->fd = %d\n", sock->fd);
-    printf("sock->initialized = %d\n", sock->initialized);
-    printf("sock->type = %d\n", sock->type);
-    printf("sock->addr.sin_family = %d\n", sock->addr.sin_family);
-    printf("sock->addr.sin_port = %d\n", ntohs(sock->addr.sin_port));
-    printf("sock->addr.sin_addr.s_addr = %u\n", ntohl(sock->addr.sin_addr.s_addr));
     if (bind(sock->fd, (struct sockaddr *)&sock->addr,
         sizeof(sock->addr)) < 0) {
-        printf("je suis nul 1\n");
         return -1;
     }
     if (listen(sock->fd, SOMAXCONN) < 0) {
-        printf("je suis nul 2\n");
         return -1;
     }
     return 0;
@@ -74,19 +66,9 @@ zn_socket_t zn_server_listen(int port)
         return NULL;
     }
     if (bind_and_listen(sock) < 0) {
-        printf("%d\n", bind_and_listen(sock));
-        printf("mais nn pourquoi je destroy\n");
         zn_socket_destroy(sock);
         return NULL;
     }
-    printf("sock->fd = %d\n", sock->fd);
-    printf("sock->initialized = %d\n", sock->initialized);
-    printf("sock->type = %d\n", sock->type);
-    printf("sock->addr.sin_family = %d\n", sock->addr.sin_family);
-    printf("sock->addr.sin_port = %d\n", ntohs(sock->addr.sin_port));
-    printf("sock->addr.sin_addr.s_addr = %u\n", ntohl(sock->addr.sin_addr.s_addr));
-    if (sock == NULL)
-        printf("je suis null cognio\n");
     return sock;
 }
 
