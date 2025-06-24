@@ -16,6 +16,8 @@
 
 struct server_s;
 typedef struct server_s server_t;
+struct client_s;
+typedef struct client_s client_t;
 
 typedef struct command_s {
     char *name;
@@ -26,6 +28,7 @@ typedef struct command_s {
 bool commands_add(player_t *player, const char *command_name);
 void process_commands(server_t *server);
 char *get_player_current_command(player_t *player);
+char *get_command_argument(player_t *player);
 
 void cmd_forward(player_t *player, server_t *server);
 void cmd_right(player_t *player, server_t *server);
@@ -40,9 +43,6 @@ void cmd_take(player_t *player, server_t *server);
 void cmd_set(player_t *player, server_t *server);
 void cmd_incantation(player_t *player, server_t *server);
 
-const command_t *get_command_table(void);
-size_t get_command_table_size(void);
-
 char *get_player_vision(player_t *player, map_t *map);
 void add_current_tile(char *result, player_t *player, map_t *map);
 void add_other_tiles(char *result, player_t *player, map_t *map,
@@ -55,5 +55,11 @@ char *get_player_inventory(player_t *player);
 char *get_broadcast_message(player_t *player);
 void broadcast_to_all_players(player_t *sender, server_t *server,
     const char *message);
+
+int make_player_array(tile_t *current_tile, player_t *player,
+    server_t *server, client_t *ejecting_client);
+void destroy_eggs_on_tile(tile_t *tile, server_t *server);
+client_t *find_client_by_player(server_t *server, player_t *player);
+size_t get_nb_player(tile_t *tile, player_t *player);
 
 #endif // COMMANDS_H

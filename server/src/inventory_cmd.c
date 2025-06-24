@@ -9,14 +9,21 @@
 #include "../include/server.h"
 #include "../include/player.h"
 
+const char **get_resource_names(void)
+{
+    static const char *resource_names[RESOURCE_COUNT] = {
+        "food", "linemate", "deraumere", "sibur", "mendiane", "phiras",
+        "thystame"
+    };
+
+    return resource_names;
+}
+
 void add_inventory_items(char *result, player_t *player)
 {
     char buffer[256];
     bool first = true;
-    const char *resource_names[RESOURCE_COUNT] = {
-        "food", "linemate", "deraumere", "sibur", "mendiane", "phiras",
-        "thystame"
-    };
+    const char **resource_names = get_resource_names();
 
     sprintf(result, "food %d", player->food);
     strcat(result, buffer);

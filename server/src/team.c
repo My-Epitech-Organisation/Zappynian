@@ -62,9 +62,13 @@ bool is_team_full(server_args_t *server, const char *name)
     return team->current_players >= team->max_slots;
 }
 
-bool is_valid_team(server_args_t *args, const char *name)
+void increment_team_player_slots(server_args_t *server, const char *team_name)
 {
-    if (strcmp(name, "GRAPHIC") == 0)
-        return true;
-    return get_team_by_name(args, name) != NULL;
+    team_t *team = get_team_by_name(server, team_name);
+
+    if (team) {
+        team->current_players += 1;
+        if (team->remaining_slots > 0)
+            team->remaining_slots -= 1;
+    }
 }

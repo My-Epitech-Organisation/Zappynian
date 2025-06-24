@@ -4,9 +4,10 @@
 ** File description:
 ** EntityManager
 */
+#include "../Entities/Direction.hpp"
+#include "../Entities/Egg.hpp"
 #include "../Entities/PlayerEntity.hpp"
 #include "../Entities/Stone.hpp"
-#include "../Entities/Egg.hpp"
 #include "../Entities/TileEntity.hpp"
 #include "../Event/EventReceiver.hpp"
 #include <iostream>

@@ -57,8 +57,9 @@ public:
 
   void createText() { WorldScene::createText(); }
 
-  void movePlayer(int id, int x, int y, Direction direction) {
-    WorldScene::changePlayerPos(id, x, y, direction);
+  void movePlayer(int id, int x, int y, Direction direction,
+                  Direction directionBefore) {
+    WorldScene::changePlayerPos(id, x, y, direction, directionBefore);
   }
 
   void PlayerInventory(int id, int x, int y, int q0, int q1, int q2, int q3,
@@ -78,9 +79,7 @@ public:
     return WorldScene::isPlayerIncanting(id);
   }
 
-  void createEgg(int id) {
-    WorldScene::createEntities(id);
-  }
+  void createEgg(int id) { WorldScene::createEntities(id); }
 
   bool initialiseSocket() {
     // Pour le nouveau constructeur, le NetworkManager est déjà connecté

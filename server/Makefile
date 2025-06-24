@@ -11,38 +11,42 @@ NAME_TESTS	=	unit_tests
 CC		=	gcc
 RM		=	rm -f
 
-SRCS	=	src/main.c				\
-            src/display_help.c 		\
-            src/display_infos.c 	\
-            src/fill_n_c_f.c 		\
-            src/fill_p_x_y.c 		\
-			src/handle_free.c 		\
-			src/parsing.c 			\
-			src/set_server.c 		\
-			src/error_handling.c 	\
-			src/handle_client.c 	\
-			src/client_manager.c 	\
-			src/commands_movement.c	\
-			src/commands_actions.c 	\
-			src/commands_communication.c \
-			src/commands_core.c 	\
-			src/death.c 			\
-			src/win.c 				\
-			src/game_loop.c 		\
-			src/resource.c 			\
-			src/world.c 			\
-			src/player.c 			\
-			src/elevation.c 		\
-			src/team.c 				\
-			src/look_cmd.c 			\
-			src/look_vision_tiles.c \
-			src/look_current_tile.c \
-			src/inventory_cmd.c 	\
-			src/broadcast_cmd.c 	\
-			src/network_integration.c \
-			src/client_adapters.c 	\
-			src/write_to_client.c 	\
-			src/server_loop.c 		\
+SRCS	=	src/main.c							\
+            src/display_help.c 					\
+            src/display_infos.c 				\
+            src/fill_n_c_f.c 					\
+            src/fill_p_x_y.c 					\
+			src/handle_free.c 					\
+			src/parsing.c 						\
+			src/set_server.c 					\
+			src/error_handling.c 				\
+			src/handle_client.c 				\
+			src/client_manager.c 				\
+			src/commands_movement.c				\
+			src/commands_actions.c 				\
+			src/commands_communication.c 		\
+			src/commands_core.c 				\
+			src/death.c 						\
+			src/win.c 							\
+			src/game_loop.c 					\
+			src/resource.c 						\
+			src/world.c 						\
+			src/player.c 						\
+			src/elevation.c 					\
+			src/team.c 							\
+			src/look_cmd.c 						\
+			src/look_vision_tiles.c 			\
+			src/look_current_tile.c 			\
+			src/inventory_cmd.c 				\
+			src/broadcast_cmd.c 				\
+			src/network_integration.c 			\
+			src/client_adapters.c 				\
+			src/write_to_client.c 				\
+			src/server_loop.c 					\
+			src/catch_commands_from_clients.c 	\
+			src/egg.c 							\
+			src/world_utils.c 					\
+			src/eject_cmd.c 					\
 
 OBJS	=	$(SRCS:.c=.o)
 

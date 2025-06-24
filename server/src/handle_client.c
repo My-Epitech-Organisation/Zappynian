@@ -9,6 +9,10 @@
 
 static int configure_client_properties(client_t *client)
 {
+    static int client_id = 0;
+
+    client_id++;
+    client->id = client_id;
     if (zn_set_nonblocking(client->zn_sock, 1) == -1) {
         return -1;
     }
