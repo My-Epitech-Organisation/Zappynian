@@ -317,7 +317,6 @@ void WorldScene::killPlayer(int id) {
 void WorldScene::killEgg(int id) {
   for (auto it = entity_.begin(); it != entity_.end();) {
     if ((*it)->getId() == -7) {
-      std::cout << "Killing egg with ID: " << id << std::endl;
       auto egg = std::dynamic_pointer_cast<Egg>(*it);
       if (egg)
         egg->getNode()->remove();
