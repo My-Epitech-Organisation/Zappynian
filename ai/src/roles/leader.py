@@ -4,37 +4,39 @@ from ai.src.utils.incantation_data import INCANTATION_REQUIREMENTS
 class Leader(Role):
     def __init__(self):
         super().__init__("Leader")
+        self.broadcast_timer = 0
+        self.is_incanting = False
 
     def decide(self, queue, world, vision):
-        print("Leader")
-        vision_data = queue.send_and_wait("Look")
-        vision.parse_look(vision_data)
-        inv_data = queue.send_and_wait("Inventory")
-        world.parse_inventory(inv_data)
         level = world.level
-        needs = INCANTATION_REQUIREMENTS.get(level, None)
+        needs = INCANTATION_REQUIREMENTS.get(level)
         if not needs:
             return
-        for res, count in needs.items():
-            if res == "players":
-                continue
-            if world.inventory.get(res, 0) < count:
-                return
         num_players = vision.get_tile(0).count("player")
         if num_players < needs["players"]:
-            msg = f"incantation"
-            queue.send_and_wait(f"Broadcast {msg}")
+            if self.broadcast_timer < 10:
+                queue.send_and_wait("Broadcast i_m_leader")
+                queue.send_and_wait(f"Broadcast {world.team_name}_leader_incantation")
+                self.broadcast_timer += 1
             return
-        queue.send_and_wait("Incantation")
-        while True:
-            line = queue.connection.read_line()
-            if not line:
+        self.is_incanting = True
+        self.broadcast_timer = 0
+        for res, amount in needs.items():
+            if res == "players":
                 continue
-            if line.startswith("Current level:"):
+            inv_amount = world.inventory.get(res, 0)
+            drop_count = min(inv_amount, amount)
+            for _ in range(drop_count):
+                queue.send_and_wait(f"Set {res}")
+        line = queue.send_and_wait("Incantation")
+        if line.startswith("Current level:"):
+            try:
                 new_level = int(line.split(":")[1].strip())
                 world.level = new_level
-                print(f"[INFO] Elevation succeeded. New level: {new_level}")
-                break
-            elif line == "ko":
-                print("[INFO] Elevation failed.")
-                break
+            except ValueError:
+                print(f"[WARN] Failed to parse new level from line: {line}")
+        elif line == "ko":
+            print("[INFO] Elevation failed.")
+
+    def on_broadcast(self, message, queue, world, vision):
+        return
