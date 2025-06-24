@@ -59,7 +59,6 @@ static void finalize_client_connection(server_connection_t *connection,
     if (slot >= connection->client_count) {
         connection->client_count = slot + 1;
     }
-    assign_client_type(new_client, connection, slot);
 }
 
 void accept_client(server_connection_t *connection, server_args_t *unused)
