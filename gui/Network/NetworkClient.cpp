@@ -16,12 +16,11 @@ void NetworkClient::parseMessage() {
       q5 = 0, q6 = 0, nbTiles = 0, nbArgs = 0;
   std::string team;
   Direction direction;
-  initialiseSocket();
-  if (sock_ == nullptr) {
+  if (!initialiseSocket()) {
     std::cerr << "Socket not initialized\n";
     return;
   }
-  std::string message = readLine(sock_);
+  std::string message = readLine();
   std::istringstream iss(message);
   std::string command;
   std::string lastToken, token;
@@ -129,13 +128,6 @@ void NetworkClient::parseMessage() {
 }
 
 
-const std::string NetworkClient::readLine(zn_socket_t sock) {
-  char buffer[1024];
-  ssize_t bytesRead = zn_readln(sock, buffer, sizeof(buffer) - 1);
-  if (bytesRead < 0) {
-    std::cerr << "Error reading from socket\n";
-    return "";
-  }
-  buffer[bytesRead] = '\0';
-  return std::string(buffer);
+const std::string NetworkClient::readLine() {
+  return networkManager_.receiveMessage();
 }
