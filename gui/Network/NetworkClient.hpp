@@ -65,6 +65,19 @@ public:
     return WorldScene::isPlayerIncanting(id);
   }
 
+  std::shared_ptr<IEntity> findEntityById(int id);
+
+  void spawnFromEgg(int id) {
+    auto egg = findEntityById(id);
+    if (egg) {
+      createPlayer(id, egg->getPosition().X, egg->getPosition().Z,
+                   egg->getDirection(), 1, egg->getTeam());
+      killEgg(id);
+    } else {
+      std::cerr << "Egg with ID " << id << " not found.\n";
+    }
+  }
+
   void createEgg(int id) { WorldScene::createEntities(id); }
 
   void createWorld() override {
@@ -158,12 +171,13 @@ public:
     createEgg(6);
     createEgg(7);
     createEgg(8);
-    killEgg(4);
-    killEgg(5);
-    killEgg(1);
-    killEgg(6);
-    killEgg(7);
-    killEgg(8);
+    spawnFromEgg(4);
+    // killEgg(4);
+    // killEgg(5);
+    // killEgg(1);
+    // killEgg(6);
+    // killEgg(7);
+    // killEgg(8);
     // killPlayer(1);
     // expulsion(1);
     // endGame("Red");

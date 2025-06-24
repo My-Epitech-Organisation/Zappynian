@@ -65,3 +65,11 @@ void NetworkClient::parseMessage(const std::string &message) {
     contentTiles(x, y, q0, q1, q2, q3, q4, q5, q6);
   }
 }
+
+std::shared_ptr<IEntity> NetworkClient::findEntityById(int id) {
+    for (const auto& entity : getEntities()) {
+        if (entity && entity->getId() == id)
+            return entity;
+    }
+    return nullptr;
+}
