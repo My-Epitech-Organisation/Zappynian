@@ -7,19 +7,30 @@
 
 #pragma once
 #include "../Core/WorldScene.hpp"
-#include "../libzappy_net/include/zappy_net.h"
+#include "NetworkManager.hpp"
 #include <chrono>
 #include <iostream>
 #include <thread>
 
 class NetworkClient : public WorldScene {
 public:
+  // Constructeur qui accepte un NetworkManager existant
+  NetworkClient(irr::IrrlichtDevice *device, irr::scene::ISceneManager *smgr,
+                irr::video::IVideoDriver *driver, EventReceiver &receiver,
+                const irr::io::path &mediaPath,
+                NetworkManager& networkManager)
+      : WorldScene(device, smgr, driver, receiver, mediaPath),
+        networkManager_(networkManager) {}
+
+  // Ancien constructeur pour compatibilité (deprecated)
   NetworkClient(irr::IrrlichtDevice *device, irr::scene::ISceneManager *smgr,
                 irr::video::IVideoDriver *driver, EventReceiver &receiver,
                 const irr::io::path &mediaPath,
                 const std::string &host, int port)
       : WorldScene(device, smgr, driver, receiver, mediaPath),
-        host_(host), port_(port) {}
+        networkManager_(ownNetworkManager_), host_(host), port_(port) {
+    // Pour la compatibilité avec l'ancien code, mais pas recommandé
+  }
 
   void parseMessage(void);
 
@@ -71,22 +82,27 @@ public:
     WorldScene::createEntities(id);
   }
 
-  zn_socket_t initialiseSocket() {
-    sock_ = zn_server_listen(port_);
-    if (sock_ == nullptr) {
-      std::cerr << "Failed to create server socket on port " << port_ << "\n";
-      return nullptr;
+  bool initialiseSocket() {
+    // Pour le nouveau constructeur, le NetworkManager est déjà connecté
+    // Pas besoin de refaire la connexion
+    if (&networkManager_ == &ownNetworkManager_) {
+      // Cas de l'ancien constructeur - faire la connexion
+      if (!networkManager_.connect(host_, port_)) {
+        std::cerr << "Failed to connect to server at " << host_ << ":" << port_
+                  << " - " << networkManager_.getLastError() << "\n";
+        return false;
+      }
+      
+      if (!networkManager_.performHandshake()) {
+        std::cerr << "Failed to perform handshake - " << networkManager_.getLastError() << "\n";
+        return false;
+      }
     }
-    sock_ = zn_client_connect(host_.c_str(), port_);
-    if (sock_ == nullptr) {
-      std::cerr << "Failed to connect to server at " << host_ << ":" << port_
-                << "\n";
-      return nullptr;
-    }
-    return sock_;
+    
+    return true;
   }
 
-  const std::string readLine(zn_socket_t sock);
+  const std::string readLine();
 
   void createWorld() override {
     // createPlane(5, 5);
@@ -169,7 +185,8 @@ public:
   }
 
   private:
-   zn_socket_t sock_;
+   NetworkManager& networkManager_;  // Référence au NetworkManager à utiliser
+   NetworkManager ownNetworkManager_; // Instance propre pour la compatibilité
    std::string host_;
    int port_;
 };
