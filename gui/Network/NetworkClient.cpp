@@ -101,8 +101,7 @@ void NetworkClient::parseMessage() {
     else
       direction = Direction::NORTH;
 
-    // Get current direction before changing position
-    Direction currentDirection = Direction::NORTH; // default
+    Direction currentDirection = Direction::NORTH;
     const auto& entities = entityManager_.getEntities();
     for (const auto& entity : entities) {
       if (entity->getId() == id) {
