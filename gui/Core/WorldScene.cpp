@@ -365,8 +365,6 @@ void WorldScene::broadcast(int id, const std::string &message) {
   entity_ = entityManager_.getEntities();
 }
 
-void WorldScene::createWorld() {}
-
 void WorldScene::updateChatDisplay() {
   if (!textChat_)
     return;
@@ -533,4 +531,3 @@ void WorldScene::expulsion(int id) {
     }
   }
 }
-

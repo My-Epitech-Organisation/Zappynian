@@ -82,8 +82,6 @@ public:
 
   void createText();
 
-  virtual void createWorld();
-
   void startIncantation(int x, int y, int level, std::vector<int> ids);
   void stopIncantation(int x, int y, bool result);
   bool isPlayerIncanting(int id) const {
