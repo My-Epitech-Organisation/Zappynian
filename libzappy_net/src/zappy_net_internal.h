@@ -34,4 +34,21 @@ struct zn_socket {
 int zn_send_message(zn_socket_t sock, const char *message);
 char *zn_receive_message(zn_socket_t sock);
 
+
+/**
+ * @brief Read a complete line from socket with partial segment support
+ *
+ * This function reads a complete newline-terminated line from the socket.
+ * It handles TCP fragmentation by accumulating partial segments until
+ * a complete line is available. Returns dynamically allocated string
+ * containing the complete line (without newline) or NULL if no complete
+ * line is available.
+ *
+ * @param sock The socket handle
+ * @return Dynamically allocated string with complete line (caller must
+ *         free), or NULL if no complete line available or on error
+ */
+char *zn_readline(zn_socket_t sock);
+
+
 #endif /* !ZAPPY_NET_INTERNAL_H_ */
