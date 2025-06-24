@@ -52,7 +52,12 @@ int init_teams(server_args_t *server)
         server->teams[i].max_slots = server->clients_per_team;
         server->teams[i].remaining_slots = server->clients_per_team;
         server->teams[i].current_players = 0;
-        server->teams[i].players = NULL;
+        server->teams[i].players = calloc(server->clients_per_team,
+            sizeof(player_t *));
+        if (server->teams[i].players == NULL) {
+            fprintf(stderr, "Memory allocation failed for team players.\n");
+            return 84;
+        }
     }
     return 0;
 }
