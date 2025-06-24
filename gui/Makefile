@@ -12,11 +12,14 @@ SRC = src/main.cpp \
 	App/Game.cpp \
 	Core/EntityManager.cpp \
 	Core/WorldScene.cpp \
+	Core/GameState.cpp \
 	Entities/AEntity.cpp \
 	Entities/PlayerEntity.cpp \
 	Entities/TileEntity.cpp \
 	Entities/Inventory.cpp \
 	Network/NetworkClient.cpp \
+	Network/NetworkManager.cpp \
+	Network/NetworkManagerImpl.cpp \
 	Network/ProtocolParser.cpp \
 	Renderer/IrrlichtContext.cpp \
 	Renderer/TextureManager.cpp \
@@ -26,7 +29,7 @@ SRC = src/main.cpp \
 OBJDIR = build
 OBJ = $(SRC:%.cpp=$(OBJDIR)/%.o)
 
-CXXFLAGS = -Wall -Wextra -std=c++17 -I./
+CXXFLAGS = -Wall -Wextra -std=c++17 -I./ -I../libzappy_net/include
 LDFLAGS = -lIrrlicht -lGL -lXxf86vm -lXext -lX11 -L../libzappy_net -lzappy_net
 
 all: $(NAME)
