@@ -7,6 +7,7 @@
 
 #include "../include/zappy_net_ringbuf.h"
 #include <string.h>
+#include <stdio.h>
 
 static void read_no_wrap(zn_ringbuf_t *rb, uint8_t *dst, size_t len)
 {
@@ -58,6 +59,8 @@ ssize_t zn_ringbuf_read(zn_ringbuf_t *rb, void *data, size_t len)
     if (validate_read_params(rb, data, len))
         return 0;
     available = zn_ringbuf_read_available(rb);
+    if (available == 0)
+        return 0;
     len = (len < available) ? len : available;
     newline_count = count_newlines_for_read(rb, len);
     if (rb->read_pos + len <= rb->capacity)
@@ -77,22 +80,32 @@ static int validate_read_line_params(zn_ringbuf_t *rb, void *data,
         max_len == 0 || rb->is_empty);
 }
 
+static void finalize_line_read(zn_ringbuf_t *rb, uint8_t *dst, size_t pos,
+    size_t i)
+{
+    rb->line_count--;
+    rb->read_pos = pos;
+    if (rb->read_pos == rb->write_pos)
+        rb->is_empty = 1;
+    dst[i + 1] = '\0';
+}
+
 static ssize_t read_until_newline(zn_ringbuf_t *rb, uint8_t *dst,
     size_t max_len)
 {
     size_t i;
     size_t pos;
     uint8_t c;
+    size_t available;
 
     pos = rb->read_pos;
-    for (i = 0; i < max_len; i++) {
+    available = zn_ringbuf_read_available(rb);
+    for (i = 0; i < max_len - 1 && i < available; i++) {
         c = rb->buffer[pos];
         dst[i] = c;
         pos = (pos + 1) % rb->capacity;
         if (c == '\n') {
-            rb->line_count--;
-            rb->read_pos = pos;
-            dst[i + 1] = '\0';
+            finalize_line_read(rb, dst, pos, i);
             return i + 1;
         }
     }
@@ -101,16 +114,11 @@ static ssize_t read_until_newline(zn_ringbuf_t *rb, uint8_t *dst,
 
 ssize_t zn_ringbuf_read_line(zn_ringbuf_t *rb, void *data, size_t max_len)
 {
-    size_t available;
     uint8_t *dst = (uint8_t *)data;
-    ssize_t result;
 
     if (validate_read_line_params(rb, data, max_len))
         return -1;
-    available = zn_ringbuf_read_available(rb);
-    max_len = (max_len < available) ? max_len : available;
-    result = read_until_newline(rb, dst, max_len);
-    if (rb->read_pos == rb->write_pos)
-        rb->is_empty = 1;
-    return result;
+    if (rb->line_count == 0)
+        return -1;
+    return read_until_newline(rb, dst, max_len);
 }
