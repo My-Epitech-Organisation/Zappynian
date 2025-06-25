@@ -245,7 +245,6 @@ void EntityManager::createDroppedResource(int x, int y,
   }
   float radius = 6.0f;
 
-  int removedCount = 0;
   auto it = entity_.begin();
   while (it != entity_.end()) {
     if ((*it)->getName() != "Stone") {
@@ -259,7 +258,6 @@ void EntityManager::createDroppedResource(int x, int y,
       if ((*it)->getNode())
         (*it)->getNode()->remove();
       it = entity_.erase(it);
-      removedCount++;
     } else {
       ++it;
     }
