@@ -89,6 +89,8 @@ void cmd_incantation(player_t *player, server_t *server)
 
     if (!player || !server)
         return;
+    if (player->dead || player->in_elevation)
+        return (void)zn_send_message(server->connection->zn_server, "ko");
     player_client = find_client_by_player(server, player);
     if (!player_client)
         return;
@@ -98,8 +100,7 @@ void cmd_incantation(player_t *player, server_t *server)
     elevation_init_requirements(req);
     if (!can_start_incantation(current_tile, player, req))
         return (void)zn_send_message(player_client->zn_sock, "ko");
-    else
-        zn_send_message(player_client->zn_sock, "Elevation underway");
     start_incantation(current_tile);
+    zn_send_message(player_client->zn_sock, "Elevation underway");
     check_and_send_elevation_status(server, player, current_tile, req);
 }
