@@ -31,6 +31,13 @@ public:
   void updatePlayerMovement(irr::u32 currentTime, WorldScene &scene);
   void updateIncantingPlayers(WorldScene &scene);
 
+  void createWorldScene(WorldScene &scene) {
+    scene.createCamera();
+    scene.createLights();
+    scene.createText();
+    scene.createPlane(10, 10); // Example size, adjust as needed
+  }
+
 private:
   irr::IrrlichtDevice *device_;
   irr::video::IVideoDriver *driver_;

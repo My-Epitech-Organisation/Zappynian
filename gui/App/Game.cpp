@@ -168,9 +168,7 @@ void Game::gameLoop() {
 
   WorldScene scene(device_, smgr_, driver_, receiver_, mediaPath_);
 
-  scene.createLights();
-  scene.createCamera();
-  scene.createText();
+  createWorldScene(scene);
 
   bool mapInitialized = false;
   bool resourcesInitialized = false;
