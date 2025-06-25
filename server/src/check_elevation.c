@@ -37,9 +37,12 @@ bool can_start_incantation(tile_t *tile, player_t *player,
 {
     elevation_requirement_t req;
 
-    if (player->level < 1 || player->level > MAX_LEVEL) {
+    if (!tile || !tile->players || tile->player_count == 0)
         return false;
-    }
+    if (!player || player->dead || player->in_elevation)
+        return false;
+    if (player->level < 1 || player->level > MAX_LEVEL)
+        return false;
     req = requirements[player->level - 1];
     if (tile->player_count < req.required_players) {
         return false;
