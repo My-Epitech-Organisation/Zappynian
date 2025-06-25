@@ -12,7 +12,8 @@
 
 namespace Zappy {
 
-    ProtocolParser::ProtocolParser(GameState& gameState) : gameState_(gameState) {}
+    ProtocolParser::ProtocolParser(GameState& gameState, WorldScene& worldScene)
+        : gameState_(gameState), worldScene_(worldScene) {}
 
     bool ProtocolParser::parseMessage(const std::string& message) {
         if (!isValidMessage(message)) {
@@ -71,7 +72,7 @@ namespace Zappy {
         try {
             int width = std::stoi(args[0]);
             int height = std::stoi(args[1]);
-            gameState_.setMapSize(width, height);
+            worldScene_.createPlane(width, height);
             return true;
         } catch (const std::exception& e) {
             std::cerr << "ERROR: Failed to parse msz: " << e.what() << std::endl;
@@ -100,7 +101,13 @@ namespace Zappy {
             resources.addItem("mendiane", std::stoi(args[6]));
             resources.addItem("phiras", std::stoi(args[7]));
             resources.addItem("thystame", std::stoi(args[8]));
-            gameState_.updateTile(irr::core::vector3df(x, y, 0), resources);
+            worldScene_.createEntities(x, y, resources.getItemQuantity("food"),
+                                       resources.getItemQuantity("linemate"),
+                                       resources.getItemQuantity("deraumere"),
+                                       resources.getItemQuantity("sibur"),
+                                       resources.getItemQuantity("mendiane"),
+                                       resources.getItemQuantity("phiras"),
+                                       resources.getItemQuantity("thystame"));
             return true;
         } catch (const std::exception& e) {
             std::cerr << "ERROR: Failed to parse bct: " << e.what() << std::endl;
@@ -114,7 +121,7 @@ namespace Zappy {
             return false;
         }
 
-        gameState_.addTeam(args[0]);
+        worldScene_.addTeam(args[0]);
         return true;
     }
 
@@ -125,14 +132,14 @@ namespace Zappy {
         }
 
         try {
-            int id = std::stoi(args[0]);
+            int id = parseId(args[0]);
             int x = std::stoi(args[1]);
             int y = std::stoi(args[2]);
             Direction dir = parseDirection(args[3]);
             int level = std::stoi(args[4]);
             std::string team = args[5];
 
-            gameState_.addPlayer(id, irr::core::vector3df(x, y, 0), dir, level, team);
+            worldScene_.createEntities(id, x, y, dir, level, team);
 
             if (onPlayerConnected_) {
                 onPlayerConnected_("Player " + std::to_string(id) + " connected");
@@ -140,7 +147,9 @@ namespace Zappy {
 
             return true;
         } catch (const std::exception& e) {
-            std::cerr << "ERROR: Failed to parse pnw: " << e.what() << std::endl;
+            std::cerr << "ERROR: Failed to parse pnw: " << e.what() << " (args: ";
+            for (const auto& a : args) std::cerr << a << ", ";
+            std::cerr << ")" << std::endl;
             return false;
         }
     }
@@ -152,12 +161,13 @@ namespace Zappy {
         }
 
         try {
-            int id = std::stoi(args[0]);
+            int id = parseId(args[0]);
             int x = std::stoi(args[1]);
             int y = std::stoi(args[2]);
             Direction dir = parseDirection(args[3]);
 
-            gameState_.updatePlayerPosition(id, irr::core::vector3df(x, y, 0), dir);
+            std::cout << "DEBUG: Updating player " << id << " position to (" << x << ", " << y << ") with direction " << static_cast<int>(dir) << std::endl;
+            worldScene_.changePlayerPos(id, x, y, dir, dir);
             return true;
         } catch (const std::exception& e) {
             std::cerr << "ERROR: Failed to parse ppo: " << e.what() << std::endl;
@@ -172,10 +182,10 @@ namespace Zappy {
         }
 
         try {
-            int id = std::stoi(args[0]);
+            int id = parseId(args[0]);
             int level = std::stoi(args[1]);
 
-            gameState_.updatePlayerLevel(id, level);
+            worldScene_.setPlayerLevel(id, level);
             return true;
         } catch (const std::exception& e) {
             std::cerr << "ERROR: Failed to parse plv: " << e.what() << std::endl;
@@ -190,12 +200,18 @@ namespace Zappy {
         }
 
         try {
-            int id = std::stoi(args[0]);
+            int id = parseId(args[0]);
             int x = std::stoi(args[1]);
             int y = std::stoi(args[2]);
 
             Inventory inventory = parseInventoryArgs(args, 3);
-            gameState_.updatePlayerInventory(id, irr::core::vector3df(x, y, 0), inventory);
+            worldScene_.setPlayerInventory(id, x, y, inventory.getItemQuantity("food"),
+                                           inventory.getItemQuantity("linemate"),
+                                           inventory.getItemQuantity("deraumere"),
+                                           inventory.getItemQuantity("sibur"),
+                                           inventory.getItemQuantity("mendiane"),
+                                           inventory.getItemQuantity("phiras"),
+                                           inventory.getItemQuantity("thystame"));
             return true;
         } catch (const std::exception& e) {
             std::cerr << "ERROR: Failed to parse pin: " << e.what() << std::endl;
@@ -210,7 +226,8 @@ namespace Zappy {
         }
 
         try {
-            int id = std::stoi(args[0]);
+            int id = parseId(args[0]);
+            worldScene_.expulsion(id);
             return true;
         } catch (const std::exception& e) {
             std::cerr << "ERROR: Failed to parse pex: " << e.what() << std::endl;
@@ -225,15 +242,16 @@ namespace Zappy {
         }
 
         try {
-            int id = std::stoi(args[0]);
+            int id = parseId(args[0]);
             std::string message = args[1];
             for (size_t i = 2; i < args.size(); ++i) {
                 message += " " + args[i];
             }
 
-            if (onBroadcast_) {
-                onBroadcast_("Player " + std::to_string(id) + ": " + message);
-            }
+            // if (onBroadcast_) {
+            //     onBroadcast_("Player " + std::to_string(id) + ": " + message);
+            // }
+            worldScene_.broadcast(id, message);
             return true;
         } catch (const std::exception& e) {
             std::cerr << "ERROR: Failed to parse pbc: " << e.what() << std::endl;
@@ -252,8 +270,11 @@ namespace Zappy {
             int y = std::stoi(args[1]);
             int level = std::stoi(args[2]);
 
-            std::vector<int> playerIds = parsePlayerIds(args, 3);
-            gameState_.startIncantation(irr::core::vector3df(x, y, 0), level, playerIds);
+            std::vector<int> playerIds;
+            for (size_t i = 3; i < args.size(); ++i) {
+                playerIds.push_back(parseId(args[i]));
+            }
+            worldScene_.startIncantation(x, y, level, playerIds);
             return true;
         } catch (const std::exception& e) {
             std::cerr << "ERROR: Failed to parse pic: " << e.what() << std::endl;
@@ -272,7 +293,7 @@ namespace Zappy {
             int y = std::stoi(args[1]);
             bool success = (args[2] == "1");
 
-            gameState_.endIncantation(irr::core::vector3df(x, y, 0), success);
+            worldScene_.stopIncantation(x, y, success);
             return true;
         } catch (const std::exception& e) {
             std::cerr << "ERROR: Failed to parse pie: " << e.what() << std::endl;
@@ -287,7 +308,8 @@ namespace Zappy {
         }
 
         try {
-            int id = std::stoi(args[0]);
+            int id = parseId(args[0]);
+            // worldScene_.createEntities(id);
             return true;
         } catch (const std::exception& e) {
             std::cerr << "ERROR: Failed to parse pfk: " << e.what() << std::endl;
@@ -302,8 +324,9 @@ namespace Zappy {
         }
 
         try {
-            int id = std::stoi(args[0]);
+            int id = parseId(args[0]);
             std::string resource = args[1];
+            worldScene_.resourceDropping(id, resource);
             return true;
         } catch (const std::exception& e) {
             std::cerr << "ERROR: Failed to parse pdr: " << e.what() << std::endl;
@@ -318,8 +341,9 @@ namespace Zappy {
         }
 
         try {
-            int id = std::stoi(args[0]);
+            int id = parseId(args[0]);
             std::string resource = args[1];
+            worldScene_.resourceCollect(id, resource);
             return true;
         } catch (const std::exception& e) {
             std::cerr << "ERROR: Failed to parse pgt: " << e.what() << std::endl;
@@ -334,12 +358,12 @@ namespace Zappy {
         }
 
         try {
-            int id = std::stoi(args[0]);
-            gameState_.removePlayer(id);
+            int id = parseId(args[0]);
+            worldScene_.killPlayer(id);
 
-            if (onPlayerDisconnected_) {
-                onPlayerDisconnected_("Player " + std::to_string(id) + " died");
-            }
+            // if (onPlayerDisconnected_) {
+            //     onPlayerDisconnected_("Player " + std::to_string(id) + " died");
+            // }
 
             return true;
         } catch (const std::exception& e) {
@@ -364,28 +388,28 @@ namespace Zappy {
             }
 
             std::string playerIdStr = args[1];
-            int playerId = -1;
-            if (playerIdStr.front() == '#') {
-                std::string idStr = playerIdStr.substr(1);
-                if (idStr != "-1") {
-                    playerId = std::stoi(idStr);
-                }
-            } else {
-                playerId = std::stoi(playerIdStr);
-            }
+            // int playerId = -1;
+            // if (playerIdStr.front() == '#') {
+            //     std::string idStr = playerIdStr.substr(1);
+            //     if (idStr != "-1") {
+            //         playerId = std::stoi(idStr);
+            //     }
+            // } else {
+            //     playerId = std::stoi(playerIdStr);
+            // }
 
-            int x = std::stoi(args[2]);
-            int y = std::stoi(args[3]);
+            // int x = std::stoi(args[2]);
+            // int y = std::stoi(args[3]);
 
-            std::string team = "unknown";
-            if (playerId >= 0) {
-                const PlayerEntity* player = gameState_.getPlayer(playerId);
-                if (player) {
-                    team = player->getTeam();
-                }
-            }
+            // std::string team = "unknown";
+            // if (playerId >= 0) {
+            //     const PlayerEntity* player = worldScene_.getPlayer(playerId);
+            //     if (player) {
+            //         team = player->getTeam();
+            //     }
+            // }
 
-            gameState_.addEgg(eggId, irr::core::vector3df(x, y, 0), team);
+            // worldScene_.addEgg(eggId, irr::core::vector3df(x, y, 0), team);
             return true;
         } catch (const std::exception& e) {
             std::cerr << "ERROR: Failed to parse enw: " << e.what() << std::endl;
@@ -408,7 +432,7 @@ namespace Zappy {
                 eggId = std::stoi(eggIdStr);
             }
 
-            gameState_.setEggHatching(eggId, true);
+            // gameState_.setEggHatching(eggId, true);
             return true;
         } catch (const std::exception& e) {
             std::cerr << "ERROR: Failed to parse eht: " << e.what() << std::endl;
@@ -431,7 +455,7 @@ namespace Zappy {
                 eggId = std::stoi(eggIdStr);
             }
 
-            gameState_.removeEgg(eggId);
+            worldScene_.killEgg(eggId);
             return true;
         } catch (const std::exception& e) {
             std::cerr << "ERROR: Failed to parse edi: " << e.what() << std::endl;
@@ -447,7 +471,7 @@ namespace Zappy {
 
         try {
             int timeUnit = std::stoi(args[0]);
-            gameState_.setTimeUnit(timeUnit);
+            // gameState_.setTimeUnit(timeUnit);
             return true;
         } catch (const std::exception& e) {
             std::cerr << "ERROR: Failed to parse sgt: " << e.what() << std::endl;
@@ -463,7 +487,7 @@ namespace Zappy {
 
         try {
             int timeUnit = std::stoi(args[0]);
-            gameState_.setTimeUnit(timeUnit);
+            // gameState_.setTimeUnit(timeUnit);
             return true;
         } catch (const std::exception& e) {
             std::cerr << "ERROR: Failed to parse sst: " << e.what() << std::endl;
@@ -491,9 +515,9 @@ namespace Zappy {
         std::string winningTeam = args[0];
         std::cout << "GAME ENDED: Team '" << winningTeam << "' won!" << std::endl;
 
-        if (onGameEnd_) {
-            onGameEnd_("Game ended - Team " + winningTeam + " won!");
-        }
+        // if (onGameEnd_) {
+        //     onGameEnd_("Game ended - Team " + winningTeam + " won!");
+        // }
 
         return true;
     }
@@ -550,5 +574,11 @@ namespace Zappy {
 
     bool ProtocolParser::isValidMessage(const std::string& message) const {
         return !message.empty() && !std::all_of(message.begin(), message.end(), ::isspace);
+    }
+
+    int ProtocolParser::parseId(const std::string& idStr) const {
+        if (!idStr.empty() && idStr.front() == '#')
+            return std::stoi(idStr.substr(1));
+        return std::stoi(idStr);
     }
 }
