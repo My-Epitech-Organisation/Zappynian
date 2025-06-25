@@ -46,7 +46,7 @@ int setup_client_handshake(client_t *client, server_connection_t *connection,
         disconnect_client(connection, idx);
         return -1;
     }
-    
+
     client->type = (client_type_t)role;
     printf("[DEBUG] Client %d handshake successful, role: %d\n", idx, role);
     return 0;

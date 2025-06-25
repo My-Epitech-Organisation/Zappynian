@@ -81,7 +81,7 @@ void accept_client(server_connection_t *connection, server_args_t *unused)
         return;
     }
     finalize_client_connection(connection, slot, new_client);
-    
+
     // Send WELCOME message immediately after connection
     if (zn_send_welcome(new_client->zn_sock) != 0) {
         printf("[ERROR] Failed to send WELCOME to new client\n");
