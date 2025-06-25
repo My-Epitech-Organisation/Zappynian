@@ -6,7 +6,10 @@
 */
 
 #include "EntityManager.hpp"
+#include <algorithm>
+#include <cmath>
 #include <iostream>
+#include <map>
 #include <sstream>
 
 void EntityManager::createPlayers(int id, int x, int y, Direction direction,
@@ -92,33 +95,8 @@ void EntityManager::createStones(int x, int y, int q0, int q1, int q2, int q3,
     }
   }
   std::vector<int> quantities = {q0, q1, q2, q3, q4, q5, q6};
-  int numStones = 0;
-  for (size_t i = 1; i < quantities.size(); ++i)
-    if (quantities[i] > 0)
-      ++numStones;
-  for (int i = 0; i < quantities[0]; ++i) {
-    entity_.push_back(std::make_shared<Stone>(
-        -2, position, qScale[0], stoneTextures[0], qB3D[0], stoneNames[0]));
-    entity_.back()->createNode(smgr_, driver_);
-  }
-  if (numStones == 0)
-    return;
-
-  float radius = 6.0f;
-  float angleStep = 2.0f * M_PI / numStones;
-  int placed = 0;
-  for (size_t i = 1; i < quantities.size(); ++i) {
-    if (quantities[i] > 0) {
-      float angle = placed * angleStep;
-      irr::core::vector3df objPos = position;
-      objPos.X += std::cos(angle) * radius;
-      objPos.Z += std::sin(angle) * radius;
-      entity_.push_back(std::make_shared<Stone>(
-          -3, objPos, qScale[i], stoneTextures[i], qB3D[i], stoneNames[i]));
-      entity_.back()->createNode(smgr_, driver_);
-      ++placed;
-    }
-  }
+  placeStoneEntities(position, quantities, stoneTextures, qB3D, stoneNames,
+                     qScale);
 }
 
 void EntityManager::createTiles(int x, int y) {
@@ -180,4 +158,111 @@ void EntityManager::createEgg(int id) {
       break;
     }
   }
+}
+
+void EntityManager::placeStoneEntities(
+    const irr::core::vector3df &position, const std::vector<int> &quantities,
+    const std::vector<std::vector<irr::io::path>> &stoneTextures,
+    const std::vector<irr::io::path> &qB3D,
+    const std::vector<std::string> &stoneNames,
+    const std::vector<irr::core::vector3df> &qScale) {
+  int numStones = 0;
+  for (size_t i = 0; i < quantities.size(); ++i)
+    if (quantities[i] > 0)
+      ++numStones;
+  if (numStones == 0)
+    return;
+  float radius = 6.0f;
+  float angleStep = 2.0f * M_PI / numStones;
+  int placed = 0;
+  for (size_t i = 0; i < quantities.size(); ++i) {
+    if (quantities[i] > 0) {
+      float angle = placed * angleStep;
+      irr::core::vector3df objPos = position;
+      objPos.X += std::cos(angle) * radius;
+      objPos.Z += std::sin(angle) * radius;
+      entity_.push_back(std::make_shared<Stone>(
+          -2, objPos, qScale[i], stoneTextures[i], qB3D[i], stoneNames[i]));
+      entity_.back()->createNode(smgr_, driver_);
+      ++placed;
+    }
+  }
+}
+
+void EntityManager::createDroppedResource(int x, int y,
+                                          const std::string &item) {
+  std::map<std::string, std::vector<irr::io::path>> resourceTextures = {
+      {"food",
+       {mediaPath_ + "stone_texture/food_redbull.png",
+        mediaPath_ + "stone_texture/food_redbull.png"}},
+      {"linemate", {mediaPath_ + "stone_texture/stone_red.png"}},
+      {"deraumere", {mediaPath_ + "stone_texture/stone_orange.png"}},
+      {"sibur", {mediaPath_ + "stone_texture/stone_yellow.png"}},
+      {"mendiane", {mediaPath_ + "stone_texture/stone_green.png"}},
+      {"phiras", {mediaPath_ + "stone_texture/stone_blue.png"}},
+      {"thystame", {mediaPath_ + "stone_texture/stone_purple.png"}}};
+  std::map<std::string, irr::io::path> resourceB3D = {
+      {"food", mediaPath_ + "RedBull.b3d"},
+      {"linemate", mediaPath_ + "ruby.b3d"},
+      {"deraumere", mediaPath_ + "ruby.b3d"},
+      {"sibur", mediaPath_ + "ruby.b3d"},
+      {"mendiane", mediaPath_ + "ruby.b3d"},
+      {"phiras", mediaPath_ + "ruby.b3d"},
+      {"thystame", mediaPath_ + "ruby.b3d"}};
+  std::map<std::string, irr::core::vector3df> resourceScale = {
+      {"food", irr::core::vector3df(0.8f, 0.8f, 0.8f)},
+      {"linemate", irr::core::vector3df(0.009f, 0.009f, 0.009f)},
+      {"deraumere", irr::core::vector3df(0.009f, 0.009f, 0.009f)},
+      {"sibur", irr::core::vector3df(0.009f, 0.009f, 0.009f)},
+      {"mendiane", irr::core::vector3df(0.009f, 0.009f, 0.009f)},
+      {"phiras", irr::core::vector3df(0.009f, 0.009f, 0.009f)},
+      {"thystame", irr::core::vector3df(0.009f, 0.009f, 0.009f)}};
+
+  if (resourceTextures.find(item) == resourceTextures.end())
+    return;
+
+  auto tile = getTileByName("Cube info: row " + std::to_string(x) + " col " +
+                            std::to_string(y));
+  std::vector<std::string> stoneNames = {"food",    "linemate", "deraumere",
+                                         "sibur",   "mendiane", "phiras",
+                                         "thystame"};
+  std::vector<int> quantities;
+  for (const auto &name : stoneNames) {
+    int qty = static_cast<int>(tile->getInventory().getItemQuantity(name));
+    quantities.push_back(qty);
+  }
+  irr::core::vector3df position(x * 20.0f, 5.0f, y * 20.0f);
+  std::vector<std::vector<irr::io::path>> stoneTextures;
+  std::vector<irr::io::path> qB3D;
+  std::vector<irr::core::vector3df> qScale;
+  for (const auto &name : stoneNames) {
+    if (!resourceTextures[name].empty())
+      stoneTextures.push_back(resourceTextures[name]);
+    else
+      stoneTextures.push_back({});
+    qB3D.push_back(resourceB3D[name]);
+    qScale.push_back(resourceScale[name]);
+  }
+  float radius = 6.0f;
+
+  auto it = entity_.begin();
+  while (it != entity_.end()) {
+    if ((*it)->getName() != "Stone") {
+      ++it;
+      continue;
+    }
+    float distance =
+        std::sqrt(std::pow((*it)->getPosition().X - position.X, 2) +
+                  std::pow((*it)->getPosition().Z - position.Z, 2));
+    if (distance <= radius + 0.01f) {
+      if ((*it)->getNode())
+        (*it)->getNode()->remove();
+      it = entity_.erase(it);
+    } else {
+      ++it;
+    }
+  }
+
+  placeStoneEntities(position, quantities, stoneTextures, qB3D, stoneNames,
+                     qScale);
 }

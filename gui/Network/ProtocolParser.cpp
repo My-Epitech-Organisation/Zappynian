@@ -2,7 +2,7 @@
 ** EPITECH PROJECT, 2025
 ** zappy
 ** File description:
-** ProtocolParser - Implémentation du parser de protocole
+** ProtocolParser
 */
 
 #include "ProtocolParser.hpp"

@@ -8,14 +8,22 @@
 #include "WorldScene.hpp"
 #include <algorithm>
 #include <cmath>
+#include <cstdlib>
+#include <map>
+
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif
 
 void WorldScene::createEntities(int id, int x, int y, Direction direction,
                                 int level, std::string team) {
-    if (!smgr_ || !driver_ || !device_) {
+  if (!smgr_ || !driver_ || !device_) {
     std::cerr << "Error: Uninitialized dependencies detected. "
               << "smgr_: " << (smgr_ ? "initialized" : "uninitialized") << ", "
-              << "driver_: " << (driver_ ? "initialized" : "uninitialized") << ", "
-              << "device_: " << (device_ ? "initialized" : "uninitialized") << std::endl;
+              << "driver_: " << (driver_ ? "initialized" : "uninitialized")
+              << ", "
+              << "device_: " << (device_ ? "initialized" : "uninitialized")
+              << std::endl;
     return;
   }
   entityManager_.addTeams(teams_);
@@ -378,6 +386,52 @@ void WorldScene::broadcast(int id, const std::string &message) {
     }
   }
   entity_ = entityManager_.getEntities();
+}
+
+void WorldScene::resourceDroping(int id, const std::string &item) {
+  for (auto &entity : entity_) {
+    if (entity->getId() == id) {
+      entity->getInventory().removeItem(item, 1);
+      int tileX = static_cast<int>(entity->getPosition().X / 20);
+      int tileZ = static_cast<int>(entity->getPosition().Z / 20);
+      auto tile = entityManager_.getTileByName("Cube info: row " +
+                                               std::to_string(tileX) + " col " +
+                                               std::to_string(tileZ));
+      if (!tile)
+        return;
+      tile->getInventory().addItem(item, 1);
+      entityManager_.createDroppedResource(tileX, tileZ, item);
+      entity_ = entityManager_.getEntities();
+      addChatMessage("Player " + std::to_string(id) + " dropped " + item +
+                     " at (" + std::to_string(tileX) + ", " +
+                     std::to_string(tileZ) + ")");
+      return;
+    }
+  }
+}
+
+void WorldScene::resourceCollect(int id, const std::string &item) {
+  for (auto &entity : entity_) {
+    if (entity->getId() == id) {
+      int tileX = static_cast<int>(entity->getPosition().X / 20);
+      int tileZ = static_cast<int>(entity->getPosition().Z / 20);
+      auto tile = entityManager_.getTileByName("Cube info: row " +
+                                               std::to_string(tileX) + " col " +
+                                               std::to_string(tileZ));
+      if (!tile)
+        return;
+      if (tile->getInventory().getItemQuantity(item) == 0)
+        return;
+      tile->getInventory().removeItem(item, 1);
+      entity->getInventory().addItem(item, 1);
+      entityManager_.createDroppedResource(tileX, tileZ, item);
+      entity_ = entityManager_.getEntities();
+      addChatMessage("Player " + std::to_string(id) + " collected " + item +
+                     " at (" + std::to_string(tileX) + ", " +
+                     std::to_string(tileZ) + ")");
+      return;
+    }
+  }
 }
 
 void WorldScene::updateChatDisplay() {

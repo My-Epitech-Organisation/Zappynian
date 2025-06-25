@@ -173,13 +173,4 @@ void GameState::updateTilePlayerList(const irr::core::vector3df& pos) {
 int GameState::getTileId(const irr::core::vector3df& pos) const {
     return static_cast<int>(pos.Y) * static_cast<int>(mapSize_.X) + static_cast<int>(pos.X);
 }
-
-// Gestion des œufs
-// Ajout d'un œuf
-// (déjà inline dans le header)
-// Changement d'état d'un œuf
-// (déjà inline dans le header)
-// Suppression d'un œuf
-// (déjà inline dans le header)
-
 } // namespace Zappy
