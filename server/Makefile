@@ -47,6 +47,8 @@ SRCS	=	src/main.c							\
 			src/egg.c 							\
 			src/world_utils.c 					\
 			src/eject_cmd.c 					\
+			src/check_elevation.c 				\
+			src/send_state_msg_to_players.c 	\
 
 OBJS	=	$(SRCS:.c=.o)
 
