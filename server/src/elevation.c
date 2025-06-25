@@ -51,6 +51,8 @@ void apply_elevation(tile_t *tile, int player_level,
 
 void cancel_incantation(tile_t *tile, int player_level)
 {
+    if (!tile || !tile->players || tile->player_count == 0)
+        return;
     if (player_level < 1 || player_level >= MAX_LEVEL)
         return;
     for (size_t i = 0; i < tile->player_count; i++) {
