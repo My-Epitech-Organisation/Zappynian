@@ -385,83 +385,38 @@ void WorldScene::resourceDroping(int id, const std::string &item) {
       if (!tile)
         return;
       tile->getInventory().addItem(item, 1);
-      createDroppedResource(tileX, tileZ, item);
+      entityManager_.createDroppedResource(tileX, tileZ, item);
+      entity_ = entityManager_.getEntities();
+      addChatMessage("Player " + std::to_string(id) + " dropped " + item +
+                     " at (" + std::to_string(tileX) + ", " +
+                     std::to_string(tileZ) + ")");
       return;
     }
   }
 }
 
-void WorldScene::createDroppedResource(int x, int y, const std::string &item) {
-  std::map<std::string, std::vector<irr::io::path>> resourceTextures = {
-      {"food",
-       {mediaPath_ + "stone_texture/food_redbull.png",
-        mediaPath_ + "stone_texture/food_redbull.png"}},
-      {"linemate", {mediaPath_ + "stone_texture/stone_red.png"}},
-      {"deraumere", {mediaPath_ + "stone_texture/stone_orange.png"}},
-      {"sibur", {mediaPath_ + "stone_texture/stone_yellow.png"}},
-      {"mendiane", {mediaPath_ + "stone_texture/stone_green.png"}},
-      {"phiras", {mediaPath_ + "stone_texture/stone_blue.png"}},
-      {"thystame", {mediaPath_ + "stone_texture/stone_purple.png"}}};
-  std::map<std::string, irr::io::path> resourceB3D = {
-      {"food", mediaPath_ + "RedBull.b3d"},
-      {"linemate", mediaPath_ + "ruby.b3d"},
-      {"deraumere", mediaPath_ + "ruby.b3d"},
-      {"sibur", mediaPath_ + "ruby.b3d"},
-      {"mendiane", mediaPath_ + "ruby.b3d"},
-      {"phiras", mediaPath_ + "ruby.b3d"},
-      {"thystame", mediaPath_ + "ruby.b3d"}};
-  std::map<std::string, irr::core::vector3df> resourceScale = {
-      {"food", irr::core::vector3df(0.8f, 0.8f, 0.8f)},
-      {"linemate", irr::core::vector3df(0.009f, 0.009f, 0.009f)},
-      {"deraumere", irr::core::vector3df(0.009f, 0.009f, 0.009f)},
-      {"sibur", irr::core::vector3df(0.009f, 0.009f, 0.009f)},
-      {"mendiane", irr::core::vector3df(0.009f, 0.009f, 0.009f)},
-      {"phiras", irr::core::vector3df(0.009f, 0.009f, 0.009f)},
-      {"thystame", irr::core::vector3df(0.009f, 0.009f, 0.009f)}};
-
-  if (resourceTextures.find(item) == resourceTextures.end())
-    return;
-
-  auto tile = entityManager_.getTileByName(
-      "Cube info: row " + std::to_string(x) + " col " + std::to_string(y));
-  std::vector<std::string> stoneNames = {"food",    "linemate", "deraumere",
-                                         "sibur",   "mendiane", "phiras",
-                                         "thystame"};
-  std::vector<int> quantities;
-  for (const auto &name : stoneNames) {
-    int qty = static_cast<int>(tile->getInventory().getItemQuantity(name));
-    quantities.push_back(qty);
+void WorldScene::resourceCollect(int id, const std::string &item) {
+  for (auto &entity : entity_) {
+    if (entity->getId() == id) {
+      int tileX = static_cast<int>(entity->getPosition().X / 20);
+      int tileZ = static_cast<int>(entity->getPosition().Z / 20);
+      auto tile = entityManager_.getTileByName("Cube info: row " +
+                                               std::to_string(tileX) + " col " +
+                                               std::to_string(tileZ));
+      if (!tile)
+        return;
+      if (tile->getInventory().getItemQuantity(item) == 0)
+        return;
+      tile->getInventory().removeItem(item, 1);
+      entity->getInventory().addItem(item, 1);
+      entityManager_.createDroppedResource(tileX, tileZ, item);
+      entity_ = entityManager_.getEntities();
+      addChatMessage("Player " + std::to_string(id) + " collected " + item +
+                     " at (" + std::to_string(tileX) + ", " +
+                     std::to_string(tileZ) + ")");
+      return;
+    }
   }
-  irr::core::vector3df position(x * 20.0f, 5.0f, y * 20.0f);
-  std::vector<std::vector<irr::io::path>> stoneTextures;
-  std::vector<irr::io::path> qB3D;
-  std::vector<irr::core::vector3df> qScale;
-  for (const auto &name : stoneNames) {
-    if (!resourceTextures[name].empty())
-      stoneTextures.push_back(resourceTextures[name]);
-    else
-      stoneTextures.push_back({});
-    qB3D.push_back(resourceB3D[name]);
-    qScale.push_back(resourceScale[name]);
-  }
-  float radius = 6.0f;
-  auto it = std::remove_if(
-      entity_.begin(), entity_.end(), [&](const std::shared_ptr<IEntity> &e) {
-        if (e->getName() != "Stone")
-          return false;
-        float dist = std::sqrt(std::pow(e->getPosition().X - position.X, 2) +
-                               std::pow(e->getPosition().Z - position.Z, 2));
-        if (dist <= radius) {
-          if (e->getNode()) {
-            e->getNode()->remove();
-          }
-          return true;
-        }
-        return false;
-      });
-  entity_.erase(it, entity_.end());
-  entityManager_.placeStoneEntities(position, quantities, stoneTextures, qB3D,
-                                    stoneNames, qScale);
 }
 
 void WorldScene::createWorld() {}

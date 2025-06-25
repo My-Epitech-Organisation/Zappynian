@@ -6,7 +6,10 @@
 */
 
 #include "EntityManager.hpp"
+#include <algorithm>
+#include <cmath>
 #include <iostream>
+#include <map>
 #include <sstream>
 
 void EntityManager::createPlayers(int id, int x, int y, Direction direction,
@@ -184,4 +187,84 @@ void EntityManager::placeStoneEntities(
       ++placed;
     }
   }
+}
+
+void EntityManager::createDroppedResource(int x, int y,
+                                          const std::string &item) {
+  std::map<std::string, std::vector<irr::io::path>> resourceTextures = {
+      {"food",
+       {mediaPath_ + "stone_texture/food_redbull.png",
+        mediaPath_ + "stone_texture/food_redbull.png"}},
+      {"linemate", {mediaPath_ + "stone_texture/stone_red.png"}},
+      {"deraumere", {mediaPath_ + "stone_texture/stone_orange.png"}},
+      {"sibur", {mediaPath_ + "stone_texture/stone_yellow.png"}},
+      {"mendiane", {mediaPath_ + "stone_texture/stone_green.png"}},
+      {"phiras", {mediaPath_ + "stone_texture/stone_blue.png"}},
+      {"thystame", {mediaPath_ + "stone_texture/stone_purple.png"}}};
+  std::map<std::string, irr::io::path> resourceB3D = {
+      {"food", mediaPath_ + "RedBull.b3d"},
+      {"linemate", mediaPath_ + "ruby.b3d"},
+      {"deraumere", mediaPath_ + "ruby.b3d"},
+      {"sibur", mediaPath_ + "ruby.b3d"},
+      {"mendiane", mediaPath_ + "ruby.b3d"},
+      {"phiras", mediaPath_ + "ruby.b3d"},
+      {"thystame", mediaPath_ + "ruby.b3d"}};
+  std::map<std::string, irr::core::vector3df> resourceScale = {
+      {"food", irr::core::vector3df(0.8f, 0.8f, 0.8f)},
+      {"linemate", irr::core::vector3df(0.009f, 0.009f, 0.009f)},
+      {"deraumere", irr::core::vector3df(0.009f, 0.009f, 0.009f)},
+      {"sibur", irr::core::vector3df(0.009f, 0.009f, 0.009f)},
+      {"mendiane", irr::core::vector3df(0.009f, 0.009f, 0.009f)},
+      {"phiras", irr::core::vector3df(0.009f, 0.009f, 0.009f)},
+      {"thystame", irr::core::vector3df(0.009f, 0.009f, 0.009f)}};
+
+  if (resourceTextures.find(item) == resourceTextures.end())
+    return;
+
+  auto tile = getTileByName("Cube info: row " + std::to_string(x) + " col " +
+                            std::to_string(y));
+  std::vector<std::string> stoneNames = {"food",    "linemate", "deraumere",
+                                         "sibur",   "mendiane", "phiras",
+                                         "thystame"};
+  std::vector<int> quantities;
+  for (const auto &name : stoneNames) {
+    int qty = static_cast<int>(tile->getInventory().getItemQuantity(name));
+    quantities.push_back(qty);
+  }
+  irr::core::vector3df position(x * 20.0f, 5.0f, y * 20.0f);
+  std::vector<std::vector<irr::io::path>> stoneTextures;
+  std::vector<irr::io::path> qB3D;
+  std::vector<irr::core::vector3df> qScale;
+  for (const auto &name : stoneNames) {
+    if (!resourceTextures[name].empty())
+      stoneTextures.push_back(resourceTextures[name]);
+    else
+      stoneTextures.push_back({});
+    qB3D.push_back(resourceB3D[name]);
+    qScale.push_back(resourceScale[name]);
+  }
+  float radius = 6.0f;
+
+  int removedCount = 0;
+  auto it = entity_.begin();
+  while (it != entity_.end()) {
+    if ((*it)->getName() != "Stone") {
+      ++it;
+      continue;
+    }
+    float distance =
+        std::sqrt(std::pow((*it)->getPosition().X - position.X, 2) +
+                  std::pow((*it)->getPosition().Z - position.Z, 2));
+    if (distance <= radius + 0.01f) {
+      if ((*it)->getNode())
+        (*it)->getNode()->remove();
+      it = entity_.erase(it);
+      removedCount++;
+    } else {
+      ++it;
+    }
+  }
+
+  placeStoneEntities(position, quantities, stoneTextures, qB3D, stoneNames,
+                     qScale);
 }

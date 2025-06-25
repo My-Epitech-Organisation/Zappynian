@@ -131,10 +131,16 @@ public:
     } catch (const std::exception &e) {
     }
     setPlayerLevel(8, 5);
-    setPlayerInventory(10, 3, 0, 1, 1, 1, 1, 1, 1, 1);
-    contentTiles(3, 0, 10, 0, 10, 10, 10, 10, 10);
+    setPlayerInventory(10, 3, 0, 10, 1, 1, 1, 1, 1, 1);
+    contentTiles(2, 0, 10, 10, 10, 10, 10, 10, 10);
+    contentTiles(3, 0, 0, 0, 10, 10, 0, 10, 1);
+    contentTiles(4, 0, 10, 10, 10, 10, 10, 10, 10);
     resourceDroping(10, "linemate");
-    movePlayer(10, 4, 0, Direction::WEST, Direction::WEST);
+    resourceDroping(10, "mendiane");
+    resourceDroping(10, "food");
+    resourceCollect(10, "thystame");
+    // resourceCollect(10, "food");
+    // movePlayer(10, 4, 0, Direction::WEST, Direction::WEST);
 
     contentTiles(2, 4, 32, 32, 32, 32, 32, 32, 32);
     contentTiles(4, 4, 32, 32, 32, 32, 32, 32, 32);

@@ -62,6 +62,8 @@ public:
       const std::vector<std::string> &stoneNames,
       const std::vector<irr::core::vector3df> &qScale);
 
+  void createDroppedResource(int x, int y, const std::string &item);
+
 protected:
   std::vector<std::shared_ptr<IEntity>> entity_;
   irr::scene::ISceneManager *smgr_;
