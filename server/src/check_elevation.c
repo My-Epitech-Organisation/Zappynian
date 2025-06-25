@@ -51,10 +51,16 @@ bool can_start_incantation(tile_t *tile, int player_level,
 void check_and_send_elevation_status(server_t *server, player_t *player,
     tile_t *current_tile, const elevation_requirement_t *requirements)
 {
+    char response[256];
+
     if (complete_incantation(current_tile, player->level, requirements)) {
         apply_elevation(current_tile, player->level, requirements);
-        for (size_t i = 0; i < current_tile->player_count; i++)
+        snprintf(response, sizeof(response),
+            "Elevation underway Current level: %d", player->level);
+        for (size_t i = 0; i < current_tile->player_count; i++) {
+            send_stat_to_all_players(server, current_tile, i, response);
             send_ok_to_all_players(server, current_tile, i);
+        }
     } else {
         cancel_incantation(current_tile, player->level);
         for (size_t i = 0; i < current_tile->player_count; i++)
