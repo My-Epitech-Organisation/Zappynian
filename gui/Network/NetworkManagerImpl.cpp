@@ -47,7 +47,6 @@ bool NetworkManagerImpl::connect(const std::string& host, int port) {
         disconnect();
     }
 
-    std::cout << "DEBUG: Attempting to connect to " << host << ":" << port << std::endl;
     state_ = ConnectionState::CONNECTING;
     host_ = host;
     port_ = port;
@@ -55,13 +54,11 @@ bool NetworkManagerImpl::connect(const std::string& host, int port) {
     socket_ = zn_client_connect(host.c_str(), port);
 
     if (socket_ == nullptr) {
-        std::cout << "ERROR: Failed to connect to " << host << ":" << port << std::endl;
         setError("Failed to connect to " + host + ":" + std::to_string(port));
         state_ = ConnectionState::ERROR;
         return false;
     }
 
-    std::cout << "DEBUG: Successfully connected to " << host << ":" << port << std::endl;
     state_ = ConnectionState::CONNECTED;
     return true;
 }
@@ -76,7 +73,6 @@ void NetworkManagerImpl::disconnect() {
 }
 
 bool NetworkManagerImpl::performHandshake() {
-    std::cout << "DEBUG: Starting handshake..." << std::endl;
     if (!isConnected()) {
         setError("Not connected to server");
         return false;
@@ -110,38 +106,25 @@ bool NetworkManagerImpl::performHandshake() {
         return false;
     }
 
-    std::cout << "DEBUG: Sent GRAPHIC command, waiting for initial messages..." << std::endl;
-    usleep(100000); // 100ms au lieu de 2 secondes
+    usleep(100000);
 
     int messagesAvailable = 0;
     std::string message;
     std::vector<std::string> initialMessages;
 
-    std::cout << "DEBUG: Starting message collection loop..." << std::endl;
     for (int attempts = 0; attempts < 200; ++attempts) {
-        std::cout << "DEBUG: Attempt " << attempts << ", trying to receive message..." << std::endl;
         message = receiveMessage();
         if (!message.empty()) {
             messagesAvailable++;
             initialMessages.push_back(message);
-            std::cout << "DEBUG: Received initial message " << messagesAvailable << ": '" << message << "'" << std::endl;
-            usleep(10000); // 10ms
+            usleep(10000);
         } else {
-            std::cout << "DEBUG: No message received on attempt " << attempts << std::endl;
-            usleep(50000); // 50ms
+            usleep(50000);
             if (messagesAvailable > 10 && attempts > messagesAvailable + 20) {
-                std::cout << "DEBUG: Breaking after " << attempts << " attempts with " << messagesAvailable << " messages" << std::endl;
-                break;
-            }
-            // Sortir si on n'a rien reçu pendant longtemps
-            if (attempts > 50 && messagesAvailable == 0) {
-                std::cout << "DEBUG: No messages received after 50 attempts, breaking..." << std::endl;
                 break;
             }
         }
     }
-
-    std::cout << "DEBUG: Total initial messages received: " << messagesAvailable << std::endl;
     for (const auto& msg : initialMessages) {
         initialMessages_.push_back(msg);
     }
@@ -154,16 +137,11 @@ bool NetworkManagerImpl::sendMessage(const std::string& message) {
         setError("Not connected");
         return false;
     }
-
-    std::cout << "DEBUG: Sending message: '" << message << "'" << std::endl;
     int result = zn_send_message(socket_, message.c_str());
     if (result < 0) {
-        std::cout << "ERROR: Failed to send message: '" << message << "'" << std::endl;
         setError("Failed to send message: " + message);
         return false;
     }
-
-    std::cout << "DEBUG: Message sent successfully: '" << message << "'" << std::endl;
     return true;
 }
 
@@ -176,21 +154,13 @@ std::string NetworkManagerImpl::receiveMessage() {
     if (!initialMessages_.empty()) {
         std::string message = initialMessages_.front();
         initialMessages_.pop_front();
-        std::cout << "DEBUG: Returning cached message: '" << message << "'" << std::endl;
         return message;
     }
-
-    // Toujours essayer de lire, même sans nouvelles données socket
-    // car les messages peuvent être dans le buffer interne
-    std::cout << "DEBUG: Attempting to receive message with timeout..." << std::endl;
     char* raw_message = zn_receive_message(socket_);
     if (raw_message != nullptr) {
         std::string message(raw_message);
         free(raw_message);
-        std::cout << "DEBUG: Received new message: '" << message << "'" << std::endl;
         return message;
-    } else {
-        std::cout << "DEBUG: zn_receive_message returned nullptr (no message available)" << std::endl;
     }
 
     return "";
@@ -240,26 +210,7 @@ void NetworkManagerImpl::setError(const std::string& error) {
 }
 
 void NetworkManagerImpl::initializeParser() {
-    std::cout << "DEBUG: Initializing protocol parser..." << std::endl;
     parser_ = std::make_unique<Zappy::ProtocolParser>(gameState_);
-
-    parser_->setOnPlayerConnected([](const std::string& msg) {
-        std::cout << "EVENT: Player connected - " << msg << std::endl;
-    });
-
-    parser_->setOnPlayerDisconnected([](const std::string& msg) {
-        std::cout << "EVENT: Player disconnected - " << msg << std::endl;
-    });
-
-    parser_->setOnBroadcast([](const std::string& msg) {
-        std::cout << "BROADCAST: " << msg << std::endl;
-    });
-
-    parser_->setOnGameEnd([](const std::string& msg) {
-        std::cout << "GAME END: " << msg << std::endl;
-    });
-
-    std::cout << "DEBUG: Protocol parser initialized successfully" << std::endl;
 }
 
 void NetworkManagerImpl::updateFromServer() {
@@ -272,18 +223,14 @@ void NetworkManagerImpl::updateFromServer() {
 
 void NetworkManagerImpl::processIncomingMessages() {
     if (!parser_) {
-        std::cerr << "ERROR: Parser not initialized" << std::endl;
         return;
     }
-
-    std::cout << "DEBUG: Processing incoming messages. Cached messages: " << initialMessages_.size() << std::endl;
 
     while (!initialMessages_.empty()) {
         std::string message = initialMessages_.front();
         initialMessages_.pop_front();
 
         if (!message.empty()) {
-            std::cout << "DEBUG: Processing cached message: '" << message << "'" << std::endl;
             parser_->parseMessage(message);
         }
     }
@@ -294,29 +241,17 @@ void NetworkManagerImpl::processIncomingMessages() {
     while (hasData() && attempts < maxAttempts) {
         std::string message = receiveMessage();
         if (!message.empty()) {
-            std::cout << "DEBUG: Processing new message: '" << message << "'" << std::endl;
             parser_->parseMessage(message);
         } else {
             break;
         }
         attempts++;
     }
-
-    // Vérifier l'état de la map
     if (!gameStateSynchronized_ && !gameState_.isEmpty()) {
         auto mapSize = gameState_.getMapSize();
-        std::cout << "DEBUG: Checking map synchronization. Map size: " << mapSize.X << "x" << mapSize.Y << std::endl;
         if (mapSize.X > 0 && mapSize.Y > 0) {
             gameStateSynchronized_ = true;
-            std::cout << "DEBUG: Game state synchronized! Map size confirmed: " << mapSize.X << "x" << mapSize.Y << std::endl;
-        } else {
-            std::cout << "DEBUG: Map size still invalid, not synchronized yet" << std::endl;
         }
-    } else if (gameStateSynchronized_) {
-        auto mapSize = gameState_.getMapSize();
-        std::cout << "DEBUG: Game already synchronized. Current map size: " << mapSize.X << "x" << mapSize.Y << std::endl;
-    } else {
-        std::cout << "DEBUG: GameState is empty, waiting for map data..." << std::endl;
     }
 }
 
