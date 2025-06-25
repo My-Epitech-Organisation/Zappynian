@@ -31,18 +31,21 @@ static int receive_team_name_async(client_t *client, char *team_name,
     return ZN_ROLE_AI;
 }
 
-int setup_client_handshake(client_t *client, server_connection_t *connection,
-    int idx, char *team_name)
+client_event_t setup_client_handshake(client_t *client,
+    server_connection_t *connection, int idx, char *team_name)
 {
     int role;
 
     role = receive_team_name_async(client, team_name, 256);
     if (role == -1)
-        return -1;
+        return CLIENT_EVENT_PENDING;
     if (role == -2) {
         disconnect_client(connection, idx);
-        return -1;
+        return CLIENT_EVENT_ERROR;
     }
     client->type = (client_type_t)role;
-    return 0;
+    client->team_name = strdup(team_name);
+    if (role == ZN_ROLE_AI)
+        return CLIENT_EVENT_IA_CONNECTED;
+    return CLIENT_EVENT_GUI_CONNECTED;
 }
