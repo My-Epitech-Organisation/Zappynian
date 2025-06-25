@@ -112,6 +112,10 @@ public:
 
   void expulsion(int id);
 
+  void resourceDroping(int id, const std::string &item);
+
+  void resourceCollect(int id, const std::string &item);
+
 protected:
   irr::IrrlichtDevice *device_;
   irr::scene::ISceneManager *smgr_;
