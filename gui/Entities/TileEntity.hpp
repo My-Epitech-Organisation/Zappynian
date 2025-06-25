@@ -31,6 +31,7 @@ public:
   irr::scene::IMeshSceneNode *getTileNode() const { return tileNode_; }
 
   Inventory &getInventory() { return inventory_; }
+  const Inventory &getInventory() const { return inventory_; }
 
 protected:
   irr::video::ITexture *textureTile_;

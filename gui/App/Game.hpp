@@ -6,10 +6,12 @@
 */
 #include "../Core/EntityManager.hpp"
 #include "../Core/WorldScene.hpp"
+#include "../Core/GameState.hpp"
 #include "../Entities/PlayerEntity.hpp"
 #include "../Entities/Stone.hpp"
 #include "../Event/EventReceiver.hpp"
 #include "../Network/NetworkClient.hpp"
+#include "../Network/NetworkManager.hpp"
 #include <irrlicht/irrlicht.h>
 #include <memory>
 #include <string>
@@ -17,16 +19,17 @@
 
 #pragma once
 
-class Game {
+class Game
+{
 public:
-  Game();
+  Game(const std::string &host, int port);
   ~Game();
 
   void initWindow();
   void gameLoop();
   std::shared_ptr<IEntity> findEntityById(int id);
-  void updatePlayerMovement(irr::u32 currentTime, NetworkClient &scene);
-  void updateIncantingPlayers(NetworkClient &scene);
+  void updatePlayerMovement(irr::u32 currentTime, WorldScene &scene);
+  void updateIncantingPlayers(WorldScene &scene);
 
 private:
   irr::IrrlichtDevice *device_;
@@ -36,4 +39,19 @@ private:
   EventReceiver receiver_;
   irr::io::path mediaPath_;
   std::vector<std::shared_ptr<IEntity>> entity_;
+  std::string host_;
+  int port_;
+
+  NetworkManager *networkManager_;
+
+  /**
+   * @brief Initialize the network connection
+   * @return true if the connection was successful
+   */
+  bool initNetwork();
+
+  /**
+   * @brief Process network messages
+   */
+  void processNetworkMessages();
 };
