@@ -58,7 +58,6 @@ void broadcast_to_all_players(player_t *sender, server_t *server,
 
 int make_player_array(tile_t *current_tile, player_t *player,
     server_t *server, client_t *ejecting_client);
-void destroy_eggs_on_tile(tile_t *tile, server_t *server);
 client_t *find_client_by_player(server_t *server, player_t *player);
 size_t get_nb_player(tile_t *tile, player_t *player);
 
