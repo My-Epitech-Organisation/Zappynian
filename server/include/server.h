@@ -31,6 +31,15 @@ typedef enum {
     CLIENT_GUI = ZN_ROLE_GUI
 } client_type_t;
 
+typedef enum client_event_e {
+    CLIENT_EVENT_NONE = 0,
+    CLIENT_EVENT_ERROR = -1,
+    CLIENT_EVENT_PENDING = -2,
+    CLIENT_EVENT_IA_CONNECTED = 1,
+    CLIENT_EVENT_GUI_CONNECTED = 2,
+    CLIENT_EVENT_DISCONNECTED = 3
+} client_event_t;
+
 typedef struct client_s {
     zn_socket_t zn_sock;
     client_type_t type;
@@ -89,16 +98,17 @@ void handle_error_connection(char *msg, server_connection_t *connection);
 void set_server(server_connection_t *connection);
 
 // Client handling functions
-void handle_client_read(server_connection_t *connection, int client_idx);
+client_event_t handle_client_read(
+    server_connection_t *connection, int client_idx);
 void handle_client_write(server_connection_t *connection, int client_idx);
 void disconnect_client(server_connection_t *connection, int client_idx);
-void assign_client_type(client_t *client, server_connection_t *connection,
-    int idx);
+client_event_t assign_client_type(
+    client_t *client, server_connection_t *connection, int idx);
 void accept_client(server_connection_t *connection, server_args_t *args);
 
 /* Client handshake functions */
-int setup_client_handshake(client_t *client, server_connection_t *connection,
-    int idx, char *team_name);
+client_event_t setup_client_handshake(client_t *client,
+    server_connection_t *connection, int idx, char *team_name);
 int validate_and_respond(client_t *client, server_connection_t *connection,
     int idx, const char *team_name);
 void finalize_client_assignment(client_t *client,
@@ -107,6 +117,12 @@ void finalize_client_assignment(client_t *client,
 /* Server loop functions */
 void server_loop(server_t *server);
 void stop_server_loop(server_t *server);
+
+/* Server player management functions */
+void handle_client_event(server_t *server, client_event_t event,
+    int client_idx);
+int initialize_server_players(server_t *server);
+player_t *create_player_for_client(server_t *server, client_t *client);
 
 /* Network integration functions */
 int init_network_integration(void);
