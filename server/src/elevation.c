@@ -6,7 +6,6 @@
 */
 
 #include "../include/elevation.h"
-#include "../include/server.h"
 #include "../include/world.h"
 #include <stdio.h>
 
