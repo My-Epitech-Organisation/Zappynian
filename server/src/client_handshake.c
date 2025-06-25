@@ -36,18 +36,13 @@ int setup_client_handshake(client_t *client, server_connection_t *connection,
 {
     int role;
 
-    // The WELCOME message has already been sent in accept_client()
-    // Now we just wait for the team name
     role = receive_team_name_async(client, team_name, 256);
-    if (role == -1) {
-        return -1;  // No message available yet, try again later
-    }
+    if (role == -1)
+        return -1;
     if (role == -2) {
         disconnect_client(connection, idx);
         return -1;
     }
-
     client->type = (client_type_t)role;
-    printf("[DEBUG] Client %d handshake successful, role: %d\n", idx, role);
     return 0;
 }

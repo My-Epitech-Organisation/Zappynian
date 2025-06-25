@@ -61,6 +61,16 @@ static void finalize_client_connection(server_connection_t *connection,
     }
 }
 
+static int send_welcome_to_client(client_t *client,
+    server_connection_t *connection, int slot)
+{
+    if (zn_send_welcome(client->zn_sock) != 0) {
+        disconnect_client(connection, slot);
+        return -1;
+    }
+    return 0;
+}
+
 void accept_client(server_connection_t *connection, server_args_t *unused)
 {
     int slot = find_free_client_slot(connection->clients, MAX_CLIENTS);
@@ -68,25 +78,16 @@ void accept_client(server_connection_t *connection, server_args_t *unused)
     client_t *new_client = NULL;
 
     (void)unused;
-    if (slot == -1) {
+    if (slot == -1)
         return;
-    }
     new_sock = zn_accept(connection->zn_server, NULL, NULL);
-    if (new_sock == NULL) {
+    if (new_sock == NULL)
         return;
-    }
     new_client = create_new_client(new_sock);
     if (new_client == NULL) {
         zn_close(new_sock);
         return;
     }
     finalize_client_connection(connection, slot, new_client);
-
-    // Send WELCOME message immediately after connection
-    if (zn_send_welcome(new_client->zn_sock) != 0) {
-        printf("[ERROR] Failed to send WELCOME to new client\n");
-        disconnect_client(connection, slot);
-        return;
-    }
-    printf("[DEBUG] WELCOME sent to new client %d\n", new_client->id);
+    send_welcome_to_client(new_client, connection, slot);
 }
