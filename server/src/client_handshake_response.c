@@ -58,14 +58,41 @@ int validate_and_respond(client_t *client, server_connection_t *connection,
     return 0;
 }
 
+static player_t *create_and_add_player_to_team(client_t *client, team_t *team,
+    server_args_t *args)
+{
+    player_t *player = NULL;
+    int x = rand() % args->width;
+    int y = rand() % args->height;
+
+    player = create_player(client->id, team->name, x, y);
+    if (player == NULL)
+        return NULL;
+    player->slot_id = client->id;
+    for (int i = 0; i < team->max_slots; i++) {
+        if (team->players[i] == NULL) {
+            team->players[i] = player;
+            break;
+        }
+    }
+    return player;
+}
+
 void finalize_client_assignment(client_t *client,
     server_connection_t *connection, const char *team_name)
 {
     server_args_t *args = connection->args;
     team_t *team;
+    player_t *player = NULL;
 
     if (client->type == CLIENT_IA) {
         team = get_team_by_name(args, team_name);
+        player = create_and_add_player_to_team(client, team, args);
+        if (player == NULL) {
+            fprintf(stderr,
+                "Failed to create player for client %d\n", client->id);
+            return;
+        }
         team->current_players++;
         client->team_name = strdup(team_name);
         printf("Client is an IA client: %s\n", team_name);
