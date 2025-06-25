@@ -184,34 +184,6 @@ std::string NetworkManagerImpl::receiveMessage() {
         return message;
     }
 
-    char buffer[4096];
-    ssize_t bytes_read = zn_read(socket_, buffer, sizeof(buffer) - 1);
-
-    if (bytes_read > 0) {
-        buffer[bytes_read] = '\0';
-        std::string data(buffer);
-
-        std::istringstream iss(data);
-        std::string line;
-        std::vector<std::string> lines;
-
-        while (std::getline(iss, line)) {
-            if (!line.empty()) {
-                lines.push_back(line);
-            }
-        }
-
-        if (!lines.empty()) {
-            std::string firstLine = lines[0];
-            for (size_t i = 1; i < lines.size(); i++) {
-                initialMessages_.push_back(lines[i]);
-            }
-            return firstLine;
-        }
-    } else if (bytes_read == 0) {
-        setError("Connection closed by server");
-    }
-
     return "";
 }
 
