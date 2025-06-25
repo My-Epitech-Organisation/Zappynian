@@ -85,7 +85,6 @@ bool NetworkManagerImpl::performHandshake() {
         welcome = receiveMessage();
         if (welcome.empty()) {
             usleep(100000);
-            usleep(100000);
         }
     }
 
@@ -108,7 +107,6 @@ bool NetworkManagerImpl::performHandshake() {
     }
 
     sleep(2);
-    sleep(2);
 
     int messagesAvailable = 0;
     std::string message;
@@ -119,7 +117,6 @@ bool NetworkManagerImpl::performHandshake() {
         if (!message.empty()) {
             messagesAvailable++;
             initialMessages.push_back(message);
-            usleep(10000);
             usleep(10000);
         } else {
             usleep(50000);
