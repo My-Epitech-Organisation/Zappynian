@@ -17,7 +17,6 @@ SRC = src/main.cpp \
 	Entities/PlayerEntity.cpp \
 	Entities/TileEntity.cpp \
 	Entities/Inventory.cpp \
-	Network/NetworkClient.cpp \
 	Network/NetworkManager.cpp \
 	Network/NetworkManagerImpl.cpp \
 	Network/ProtocolParser.cpp \
