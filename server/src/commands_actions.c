@@ -10,6 +10,7 @@
 #include "../include/world.h"
 #include "../include/team.h"
 #include "../include/egg.h"
+#include "../include/elevation.h"
 
 void cmd_eject(player_t *player, server_t *server)
 {
@@ -82,6 +83,23 @@ void cmd_set(player_t *player, server_t *server)
 
 void cmd_incantation(player_t *player, server_t *server)
 {
-    (void) server;
-    printf("Player %d executed incantation command\n", player->id);
+    tile_t *current_tile;
+    client_t *player_client;
+    elevation_requirement_t req[MAX_LEVEL];
+
+    player_client = find_client_by_player(server, player);
+    if (!player_client)
+        return;
+    if (player->dead)
+        return (void)zn_send_message(player_client->zn_sock, "ko");
+    if (player->in_elevation)
+        return complete_incantation_ritual(player, server);
+    if (player->level >= MAX_LEVEL)
+        return (void)zn_send_message(player_client->zn_sock, "ko");
+    current_tile = get_tile(server->map, player->x, player->y);
+    if (!current_tile)
+        return (void)zn_send_message(player_client->zn_sock, "ko");
+    if (check_good_nb_players_and_resources(current_tile, req, player) == -1)
+        return (void)zn_send_message(player_client->zn_sock, "ko");
+    check_and_send_elevation_status(server, player, current_tile, req);
 }
