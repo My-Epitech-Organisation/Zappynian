@@ -8,45 +8,31 @@
 #include "../include/elevation.h"
 #include "../include/server.h"
 
-bool complete_incantation(tile_t *tile, int player_level,
-    const elevation_requirement_t *requirements, server_t *server)
+size_t count_players_with_level(tile_t *tile, player_t *player)
 {
-    elevation_requirement_t req;
-    char response[256];
+    size_t count = 0;
 
-    if (player_level < 1 || player_level > MAX_LEVEL) {
-        return false;
-    }
-    req = requirements[player_level - 1];
-    if (tile->player_count < req.required_players) {
-        return false;
-    }
-    for (int i = 0; i < NB_RESOURCE_TYPES; i++) {
-        if (tile->resources[i] < req.required_resources[i]) {
-            return false;
+    for (size_t i = 0; i < tile->player_count; i++) {
+        if (tile->players[i] && tile->players[i]->level == player->level) {
+            count++;
         }
     }
-    snprintf(response, sizeof(response), "Elevation underway");
-    for (size_t i = 0; i < tile->player_count; i++)
-        send_stat_to_all_players(server, tile, i, response);
-    return true;
+    return count;
 }
 
 bool can_start_incantation(tile_t *tile, player_t *player,
     const elevation_requirement_t *requirements)
 {
     elevation_requirement_t req;
+    size_t same_level_players = 0;
 
-    if (!tile || !tile->players || tile->player_count == 0)
-        return false;
-    if (!player || player->dead || player->in_elevation)
-        return false;
-    if (player->level < 1 || player->level > MAX_LEVEL)
+    if (!tile || !tile->players || tile->player_count == 0 || !player ||
+        player->dead || player->level < 1 || player->level > MAX_LEVEL)
         return false;
     req = requirements[player->level - 1];
-    if (tile->player_count < req.required_players) {
+    same_level_players = count_players_with_level(tile, player);
+    if (same_level_players < requirements[player->level - 1].required_players)
         return false;
-    }
     for (int i = 0; i < NB_RESOURCE_TYPES; i++) {
         if (tile->resources[i] < req.required_resources[i]) {
             return false;
@@ -60,45 +46,13 @@ void check_and_send_elevation_status(server_t *server, player_t *player,
 {
     char msg[256];
 
-    if (complete_incantation(current_tile, player->level, requirements,
-        server)) {
-        apply_elevation(current_tile, player->level, requirements, server);
+    if (can_start_incantation(current_tile, player, requirements)) {
+        apply_elevation(current_tile, player->level, requirements);
         snprintf(msg, sizeof(msg), "Current level: %d", player->level);
         for (size_t i = 0; i < current_tile->player_count; i++)
             send_stat_to_all_players(server, current_tile, i, msg);
     } else {
         cancel_incantation(current_tile, player->level);
-        for (size_t i = 0; i < current_tile->player_count; i++)
-            send_ko_to_all_players(server, current_tile, i);
+        zn_send_message(server->connection->zn_server, "ko");
     }
-}
-
-size_t count_players_with_level(tile_t *tile, player_t *player)
-{
-    size_t count = 0;
-
-    for (size_t i = 0; i < tile->player_count; i++) {
-        if (tile->players[i] &&
-            tile->players[i]->level == player->level) {
-            count++;
-        }
-    }
-    return count;
-}
-
-int check_good_nb_players_and_resources(tile_t *current_tile,
-    elevation_requirement_t *req, player_t *player)
-{
-    size_t same_level_players = 0;
-
-    elevation_init_requirements(req);
-    same_level_players = count_players_with_level(current_tile, player);
-    if (same_level_players < req[player->level - 1].required_players)
-        return -1;
-    for (int i = 0; i < NB_RESOURCE_TYPES; i++) {
-        if (current_tile->resources[i] <
-            req[player->level - 1].required_resources[i])
-            return -1;
-    }
-    return 0;
 }
