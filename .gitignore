@@ -61,3 +61,6 @@ gui/build/
 # Coverage files
 *.gcda
 *.gcno
+
+# Python cache files
+*.pyc
