@@ -13,7 +13,8 @@ size_t count_players_with_level(tile_t *tile, player_t *player)
     size_t count = 0;
 
     for (size_t i = 0; i < tile->player_count; i++) {
-        if (tile->players[i] && tile->players[i]->level == player->level) {
+        if (tile->players[i] && !tile->players[i]->dead &&
+            tile->players[i]->level == player->level) {
             count++;
         }
     }
