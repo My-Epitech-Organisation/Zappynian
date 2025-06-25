@@ -32,15 +32,15 @@ bool complete_incantation(tile_t *tile, int player_level,
     return true;
 }
 
-bool can_start_incantation(tile_t *tile, int player_level,
+bool can_start_incantation(tile_t *tile, player_t *player,
     const elevation_requirement_t *requirements)
 {
     elevation_requirement_t req;
 
-    if (player_level < 1 || player_level > MAX_LEVEL) {
+    if (player->level < 1 || player->level > MAX_LEVEL) {
         return false;
     }
-    req = requirements[player_level - 1];
+    req = requirements[player->level - 1];
     if (tile->player_count < req.required_players) {
         return false;
     }

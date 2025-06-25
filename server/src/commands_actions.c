@@ -87,6 +87,22 @@ void cmd_incantation(player_t *player, server_t *server)
     client_t *player_client;
     elevation_requirement_t req[MAX_LEVEL];
 
+    if (!player || !server)
+        return;
+    if (!can_start_incantation(current_tile, player, req)) {
+        zn_send_message(server->connection->zn_server, "ko");
+        return;
+    }
+    start_incantation(current_tile, player->level, req);
+    complete_incantation_ritual(player, server);
+}
+
+void cmd_incantation(player_t *player, server_t *server)
+{
+    tile_t *current_tile;
+    client_t *player_client;
+    elevation_requirement_t req[MAX_LEVEL];
+
     player_client = find_client_by_player(server, player);
     if (!player_client)
         return;
