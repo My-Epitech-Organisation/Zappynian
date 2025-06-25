@@ -169,6 +169,8 @@ void Game::gameLoop() {
   WorldScene scene(device_, smgr_, driver_, receiver_, mediaPath_);
 
   createWorldScene(scene);
+  if (networkManager_)
+    networkManager_->initializeParser(scene);
 
   bool mapInitialized = false;
   bool resourcesInitialized = false;
