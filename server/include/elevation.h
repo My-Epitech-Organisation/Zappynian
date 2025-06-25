@@ -36,7 +36,5 @@ void complete_incantation_ritual(player_t *player, server_t *server);
 size_t count_players_with_level(tile_t *tile, player_t *player);
 int check_good_nb_players_and_resources(tile_t *tile,
     elevation_requirement_t *req, player_t *player);
-bool start_incantation_immediately(player_t *player, client_t *client,
-    server_connection_t *connection);
 
 #endif // ELEVATION_H
