@@ -35,9 +35,9 @@ void start_incantation(tile_t *tile, int player_level,
 }
 
 void apply_elevation(tile_t *tile, int player_level,
-    const elevation_requirement_t *requirements)
+    const elevation_requirement_t *requirements, server_t *server)
 {
-    if (!complete_incantation(tile, player_level, requirements))
+    if (!complete_incantation(tile, player_level, requirements, server))
         return;
     for (size_t i = 0; i < tile->player_count; i++) {
         tile->players[i]->level++;
