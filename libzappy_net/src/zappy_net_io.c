@@ -75,37 +75,6 @@ ssize_t zn_write(zn_socket_t sock, const void *data, size_t len)
 }
 
 /**
- * @brief Read data from the socket's receive buffer
- *
- * This function reads data from the socket's internal receive buffer.
- * If the buffer is empty, it attempts to read from the socket into
- * the buffer first. This function does not block if no data is available.
- *
- * @param sock The socket handle
- * @param data Buffer to store read data
- * @param len Maximum amount of data to read
- * @return Number of bytes read, -1 on error with errno set,
- *         0 if no data available
- */
-ssize_t zn_read(zn_socket_t sock, void *data, size_t len)
-{
-    ssize_t result;
-
-    if (validate_socket_params(sock, data, len) < 0)
-        return -1;
-    if (init_socket_buffers_if_needed(sock) < 0) {
-        errno = ENOMEM;
-        return -1;
-    }
-    if (zn_ringbuf_is_empty(&sock->read_buffer)) {
-        result = try_read_from_socket(sock);
-        if (result <= 0)
-            return result;
-    }
-    return zn_ringbuf_read(&sock->read_buffer, data, len);
-}
-
-/**
  * @brief Read a line from the socket's receive buffer
  *
  * This function reads a complete line (ending with '\n') from the socket's
@@ -136,24 +105,6 @@ static ssize_t try_read_line_from_socket(zn_socket_t sock)
     return result;
 }
 
-ssize_t zn_readln(zn_socket_t sock, void *data, size_t len)
-{
-    ssize_t result;
-
-    if (validate_socket_params(sock, data, len) < 0)
-        return -1;
-    if (init_socket_buffers_if_needed(sock) < 0) {
-        errno = ENOMEM;
-        return -1;
-    }
-    if (zn_ringbuf_count_lines(&sock->read_buffer) == 0) {
-        result = try_read_line_from_socket(sock);
-        if (result < 0)
-            return -1;
-    }
-    return zn_ringbuf_read_line(&sock->read_buffer, data, len);
-}
-
 /**
  * @brief Flush the socket's send buffer to the network
  *
@@ -175,40 +126,4 @@ ssize_t zn_flush(zn_socket_t sock)
         return 0;
     }
     return zn_ringbuf_flush_to_fd(&sock->write_buffer, sock->fd);
-}
-
-/**
- * @brief Check if the socket has data available to read
- *
- * This function checks if there is data available in the socket's
- * internal buffer or if the socket is ready for reading.
- *
- * @param sock The socket handle
- * @return 1 if data is available, 0 if not, -1 on error with errno set
- */
-static int check_socket_ready_for_reading(int fd)
-{
-    struct pollfd pfd;
-    int result;
-
-    pfd.fd = fd;
-    pfd.events = POLLIN;
-    pfd.revents = 0;
-    result = poll(&pfd, 1, 0);
-    if (result < 0)
-        return -1;
-    return (pfd.revents & POLLIN) ? 1 : 0;
-}
-
-int zn_has_data(zn_socket_t sock)
-{
-    if (sock == NULL || !sock->initialized) {
-        errno = EINVAL;
-        return -1;
-    }
-    if (!sock->buffer_initialized)
-        return 0;
-    if (!zn_ringbuf_is_empty(&sock->read_buffer))
-        return 1;
-    return check_socket_ready_for_reading(sock->fd);
 }

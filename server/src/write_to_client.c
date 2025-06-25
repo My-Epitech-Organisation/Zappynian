@@ -9,15 +9,9 @@
 
 void send_to_client(client_t *client, const char *msg)
 {
-    int len;
-
     if (!client || !msg || !client->zn_sock)
         return;
-    len = strlen(msg);
-    if (len > 0) {
-        zn_write(client->zn_sock, msg, len);
-        zn_flush(client->zn_sock);
-    }
+    zn_send_message(client->zn_sock, msg);
 }
 
 void handle_client_write(server_connection_t *connection, int client_idx)
