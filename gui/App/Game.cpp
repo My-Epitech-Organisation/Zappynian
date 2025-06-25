@@ -6,10 +6,60 @@
 */
 
 #include "Game.hpp"
+#include "../Entities/IEntity.hpp"
+#include <memory>
+#include <iostream>
 
-Game::Game() { initWindow(); }
+Game::Game(const std::string &host, int port)
+    : host_(host), port_(port), networkManager_(new NetworkManager()) {
+  initWindow();
+  if (!device_) {
+    std::cerr << "Failed to create Irrlicht device\n";
+    return;
+  }
 
-Game::~Game() {}
+  if (!initNetwork()) {
+    std::cerr << "Failed to initialize network connection\n";
+    return;
+  }
+}
+
+Game::~Game() {
+  if (networkManager_) {
+    delete networkManager_;
+    networkManager_ = nullptr;
+  }
+}
+
+bool Game::initNetwork() {
+  if (!networkManager_) {
+    std::cerr << "NetworkManager not initialized\n";
+    return false;
+  }
+
+  if (!networkManager_->connect(host_, port_)) {
+    return false;
+  }
+  if (!networkManager_->performHandshake()) {
+    return false;
+  }
+  return true;
+}
+
+void Game::processNetworkMessages() {
+  if (!networkManager_ || !networkManager_->isConnected()) {
+    return;
+  }
+
+  networkManager_->updateFromServer();
+
+  const auto& gameState = networkManager_->getGameState();
+
+  static bool firstSync = true;
+  if (networkManager_->isGameStateSynchronized() && firstSync) {
+    firstSync = false;
+  }
+}
 
 std::shared_ptr<IEntity> Game::findEntityById(int id) {
   for (auto &entity : entity_) {
@@ -30,7 +80,7 @@ void Game::initWindow() {
   smgr_ = device_->getSceneManager();
   guienv_ = device_->getGUIEnvironment();
   receiver_.setDevice(device_);
-  mediaPath_ = "assets/";
+  mediaPath_ = "gui/assets/";
   device_->setWindowCaption(L"Zappy FPS: 0");
 
   driver_->setTextureCreationFlag(irr::video::ETCF_CREATE_MIP_MAPS, false);
@@ -42,11 +92,10 @@ void Game::initWindow() {
       driver_->getTexture(mediaPath_ + "sky_texture/skymidright.png"),
       driver_->getTexture(mediaPath_ + "sky_texture/skymidleft.png"),
       driver_->getTexture(mediaPath_ + "sky_texture/skyleft.png"));
-
   driver_->setTextureCreationFlag(irr::video::ETCF_CREATE_MIP_MAPS, true);
 }
 
-void Game::updatePlayerMovement(irr::u32 currentTime, NetworkClient &scene) {
+void Game::updatePlayerMovement(irr::u32 currentTime, WorldScene &scene) {
   if (!receiver_.getIsMoving())
     return;
 
@@ -96,7 +145,7 @@ void Game::updatePlayerMovement(irr::u32 currentTime, NetworkClient &scene) {
   }
 }
 
-void Game::updateIncantingPlayers(NetworkClient &scene) {
+void Game::updateIncantingPlayers(WorldScene &scene) {
   for (auto &entity : entity_) {
     if (!entity || !entity->getNode()) {
       continue;
@@ -117,18 +166,86 @@ void Game::updateIncantingPlayers(NetworkClient &scene) {
 void Game::gameLoop() {
   irr::u32 frames = 0;
 
-  NetworkClient scene(device_, smgr_, driver_, receiver_, mediaPath_);
-  scene.createWorld();
-  entity_ = scene.getEntities();
-  if (entity_.empty() || !entity_[0] || !entity_[0]->getNode())
-    return;
+  WorldScene scene(device_, smgr_, driver_, receiver_, mediaPath_);
+
+  scene.createLights();
+  scene.createCamera();
+  scene.createText();
+
+  bool mapInitialized = false;
+  bool resourcesInitialized = false;
 
   while (device_->run()) {
     irr::u32 currentTime = device_->getTimer()->getTime();
 
-    updatePlayerMovement(currentTime, scene);
-    updateIncantingPlayers(scene);
-    scene.updatePaperPlaneMovements();
+    processNetworkMessages();
+
+    if (networkManager_->isGameStateSynchronized()) {
+      const auto& gameState = networkManager_->getGameState();
+
+      if (!mapInitialized && gameState.getMapSize().X > 0) {
+        auto mapSize = gameState.getMapSize();
+        scene.createPlane(mapSize.X, mapSize.Y);
+
+        for (const auto& teamName : gameState.getAllTeamNames()) {
+          scene.addTeam(teamName);
+        }
+
+        mapInitialized = true;
+
+        entity_ = scene.getEntities();
+      }
+
+      auto players = gameState.getAllPlayers();
+      for (const auto* player : players) {
+        bool playerExists = false;
+        for (auto& entity : entity_) {
+          if (entity && entity->getId() == player->getId()) {
+            playerExists = true;
+            break;
+          }
+        }
+
+        if (!playerExists) {
+          scene.createEntities(player->getId(), player->getPosition().X, player->getPosition().Y,
+                              player->getDirection(), player->getLevel(), player->getTeam());
+          entity_ = scene.getEntities();
+        }
+      }
+
+      if (mapInitialized && !resourcesInitialized) {
+        auto tiles = gameState.getAllTiles();
+
+        for (const auto* tile : tiles) {
+          int totalResources = tile->getInventory().getItemQuantity("food") +
+                              tile->getInventory().getItemQuantity("linemate") +
+                              tile->getInventory().getItemQuantity("deraumere") +
+                              tile->getInventory().getItemQuantity("sibur") +
+                              tile->getInventory().getItemQuantity("mendiane") +
+                              tile->getInventory().getItemQuantity("phiras") +
+                              tile->getInventory().getItemQuantity("thystame");
+
+          if (totalResources > 0) {
+            scene.createEntities(tile->getPosition().X, tile->getPosition().Y,
+                                tile->getInventory().getItemQuantity("food"),
+                                tile->getInventory().getItemQuantity("linemate"),
+                                tile->getInventory().getItemQuantity("deraumere"),
+                                tile->getInventory().getItemQuantity("sibur"),
+                                tile->getInventory().getItemQuantity("mendiane"),
+                                tile->getInventory().getItemQuantity("phiras"),
+                                tile->getInventory().getItemQuantity("thystame"));
+          }
+        }
+        resourcesInitialized = true;
+        entity_ = scene.getEntities();
+      }
+    }
+
+    if (!entity_.empty()) {
+      updatePlayerMovement(currentTime, scene);
+      updateIncantingPlayers(scene);
+      scene.updatePaperPlaneMovements();
+    }
 
     driver_->beginScene(true, true, irr::video::SColor(255, 255, 128, 0));
 
@@ -146,6 +263,5 @@ void Game::gameLoop() {
       frames = 0;
     }
   }
-
   device_->drop();
 }

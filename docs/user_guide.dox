@@ -125,7 +125,7 @@
  *
  * 3. **Register in CommandFactory**:
  *    ```cpp
- *    commandFactory.registerHandler("my_command", 
+ *    commandFactory.registerHandler("my_command",
  *        std::make_unique<MyNewCommandHandler>());
  *    ```
  *
@@ -192,7 +192,7 @@
  *
  * ### 🏭 Factory Pattern
  * **Location**: `src/factory/`
- * **Usage**: 
+ * **Usage**:
  * - `CommandFactory` - Creates command handlers based on input
  * - `ClientFactory` - Manages client creation and initialization
  * - `BehaviorFactory` - Instantiates AI behaviors
@@ -315,7 +315,7 @@
  * ---
  *
  * ## 🔗 Navigation
- * 
+ *
  * - 🏠 \ref getting_started "Getting Started" - Quick setup and launch instructions
  * - 📖 \ref user_guide "User Guide" - Complete setup and gameplay instructions
  * - ❓ \ref faq "FAQ" - Frequently asked questions and troubleshooting
