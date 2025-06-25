@@ -116,5 +116,7 @@ const char **get_resource_names(void);
 
 void send_ko_to_all_players(server_t *server, tile_t *current_tile, size_t i);
 void send_ok_to_all_players(server_t *server, tile_t *current_tile, size_t i);
+void send_stat_to_all_players(server_t *server, tile_t *current_tile,
+    size_t i, const char *stat_msg);
 
 #endif /* SERVER_H */
