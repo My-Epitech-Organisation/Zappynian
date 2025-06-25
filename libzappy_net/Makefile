@@ -30,8 +30,8 @@ HEADERS = $(INC_DIR)/libzappy_net.h \
           $(INC_DIR)/zappy_net_error.h
 
 SRC_C = $(SRC_DIR)/libzappy_net.c \
-        $(SRC_DIR)/zappy_net_core.c \
         $(SRC_DIR)/zappy_net_socket.c \
+        $(SRC_DIR)/zappy_net_core.c \
         $(SRC_DIR)/zappy_net_socket_ops.c \
         $(SRC_DIR)/zappy_net_server.c \
         $(SRC_DIR)/zappy_net_client.c \
@@ -43,6 +43,7 @@ SRC_C = $(SRC_DIR)/libzappy_net.c \
         $(SRC_DIR)/zappy_net_ringbuf_read.c \
         $(SRC_DIR)/zappy_net_ringbuf_flush.c \
         $(SRC_DIR)/zappy_net_ringbuf_read_fd.c \
+        $(SRC_DIR)/zappy_net_ringbuf_read_helpers.c \
         $(SRC_DIR)/zappy_net_io.c \
         $(SRC_DIR)/zappy_net_readline.c \
         $(SRC_DIR)/zappy_net_handshake_client.c \

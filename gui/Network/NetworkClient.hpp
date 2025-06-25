@@ -7,6 +7,7 @@
 
 #pragma once
 #include "../Core/WorldScene.hpp"
+#include "NetworkManager.hpp"
 #include <chrono>
 #include <iostream>
 #include <thread>
@@ -15,10 +16,20 @@ class NetworkClient : public WorldScene {
 public:
   NetworkClient(irr::IrrlichtDevice *device, irr::scene::ISceneManager *smgr,
                 irr::video::IVideoDriver *driver, EventReceiver &receiver,
-                const irr::io::path &mediaPath)
-      : WorldScene(device, smgr, driver, receiver, mediaPath) {}
+                const irr::io::path &mediaPath,
+                NetworkManager& networkManager)
+      : WorldScene(device, smgr, driver, receiver, mediaPath),
+        networkManager_(networkManager) {}
 
-  void parseMessage(const std::string &message);
+  NetworkClient(irr::IrrlichtDevice *device, irr::scene::ISceneManager *smgr,
+                irr::video::IVideoDriver *driver, EventReceiver &receiver,
+                const irr::io::path &mediaPath,
+                const std::string &host, int port)
+      : WorldScene(device, smgr, driver, receiver, mediaPath),
+        networkManager_(ownNetworkManager_), host_(host), port_(port) {
+  }
+
+  void parseMessage(void);
 
   void createPlayer(int id, int x, int y, Direction direction, int level,
                     std::string team) {
@@ -67,125 +78,33 @@ public:
 
   void createEgg(int id) { WorldScene::createEntities(id); }
 
-  void createWorld() override {
-    createPlane(5, 5);
-    createLights();
-    createCamera();
-    createText();
-    addTeam("Red");
-    addTeam("Blue");
-    addTeam("Yellow");
-    addTeam("Purple");
-    addTeam("Orange");
-    addTeam("Green");
-    try {
-      createPlayer(1, 2, 2, Direction::WEST, 0, "Red");
-    } catch (const std::exception &e) {
-    }
-    setPlayerLevel(1, 1);
-    try {
-      createPlayer(2, 2, 2, Direction::EAST, 0, "Blue");
-    } catch (const std::exception &e) {
-    }
-    setPlayerLevel(2, 2);
-    try {
-      createPlayer(3, 2, 2, Direction::EAST, 0, "Red");
-    } catch (const std::exception &e) {
-    }
-    setPlayerLevel(3, 3);
+  bool initialiseSocket() {
 
-    try {
-      createPlayer(4, 0, 0, Direction::WEST, 0, "Yellow");
-    } catch (const std::exception &e) {
-    }
-    setPlayerLevel(4, 4);
-    try {
-      createPlayer(5, 0, 1, Direction::WEST, 0, "Purple");
-    } catch (const std::exception &e) {
-    }
-    setPlayerLevel(5, 5);
-    try {
-      createPlayer(6, 0, 2, Direction::WEST, 0, "Orange");
-    } catch (const std::exception &e) {
-    }
-    setPlayerLevel(6, 6);
-    try {
-      createPlayer(7, 0, 3, Direction::WEST, 0, "Green");
-    } catch (const std::exception &e) {
-    }
-    setPlayerLevel(7, 7);
-    try {
-      createPlayer(8, 0, 4, Direction::WEST, 0, "Green");
-    } catch (const std::exception &e) {
-    }
-    setPlayerLevel(8, 8);
+    if (&networkManager_ == &ownNetworkManager_) {
+      if (!networkManager_.connect(host_, port_)) {
+        std::cerr << "Failed to connect to server at " << host_ << ":" << port_
+                  << " - " << networkManager_.getLastError() << "\n";
+        return false;
+      }
 
-    try {
-      createPlayer(9, 4, 4, Direction::WEST, 0, "Red");
-    } catch (const std::exception &e) {
+      if (!networkManager_.performHandshake()) {
+        std::cerr << "Failed to perform handshake - " << networkManager_.getLastError() << "\n";
+        return false;
+      }
     }
-    setPlayerLevel(9, 5);
 
-    try {
-      createPlayer(10, 3, 0, Direction::WEST, 0, "Red");
-    } catch (const std::exception &e) {
-    }
-    setPlayerLevel(8, 5);
-    setPlayerInventory(10, 3, 0, 10, 1, 1, 1, 1, 1, 1);
-    contentTiles(2, 0, 10, 10, 10, 10, 10, 10, 10);
-    contentTiles(3, 0, 0, 0, 10, 10, 0, 10, 1);
-    contentTiles(4, 0, 10, 10, 10, 10, 10, 10, 10);
-    resourceDroping(10, "linemate");
-    resourceDroping(10, "mendiane");
-    resourceDroping(10, "food");
-    resourceCollect(10, "thystame");
-    // resourceCollect(10, "food");
-    // movePlayer(10, 4, 0, Direction::WEST, Direction::WEST);
-
-    contentTiles(2, 4, 32, 32, 32, 32, 32, 32, 32);
-    contentTiles(4, 4, 32, 32, 32, 32, 32, 32, 32);
-    movePlayer(4, 1, 0, Direction::WEST, Direction::WEST);
-    movePlayer(5, 1, 1, Direction::WEST, Direction::WEST);
-    movePlayer(6, 1, 2, Direction::WEST, Direction::WEST);
-    movePlayer(7, 1, 3, Direction::WEST, Direction::WEST);
-    movePlayer(8, 1, 4, Direction::WEST, Direction::WEST);
-    movePlayer(1, 2, 3, Direction::WEST, Direction::WEST);
-    // movePlayer(1, 2, 2, Direction::NORTH);
-    // movePlayer(1, 2, 1, Direction::NORTH);
-    // movePlayer(1, 2, 0, Direction::NORTH);
-    // movePlayer(1, 2, 4, Direction::NORTH);
-    // movePlayer(1, 1, 4, Direction::EAST);
-    // movePlayer(1, 0, 4, Direction::EAST);
-    // movePlayer(1, 4, 4, Direction::EAST);
-    // movePlayer(1, 4, 0, Direction::SOUTH);
-    // movePlayer(1, 4, 1, Direction::SOUTH);
-    // movePlayer(1, 4, 2, Direction::SOUTH);
-    // movePlayer(1, 0, 2, Direction::WEST);
-    // movePlayer(2, 4, 2, Direction::NORTH);
-    PlayerInventory(1, 0, 2, 1, 1, 1, 14, 1, 1, 1);
-    PlayerInventory(3, 0, 0, 10, 10, 10, 10, 10, 10, 10);
-    startIncantation(4, 4, 6, {9});
-    // stopIncantation(4, 4, true);
-    // killPlayer(3);
-    // resourceDroping(3, "linemate");
-    // resourceDroping(3, "sibur");
-    // resourceDroping(3, "phiras");
-    // resourceDroping(3, "thystame");
-    broadcast(1, "Hello from player 1!");
-    broadcast(2, "Hello from player 2!");
-    createEgg(4);
-    createEgg(5);
-    createEgg(1);
-    createEgg(6);
-    createEgg(7);
-    createEgg(8);
-    expulsion(1);
-    // resourceDroping(3, "mendiane");
-    // resourceDroping(3, "deraumere");
-    // endGame("Red");
+    return true;
   }
+
+  const std::string readLine();
 
   std::vector<std::shared_ptr<IEntity>> getEntities() {
     return WorldScene::getEntities();
   }
+
+  private:
+   NetworkManager& networkManager_;
+   NetworkManager ownNetworkManager_;
+   std::string host_;
+   int port_;
 };

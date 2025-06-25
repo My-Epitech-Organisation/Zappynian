@@ -26,9 +26,9 @@ void resource_init(map_t *map)
 
     if (!map || !map->tiles)
         return;
-    for (size_t i = 0; i < map->width; i++) {
-        for (size_t j = 0; j < map->height; j++) {
-            tile = &map->tiles[i][j];
+    for (size_t y = 0; y < map->height; y++) {
+        for (size_t x = 0; x < map->width; x++) {
+            tile = &map->tiles[y][x];
             fill_resource(tile, false);
         }
     }
@@ -40,9 +40,9 @@ void resource_respawn(map_t *map)
 
     if (!map || !map->tiles)
         return;
-    for (size_t i = 0; i < map->width; i++) {
-        for (size_t j = 0; j < map->height; j++) {
-            tile = &map->tiles[i][j];
+    for (size_t y = 0; y < map->height; y++) {
+        for (size_t x = 0; x < map->width; x++) {
+            tile = &map->tiles[y][x];
             fill_resource(tile, false);
         }
     }

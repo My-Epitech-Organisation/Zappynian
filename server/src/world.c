@@ -20,16 +20,27 @@ static int set_tiles(map_t *map, size_t width, size_t height, size_t y)
     }
     if (!map->tiles[y]) {
         perror("Failed to allocate memory for tile row");
+        return 84;
+    }
+    for (size_t x = 0; x < width; x++) {
+        for (int i = 0; i < RESOURCE_COUNT; i++)
+            map->tiles[y][x].resources[i] = 0;
+        map->tiles[y][x].players = NULL;
+        map->tiles[y][x].player_count = 0;
+    }
+    return 0;
+}
+
+static int allocate_and_set_tile_row(map_t *map, size_t width,
+    size_t height, size_t y)
+{
+    map->tiles[y] = malloc(width * sizeof(tile_t));
+    if (set_tiles(map, width, height, y) == 84) {
         for (size_t i = 0; i < y; i++)
             free(map->tiles[i]);
         free(map->tiles);
         free(map);
         return 84;
-    }
-    for (size_t x = 0; x < width; x++) {
-        resource_init(map);
-        map->tiles[y][x].players = NULL;
-        map->tiles[y][x].player_count = 0;
     }
     return 0;
 }
@@ -51,10 +62,10 @@ map_t *create_map(size_t width, size_t height)
         return NULL;
     }
     for (size_t y = 0; y < height; y++) {
-        map->tiles[y] = malloc(width * sizeof(tile_t));
-        if (set_tiles(map, width, height, y) == 84)
+        if (allocate_and_set_tile_row(map, width, height, y) == 84)
             return NULL;
     }
+    resource_init(map);
     return map;
 }
 

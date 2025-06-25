@@ -16,7 +16,7 @@
     #include <unistd.h>
     #include <errno.h>
 
-    #define MAX_QUEUED_LINES 10
+    #define MAX_QUEUED_LINES 200
     #define DEFAULT_BUFFER_SIZE 65536 // 64 KiB
 
 /**
@@ -34,6 +34,14 @@ typedef struct zn_ringbuf {
     size_t line_count;     /**< Number of complete lines in buffer */
     int is_empty;          /**< Flag indicating if buffer is empty */
 } zn_ringbuf_t;
+
+typedef struct read_wrap_params {
+    zn_ringbuf_t *rb;
+    int fd;
+    size_t available;
+    ssize_t bytes_read;
+    size_t first_chunk;
+} read_wrap_params_t;
 
 /**
  * @brief Initialize a ring buffer with given capacity
@@ -147,5 +155,14 @@ int zn_ringbuf_is_full(const zn_ringbuf_t *rb);
  * @return Number of newline characters found
  */
 int zn_count_newlines(const uint8_t *data, size_t len);
+
+/* Helper functions for ring buffer read operations */
+ssize_t handle_wrap_read_first(zn_ringbuf_t *rb, int fd, size_t first_chunk);
+ssize_t handle_wrap_read_second(zn_ringbuf_t *rb, int fd, size_t second_chunk,
+    ssize_t first_bytes_read);
+void update_write_pos_after_wrap(zn_ringbuf_t *rb, ssize_t bytes_read,
+    size_t first_chunk, ssize_t result);
+int validate_read_fd_params(zn_ringbuf_t *rb, int fd);
+int check_line_limit_after_read(zn_ringbuf_t *rb, ssize_t bytes_read);
 
 #endif /* !ZAPPY_NET_RINGBUF_H_ */

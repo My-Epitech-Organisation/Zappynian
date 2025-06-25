@@ -2,20 +2,20 @@
  * @mainpage 🌀 Zappy Project — Documentation
  *
  * Welcome to the official documentation of the **Zappy Project**! 🎉
- * 
+ *
  * \image html test.png "Zappy test" width=600px
  *
- * Zappy is a network-based multiplayer strategy game where teams of AI-controlled players compete 
- * on the mystical planet **Trantor** to achieve the ultimate goal: having at least 6 players 
+ * Zappy is a network-based multiplayer strategy game where teams of AI-controlled players compete
+ * on the mystical planet **Trantor** to achieve the ultimate goal: having at least 6 players
  * reach the maximum elevation level (level 8).
  *
  * ---
  *
  * ## 🌍 About Trantor
- * 
- * The game takes place on **Trantor**, a spherical world with zero-relief planes. Players can walk 
+ *
+ * The game takes place on **Trantor**, a spherical world with zero-relief planes. Players can walk
  * through the edges of the map (wrapping around like a torus), creating an infinite exploration experience.
- * 
+ *
  * The world is rich in resources including:
  * - 🍖 **Food**: Essential for survival (1 unit = 126 time units of life)
  * - 💎 **Six types of stones**: linemate, deraumere, sibur, mendiane, phiras, thystame
@@ -23,7 +23,7 @@
  * ---
  *
  * ## 🎯 Game Objectives
- * 
+ *
  * - **Survival**: Collect food to maintain life energy
  * - **Resource Gathering**: Collect precious stones scattered across Trantor
  * - **Team Collaboration**: Work with teammates to perform elevation rituals
@@ -33,19 +33,19 @@
  * ---
  *
  * ## 🏗️ Architecture Overview
- * 
+ *
  * The Zappy project consists of three main components:
- * 
+ *
  * ### 🖥️ Server (zappy_server)
  * - **Language**: C
  * - **Role**: World simulation, game logic, resource spawning
  * - **Features**: TCP socket handling, multiplexing with `poll()`, time management
- * 
- * ### 🎮 GUI Client (zappy_gui) 
+ *
+ * ### 🎮 GUI Client (zappy_gui)
  * - **Language**: C++
  * - **Role**: Real-time visualization of the game world
  * - **Features**: 2D/3D rendering, player tracking, resource visualization
- * 
+ *
  * ### 🤖 AI Client (zappy_ai)
  * - **Language**: Python
  * - **Role**: Autonomous player control and strategy implementation
@@ -54,7 +54,7 @@
  * ---
  *
  * ## 📂 Project Structure
- * 
+ *
  * ```
  * Zappynian/
  * ├── server/          # Game server implementation (C)
@@ -68,18 +68,18 @@
  * ---
  *
  * ## 🔮 Elevation System
- * 
+ *
  * Players advance through levels by performing **incantation rituals** that require:
  * - Specific combinations of stones
  * - Minimum number of same-level players on the same tile
  * - 300 time units to complete the ritual
- * 
+ *
  * Each successful elevation increases vision range and unlocks new strategic possibilities.
  *
  * ---
  *
  * ## 🎮 Key Features
- * 
+ *
  * - **🌐 Network Multiplayer**: TCP-based client-server architecture
  * - **👁️ Vision System**: Level-based field of view with strategic implications
  * - **📡 Broadcasting**: Sound-based communication system between players
@@ -90,7 +90,7 @@
  * ---
  *
  * ## 🛠️ Technical Highlights
- * 
+ *
  * - **Multi-language Implementation**: C server, C++ GUI, Python AI
  * - **Socket Multiplexing**: Efficient handling of multiple client connections
  * - **Protocol Design**: Well-defined communication protocols between components
@@ -100,7 +100,7 @@
  * ---
  *
  * ## 🔗 Navigation
- * 
+ *
  * - 🏠 \ref getting_started "Getting Started" - Quick setup and launch instructions
  * - 📖 \ref user_guide "User Guide" - Complete setup and gameplay instructions
  * - ❓ \ref faq "FAQ" - Frequently asked questions and troubleshooting

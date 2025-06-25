@@ -82,8 +82,6 @@ public:
 
   void createText();
 
-  virtual void createWorld();
-
   void startIncantation(int x, int y, int level, std::vector<int> ids);
   void stopIncantation(int x, int y, bool result);
   bool isPlayerIncanting(int id) const {
@@ -93,6 +91,8 @@ public:
   std::vector<std::shared_ptr<IEntity>> getEntities() const { return entity_; }
 
   void killPlayer(int id);
+
+  void killEgg(int id);
 
   void addChatMessage(const std::string &message);
 

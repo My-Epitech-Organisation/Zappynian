@@ -58,6 +58,7 @@ public:
   }
 
   Inventory &getInventory() { return inventory_; }
+  const Inventory &getInventory() const { return inventory_; }
 
 protected:
   int id_;

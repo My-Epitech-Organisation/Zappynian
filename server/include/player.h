@@ -36,6 +36,7 @@ typedef struct player_s {
     const command_t *commands[MAX_PLAYER_COMMANDS];
     int command_timers[MAX_PLAYER_COMMANDS];
     int command_count;
+    char *current_command_line;
 } player_t;
 
 player_t *create_player(int id, const char *team_name, int x, int y);
