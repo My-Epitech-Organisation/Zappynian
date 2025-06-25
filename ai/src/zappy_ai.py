@@ -63,7 +63,6 @@ class ZappyAI:
             self.read_passive_messages()
             self.role = select_role(self.world, self.vision)
             self.role.decide(self.queue, self.world, self.vision)
-            self.queue.flush()
 
 
 def parse_args():
