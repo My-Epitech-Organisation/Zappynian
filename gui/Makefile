@@ -35,7 +35,7 @@ LDFLAGS = -lIrrlicht -lGL -lXxf86vm -lXext -lX11 -L../libzappy_net -lzappy_net
 all: $(NAME)
 
 $(OBJDIR)/%.o: %.cpp
-	@mkdir -p $(dir $@)
+	@mkdir -f -p $(dir $@)
 	g++ $(CXXFLAGS) -c $< -o $@
 
 $(NAME): $(OBJ)
