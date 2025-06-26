@@ -60,6 +60,8 @@ SRCS	=	src/main.c							\
 			src/send_gui_map_info.c 			\
 			src/send_gui_team_info.c 			\
 			src/send_gui_time_info.c 			\
+			src/send_gui_broadcast_info.c 		\
+			src/send_gui_resource_info.c 		\
 
 OBJS	=	$(SRCS:.c=.o)
 
