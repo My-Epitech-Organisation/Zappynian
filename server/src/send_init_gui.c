@@ -14,10 +14,10 @@ int send_graphic_initial_state(client_t *client, server_t *server)
     if (client == NULL || server == NULL || client->zn_sock == NULL ||
         server->args == NULL)
         return -1;
-    send_msz(client->zn_sock, server->args->width, server->args->height);
-    send_sgt(client->zn_sock, server->args->frequency);
-    send_mct(client->zn_sock, server->map);
-    send_tna(client->zn_sock, server->args->teams, server->args->team_count);
-    send_ewn(client->zn_sock, server);
+    send_msz(server, server->args->width, server->args->height);
+    send_sgt(server, server->args->frequency);
+    send_mct(server, server->map);
+    send_tna(server, server->args->teams, server->args->team_count);
+    send_ewn(server);
     return 0;
 }

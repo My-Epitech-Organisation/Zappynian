@@ -25,6 +25,12 @@ static server_t *init_server(void)
     }
     memset(server, 0, sizeof(server_t));
     server->server_running = true;
+    server->graphic_clients = create_graphic_client_list();
+    if (server->graphic_clients == NULL) {
+        cleanup_network_integration();
+        free(server);
+        return NULL;
+    }
     return server;
 }
 
