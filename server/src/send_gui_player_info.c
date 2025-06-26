@@ -61,13 +61,25 @@ void send_pin(zn_socket_t sock, player_t *player)
     if (sock == NULL || player == NULL)
         return;
     ret = snprintf(pin_command, sizeof(pin_command),
-        "pin #%d %d %d %d %d %d %d %d %d %d %d %d",
-        player->id, player->x, player->y, player->level,
-        player->orientation, player->food,
-        player->resources[0], player->resources[1],
-        player->resources[2], player->resources[3],
-        player->resources[4], player->resources[5]);
+        "pin #%d %d %d %d %d %d %d %d %d %d",
+        player->id, player->x, player->y, player->resources[0],
+        player->resources[1], player->resources[2], player->resources[3],
+        player->resources[4], player->resources[5], player->resources[6]);
     if (ret < 0 || (size_t)ret >= sizeof(pin_command))
         return;
     zn_send_message(sock, pin_command);
+}
+
+void send_pex(zn_socket_t sock, player_t *player)
+{
+    char pex_command[256];
+    int ret;
+
+    if (sock == NULL || player == NULL)
+        return;
+    ret = snprintf(pex_command, sizeof(pex_command),
+        "pex #%d", player->id);
+    if (ret < 0 || (size_t)ret >= sizeof(pex_command))
+        return;
+    zn_send_message(sock, pex_command);
 }

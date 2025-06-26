@@ -15,6 +15,10 @@ void send_ewn(zn_socket_t sock, server_t *server)
 
     if (sock == NULL || server == NULL)
         return;
+    if (server->eggs == NULL) {
+        zn_send_message(sock, "ewn");
+        return;
+    }
     for (egg_t *egg = server->eggs; egg != NULL; egg = egg->next) {
         ret = snprintf(ewn_command, sizeof(ewn_command),
             "ewn #%d #%d %d %d", egg->id, egg->id,
