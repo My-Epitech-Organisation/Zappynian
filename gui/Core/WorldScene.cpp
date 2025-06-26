@@ -388,7 +388,7 @@ void WorldScene::broadcast(int id, const std::string &message) {
   entity_ = entityManager_.getEntities();
 }
 
-void WorldScene::resourceDroping(int id, const std::string &item) {
+void WorldScene::resourceDropping(int id, const std::string &item) {
   for (auto &entity : entity_) {
     if (entity->getId() == id) {
       entity->getInventory().removeItem(item, 1);

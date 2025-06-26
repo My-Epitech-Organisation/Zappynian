@@ -74,20 +74,21 @@ void GameState::addPlayer(int id, const irr::core::vector3df& pos, Direction dir
 }
 
 void GameState::updatePlayerPosition(int id, const irr::core::vector3df& pos, Direction dir) {
-    auto it = players_.find(id);
-    if (it == players_.end()) {
-        std::cerr << "ERROR: Player " << id << " not found for position update" << std::endl;
-        return;
-    }
-    if (!isValidPosition(pos)) {
-        std::cerr << "ERROR: Invalid position (" << pos.X << "," << pos.Y << ") for player " << id << std::endl;
-        return;
-    }
-    irr::core::vector3df oldPos = it->second->getPosition();
-    it->second->setPosition(pos);
-    it->second->setDirection(dir);
-    updateTilePlayerList(oldPos);
-    updateTilePlayerList(pos);
+    // auto it = players_.find(id);
+    // if (it == players_.end()) {
+    //     std::cerr << "ERROR: Player " << id << " not found for position update" << std::endl;
+    //     return;
+    // }
+    // if (!isValidPosition(pos)) {
+    //     std::cerr << "ERROR: Invalid position (" << pos.X << "," << pos.Y << ") for player " << id << std::endl;
+    //     return;
+    // }
+    // irr::core::vector3df oldPos = it->second->getPosition();
+    // it->second->setPosition(pos);
+    // it->second->setDirection(dir);
+    // updateTilePlayerList(oldPos);
+    // updateTilePlayerList(pos);
+    
 }
 
 void GameState::updatePlayerLevel(int id, int level) {

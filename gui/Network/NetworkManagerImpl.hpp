@@ -9,6 +9,7 @@
 
 #include "../../libzappy_net/include/zappy_net.h"
 #include "../Core/GameState.hpp"
+#include "../Core/WorldScene.hpp"
 #include <string>
 #include <deque>
 #include <memory>
@@ -45,6 +46,7 @@ public:
     ConnectionState getState() const;
     std::string getLastError() const;
     bool isConnected() const;
+    void initializeParser(WorldScene& scene);
 
 private:
     zn_socket_t socket_;

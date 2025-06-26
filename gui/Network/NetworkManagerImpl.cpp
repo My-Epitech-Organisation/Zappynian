@@ -20,8 +20,6 @@ NetworkManagerImpl::NetworkManagerImpl()
     if (!initializeLibrary()) {
         setError("Failed to initialize libzappy_net");
     }
-
-    initializeParser();
 }
 
 NetworkManagerImpl::~NetworkManagerImpl() {
@@ -209,8 +207,8 @@ void NetworkManagerImpl::setError(const std::string& error) {
     std::cerr << "NetworkManager Error: " << error << std::endl;
 }
 
-void NetworkManagerImpl::initializeParser() {
-    parser_ = std::make_unique<Zappy::ProtocolParser>(gameState_);
+void NetworkManagerImpl::initializeParser(WorldScene& scene) {
+    parser_ = std::make_unique<Zappy::ProtocolParser>(scene);
 }
 
 void NetworkManagerImpl::updateFromServer() {

@@ -61,3 +61,7 @@ void NetworkManager::updateFromServer() {
 bool NetworkManager::isGameStateSynchronized() const {
     return impl_->isGameStateSynchronized();
 }
+
+void NetworkManager::initializeParser(WorldScene& scene) {
+    impl_->initializeParser(scene);
+}
