@@ -159,4 +159,6 @@ void send_pfk(zn_socket_t sock, player_t *player);
 // void send_pgt(zn_socket_t sock, player_t *player, resource_type_t resource);
 void send_pdi(zn_socket_t sock, player_t *player);
 
+int init_eggs_list(server_t *server);
+
 #endif /* SERVER_H */
