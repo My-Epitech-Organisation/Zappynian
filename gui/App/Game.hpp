@@ -93,7 +93,7 @@ public:
     scene.setPlayerLevel(10, 5);
     scene.setPlayerInventory(10, 3, 0, 1, 1, 1, 1, 1, 1, 1);
     scene.createEntities(3, 0, 10, 0, 10, 10, 10, 10, 10);
-    scene.resourceDroping(10, "linemate");
+    scene.resourceDropping(10, "linemate");
     scene.changePlayerPos(10, 4, 0, Direction::WEST, Direction::WEST);
 
     scene.createEntities(2, 4, 32, 32, 32, 32, 32, 32, 32);
@@ -134,6 +134,7 @@ public:
     scene.createEntities(7);
     scene.createEntities(8);
     scene.expulsion(1);
+
     // resourceDroping(3, "mendiane");
     // resourceDroping(3, "deraumere");
     // endGame("Red");
