@@ -57,30 +57,44 @@ int add_graphic_client(graphic_client_list_t *list, client_t *client)
     return 0;
 }
 
-int remove_graphic_client(graphic_client_list_t *list, client_t *client)
+static void remove_node(graphic_client_list_t *list,
+    graphic_client_node_t *current, graphic_client_node_t *prev)
 {
-    graphic_client_node_t *current;
-    graphic_client_node_t *prev = NULL;
+    if (prev == NULL)
+        list->head = current->next;
+    else
+        prev->next = current->next;
+    free(current);
+    list->count--;
+}
 
-    if (list == NULL || client == NULL) {
-        return -1;
-    }
-    current = list->head;
+static graphic_client_node_t *find_client_node(graphic_client_list_t *list,
+    client_t *client, graphic_client_node_t **prev)
+{
+    graphic_client_node_t *current = list->head;
+
+    *prev = NULL;
     while (current != NULL) {
-        if (current->client == client) {
-            if (prev == NULL) {
-                list->head = current->next;
-            } else {
-                prev->next = current->next;
-            }
-            free(current);
-            list->count--;
-            return 0;
-        }
-        prev = current;
+        if (current->client == client)
+            return current;
+        *prev = current;
         current = current->next;
     }
-    return -1;
+    return NULL;
+}
+
+int remove_graphic_client(graphic_client_list_t *list, client_t *client)
+{
+    graphic_client_node_t *prev;
+    graphic_client_node_t *current;
+
+    if (list == NULL || client == NULL)
+        return -1;
+    current = find_client_node(list, client, &prev);
+    if (current == NULL)
+        return -1;
+    remove_node(list, current, prev);
+    return 0;
 }
 
 graphic_client_node_t *find_graphic_client(graphic_client_list_t *list,
