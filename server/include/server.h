@@ -25,6 +25,16 @@
 typedef struct team_s team_t;
 typedef struct egg_s egg_t;
 
+typedef struct graphic_client_node_s {
+    client_t *client;
+    struct graphic_client_node_s *next;
+} graphic_client_node_t;
+
+typedef struct graphic_client_list_s {
+    graphic_client_node_t *head;
+    int count;
+} graphic_client_list_t;
+
 typedef enum {
     CLIENT_UNKNOWN = ZN_ROLE_UNKNOWN,
     CLIENT_IA = ZN_ROLE_AI,
@@ -77,6 +87,7 @@ typedef struct server_s {
     bool game_running;
     volatile bool server_running;
     egg_t *eggs;
+    graphic_client_list_t *graphic_clients;
 } server_t;
 
 int handle_args(int argc, char **argv, server_t *server);
@@ -140,33 +151,43 @@ void send_stat_to_all_players(server_t *server, tile_t *current_tile,
     size_t i, const char *stat_msg);
 
 int send_graphic_initial_state(client_t *client, server_t *server);
-void send_msz(zn_socket_t sock, size_t width, size_t height);
-void send_bct(zn_socket_t sock, tile_t *tile);
-void send_mct(zn_socket_t sock, map_t *map);
-void send_tna(zn_socket_t sock, team_t *teams, int team_count);
-void send_pnw(zn_socket_t sock, player_t *player);
-void send_ppo(zn_socket_t sock, player_t *player);
-void send_plv(zn_socket_t sock, player_t *player);
-void send_pin(zn_socket_t sock, player_t *player);
-void send_pex(zn_socket_t sock, player_t *player);
-void send_pbc(zn_socket_t sock, player_t *player, const char *message);
-void send_pic(zn_socket_t sock, tile_t *tile, player_t *player);
-void send_pie(zn_socket_t sock, tile_t *tile, player_t *player);
-void send_pfk(zn_socket_t sock, int player_id);
-void send_pdr(zn_socket_t sock, int player_id, int resource_type);
-void send_pgt(zn_socket_t sock, int player_id, int resource_type);
-void send_pdi(zn_socket_t sock, player_t *player);
-void send_ewn(zn_socket_t sock, server_t *server);
-void send_ebo(zn_socket_t sock, int egg_id);
-void send_edi(zn_socket_t sock, int egg_id);
-void send_sgt(zn_socket_t sock, int frequency);
-void send_sst(zn_socket_t sock, int time);
-void send_seg(zn_socket_t sock, const char *team_name);
-void send_smg(zn_socket_t sock, const char *message);
-void send_suc(zn_socket_t sock);
-void send_sbp(zn_socket_t sock);
+void send_msz(server_t *server, size_t width, size_t height);
+void send_bct(server_t *server, tile_t *tile);
+void send_mct(server_t *server, map_t *map);
+void send_tna(server_t *server, team_t *teams, int team_count);
+void send_pnw(server_t *server, player_t *player);
+void send_ppo(server_t *server, player_t *player);
+void send_plv(server_t *server, player_t *player);
+void send_pin(server_t *server, player_t *player);
+void send_pex(server_t *server, player_t *player);
+void send_pbc(server_t *server, player_t *player, const char *message);
+void send_pic(server_t *server, tile_t *tile, player_t *player);
+void send_pie(server_t *server, tile_t *tile, player_t *player);
+void send_pfk(server_t *server, int player_id);
+void send_pdr(server_t *server, int player_id, int resource_type);
+void send_pgt(server_t *server, int player_id, int resource_type);
+void send_pdi(server_t *server, player_t *player);
+void send_ewn(server_t *server);
+void send_ebo(server_t *server, int egg_id);
+void send_edi(server_t *server, int egg_id);
+void send_sgt(server_t *server, int frequency);
+void send_sst(server_t *server, int time);
+void send_seg(server_t *server, const char *team_name);
+void send_smg(server_t *server, const char *message);
+void send_suc(server_t *server);
+void send_sbp(server_t *server);
 
 int init_eggs_list(server_t *server);
 void make_enough_eggs_for_team(server_t *server, int team_idx);
+
+/* Graphic clients linked list management functions */
+graphic_client_list_t *create_graphic_client_list(void);
+void destroy_graphic_client_list(graphic_client_list_t *list);
+int add_graphic_client(graphic_client_list_t *list, client_t *client);
+int remove_graphic_client(graphic_client_list_t *list, client_t *client);
+graphic_client_node_t *find_graphic_client(graphic_client_list_t *list,
+    int client_id);
+void send_to_all_graphic_clients(graphic_client_list_t *list,
+    const char *message);
 
 #endif /* SERVER_H */

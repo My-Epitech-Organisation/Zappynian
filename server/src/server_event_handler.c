@@ -33,14 +33,33 @@ static void handle_ia_connection(server_t *server, int client_idx)
 
 static void handle_gui_connection(server_t *server, int client_idx)
 {
-    (void)server;
-    (void)client_idx;
+    client_t *client = server->connection->clients[client_idx];
+
+    if (client == NULL || server->graphic_clients == NULL) {
+        return;
+    }
+    if (add_graphic_client(server->graphic_clients, client) == 0) {
+        printf("Graphic client %d added to the list\n", client->id);
+    } else {
+        printf("Failed to add graphic client %d to the list\n", client->id);
+    }
 }
 
 static void handle_disconnection(server_t *server, int client_idx)
 {
-    (void)server;
-    (void)client_idx;
+    client_t *client = server->connection->clients[client_idx];
+
+    if (client == NULL) {
+        return;
+    }
+    if (client->type == CLIENT_GUI && server->graphic_clients != NULL) {
+        if (remove_graphic_client(server->graphic_clients, client) == 0) {
+            printf("Graphic client %d removed from the list\n", client->id);
+        } else {
+            printf("Failed to remove graphic client %d from the list\n",
+                client->id);
+        }
+    }
 }
 
 void handle_client_event(server_t *server, client_event_t event,
