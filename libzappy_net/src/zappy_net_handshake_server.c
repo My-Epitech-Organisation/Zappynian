@@ -57,6 +57,7 @@ zn_role_t zn_receive_team_name(zn_socket_t sock, char *team_name,
         return ZN_ROLE_UNKNOWN;
     }
     strcpy(team_name, received_line);
+    printf("Received team name: %s\n", team_name);
     if (strcmp(received_line, "GRAPHIC") == 0) {
         free(received_line);
         return ZN_ROLE_GUI;
