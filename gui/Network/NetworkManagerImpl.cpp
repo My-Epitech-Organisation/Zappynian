@@ -20,8 +20,6 @@ NetworkManagerImpl::NetworkManagerImpl()
     if (!initializeLibrary()) {
         setError("Failed to initialize libzappy_net");
     }
-
-    // Ne rien faire ici, la version correcte prend WorldScene&
 }
 
 NetworkManagerImpl::~NetworkManagerImpl() {
