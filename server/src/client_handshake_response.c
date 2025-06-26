@@ -15,6 +15,8 @@ static int get_available_slots(server_args_t *args, const char *team_name)
     if (team == NULL) {
         return 0;
     }
+    if (team->remaining_slots > 0)
+        team->remaining_slots--;
     return team->max_slots - team->current_players;
 }
 
