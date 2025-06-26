@@ -180,6 +180,8 @@ void Game::gameLoop() {
 
     processNetworkMessages();
 
+    scene.updateMapText();
+
     if (networkManager_->isGameStateSynchronized()) {
       const auto& gameState = networkManager_->getGameState();
 
