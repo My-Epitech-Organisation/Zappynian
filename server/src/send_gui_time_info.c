@@ -19,3 +19,16 @@ void send_sgt(zn_socket_t sock, int frequency)
         return;
     zn_send_message(sock, sgt_command);
 }
+
+void send_sst(zn_socket_t sock, int time)
+{
+    char sst_command[256];
+    int ret;
+
+    if (sock == NULL || time < 0)
+        return;
+    ret = snprintf(sst_command, sizeof(sst_command), "sst %d", time);
+    if (ret < 0 || (size_t)ret >= sizeof(sst_command))
+        return;
+    zn_send_message(sock, sst_command);
+}

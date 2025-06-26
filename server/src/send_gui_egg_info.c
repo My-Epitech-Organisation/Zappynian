@@ -47,3 +47,29 @@ void send_pfk(zn_socket_t sock, int player_id)
         return;
     zn_send_message(sock, pfk_command);
 }
+
+void send_ebo(zn_socket_t sock, int egg_id)
+{
+    char ebo_command[64];
+    int ret;
+
+    if (sock == NULL)
+        return;
+    ret = snprintf(ebo_command, sizeof(ebo_command), "ebo #%d", egg_id);
+    if (ret < 0 || (size_t)ret >= sizeof(ebo_command))
+        return;
+    zn_send_message(sock, ebo_command);
+}
+
+void send_edi(zn_socket_t sock, int egg_id)
+{
+    char edi_command[64];
+    int ret;
+
+    if (sock == NULL)
+        return;
+    ret = snprintf(edi_command, sizeof(edi_command), "edi #%d", egg_id);
+    if (ret < 0 || (size_t)ret >= sizeof(edi_command))
+        return;
+    zn_send_message(sock, edi_command);
+}
