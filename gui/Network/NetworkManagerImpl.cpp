@@ -208,7 +208,7 @@ void NetworkManagerImpl::setError(const std::string& error) {
 }
 
 void NetworkManagerImpl::initializeParser(WorldScene& scene) {
-    parser_ = std::make_unique<Zappy::ProtocolParser>(gameState_, scene);
+    parser_ = std::make_unique<Zappy::ProtocolParser>(scene);
 }
 
 void NetworkManagerImpl::updateFromServer() {
