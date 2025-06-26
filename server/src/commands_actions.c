@@ -29,6 +29,7 @@ void cmd_eject(player_t *player, server_t *server)
     players_to_eject_count = get_nb_player(current_tile, player);
     if (players_to_eject_count == 0) {
         destroy_eggs_at_position(player->x, player->y, server);
+        send_pex(ejecting_client->zn_sock, player);
         return (void)zn_send_message(ejecting_client->zn_sock, "ok");
     }
     if (make_player_array(current_tile, player, server, ejecting_client) == -1)
@@ -53,6 +54,7 @@ void cmd_take(player_t *player, server_t *server)
             player->food++;
         else
             player->resources[resource_type]++;
+        send_pgt(server->connection->zn_server, player->id, resource_type);
         zn_send_message(server->connection->zn_server, "ok");
     } else
         zn_send_message(server->connection->zn_server, "ko");
@@ -74,6 +76,7 @@ void cmd_set(player_t *player, server_t *server)
     if (player->resources[resource_type] > 0) {
         if (set_resource_on_tile(current_tile, resource_type)) {
             player->resources[resource_type]--;
+            send_pdr(server->connection->zn_server, player->id, resource_type);
             zn_send_message(server->connection->zn_server, "ok");
         } else
             zn_send_message(server->connection->zn_server, "ko");
@@ -102,5 +105,6 @@ void cmd_incantation(player_t *player, server_t *server)
         return (void)zn_send_message(player_client->zn_sock, "ko");
     start_incantation(current_tile);
     zn_send_message(player_client->zn_sock, "Elevation underway");
+    send_pic(server->connection->zn_server, current_tile, player);
     check_and_send_elevation_status(server, player, current_tile, req);
 }

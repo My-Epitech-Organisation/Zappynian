@@ -49,6 +49,7 @@ void check_and_send_elevation_status(server_t *server, player_t *player,
 
     if (can_start_incantation(current_tile, player, requirements)) {
         apply_elevation(current_tile, player->level, requirements);
+        send_pie(server->connection->zn_server, current_tile, player);
         snprintf(msg, sizeof(msg), "Current level: %d", player->level);
         for (size_t i = 0; i < current_tile->player_count; i++)
             send_stat_to_all_players(server, current_tile, i, msg);

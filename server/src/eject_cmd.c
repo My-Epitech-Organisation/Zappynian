@@ -92,10 +92,6 @@ static void ejection(player_t *player, server_t *server,
     for (size_t i = 0; i < get_nb_player(current_tile, player); i++) {
         ejected = players_to_eject[i];
         ejected_client = find_client_by_player(server, ejected);
-        if (ejected_client) {
-            snprintf(msg, sizeof(msg), "eject: %d", get_dir(ejected, player));
-            zn_send_message(ejected_client->zn_sock, msg);
-        }
         remove_player_from_tile(current_tile, ejected);
         move_player_in_direction(ejected, player->orientation,
             server->map);
@@ -124,6 +120,7 @@ int make_player_array(tile_t *current_tile, player_t *player, server_t *server,
     ejection(player, server, players_to_eject, current_tile);
     destroy_eggs_at_position(player->x, player->y, server);
     zn_send_message(ejecting_client->zn_sock, "ok");
+    send_pex(ejecting_client->zn_sock, player);
     free(players_to_eject);
     return 0;
 }
