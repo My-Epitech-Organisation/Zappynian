@@ -30,8 +30,8 @@ OBJDIR = build
 OBJ = $(SRC:%.cpp=$(OBJDIR)/%.o)
 
 CXXFLAGS = -Wall -Wextra -std=c++17 -I./ -I../libzappy_net/include
-LDFLAGS = -lIrrlicht -lGL -lXxf86vm -lXext -lX11 -L../libzappy_net -lzappy_net
-
+LDFLAGS = -lIrrlicht -lGL -lXxf86vm -lXext -lX11 -L../libzappy_net -lzappy_net\
+		  -Wl,-rpath='$$ORIGIN/libzappy_net'
 all: $(NAME)
 
 $(OBJDIR)/%.o: %.cpp
