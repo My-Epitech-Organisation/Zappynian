@@ -8,16 +8,16 @@
 #include "../include/server.h"
 #include "../include/player.h"
 
-void send_pbc(zn_socket_t sock, player_t *player, const char *message)
+void send_pbc(server_t *server, player_t *player, const char *message)
 {
     char pbc_command[256];
     int ret;
 
-    if (sock == NULL || player == NULL || message == NULL)
+    if (server->graphic_clients == NULL || player == NULL || message == NULL)
         return;
     ret = snprintf(pbc_command, sizeof(pbc_command),
         "pbc #%d %s", player->id, message);
     if (ret < 0 || (size_t)ret >= sizeof(pbc_command))
         return;
-    zn_send_message(sock, pbc_command);
+    send_to_all_graphic_clients(server->graphic_clients, pbc_command);
 }

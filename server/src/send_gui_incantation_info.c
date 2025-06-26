@@ -61,13 +61,13 @@ static char *get_teams_in_tile(tile_t *tile)
     return teams;
 }
 
-void send_pic(zn_socket_t sock, tile_t *tile, player_t *player)
+void send_pic(server_t *server, tile_t *tile, player_t *player)
 {
     char pic_command[256];
     int ret;
     char *teams = NULL;
 
-    if (sock == NULL || tile == NULL || player == NULL)
+    if (server->graphic_clients == NULL || tile == NULL || player == NULL)
         return;
     teams = get_teams_in_tile(tile);
     ret = snprintf(pic_command, sizeof(pic_command),
@@ -75,19 +75,19 @@ void send_pic(zn_socket_t sock, tile_t *tile, player_t *player)
         tile->x, tile->y, player->level, teams);
     if (ret < 0 || (size_t)ret >= sizeof(pic_command))
         return;
-    zn_send_message(sock, pic_command);
+    send_to_all_graphic_clients(server->graphic_clients, pic_command);
 }
 
-void send_pie(zn_socket_t sock, tile_t *tile, player_t *player)
+void send_pie(server_t *server, tile_t *tile, player_t *player)
 {
     char pie_command[256];
     int ret;
 
-    if (sock == NULL || tile == NULL || player == NULL)
+    if (server->graphic_clients == NULL || tile == NULL || player == NULL)
         return;
     ret = snprintf(pie_command, sizeof(pie_command),
         "pie %zu %zu %d", tile->x, tile->y, player->level);
     if (ret < 0 || (size_t)ret >= sizeof(pie_command))
         return;
-    zn_send_message(sock, pie_command);
+    send_to_all_graphic_clients(server->graphic_clients, pie_command);
 }

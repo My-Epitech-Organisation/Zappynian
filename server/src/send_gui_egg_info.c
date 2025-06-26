@@ -8,68 +8,64 @@
 #include "../include/server.h"
 #include "../include/egg.h"
 
-static void send_egg_recursively(zn_socket_t sock, egg_t *egg)
+static void send_egg_recursively(graphic_client_list_t *list, egg_t *egg)
 {
     char ewn_command[256];
     int ret;
 
     if (egg == NULL)
         return;
-    send_egg_recursively(sock, egg->next);
+    send_egg_recursively(list, egg->next);
     ret = snprintf(ewn_command, sizeof(ewn_command),
         "ewn #%d #%d %d %d", egg->id, egg->player_id,
         egg->x, egg->y);
     if (ret < 0 || (size_t)ret >= sizeof(ewn_command))
         return;
-    zn_send_message(sock, ewn_command);
+    send_to_all_graphic_clients(list, ewn_command);
 }
 
-void send_ewn(zn_socket_t sock, server_t *server)
+void send_ewn(server_t *server)
 {
-    if (sock == NULL || server == NULL)
+    if (server->graphic_clients == NULL || server == NULL)
         return;
-    if (server->eggs == NULL) {
-        zn_send_message(sock, "ewn");
-        return;
-    }
-    send_egg_recursively(sock, server->eggs);
+    send_egg_recursively(server->graphic_clients, server->eggs);
 }
 
-void send_pfk(zn_socket_t sock, int player_id)
+void send_pfk(server_t *server, int player_id)
 {
     char pfk_command[64];
     int ret;
 
-    if (sock == NULL)
+    if (server->graphic_clients == NULL)
         return;
     ret = snprintf(pfk_command, sizeof(pfk_command), "pfk #%d", player_id);
     if (ret < 0 || (size_t)ret >= sizeof(pfk_command))
         return;
-    zn_send_message(sock, pfk_command);
+    send_to_all_graphic_clients(server->graphic_clients, pfk_command);
 }
 
-void send_ebo(zn_socket_t sock, int egg_id)
+void send_ebo(server_t *server, int egg_id)
 {
     char ebo_command[64];
     int ret;
 
-    if (sock == NULL)
+    if (server->graphic_clients == NULL)
         return;
     ret = snprintf(ebo_command, sizeof(ebo_command), "ebo #%d", egg_id);
     if (ret < 0 || (size_t)ret >= sizeof(ebo_command))
         return;
-    zn_send_message(sock, ebo_command);
+    send_to_all_graphic_clients(server->graphic_clients, ebo_command);
 }
 
-void send_edi(zn_socket_t sock, int egg_id)
+void send_edi(server_t *server, int egg_id)
 {
     char edi_command[64];
     int ret;
 
-    if (sock == NULL)
+    if (server->graphic_clients == NULL)
         return;
     ret = snprintf(edi_command, sizeof(edi_command), "edi #%d", egg_id);
     if (ret < 0 || (size_t)ret >= sizeof(edi_command))
         return;
-    zn_send_message(sock, edi_command);
+    send_to_all_graphic_clients(server->graphic_clients, edi_command);
 }

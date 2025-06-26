@@ -10,42 +10,42 @@
 #include "../include/world.h"
 #include "../include/egg.h"
 
-void send_msz(zn_socket_t sock, size_t width, size_t height)
+void send_msz(server_t *server, size_t width, size_t height)
 {
     char msz_command[256];
     int ret;
 
-    if (sock == NULL || width == 0 || height == 0)
+    if (server->graphic_clients == NULL || width == 0 || height == 0)
         return;
     ret = snprintf(msz_command, sizeof(msz_command),
         "msz %zu %zu", width, height);
     if (ret < 0 || (size_t)ret >= sizeof(msz_command))
         return;
-    zn_send_message(sock, msz_command);
+    send_to_all_graphic_clients(server->graphic_clients, msz_command);
 }
 
-void send_mct(zn_socket_t sock, map_t *map)
+void send_mct(server_t *server, map_t *map)
 {
     tile_t *tile;
 
-    if (sock == NULL || map == NULL)
+    if (server->graphic_clients == NULL || map == NULL)
         return;
     for (size_t i = 0; i < map->width; i++) {
         for (size_t j = 0; j < map->height; j++) {
             tile = get_tile(map, i, j);
             tile->x = i;
             tile->y = j;
-            send_bct(sock, tile);
+            send_bct(server, tile);
         }
     }
 }
 
-void send_bct(zn_socket_t sock, tile_t *tile)
+void send_bct(server_t *server, tile_t *tile)
 {
     char bct_command[256];
     int ret;
 
-    if (sock == NULL || tile == NULL)
+    if (server->graphic_clients == NULL || tile == NULL)
         return;
     ret = snprintf(bct_command, sizeof(bct_command),
         "bct %zu %zu %d %d %d %d %d %d %d",
@@ -54,5 +54,5 @@ void send_bct(zn_socket_t sock, tile_t *tile)
         tile->resources[5], tile->resources[6]);
     if (ret < 0 || (size_t)ret >= sizeof(bct_command))
         return;
-    zn_send_message(sock, bct_command);
+    send_to_all_graphic_clients(server->graphic_clients, bct_command);
 }
