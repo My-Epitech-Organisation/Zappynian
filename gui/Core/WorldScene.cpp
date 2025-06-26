@@ -40,6 +40,7 @@ void WorldScene::createEntities(int id, int x, int y, Direction direction,
       "Player " + std::to_string(id) + " created at (" + std::to_string(x) +
       ", " + std::to_string(y) + ") with direction " +
       std::to_string(static_cast<int>(direction)) + " and team " + team);
+  teamStates_[team].first++;
 }
 
 void WorldScene::setPlayerInventory(int id, int x, int y, int q0, int q1,
@@ -208,27 +209,41 @@ void WorldScene::createText() {
   if (!smgr_ || !driver_)
     return;
   irr::gui::IGUIStaticText *text = smgr_->getGUIEnvironment()->addStaticText(
-      L"Tile Info:", irr::core::rect<irr::s32>(10, 10, 220, 200), false);
+      L"Tile Info:", irr::core::rect<irr::s32>(10, 10, 220, 150), false);
+  text->setDrawBorder(true);
 
   irr::gui::IGUIStaticText *playerText =
       smgr_->getGUIEnvironment()->addStaticText(
           L"Player Info:",
           irr::core::rect<irr::s32>(
               smgr_->getVideoDriver()->getScreenSize().Width - 120, 10,
-              smgr_->getVideoDriver()->getScreenSize().Width - 10, 200),
+              smgr_->getVideoDriver()->getScreenSize().Width - 10, 180),
           false);
+  playerText->setDrawBorder(true);
 
   textMap_ = smgr_->getGUIEnvironment()->addStaticText(
-      L"Map Info:\n", irr::core::rect<irr::s32>(10, 220, 400, 700), false);
+      L"Map Info:\n", irr::core::rect<irr::s32>(10, 220, 220, 640), false);
+  textMap_->setDrawBorder(true);
 
   irr::core::dimension2du screenSize = smgr_->getVideoDriver()->getScreenSize();
   textChat_ = smgr_->getGUIEnvironment()->addStaticText(
       L"Chat:\n",
       irr::core::rect<irr::s32>(10, 700, 400, screenSize.Height - 10), false);
+  textChat_->setDrawBorder(true);
 
   irr::gui::IGUIFont *font = smgr_->getGUIEnvironment()->getFont(
       mediaPath_ + "fonthaettenschweiler.bmp");
   if (font) {
+    text->setOverrideColor(irr::video::SColor(255, 0, 0, 0));
+    playerText->setOverrideColor(irr::video::SColor(255, 0, 0, 0));
+    textChat_->setOverrideColor(irr::video::SColor(255, 0, 0, 0));
+    textMap_->setOverrideColor(irr::video::SColor(255, 0, 0, 0));
+
+    text->setBackgroundColor(irr::video::SColor(120, 211, 211, 211));
+    playerText->setBackgroundColor(irr::video::SColor(120, 211, 211, 211));
+    textChat_->setBackgroundColor(irr::video::SColor(120, 211, 211, 211));
+    textMap_->setBackgroundColor(irr::video::SColor(120, 211, 211, 211));
+
     text->setOverrideFont(font);
     playerText->setOverrideFont(font);
     textChat_->setOverrideFont(font);
@@ -320,6 +335,8 @@ void WorldScene::killPlayer(int id) {
       it = entity_.erase(it);
       receiver_.removeEntity(id);
       addChatMessage("Player " + std::to_string(id) + " has been killed.");
+      teamStates_[player->getTeam()].first--;
+      teamStates_[player->getTeam()].second++;
     } else {
       ++it;
     }
@@ -606,28 +623,37 @@ void WorldScene::expulsion(int id) {
 }
 
 void WorldScene::updateMapText() {
-  std::cout << "Updating map text..." << std::endl;
-  if (!textMap_)
-    return;
-  irr::core::stringw mapText = L"Map Info:\n";
-  std::map<std::string, int> resourceCount;
-  std::vector<std::string> resources = {
-      "food", "linemate", "deraumere", "sibur", "mendiane", "phiras", "thystame"};
+  entityManager_.updateMapText(textMap_);
+  irr::core::stringw mapText = textMap_->getText();
+  int playerCount = 0;
   for (const auto &entity : entity_) {
-    std::cout << "Checking entity with ID: " << entity->getId()
-              << std::endl;
-    if (entity->getId() != -6)
+    if (entity->getId() < 0)
       continue;
-    std::cout << "C'est goof" << std::endl;
-    for (const auto &resource : resources) {
-      resourceCount[resource] += entity->getInventory().getItemQuantity(resource);
-    }
+    playerCount++;
   }
-  for (const auto &pair : resourceCount) {
-    mapText += irr::core::stringw(pair.first.c_str());
-    mapText += L": ";
-    mapText += irr::core::stringw(std::to_wstring(pair.second).c_str());
-    mapText += L"\n";
+  mapText += irr::core::stringw(L"\nTotal Players: ") + irr::core::stringw(playerCount) + L"\n\n";
+  std::vector<std::string> levelTeams = {"0", "0", "0", "0", "0", "0", "0", "0", "0"};
+  for (const auto &teamState : teamStates_) {
+    mapText += irr::core::stringw(teamState.first.c_str()) + L": " +
+               irr::core::stringw(teamState.second.first) + L" alive, " +
+               irr::core::stringw(teamState.second.second) + L" dead\n";
+    mapText += L"Levels :  ";
+    for (const auto &entity : entity_) {
+      if (entity->getId() < 0)
+        continue;
+      auto player = std::dynamic_pointer_cast<PlayerEntity>(entity);
+      if (player && player->getTeam() == teamState.first) {
+        levelTeams[player->getLevel()] =
+            std::to_string(std::stoi(levelTeams[player->getLevel()]) + 1);
+      }
+    }
+    for (size_t i = 0; i < levelTeams.size(); ++i) {
+      mapText += irr::core::stringw(levelTeams[i].c_str()) + L" ";
+      if (i < levelTeams.size() - 1)
+        mapText += L"- ";
+    }
+    mapText += L"\n\n";
+    levelTeams = {"0", "0", "0", "0", "0", "0", "0", "0", "0"};
   }
   textMap_->setText(mapText.c_str());
 }

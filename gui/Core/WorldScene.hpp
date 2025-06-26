@@ -137,6 +137,7 @@ protected:
   std::vector<std::string> chatMessages_;
   static const size_t MAX_CHAT_MESSAGES = 20;
   std::vector<std::string> teams_;
+  std::map<std::string, std::pair<int, int>> teamStates_; // team name, (alive, death)
 
 private:
   void updateChatDisplay();
