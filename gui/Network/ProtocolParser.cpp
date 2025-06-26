@@ -12,8 +12,8 @@
 
 namespace Zappy {
 
-    ProtocolParser::ProtocolParser(GameState& gameState, WorldScene& worldScene)
-        : gameState_(gameState), worldScene_(worldScene) {}
+    ProtocolParser::ProtocolParser(WorldScene& worldScene)
+        : worldScene_(worldScene) {}
 
     bool ProtocolParser::parseMessage(const std::string& message) {
         if (!isValidMessage(message)) {
@@ -166,7 +166,6 @@ namespace Zappy {
             int y = std::stoi(args[2]);
             Direction dir = parseDirection(args[3]);
 
-            std::cout << "DEBUG: Updating player " << id << " position to (" << x << ", " << y << ") with direction " << static_cast<int>(dir) << std::endl;
             worldScene_.changePlayerPos(id, x, y, dir, dir);
             return true;
         } catch (const std::exception& e) {

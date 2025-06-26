@@ -7,7 +7,6 @@
 
 #pragma once
 
-#include "../Core/GameState.hpp"
 #include "../Core/WorldScene.hpp"
 #include <string>
 #include <vector>
@@ -25,7 +24,7 @@ namespace Zappy {
     public:
         using MessageHandler = std::function<void(const std::string&)>;
 
-        ProtocolParser(GameState& gameState, WorldScene& worldScene);
+        ProtocolParser(WorldScene& worldScene);
         ~ProtocolParser() = default;
 
         /**
@@ -46,7 +45,6 @@ namespace Zappy {
         void setOnGameEnd(MessageHandler handler) { onGameEnd_ = handler; }
 
     private:
-        GameState& gameState_;
         WorldScene& worldScene_;
         MessageHandler onPlayerConnected_;
         MessageHandler onPlayerDisconnected_;

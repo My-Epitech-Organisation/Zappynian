@@ -20,8 +20,6 @@ NetworkManagerImpl::NetworkManagerImpl()
     if (!initializeLibrary()) {
         setError("Failed to initialize libzappy_net");
     }
-
-    // Ne rien faire ici, la version correcte prend WorldScene&
 }
 
 NetworkManagerImpl::~NetworkManagerImpl() {
@@ -210,7 +208,7 @@ void NetworkManagerImpl::setError(const std::string& error) {
 }
 
 void NetworkManagerImpl::initializeParser(WorldScene& scene) {
-    parser_ = std::make_unique<Zappy::ProtocolParser>(gameState_, scene);
+    parser_ = std::make_unique<Zappy::ProtocolParser>(scene);
 }
 
 void NetworkManagerImpl::updateFromServer() {
