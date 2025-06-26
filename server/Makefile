@@ -49,6 +49,7 @@ SRCS	=	src/main.c							\
 			src/server_event_handler.c 		\
 			src/catch_commands_from_clients.c 	\
 			src/egg.c 							\
+			src/init_eggs.c 					\
 			src/world_utils.c 					\
 			src/eject_cmd.c 					\
 			src/check_elevation.c 				\

@@ -33,6 +33,9 @@ static int handle_args_with_cleanup(int argc, char **argv, server_t *server)
     int args_result = handle_args(argc, argv, server);
 
     if (args_result == 84) {
+        fprintf(stderr, "Error handling arguments.\n");
+        free(server->args);
+        free(server->connection);
         cleanup_network_integration();
         handle_free(server);
         return 84;

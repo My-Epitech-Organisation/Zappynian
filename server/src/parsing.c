@@ -150,22 +150,17 @@ int handle_args(int argc, char **argv, server_t *server)
 {
     int result;
 
-    if (server == NULL)
-        return 84;
-    if (init_server_memory(server) == 84)
+    if (server == NULL || init_server_memory(server) == 84)
         return 84;
     result = validate_arguments(argc, argv, server);
     if (result != 0)
         return result;
     server->map = create_map(server->args->width, server->args->height);
-    if (server->map == NULL || server->connection == NULL) {
-        fprintf(stderr, "Failed to create map or connection.\n");
-        free(server->args);
-        free(server->connection);
+    if (server->map == NULL || server->connection == NULL)
         return 84;
-    }
     server->connection->port = server->args->port;
     server->connection->args = server->args;
-    // init_eggs(server);
+    if (init_eggs_list(server) == 84)
+        return 84;
     return 0;
 }
