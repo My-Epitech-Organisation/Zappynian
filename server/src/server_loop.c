@@ -7,6 +7,7 @@
 
 #include "../include/server.h"
 #include "../include/game_loop.h"
+#include "../include/egg.h"
 
 static void setup_socket_array(server_connection_t *connection,
     zn_socket_t *sockets, int *count)
@@ -93,14 +94,21 @@ static void setup_poll_events(short *events, int count)
     }
 }
 
+void check_min_eggs(server_t *server)
+{
+    for (int i = 0; i < server->args->team_count; i++) {
+        make_enough_eggs_for_team(server, i);
+    }
+}
+
 static void process_game_tick(server_t *server)
 {
     game_loop_tick(server);
     process_commands(server);
     decrement_food_for_all_players(server); //changer quelque chose dedans sinn ça meure instantanément
-    death_check(server->players, server->player_count,
-        server->map, server);
+    death_check(server->players, server->player_count, server->map, server);
     check_victory(server);
+    check_min_eggs(server);
 }
 
 void stop_server_loop(server_t *server)
