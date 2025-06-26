@@ -8,103 +8,18 @@
 #include "../include/server.h"
 #include "../include/team.h"
 
-static int get_available_slots(server_args_t *args, const char *team_name)
-{
-    team_t *team = get_team_by_name(args, team_name);
-
-    if (team == NULL) {
-        return 0;
-    }
-    return team->max_slots - team->current_players;
-}
-
-static int send_handshake_response(client_t *client, server_args_t *args,
-    const char *team_name)
-{
-    int client_num = 0;
-
-    if (client->type == CLIENT_IA) {
-        client_num = get_available_slots(args, team_name);
-        return zn_send_handshake_response(client->zn_sock, client_num,
-            (int)args->width, (int)args->height);
-    } else if (client->type == CLIENT_GUI) {
-        return send_graphic_initial_state(client, args);
-    }
-    return -1;
-}
-
-static int validate_team_assignment(server_args_t *args, const char *team_name)
-{
-    team_t *team = get_team_by_name(args, team_name);
-
-    if (team == NULL || team->current_players >= team->max_slots) {
-        return -1;
-    }
-    return 0;
-}
-
-static int setup_client_handshake(client_t *client,
-    server_connection_t *connection, int idx, char *team_name)
-{
-    zn_role_t role;
-
-    if (zn_send_welcome(client->zn_sock) != 0) {
-        disconnect_client(connection, idx);
-        return -1;
-    }
-    role = zn_receive_team_name(client->zn_sock, team_name, sizeof(team_name));
-    if (role == ZN_ROLE_UNKNOWN) {
-        disconnect_client(connection, idx);
-        return -1;
-    }
-    client->type = (client_type_t)role;
-    return 0;
-}
-
-static int validate_and_respond(client_t *client,
-    server_connection_t *connection, int idx, const char *team_name)
-{
-    server_args_t *args = connection->args;
-
-    if (client->type == CLIENT_IA &&
-        validate_team_assignment(args, team_name) == -1) {
-        disconnect_client(connection, idx);
-        return -1;
-    }
-    if (send_handshake_response(client, args, team_name) != 0) {
-        disconnect_client(connection, idx);
-        return -1;
-    }
-    return 0;
-}
-
-static void finalize_client_assignment(client_t *client,
-    server_connection_t *connection, const char *team_name)
-{
-    server_args_t *args = connection->args;
-    team_t *team;
-
-    if (client->type == CLIENT_IA) {
-        team = get_team_by_name(args, team_name);
-        team->current_players++;
-        client->team_name = strdup(team_name);
-        printf("Client is an IA client: %s\n", team_name);
-    } else if (client->type == CLIENT_GUI) {
-        client->team_name = strdup("GRAPHIC");
-        printf("Client is a GUI client.\n");
-    }
-}
-
-void assign_client_type(client_t *client, server_connection_t *connection,
-    int idx)
+client_event_t assign_client_type(client_t *client,
+    server_connection_t *connection, int idx)
 {
     char team_name[256];
+    client_event_t event;
 
-    if (setup_client_handshake(client, connection, idx, team_name) == -1)
-        return;
+    event = setup_client_handshake(client, connection, idx, team_name);
+    if (event == CLIENT_EVENT_PENDING || event == CLIENT_EVENT_ERROR)
+        return event;
     if (validate_and_respond(client, connection, idx, team_name) == -1)
-        return;
-    finalize_client_assignment(client, connection, team_name);
+        return CLIENT_EVENT_ERROR;
+    return event;
 }
 
 void catch_command(char *line, client_t *client,
@@ -120,22 +35,27 @@ void catch_command(char *line, client_t *client,
     }
 }
 
-void handle_client_read(server_connection_t *connection, int idx)
+client_event_t handle_client_read(server_connection_t *connection, int idx)
 {
     client_t *client = connection->clients[idx];
     char *line = NULL;
+    client_event_t event;
 
-    if (client->type == CLIENT_UNKNOWN)
-        return;
+    if (client->type == CLIENT_UNKNOWN) {
+        event = assign_client_type(client, connection, idx);
+        return event;
+    }
     line = zn_receive_message(client->zn_sock);
     if (line == NULL) {
-        if (errno != EAGAIN && errno != EWOULDBLOCK)
+        if (errno != EAGAIN && errno != EWOULDBLOCK) {
             disconnect_client(connection, idx);
-        return;
+            return CLIENT_EVENT_DISCONNECTED;
+        }
+        return CLIENT_EVENT_NONE;
     }
-    printf("Command received: %s\n", line);
     catch_command(line, client, connection);
     free(line);
+    return CLIENT_EVENT_NONE;
 }
 
 void disconnect_client(server_connection_t *connection, int client_idx)

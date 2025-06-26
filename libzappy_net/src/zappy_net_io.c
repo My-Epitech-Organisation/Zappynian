@@ -36,21 +36,6 @@ static int validate_socket_params(zn_socket_t sock, void *data, size_t len)
     return 0;
 }
 
-static ssize_t try_read_from_socket(zn_socket_t sock)
-{
-    ssize_t result;
-
-    result = zn_ringbuf_read_from_fd(&sock->read_buffer, sock->fd);
-    if (result < 0) {
-        if (errno == EAGAIN || errno == EWOULDBLOCK)
-            return 0;
-        return -1;
-    } else if (result == 0) {
-        return 0;
-    }
-    return result;
-}
-
 /**
  * @brief Write data to the socket's send buffer
  *
@@ -72,37 +57,6 @@ ssize_t zn_write(zn_socket_t sock, const void *data, size_t len)
         return -1;
     }
     return zn_ringbuf_write(&sock->write_buffer, data, len);
-}
-
-/**
- * @brief Read a line from the socket's receive buffer
- *
- * This function reads a complete line (ending with '\n') from the socket's
- * internal receive buffer. If no complete line is available, it attempts to
- * read from the socket into the buffer first.
- *
- * @param sock The socket handle
- * @param data Buffer to store read data
- * @param len Maximum amount of data to read
- * @return Number of bytes read (including newline), -1 on error with errno set
- *         or if no complete line is available
- */
-static ssize_t try_read_line_from_socket(zn_socket_t sock)
-{
-    ssize_t result;
-
-    result = zn_ringbuf_read_from_fd(&sock->read_buffer, sock->fd);
-    if (result < 0) {
-        if (errno == EAGAIN || errno == EWOULDBLOCK) {
-            errno = EAGAIN;
-            return -1;
-        }
-        return -1;
-    } else if (result == 0) {
-        errno = EAGAIN;
-        return -1;
-    }
-    return result;
 }
 
 /**

@@ -156,9 +156,11 @@ static void commands_execute_next(player_t *player, server_t *server)
 void process_commands(server_t *server)
 {
     player_t *player;
-    size_t i;
 
-    for (i = 0; i < server->player_count; i++) {
+    for (int i = 0; i < server->connection->client_count; i++) {
+        if (server->players[i] == NULL
+            || strcmp(server->players[i]->team_name, "GRAPHIC") == 0)
+            continue;
         player = server->players[i];
         if (player != NULL && !player->dead && player->command_count > 0) {
             commands_execute_next(player, server);
