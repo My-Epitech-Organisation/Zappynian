@@ -120,7 +120,7 @@ int make_player_array(tile_t *current_tile, player_t *player, server_t *server,
     ejection(player, server, players_to_eject, current_tile);
     destroy_eggs_at_position(player->x, player->y, server);
     zn_send_message(ejecting_client->zn_sock, "ok");
-    send_pex(ejecting_client->zn_sock, player);
+    send_pex(server, player);
     free(players_to_eject);
     return 0;
 }
