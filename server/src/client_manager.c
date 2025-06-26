@@ -9,15 +9,15 @@
 #include "../include/team.h"
 
 client_event_t assign_client_type(client_t *client,
-    server_connection_t *connection, int idx)
+    server_t *server, int idx)
 {
     char team_name[256];
     client_event_t event;
 
-    event = setup_client_handshake(client, connection, idx, team_name);
+    event = setup_client_handshake(client, server->connection, idx, team_name);
     if (event == CLIENT_EVENT_PENDING || event == CLIENT_EVENT_ERROR)
         return event;
-    if (validate_and_respond(client, connection, idx, team_name) == -1)
+    if (validate_and_respond(client, server, idx, team_name) == -1)
         return CLIENT_EVENT_ERROR;
     return event;
 }
@@ -35,25 +35,25 @@ void catch_command(char *line, client_t *client,
     }
 }
 
-client_event_t handle_client_read(server_connection_t *connection, int idx)
+client_event_t handle_client_read(server_t *server, int idx)
 {
-    client_t *client = connection->clients[idx];
+    client_t *client = server->connection->clients[idx];
     char *line = NULL;
     client_event_t event;
 
     if (client->type == CLIENT_UNKNOWN) {
-        event = assign_client_type(client, connection, idx);
+        event = assign_client_type(client, server, idx);
         return event;
     }
     line = zn_receive_message(client->zn_sock);
     if (line == NULL) {
         if (errno != EAGAIN && errno != EWOULDBLOCK) {
-            disconnect_client(connection, idx);
+            disconnect_client(server->connection, idx);
             return CLIENT_EVENT_DISCONNECTED;
         }
         return CLIENT_EVENT_NONE;
     }
-    catch_command(line, client, connection);
+    catch_command(line, client, server->connection);
     free(line);
     return CLIENT_EVENT_NONE;
 }

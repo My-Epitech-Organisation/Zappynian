@@ -45,13 +45,11 @@ zn_role_t zn_receive_team_name(zn_socket_t sock, char *team_name,
 {
     char *received_line = NULL;
 
-    if (sock == NULL || team_name == NULL || team_name_size == 0) {
+    if (sock == NULL || team_name == NULL || team_name_size == 0)
         return ZN_ROLE_UNKNOWN;
-    }
     received_line = zn_receive_message(sock);
-    if (received_line == NULL) {
+    if (received_line == NULL)
         return ZN_ROLE_UNKNOWN;
-    }
     if (strlen(received_line) >= team_name_size) {
         free(received_line);
         return ZN_ROLE_UNKNOWN;

@@ -45,7 +45,7 @@ static void handle_socket_events(server_t *server,
     client_event_t event = CLIENT_EVENT_NONE;
 
     if (result->readable & (1ULL << i)) {
-        event = handle_client_read(server->connection, client_idx);
+        event = handle_client_read(server, client_idx);
         handle_client_event(server, event, client_idx);
     }
     if (result->writable & (1ULL << i))

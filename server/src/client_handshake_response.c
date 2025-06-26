@@ -18,16 +18,20 @@ static int get_available_slots(server_args_t *args, const char *team_name)
     return team->max_slots - team->current_players;
 }
 
-static int send_handshake_response(client_t *client, server_args_t *args,
+static int send_handshake_response(client_t *client, server_t *server,
     const char *team_name)
 {
     int client_num = 0;
+    int ret = 0;
 
     if (client->type == CLIENT_IA) {
-        client_num = get_available_slots(args, team_name);
+        client_num = get_available_slots(server->args, team_name);
+        ret = zn_send_handshake_response(client->zn_sock, client_num,
+        (int)server->args->width, (int)server->args->height);
     }
-    return zn_send_handshake_response(client->zn_sock, client_num,
-        (int)args->width, (int)args->height);
+    if (client->type == CLIENT_GUI)
+        ret = send_graphic_initial_state(client, server);
+    return ret;
 }
 
 static int validate_team_assignment(server_args_t *args, const char *team_name)
@@ -40,19 +44,19 @@ static int validate_team_assignment(server_args_t *args, const char *team_name)
     return 0;
 }
 
-int validate_and_respond(client_t *client, server_connection_t *connection,
+int validate_and_respond(client_t *client, server_t *server,
     int idx, const char *team_name)
 {
-    server_args_t *args = connection->args;
+    server_args_t *args = server->connection->args;
 
     if (client->type == CLIENT_IA) {
         if (validate_team_assignment(args, team_name) == -1) {
-            disconnect_client(connection, idx);
+            disconnect_client(server->connection, idx);
             return -1;
         }
     }
-    if (send_handshake_response(client, args, team_name) != 0) {
-        disconnect_client(connection, idx);
+    if (send_handshake_response(client, server, team_name) != 0) {
+        disconnect_client(server->connection, idx);
         return -1;
     }
     return 0;
