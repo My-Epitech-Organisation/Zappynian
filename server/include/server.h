@@ -98,19 +98,17 @@ void handle_error_connection(char *msg, server_connection_t *connection);
 void set_server(server_connection_t *connection);
 
 // Client handling functions
-client_event_t handle_client_read(
-    server_connection_t *connection, int client_idx);
+client_event_t handle_client_read(server_t *server, int idx);
 void handle_client_write(server_connection_t *connection, int client_idx);
 void disconnect_client(server_connection_t *connection, int client_idx);
-client_event_t assign_client_type(
-    client_t *client, server_connection_t *connection, int idx);
+client_event_t assign_client_type(client_t *client, server_t *server, int idx);
 void accept_client(server_connection_t *connection, server_args_t *args);
 
 /* Client handshake functions */
 client_event_t setup_client_handshake(client_t *client,
     server_connection_t *connection, int idx, char *team_name);
-int validate_and_respond(client_t *client, server_connection_t *connection,
-    int idx, const char *team_name);
+int validate_and_respond(client_t *client, server_t *server, int idx,
+    const char *team_name);
 void finalize_client_assignment(client_t *client,
     server_connection_t *connection, const char *team_name);
 
@@ -141,12 +139,24 @@ const char **get_resource_names(void);
 void send_stat_to_all_players(server_t *server, tile_t *current_tile,
     size_t i, const char *stat_msg);
 
-int send_graphic_initial_state(client_t *client, server_args_t *args);
+int send_graphic_initial_state(client_t *client, server_t *server);
 void send_msz(zn_socket_t sock, size_t width, size_t height);
 void send_sgt(zn_socket_t sock, int frequency);
 void send_mct(zn_socket_t sock, map_t *map);
 void send_bct(zn_socket_t sock, tile_t *tile);
 void send_tna(zn_socket_t sock, team_t *teams, int team_count);
 void send_ewn(zn_socket_t sock, server_t *server);
+void send_pnw(zn_socket_t sock, player_t *player);
+void send_ppo(zn_socket_t sock, player_t *player);
+void send_plv(zn_socket_t sock, player_t *player);
+void send_pin(zn_socket_t sock, player_t *player);
+void send_pex(zn_socket_t sock, player_t *player);
+void send_pbc(zn_socket_t sock, player_t *player, const char *message);
+void send_pic(zn_socket_t sock, tile_t *tile);
+void send_pie(zn_socket_t sock, tile_t *tile);
+void send_pfk(zn_socket_t sock, player_t *player);
+// void send_pdr(zn_socket_t sock, player_t *player, resource_type_t resource);
+// void send_pgt(zn_socket_t sock, player_t *player, resource_type_t resource);
+void send_pdi(zn_socket_t sock, player_t *player);
 
 #endif /* SERVER_H */
