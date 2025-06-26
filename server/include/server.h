@@ -167,5 +167,6 @@ void send_suc(zn_socket_t sock);
 void send_sbp(zn_socket_t sock);
 
 int init_eggs_list(server_t *server);
+void make_enough_eggs_for_team(server_t *server, int team_idx);
 
 #endif /* SERVER_H */

@@ -63,6 +63,7 @@ SRCS	=	src/main.c							\
 			src/send_gui_broadcast_info.c 		\
 			src/send_gui_resources_info.c 		\
 			src/send_gui_status_info.c 			\
+			src/check_min_eggs.c 				\
 
 OBJS	=	$(SRCS:.c=.o)
 
