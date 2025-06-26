@@ -112,6 +112,7 @@ static int init_server_memory(server_t *server)
         fprintf(stderr, "Memory allocation failed for server connection.\n");
         return 84;
     }
+    memset(server->connection, 0, sizeof(server_connection_t));
     server->args = malloc(sizeof(server_args_t));
     if (server->args == NULL) {
         fprintf(stderr, "Memory allocation failed for server arguments.\n");
