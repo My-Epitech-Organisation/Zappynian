@@ -165,5 +165,6 @@ int handle_args(int argc, char **argv, server_t *server)
         return 84;
     }
     server->connection->port = server->args->port;
+    server->connection->args = server->args;
     return 0;
 }

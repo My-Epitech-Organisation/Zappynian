@@ -117,4 +117,12 @@ const char **get_resource_names(void);
 void send_stat_to_all_players(server_t *server, tile_t *current_tile,
     size_t i, const char *stat_msg);
 
+int send_graphic_initial_state(client_t *client, server_args_t *args);
+void send_msz(zn_socket_t sock, size_t width, size_t height);
+void send_sgt(zn_socket_t sock, int frequency);
+void send_mct(zn_socket_t sock, map_t *map);
+void send_bct(zn_socket_t sock, tile_t *tile, map_t *map);
+void send_tna(zn_socket_t sock, team_t *teams, int team_count);
+void send_ewn(zn_socket_t sock, server_t *server);
+
 #endif /* SERVER_H */

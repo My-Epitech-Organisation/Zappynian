@@ -49,6 +49,11 @@ SRCS	=	src/main.c							\
 			src/eject_cmd.c 					\
 			src/check_elevation.c 				\
 			src/send_state_msg_to_players.c 	\
+			src/send_init_gui.c 				\
+			src/send_gui_egg_info.c 			\
+			src/send_gui_player_info.c 			\
+			src/send_gui_map_info.c 			\
+			src/send_gui_team_info.c 			\
 
 OBJS	=	$(SRCS:.c=.o)
 

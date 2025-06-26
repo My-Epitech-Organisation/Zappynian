@@ -25,9 +25,12 @@ static int send_handshake_response(client_t *client, server_args_t *args,
 
     if (client->type == CLIENT_IA) {
         client_num = get_available_slots(args, team_name);
+        return zn_send_handshake_response(client->zn_sock, client_num,
+            (int)args->width, (int)args->height);
+    } else if (client->type == CLIENT_GUI) {
+        return send_graphic_initial_state(client, args);
     }
-    return zn_send_handshake_response(client->zn_sock, client_num,
-        (int)args->width, (int)args->height);
+    return -1;
 }
 
 static int validate_team_assignment(server_args_t *args, const char *team_name)
@@ -86,7 +89,7 @@ static void finalize_client_assignment(client_t *client,
         team->current_players++;
         client->team_name = strdup(team_name);
         printf("Client is an IA client: %s\n", team_name);
-    } else {
+    } else if (client->type == CLIENT_GUI) {
         client->team_name = strdup("GRAPHIC");
         printf("Client is a GUI client.\n");
     }
