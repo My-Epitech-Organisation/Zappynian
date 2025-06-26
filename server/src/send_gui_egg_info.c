@@ -34,3 +34,16 @@ void send_ewn(zn_socket_t sock, server_t *server)
     }
     send_egg_recursively(sock, server->eggs);
 }
+
+void send_pfk(zn_socket_t sock, int player_id)
+{
+    char pfk_command[64];
+    int ret;
+
+    if (sock == NULL)
+        return;
+    ret = snprintf(pfk_command, sizeof(pfk_command), "pfk #%d", player_id);
+    if (ret < 0 || (size_t)ret >= sizeof(pfk_command))
+        return;
+    zn_send_message(sock, pfk_command);
+}
