@@ -186,36 +186,15 @@ void Game::gameLoop() {
       if (!mapInitialized && gameState.getMapSize().X > 0) {
         auto mapSize = gameState.getMapSize();
         scene.createPlane(mapSize.X, mapSize.Y);
-
         for (const auto& teamName : gameState.getAllTeamNames()) {
           scene.addTeam(teamName);
         }
-
         mapInitialized = true;
-
         entity_ = scene.getEntities();
-      }
-
-      auto players = gameState.getAllPlayers();
-      for (const auto* player : players) {
-        bool playerExists = false;
-        for (auto& entity : entity_) {
-          if (entity && entity->getId() == player->getId()) {
-            playerExists = true;
-            break;
-          }
-        }
-
-        if (!playerExists) {
-          scene.createEntities(player->getId(), player->getPosition().X, player->getPosition().Y,
-                              player->getDirection(), player->getLevel(), player->getTeam());
-          entity_ = scene.getEntities();
-        }
       }
 
       if (mapInitialized && !resourcesInitialized) {
         auto tiles = gameState.getAllTiles();
-
         for (const auto* tile : tiles) {
           int totalResources = tile->getInventory().getItemQuantity("food") +
                               tile->getInventory().getItemQuantity("linemate") +
@@ -224,7 +203,6 @@ void Game::gameLoop() {
                               tile->getInventory().getItemQuantity("mendiane") +
                               tile->getInventory().getItemQuantity("phiras") +
                               tile->getInventory().getItemQuantity("thystame");
-
           if (totalResources > 0) {
             scene.createEntities(tile->getPosition().X, tile->getPosition().Y,
                                 tile->getInventory().getItemQuantity("food"),
@@ -240,6 +218,8 @@ void Game::gameLoop() {
         entity_ = scene.getEntities();
       }
     }
+
+    entity_ = scene.getEntities();
 
     if (!entity_.empty()) {
       updatePlayerMovement(currentTime, scene);
