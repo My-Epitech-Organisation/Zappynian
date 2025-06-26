@@ -24,6 +24,7 @@ SRCS	=	src/main.c							\
 			src/client_manager.c 				\
 			src/client_handshake.c 				\
 			src/client_handshake_response.c 	\
+			src/graphic_client_list.c 			\
 			src/commands_movement.c				\
 			src/commands_actions.c 				\
 			src/commands_communication.c 		\
@@ -63,7 +64,9 @@ SRCS	=	src/main.c							\
 			src/send_gui_broadcast_info.c 		\
 			src/send_gui_resources_info.c 		\
 			src/send_gui_status_info.c 			\
+			src/send_gui_incantation_info.c 	\
 			src/check_min_eggs.c 				\
+			src/send_to_graphic_client.c 		\
 
 OBJS	=	$(SRCS:.c=.o)
 
