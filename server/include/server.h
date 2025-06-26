@@ -141,23 +141,30 @@ void send_stat_to_all_players(server_t *server, tile_t *current_tile,
 
 int send_graphic_initial_state(client_t *client, server_t *server);
 void send_msz(zn_socket_t sock, size_t width, size_t height);
-void send_sgt(zn_socket_t sock, int frequency);
-void send_mct(zn_socket_t sock, map_t *map);
 void send_bct(zn_socket_t sock, tile_t *tile);
+void send_mct(zn_socket_t sock, map_t *map);
 void send_tna(zn_socket_t sock, team_t *teams, int team_count);
-void send_ewn(zn_socket_t sock, server_t *server);
 void send_pnw(zn_socket_t sock, player_t *player);
 void send_ppo(zn_socket_t sock, player_t *player);
 void send_plv(zn_socket_t sock, player_t *player);
 void send_pin(zn_socket_t sock, player_t *player);
 void send_pex(zn_socket_t sock, player_t *player);
 void send_pbc(zn_socket_t sock, player_t *player, const char *message);
-void send_pic(zn_socket_t sock, tile_t *tile);
-void send_pie(zn_socket_t sock, tile_t *tile);
-void send_pfk(zn_socket_t sock, player_t *player);
-// void send_pdr(zn_socket_t sock, player_t *player, resource_type_t resource);
-// void send_pgt(zn_socket_t sock, player_t *player, resource_type_t resource);
+void send_pic(zn_socket_t sock, tile_t *tile, player_t *player);
+void send_pie(zn_socket_t sock, tile_t *tile, player_t *player);
+void send_pfk(zn_socket_t sock, int player_id);
+void send_pdr(zn_socket_t sock, int player_id, int resource_type);
+void send_pgt(zn_socket_t sock, int player_id, int resource_type);
 void send_pdi(zn_socket_t sock, player_t *player);
+void send_ewn(zn_socket_t sock, server_t *server);
+void send_ebo(zn_socket_t sock, int egg_id);
+void send_edi(zn_socket_t sock, int egg_id);
+void send_sgt(zn_socket_t sock, int frequency);
+void send_sst(zn_socket_t sock, int time);
+void send_seg(zn_socket_t sock, const char *team_name);
+void send_smg(zn_socket_t sock, const char *message);
+void send_suc(zn_socket_t sock);
+void send_sbp(zn_socket_t sock);
 
 int init_eggs_list(server_t *server);
 
