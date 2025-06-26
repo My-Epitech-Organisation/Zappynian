@@ -57,7 +57,6 @@ SRCS	=	src/main.c							\
 			src/send_gui_egg_info.c 			\
 			src/send_gui_player_info.c 			\
 			src/send_gui_map_info.c 			\
-			src/send_gui_team_info.c 			\
 
 OBJS	=	$(SRCS:.c=.o)
 
