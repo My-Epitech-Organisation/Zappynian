@@ -116,6 +116,8 @@ public:
 
   void resourceCollect(int id, const std::string &item);
 
+  void updateMapText();
+
 protected:
   irr::IrrlichtDevice *device_;
   irr::scene::ISceneManager *smgr_;
@@ -131,6 +133,7 @@ protected:
   std::unordered_map<int, bool> isIncanting_;
   std::vector<std::tuple<int, int, int>> incantationData_; // x, y, id
   irr::gui::IGUIStaticText *textChat_;
+  irr::gui::IGUIStaticText *textMap_;
   std::vector<std::string> chatMessages_;
   static const size_t MAX_CHAT_MESSAGES = 20;
   std::vector<std::string> teams_;

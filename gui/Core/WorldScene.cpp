@@ -218,6 +218,9 @@ void WorldScene::createText() {
               smgr_->getVideoDriver()->getScreenSize().Width - 10, 200),
           false);
 
+  textMap_ = smgr_->getGUIEnvironment()->addStaticText(
+      L"Map Info:\n", irr::core::rect<irr::s32>(10, 220, 400, 700), false);
+
   irr::core::dimension2du screenSize = smgr_->getVideoDriver()->getScreenSize();
   textChat_ = smgr_->getGUIEnvironment()->addStaticText(
       L"Chat:\n",
@@ -229,6 +232,7 @@ void WorldScene::createText() {
     text->setOverrideFont(font);
     playerText->setOverrideFont(font);
     textChat_->setOverrideFont(font);
+    textMap_->setOverrideFont(font);
   }
 
   receiver_.setText(text);
@@ -599,4 +603,31 @@ void WorldScene::expulsion(int id) {
       ++it;
     }
   }
+}
+
+void WorldScene::updateMapText() {
+  std::cout << "Updating map text..." << std::endl;
+  if (!textMap_)
+    return;
+  irr::core::stringw mapText = L"Map Info:\n";
+  std::map<std::string, int> resourceCount;
+  std::vector<std::string> resources = {
+      "food", "linemate", "deraumere", "sibur", "mendiane", "phiras", "thystame"};
+  for (const auto &entity : entity_) {
+    std::cout << "Checking entity with ID: " << entity->getId()
+              << std::endl;
+    if (entity->getId() != -6)
+      continue;
+    std::cout << "C'est goof" << std::endl;
+    for (const auto &resource : resources) {
+      resourceCount[resource] += entity->getInventory().getItemQuantity(resource);
+    }
+  }
+  for (const auto &pair : resourceCount) {
+    mapText += irr::core::stringw(pair.first.c_str());
+    mapText += L": ";
+    mapText += irr::core::stringw(std::to_wstring(pair.second).c_str());
+    mapText += L"\n";
+  }
+  textMap_->setText(mapText.c_str());
 }
