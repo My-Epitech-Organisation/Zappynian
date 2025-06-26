@@ -24,6 +24,7 @@ public:
     setId(id);
     setPosition(pos);
     setScale(scale);
+    setName("Player_" + std::to_string(id));
     textures_ = textures;
     entityB3D_ = entityB3D;
   }

@@ -9,6 +9,7 @@
 
 #include <string>
 #include <memory>
+#include "../Core/WorldScene.hpp"
 
 class NetworkManagerImpl;
 namespace Zappy {
@@ -71,6 +72,8 @@ public:
     void updateFromServer();
 
     bool isGameStateSynchronized() const;
+
+    void initializeParser(WorldScene& scene);
 
 private:
     std::unique_ptr<NetworkManagerImpl> impl_;

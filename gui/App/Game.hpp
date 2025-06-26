@@ -10,7 +10,6 @@
 #include "../Entities/PlayerEntity.hpp"
 #include "../Entities/Stone.hpp"
 #include "../Event/EventReceiver.hpp"
-#include "../Network/NetworkClient.hpp"
 #include "../Network/NetworkManager.hpp"
 #include <irrlicht/irrlicht.h>
 #include <memory>

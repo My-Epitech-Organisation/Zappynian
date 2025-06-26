@@ -24,8 +24,9 @@ public:
 
   void setPosition(const irr::core::vector3df &pos) override {
     pos_ = pos;
-    if (node_)
+    if (node_) {
       node_->setPosition(pos_);
+    }
   }
   irr::core::vector3df getPosition() const override { return pos_; }
 
@@ -34,9 +35,11 @@ public:
     if (node_)
       node_->setScale(scale_);
   }
+
   irr::core::vector3df getScale() const override { return scale_; }
 
   irr::scene::IAnimatedMeshSceneNode *getNode() const override { return node_; }
+
   void createNode(irr::scene::ISceneManager *smgr,
                   irr::video::IVideoDriver *driver) override;
 

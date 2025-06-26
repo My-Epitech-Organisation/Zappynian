@@ -112,7 +112,7 @@ public:
 
   void expulsion(int id);
 
-  void resourceDroping(int id, const std::string &item);
+  void resourceDropping(int id, const std::string &item);
 
   void resourceCollect(int id, const std::string &item);
 
