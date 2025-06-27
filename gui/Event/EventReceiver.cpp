@@ -94,8 +94,7 @@ bool EventReceiver::moveCamera(irr::EKEY_CODE key,
 
 bool EventReceiver::handleMouseInput(
     const irr::SEvent::SMouseInput &mouseInput) {
-  switch (mouseInput.Event) {
-  case irr::EMIE_MOUSE_MOVED:
+  if (mouseInput.Event == irr::EMIE_MOUSE_MOVED) {
     if (isMouseDown && smgr) {
       int deltaX = mouseInput.X - mouseX;
       int deltaY = mouseInput.Y - mouseY;
@@ -108,18 +107,15 @@ bool EventReceiver::handleMouseInput(
     mouseX = mouseInput.X;
     mouseY = mouseInput.Y;
     return true;
-
-  case irr::EMIE_LMOUSE_PRESSED_DOWN:
+  } else if (mouseInput.Event == irr::EMIE_LMOUSE_PRESSED_DOWN) {
     isMouseDown = true;
     mouseX = mouseInput.X;
     mouseY = mouseInput.Y;
     return true;
-
-  case irr::EMIE_LMOUSE_LEFT_UP:
+  } else if (mouseInput.Event == irr::EMIE_LMOUSE_LEFT_UP) {
     isMouseDown = false;
     return handleNodeSelection(mouseInput) || handlePlayerSelection(mouseInput);
-
-  case irr::EMIE_MOUSE_WHEEL:
+  } else if (mouseInput.Event == irr::EMIE_MOUSE_WHEEL) {
     return handleMouseWheelMovement(mouseInput.Wheel);
   }
   return false;
