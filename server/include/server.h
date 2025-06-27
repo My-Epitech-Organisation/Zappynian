@@ -163,7 +163,7 @@ void send_pin(server_t *server, player_t *player);
 void send_pex(server_t *server, player_t *player);
 void send_pbc(server_t *server, player_t *player, const char *message);
 void send_pic(server_t *server, tile_t *tile, player_t *player);
-void send_pie(server_t *server, tile_t *tile, player_t *player);
+void send_pie(server_t *server, tile_t *tile, bool result);
 void send_pfk(server_t *server, int player_id);
 void send_pdr(server_t *server, int player_id, int resource_type);
 void send_pgt(server_t *server, int player_id, int resource_type);
