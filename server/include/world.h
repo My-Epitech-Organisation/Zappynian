@@ -40,7 +40,5 @@ bool set_resource_on_tile(tile_t *tile, int resource_type);
 int get_resource_type_from_name(const char *resource_name);
 void normalize_coordinates_toroidal(int *x, int *y, size_t width,
     size_t height);
-int calculate_toroidal_distance(int x1, int y1, int x2, int y2,
-    size_t width, size_t height);
 
 #endif // WORLD_H
