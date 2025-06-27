@@ -6,6 +6,8 @@
 */
 
 #include "../include/server.h"
+#include "../include/player.h"
+#include "../include/team.h"
 
 static int find_free_player_slot(server_t *server)
 {
@@ -26,13 +28,6 @@ static int add_player_to_server(server_t *server, player_t *player)
     return 0;
 }
 
-static int generate_random_position(server_t *server, int *x, int *y)
-{
-    *x = rand() % (int)server->args->width;
-    *y = rand() % (int)server->args->height;
-    return 0;
-}
-
 int initialize_server_players(server_t *server)
 {
     size_t max_players = server->args->team_count *
@@ -45,14 +40,13 @@ int initialize_server_players(server_t *server)
     return 0;
 }
 
-player_t *create_player_for_client(server_t *server, client_t *client)
+player_t *create_player_for_client(server_t *server, client_t *client,
+    team_t *team)
 {
     player_t *player = NULL;
-    int x;
-    int y;
+    int x = rand() % (int)server->args->width;
+    int y = rand() % (int)server->args->height;
 
-    if (generate_random_position(server, &x, &y) == -1)
-        return NULL;
     player = create_player(client->id, client->team_name, x, y);
     if (player == NULL)
         return NULL;
@@ -61,5 +55,12 @@ player_t *create_player_for_client(server_t *server, client_t *client)
         destroy_player(player);
         return NULL;
     }
+    for (int i = 0; i < team->max_slots; i++) {
+        if (team->players[i] == NULL) {
+            team->players[i] = player;
+            break;
+        }
+    }
+    team->current_players++;
     return player;
 }
