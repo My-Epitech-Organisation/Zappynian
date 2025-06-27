@@ -10,7 +10,6 @@
 #include <memory>
 #include <iostream>
 
-// --- Variables globales pour l'initialisation WorldScene ---
 struct TileInfo {
     int x, y;
     int food, linemate, deraumere, sibur, mendiane, phiras, thystame;
@@ -20,10 +19,6 @@ int mapHeight = 0;
 std::vector<std::string> teamNames;
 std::vector<TileInfo> tiles;
 
-// --- Variables globales ou membres à initialiser via le parser ---
-extern int mapWidth, mapHeight;
-extern std::vector<std::string> teamNames;
-extern std::vector<TileInfo> tiles;
 
 Game::Game(const std::string &host, int port)
     : host_(host), port_(port), networkManager_(new NetworkManager()) {
