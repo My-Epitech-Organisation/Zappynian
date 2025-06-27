@@ -41,7 +41,7 @@ void send_smg(server_t *server, const char *message)
 
     if (server->graphic_clients == NULL || message == NULL)
         return;
-    ret = snprintf(command, sizeof(command), "smt %s", message);
+    ret = snprintf(command, sizeof(command), "smg %s", message);
     if (ret < 0 || (size_t)ret >= sizeof(command))
         return;
     send_to_all_graphic_clients(server->graphic_clients, command);
