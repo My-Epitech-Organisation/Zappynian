@@ -157,7 +157,7 @@ void process_commands(server_t *server)
 {
     player_t *player;
 
-    for (int i = 0; i < server->player_count; i++) {
+    for (size_t i = 0; i < server->player_count; i++) {
         if (server->players[i] == NULL
             || strcmp(server->players[i]->team_name, "GRAPHIC") == 0)
             continue;
