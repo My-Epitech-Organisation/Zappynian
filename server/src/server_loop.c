@@ -105,7 +105,7 @@ static void process_game_tick(server_t *server)
 {
     game_loop_tick(server);
     process_commands(server);
-    decrement_food_for_all_players(server); //changer quelque chose dedans sinn ça meure instantanément
+    decrement_food_for_all_players(server);
     death_check(server->players, server->player_count, server->map, server);
     check_victory(server);
     check_min_eggs(server);
