@@ -273,7 +273,7 @@ namespace Zappy {
             for (size_t i = 3; i < args.size(); ++i) {
                 playerIds.push_back(parseId(args[i]));
             }
-            worldScene_.startIncantation(x, y, level, playerIds);
+            worldScene_.startIncantation(x, y, playerIds);
             return true;
         } catch (const std::exception& e) {
             std::cerr << "ERROR: Failed to parse pic: " << e.what() << std::endl;
