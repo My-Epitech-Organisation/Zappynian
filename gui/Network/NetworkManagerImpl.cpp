@@ -245,12 +245,6 @@ void NetworkManagerImpl::processIncomingMessages() {
         }
         attempts++;
     }
-    if (!gameStateSynchronized_ && !gameState_.isEmpty()) {
-        auto mapSize = gameState_.getMapSize();
-        if (mapSize.X > 0 && mapSize.Y > 0) {
-            gameStateSynchronized_ = true;
-        }
-    }
 }
 
 bool NetworkManagerImpl::isGameStateSynchronized() const {

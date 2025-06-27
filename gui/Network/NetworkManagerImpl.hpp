@@ -8,7 +8,6 @@
 #pragma once
 
 #include "../../libzappy_net/include/zappy_net.h"
-#include "../Core/GameState.hpp"
 #include "../Core/WorldScene.hpp"
 #include <string>
 #include <deque>
@@ -87,20 +86,6 @@ public:
     bool hasData() const;
 
     /**
-     * @brief Gets the current game state (const version)
-     * 
-     * @return Const reference to the game state
-     */
-    const Zappy::GameState& getGameState() const { return gameState_; }
-    
-    /**
-     * @brief Gets the current game state (mutable version)
-     * 
-     * @return Reference to the game state
-     */
-    Zappy::GameState& getGameState() { return gameState_; }
-    
-    /**
      * @brief Updates the game state from server messages
      */
     void updateFromServer();
@@ -149,7 +134,6 @@ private:
     bool initialized_;
     std::deque<std::string> initialMessages_;
 
-    Zappy::GameState gameState_;
     std::unique_ptr<Zappy::ProtocolParser> parser_;
     bool gameStateSynchronized_;
 
@@ -169,9 +153,4 @@ private:
      * @brief Processes incoming messages from the server
      */
     void processIncomingMessages();
-    
-    /**
-     * @brief Initializes the protocol parser
-     */
-    void initializeParser();
 };
