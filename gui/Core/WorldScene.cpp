@@ -282,7 +282,7 @@ void WorldScene::changeHeadLevel(std::shared_ptr<IEntity> &entity, int level) {
       0, driver_->getTexture(texturesHead[level]));
 }
 
-void WorldScene::startIncantation(int x, int y, int level,
+void WorldScene::startIncantation(int x, int y,
                                   std::vector<int> ids) {
   for (int id : ids) {
     for (auto &entity : entity_) {

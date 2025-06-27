@@ -208,7 +208,7 @@ public:
    * @param level Required level for incantation
    * @param ids Vector of player IDs participating
    */
-  void startIncantation(int x, int y, int level, std::vector<int> ids);
+  void startIncantation(int x, int y, std::vector<int> ids);
   
   /**
    * @brief Stops an ongoing incantation
