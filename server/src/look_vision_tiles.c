@@ -50,6 +50,8 @@ void add_other_tiles(char *result, player_t *player, map_t *map,
     for (int distance = 1; distance <= vision_range; distance++) {
         for (int offset = -distance; offset <= distance; offset++) {
             calculate_vision_coordinates(player, distance, offset, pos);
+            normalize_coordinates_toroidal(&pos[0], &pos[1], map->width,
+                map->height);
             strcat(result, ",");
             add_tile_contents(result, pos[0], pos[1], map);
         }
