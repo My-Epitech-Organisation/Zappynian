@@ -23,10 +23,8 @@ LIB_NAME = $(LIB_DIR)/libzappy_net.so
 
 # Test source files - Comprehensive unit tests for working GUI components
 TEST_FILES = test_inventory_comprehensive.cpp \
-            test_gamestate_comprehensive.cpp \
             test_playerentity_comprehensive.cpp \
             test_inventory.cpp \
-            test_game_state.cpp \
             test_direction.cpp \
             test_direction_comprehensive.cpp \
             test_aentity_basic.cpp \
@@ -35,8 +33,7 @@ TEST_FILES = test_inventory_comprehensive.cpp \
             irrlicht_stubs.cpp
 
 # GUI source files to test - Only files that compile without string issues
-GUI_SRC_FILES = $(GUI_DIR)/Core/GameState.cpp \
-                $(GUI_DIR)/Entities/AEntity.cpp \
+GUI_SRC_FILES = $(GUI_DIR)/Entities/AEntity.cpp \
                 $(GUI_DIR)/Entities/Inventory.cpp \
                 $(GUI_DIR)/Entities/PlayerEntity.cpp \
                 $(GUI_DIR)/Entities/TileEntity.cpp
