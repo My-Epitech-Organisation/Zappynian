@@ -81,10 +81,18 @@ size_t get_nb_player(tile_t *tile, player_t *player)
     return count;
 }
 
+void send_message_ejection(client_t *ejected_client,
+    int direction)
+{
+    char msg[64];
+
+    snprintf(msg, sizeof(msg), "eject: %d", direction);
+    zn_send_message(ejected_client->zn_sock, msg);
+}
+
 static void ejection(player_t *player, server_t *server,
     player_t **players_to_eject, tile_t *current_tile)
 {
-    char msg[64];
     tile_t *new_tile;
     player_t *ejected;
     client_t *ejected_client;
@@ -100,10 +108,8 @@ static void ejection(player_t *player, server_t *server,
         if (new_tile)
             add_player_to_tile(new_tile, ejected);
         send_ppo(server, ejected);
-        if (ejected_client) {
-            snprintf(msg, sizeof(msg), "eject: %d", direction);
-            zn_send_message(ejected_client->zn_sock, msg);
-        }
+        if (ejected_client)
+            send_message_ejection(ejected_client, direction);
     }
 }
 
