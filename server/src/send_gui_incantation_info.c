@@ -82,7 +82,7 @@ void send_pie(server_t *server, tile_t *tile, bool result)
 {
     char pie_command[256];
     int ret;
-    char *str_result = result ? "true" : "false";
+    char *str_result = result ? "1" : "0";
 
     if (server->graphic_clients == NULL || tile == NULL)
         return;
