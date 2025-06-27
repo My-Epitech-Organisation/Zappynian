@@ -78,15 +78,16 @@ void send_pic(server_t *server, tile_t *tile, player_t *player)
     send_to_all_graphic_clients(server->graphic_clients, pic_command);
 }
 
-void send_pie(server_t *server, tile_t *tile, player_t *player)
+void send_pie(server_t *server, tile_t *tile, bool result)
 {
     char pie_command[256];
     int ret;
+    char *str_result = result ? "true" : "false";
 
-    if (server->graphic_clients == NULL || tile == NULL || player == NULL)
+    if (server->graphic_clients == NULL || tile == NULL)
         return;
     ret = snprintf(pie_command, sizeof(pie_command),
-        "pie %zu %zu %d", tile->x, tile->y, player->level);
+        "pie %zu %zu %d", tile->x, tile->y, str_result);
     if (ret < 0 || (size_t)ret >= sizeof(pie_command))
         return;
     send_to_all_graphic_clients(server->graphic_clients, pie_command);
