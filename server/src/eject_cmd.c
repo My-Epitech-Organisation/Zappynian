@@ -88,16 +88,22 @@ static void ejection(player_t *player, server_t *server,
     tile_t *new_tile;
     player_t *ejected;
     client_t *ejected_client;
+    int direction;
 
     for (size_t i = 0; i < get_nb_player(current_tile, player); i++) {
         ejected = players_to_eject[i];
         ejected_client = find_client_by_player(server, ejected);
+        direction = get_dir(player, ejected);
         remove_player_from_tile(current_tile, ejected);
         move_player_in_direction(ejected, player->orientation,
             server->map);
         new_tile = get_tile(server->map, ejected->x, ejected->y);
         if (new_tile)
             add_player_to_tile(new_tile, ejected);
+        if (ejected_client) {
+            snprintf(msg, sizeof(msg), "eject: %d", direction);
+            zn_send_message(ejected_client->zn_sock, msg);
+        }
     }
 }
 
