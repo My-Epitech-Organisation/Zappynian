@@ -48,18 +48,11 @@ void cmd_take(player_t *player, server_t *server)
     if (player->dead || player->in_elevation)
         return (void)zn_send_message(client->zn_sock, "ko");
     resource_type = get_resource_type_from_name(get_command_argument(player));
-    if (resource_type == -1) {
-        zn_send_message(client->zn_sock, "ko");
-        return;
-    }
+    if (resource_type == -1)
+        return (void)zn_send_message(client->zn_sock, "ko");
     current_tile = get_tile(server->map, player->x, player->y);
     if (take_resource_from_tile(current_tile, resource_type)) {
-        if (resource_type == 0)
-            player->food++;
-        else
-            player->resources[resource_type]++;
-        send_pgt(server, player->id, resource_type);
-        zn_send_message(client->zn_sock, "ok");
+        add_resources(player, resource_type, server, client);
     } else
         zn_send_message(client->zn_sock, "ko");
 }
@@ -67,7 +60,6 @@ void cmd_take(player_t *player, server_t *server)
 void cmd_set(player_t *player, server_t *server)
 {
     int resource_type;
-    tile_t *current_tile;
     client_t *client;
 
     client = find_client_by_player(server, player);
@@ -80,28 +72,10 @@ void cmd_set(player_t *player, server_t *server)
         zn_send_message(client->zn_sock, "ko");
         return;
     }
-    current_tile = get_tile(server->map, player->x, player->y);
-    if (resource_type == 0) {
-        if (player->food > 0) {
-            if (set_resource_on_tile(current_tile, resource_type)) {
-                player->food--;
-                send_pdr(server, player->id, resource_type);
-                zn_send_message(client->zn_sock, "ok");
-            } else
-                zn_send_message(client->zn_sock, "ko");
-        } else
-            zn_send_message(client->zn_sock, "ko");
-    } else {
-        if (player->resources[resource_type] > 0) {
-            if (set_resource_on_tile(current_tile, resource_type)) {
-                player->resources[resource_type]--;
-                send_pdr(server, player->id, resource_type);
-                zn_send_message(client->zn_sock, "ok");
-            } else
-                zn_send_message(client->zn_sock, "ko");
-        } else
-            zn_send_message(client->zn_sock, "ko");
-    }
+    if (resource_type == 0)
+        manage_food(server, player, client, resource_type);
+    else
+        manage_stones(server, player, client, resource_type);
 }
 
 void cmd_incantation(player_t *player, server_t *server)
