@@ -104,7 +104,7 @@ static void ejection(player_t *player, server_t *server,
         direction = get_dir(player, ejected);
         remove_player_from_tile(current_tile, ejected);
         move_player_in_direction(ejected, player->orientation, server->map);
-        new_tile = get_tile(server->map, ejected->x, ejected->y);
+        new_tile = get_tile_toroidal(server->map, ejected->x, ejected->y);
         if (new_tile)
             add_player_to_tile(new_tile, ejected);
         send_ppo(server, ejected);
