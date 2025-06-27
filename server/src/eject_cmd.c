@@ -99,6 +99,7 @@ static void ejection(player_t *player, server_t *server,
         new_tile = get_tile(server->map, ejected->x, ejected->y);
         if (new_tile)
             add_player_to_tile(new_tile, ejected);
+        send_ppo(server, ejected);
         if (ejected_client) {
             snprintf(msg, sizeof(msg), "eject: %d", direction);
             zn_send_message(ejected_client->zn_sock, msg);
