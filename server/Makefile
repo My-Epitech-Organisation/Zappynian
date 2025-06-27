@@ -67,6 +67,7 @@ SRCS	=	src/main.c							\
 			src/send_gui_incantation_info.c 	\
 			src/check_min_eggs.c 				\
 			src/send_to_graphic_client.c 		\
+			src/set_resources.c 				\
 
 OBJS	=	$(SRCS:.c=.o)
 
