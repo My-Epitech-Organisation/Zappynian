@@ -51,7 +51,7 @@ void move_player(player_t *player, int x, int y, map_t *map)
     normalize_coordinates_toroidal(&x, &y, map->width, map->height);
     player->x = x;
     player->y = y;
-    new_tile = get_tile(map, player->x, player->y);
+    new_tile = get_tile_toroidal(map, player->x, player->y);
     if (new_tile)
         add_player_to_tile(new_tile, player);
 }
