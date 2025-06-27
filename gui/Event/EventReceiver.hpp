@@ -220,15 +220,7 @@ public:
    * @return true if node selection was handled, false otherwise
    */
   bool handleNodeSelection(const irr::SEvent::SMouseInput &mouseInput);
-  
-  /**
-   * @brief Handles character movement via keyboard input
-   * 
-   * @param key Key code for movement direction
-   * @return true if character movement was handled, false otherwise
-   */
-  bool handleCharacterMovement(irr::EKEY_CODE key);
-  
+
   /**
    * @brief Moves the camera based on key input
    * 

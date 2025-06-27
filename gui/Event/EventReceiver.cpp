@@ -36,11 +36,6 @@ bool EventReceiver::OnEvent(const irr::SEvent &event) {
 }
 
 bool EventReceiver::handleKeyInput(const irr::SEvent::SKeyInput &keyInput) {
-  if (keyInput.PressedDown && animatedNode && !isMoving) {
-    if (handleCharacterMovement(keyInput.Key))
-      return true;
-  }
-
   if (keyInput.Key == irr::KEY_ESCAPE && !keyInput.PressedDown) {
     device->closeDevice();
     return true;
@@ -95,43 +90,6 @@ bool EventReceiver::moveCamera(irr::EKEY_CODE key,
   camera->setTarget(target);
 
   return true;
-}
-
-bool EventReceiver::handleCharacterMovement(irr::EKEY_CODE key) {
-  switch (key) {
-  case irr::KEY_KEY_Z:
-    setCurrentRotationY(180.0f);
-    animatedNode->setRotation(
-        irr::core::vector3df(0, getCurrentRotationY(), 0));
-    return true;
-  case irr::KEY_KEY_S:
-    setCurrentRotationY(0.0f);
-    animatedNode->setRotation(
-        irr::core::vector3df(0, getCurrentRotationY(), 0));
-    return true;
-  case irr::KEY_KEY_Q:
-    setCurrentRotationY(90.0f);
-    animatedNode->setRotation(
-        irr::core::vector3df(0, getCurrentRotationY(), 0));
-    return true;
-  case irr::KEY_KEY_D:
-    setCurrentRotationY(270.0f);
-    animatedNode->setRotation(
-        irr::core::vector3df(0, getCurrentRotationY(), 0));
-    return true;
-  case irr::KEY_SPACE:
-    if (!isMoving) {
-      setIsMoving(true);
-      setMoveStartTime(device->getTimer()->getTime());
-      irr::core::vector3df pos = animatedNode->getPosition();
-      setMoveStartX(pos.X);
-      setMoveStartZ(pos.Z);
-      animatedNode->setAnimationSpeed(26.0f);
-      return true;
-    }
-    break;
-  }
-  return false;
 }
 
 bool EventReceiver::handleMouseInput(
