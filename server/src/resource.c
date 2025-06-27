@@ -109,7 +109,7 @@ void resource_init(map_t *map)
     srand(time(NULL));
     for (size_t y = 0; y < map->height; y++) {
         for (size_t x = 0; x < map->width; x++) {
-            set_resource_to_zero(map, x, y);
+            set_resource_to_zero(map, y, x);
         }
     }
     for (int res_type = 0; res_type < RESOURCE_COUNT; res_type++) {
