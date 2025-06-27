@@ -79,6 +79,7 @@ void destroy_eggs_at_position(int x, int y, server_t *server)
     if (server == NULL)
         return;
     current = &server->eggs;
+    send_edi(server, to_delete->id);
     while (*current != NULL) {
         if ((*current)->x == x && (*current)->y == y) {
             to_delete = *current;
