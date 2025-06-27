@@ -10,6 +10,16 @@
 #include <memory>
 #include <iostream>
 
+struct TileInfo {
+    int x, y;
+    int food, linemate, deraumere, sibur, mendiane, phiras, thystame;
+};
+int mapWidth = 0;
+int mapHeight = 0;
+std::vector<std::string> teamNames;
+std::vector<TileInfo> tiles;
+
+
 Game::Game(const std::string &host, int port)
     : host_(host), port_(port), networkManager_(new NetworkManager()) {
   initWindow();
@@ -52,8 +62,6 @@ void Game::processNetworkMessages() {
   }
 
   networkManager_->updateFromServer();
-
-  const auto& gameState = networkManager_->getGameState();
 
   static bool firstSync = true;
   if (networkManager_->isGameStateSynchronized() && firstSync) {
@@ -179,46 +187,29 @@ void Game::gameLoop() {
     irr::u32 currentTime = device_->getTimer()->getTime();
 
     processNetworkMessages();
-
     scene.updateMapText();
 
-    if (networkManager_->isGameStateSynchronized()) {
-      const auto& gameState = networkManager_->getGameState();
-
-      if (!mapInitialized && gameState.getMapSize().X > 0) {
-        auto mapSize = gameState.getMapSize();
-        scene.createPlane(mapSize.X, mapSize.Y);
-        for (const auto& teamName : gameState.getAllTeamNames()) {
-          scene.addTeam(teamName);
+    if (!mapInitialized && mapWidth > 0 && mapHeight > 0) {
+        scene.createPlane(mapWidth, mapHeight);
+        for (const auto& teamName : teamNames) {
+            scene.addTeam(teamName);
         }
         mapInitialized = true;
         entity_ = scene.getEntities();
-      }
+    }
 
-      if (mapInitialized && !resourcesInitialized) {
-        auto tiles = gameState.getAllTiles();
-        for (const auto* tile : tiles) {
-          int totalResources = tile->getInventory().getItemQuantity("food") +
-                              tile->getInventory().getItemQuantity("linemate") +
-                              tile->getInventory().getItemQuantity("deraumere") +
-                              tile->getInventory().getItemQuantity("sibur") +
-                              tile->getInventory().getItemQuantity("mendiane") +
-                              tile->getInventory().getItemQuantity("phiras") +
-                              tile->getInventory().getItemQuantity("thystame");
-          if (totalResources > 0) {
-            scene.createEntities(tile->getPosition().X, tile->getPosition().Y,
-                                tile->getInventory().getItemQuantity("food"),
-                                tile->getInventory().getItemQuantity("linemate"),
-                                tile->getInventory().getItemQuantity("deraumere"),
-                                tile->getInventory().getItemQuantity("sibur"),
-                                tile->getInventory().getItemQuantity("mendiane"),
-                                tile->getInventory().getItemQuantity("phiras"),
-                                tile->getInventory().getItemQuantity("thystame"));
-          }
+    if (mapInitialized && !resourcesInitialized) {
+        for (const auto& tile : tiles) {
+            int totalResources = tile.food + tile.linemate + tile.deraumere +
+                                 tile.sibur + tile.mendiane + tile.phiras + tile.thystame;
+            if (totalResources > 0) {
+                scene.createEntities(tile.x, tile.y,
+                                    tile.food, tile.linemate, tile.deraumere,
+                                    tile.sibur, tile.mendiane, tile.phiras, tile.thystame);
+            }
         }
         resourcesInitialized = true;
         entity_ = scene.getEntities();
-      }
     }
 
     entity_ = scene.getEntities();
