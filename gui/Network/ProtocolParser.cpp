@@ -204,7 +204,7 @@ namespace Zappy {
             int y = std::stoi(args[2]);
 
             Inventory inventory = parseInventoryArgs(args, 3);
-            worldScene_.setPlayerInventory(id, x, y, inventory.getItemQuantity("food"),
+            worldScene_.setPlayerInventory(id, inventory.getItemQuantity("food"),
                                            inventory.getItemQuantity("linemate"),
                                            inventory.getItemQuantity("deraumere"),
                                            inventory.getItemQuantity("sibur"),

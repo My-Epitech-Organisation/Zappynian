@@ -133,7 +133,7 @@ public:
     } catch (const std::exception &e) {
     }
     scene.setPlayerLevel(10, 5);
-    scene.setPlayerInventory(10, 3, 0, 1, 1, 1, 1, 1, 1, 1);
+    scene.setPlayerInventory(10, 1, 1, 1, 1, 1, 1, 1);
     scene.createEntities(3, 0, 10, 0, 10, 10, 10, 10, 10);
     scene.resourceDropping(10, "linemate");
     scene.changePlayerPos(10, 4, 0, Direction::WEST, Direction::WEST);
@@ -158,8 +158,8 @@ public:
     // changePlayerPos(1, 4, 2, Direction::SOUTH);
     // changePlayerPos(1, 0, 2, Direction::WEST);
     // changePlayerPos(2, 4, 2, Direction::NORTH);
-    scene.setPlayerInventory(1, 0, 2, 1, 1, 1, 14, 1, 1, 1);
-    scene.setPlayerInventory(3, 0, 0, 10, 10, 10, 10, 10, 10, 10);
+    scene.setPlayerInventory(1, 1, 1, 1, 14, 1, 1, 1);
+    scene.setPlayerInventory(3, 10, 10, 10, 10, 10, 10, 10);
     scene.startIncantation(4, 4, 6, {9});
     // stopIncantation(4, 4, true);
     // killPlayer(3);
