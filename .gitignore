@@ -19,6 +19,9 @@ libzappy_net/.clang-format
 # Graphical
 gui/build/
 
+# AI
+*.pyc
+
 #vscode
 .vscode
 

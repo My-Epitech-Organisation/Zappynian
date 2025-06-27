@@ -22,6 +22,7 @@ typedef struct egg_s {
     int y;
     char *team_name;
     int id;
+    int player_id;
     bool is_hatched;
     struct egg_s *next;
 } egg_t;

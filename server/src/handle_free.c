@@ -65,6 +65,9 @@ int handle_free(server_t *server)
         free_clients_array(server->connection);
         free(server->connection);
     }
+    if (server->graphic_clients != NULL) {
+        destroy_graphic_client_list(server->graphic_clients);
+    }
     free(server);
     return 0;
 }

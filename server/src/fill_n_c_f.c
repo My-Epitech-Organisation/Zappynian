@@ -23,8 +23,10 @@ static int init_team_names_array(server_args_t *server, int argc)
 static void parse_team_names(server_args_t *server, int argc, char **argv,
     int *name_count)
 {
-    server->team_names[*name_count] = strdup(optarg);
-    (*name_count)++;
+    if (optarg != NULL) {
+        server->team_names[*name_count] = strdup(optarg);
+        (*name_count)++;
+    }
     while (optind < argc && argv[optind][0] != '-') {
         server->team_names[*name_count] = strdup(argv[optind]);
         (*name_count)++;
