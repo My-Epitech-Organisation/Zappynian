@@ -30,110 +30,110 @@ public:
   void updateIncantingPlayers(WorldScene &scene);
 
   void createWorldScene(WorldScene &scene) {
-    scene.createPlane(5, 5);
+    // scene.createPlane(5, 5);
     scene.createLights();
     scene.createCamera();
     scene.createText();
-    scene.addTeam("Red");
-    scene.addTeam("Blue");
-    scene.addTeam("Yellow");
-    scene.addTeam("Purple");
-    scene.addTeam("Orange");
-    scene.addTeam("Green");
-    try {
-      scene.createEntities(1, 2, 2, Direction::WEST, 0, "Red");
-    } catch (const std::exception &e) {
-    }
-    scene.setPlayerLevel(1, 1);
-    try {
-      scene.createEntities(2, 2, 2, Direction::EAST, 0, "Blue");
-    } catch (const std::exception &e) {
-    }
-    scene.setPlayerLevel(2, 2);
-    try {
-      scene.createEntities(3, 2, 2, Direction::EAST, 0, "Red");
-    } catch (const std::exception &e) {
-    }
-    scene.setPlayerLevel(3, 3);
-    try {
-      scene.createEntities(4, 0, 0, Direction::WEST, 0, "Yellow");
-    } catch (const std::exception &e) {
-    }
-    scene.setPlayerLevel(4, 4);
-    try {
-      scene.createEntities(5, 0, 1, Direction::WEST, 0, "Purple");
-    } catch (const std::exception &e) {
-    }
-    scene.setPlayerLevel(5, 5);
-    try {
-      scene.createEntities(6, 0, 2, Direction::WEST, 0, "Orange");
-    } catch (const std::exception &e) {
-    }
-    scene.setPlayerLevel(6, 6);
-    try {
-      scene.createEntities(7, 0, 3, Direction::WEST, 0, "Green");
-    } catch (const std::exception &e) {
-    }
-    scene.setPlayerLevel(7, 7);
-    try {
-      scene.createEntities(8, 0, 4, Direction::WEST, 0, "Green");
-    } catch (const std::exception &e) {
-    }
-    scene.setPlayerLevel(8, 8);
-    try {
-      scene.createEntities(9, 4, 4, Direction::WEST, 0, "Red");
-    } catch (const std::exception &e) {
-    }
-    scene.setPlayerLevel(9, 5);
+    // scene.addTeam("Red");
+    // scene.addTeam("Blue");
+    // scene.addTeam("Yellow");
+    // scene.addTeam("Purple");
+    // scene.addTeam("Orange");
+    // scene.addTeam("Green");
+    // try {
+    //   scene.createEntities(1, 2, 2, Direction::WEST, 0, "Red");
+    // } catch (const std::exception &e) {
+    // }
+    // scene.setPlayerLevel(1, 1);
+    // try {
+    //   scene.createEntities(2, 2, 2, Direction::EAST, 0, "Blue");
+    // } catch (const std::exception &e) {
+    // }
+    // scene.setPlayerLevel(2, 2);
+    // try {
+    //   scene.createEntities(3, 2, 2, Direction::EAST, 0, "Red");
+    // } catch (const std::exception &e) {
+    // }
+    // scene.setPlayerLevel(3, 3);
+    // try {
+    //   scene.createEntities(4, 0, 0, Direction::WEST, 0, "Yellow");
+    // } catch (const std::exception &e) {
+    // }
+    // scene.setPlayerLevel(4, 4);
+    // try {
+    //   scene.createEntities(5, 0, 1, Direction::WEST, 0, "Purple");
+    // } catch (const std::exception &e) {
+    // }
+    // scene.setPlayerLevel(5, 5);
+    // try {
+    //   scene.createEntities(6, 0, 2, Direction::WEST, 0, "Orange");
+    // } catch (const std::exception &e) {
+    // }
+    // scene.setPlayerLevel(6, 6);
+    // try {
+    //   scene.createEntities(7, 0, 3, Direction::WEST, 0, "Green");
+    // } catch (const std::exception &e) {
+    // }
+    // scene.setPlayerLevel(7, 7);
+    // try {
+    //   scene.createEntities(8, 0, 4, Direction::WEST, 0, "Green");
+    // } catch (const std::exception &e) {
+    // }
+    // scene.setPlayerLevel(8, 8);
+    // try {
+    //   scene.createEntities(9, 4, 4, Direction::WEST, 0, "Red");
+    // } catch (const std::exception &e) {
+    // }
+    // scene.setPlayerLevel(9, 5);
 
-    try {
-      scene.createEntities(10, 3, 0, Direction::WEST, 0, "Red");
-    } catch (const std::exception &e) {
-    }
-    scene.setPlayerLevel(10, 5);
-    scene.setPlayerInventory(10, 3, 0, 1, 1, 1, 1, 1, 1, 1);
-    scene.createEntities(3, 0, 10, 0, 10, 10, 10, 10, 10);
-    scene.resourceDropping(10, "linemate");
-    scene.changePlayerPos(10, 4, 0, Direction::WEST, Direction::WEST);
+    // try {
+    //   scene.createEntities(10, 3, 0, Direction::WEST, 0, "Red");
+    // } catch (const std::exception &e) {
+    // }
+    // scene.setPlayerLevel(10, 5);
+    // scene.setPlayerInventory(10, 3, 0, 1, 1, 1, 1, 1, 1, 1);
+    // scene.createEntities(3, 0, 10, 0, 10, 10, 10, 10, 10);
+    // scene.resourceDropping(10, "linemate");
+    // scene.changePlayerPos(10, 4, 0, Direction::WEST, Direction::WEST);
 
-    scene.createEntities(2, 4, 32, 32, 32, 32, 32, 32, 32);
-    scene.createEntities(4, 4, 32, 32, 32, 32, 32, 32, 32);
-    scene.changePlayerPos(4, 1, 0, Direction::WEST, Direction::WEST);
-    scene.changePlayerPos(5, 1, 1, Direction::WEST, Direction::WEST);
-    scene.changePlayerPos(6, 1, 2, Direction::WEST, Direction::WEST);
-    scene.changePlayerPos(7, 1, 3, Direction::WEST, Direction::WEST);
-    scene.changePlayerPos(8, 1, 4, Direction::WEST, Direction::WEST);
-    scene.changePlayerPos(1, 2, 3, Direction::WEST, Direction::WEST);
-    // changePlayerPos(1, 2, 2, Direction::NORTH);
-    // changePlayerPos(1, 2, 1, Direction::NORTH);
-    // changePlayerPos(1, 2, 0, Direction::NORTH);
-    // changePlayerPos(1, 2, 4, Direction::NORTH);
-    // changePlayerPos(1, 1, 4, Direction::EAST);
-    // changePlayerPos(1, 0, 4, Direction::EAST);
-    // changePlayerPos(1, 4, 4, Direction::EAST);
-    // changePlayerPos(1, 4, 0, Direction::SOUTH);
-    // changePlayerPos(1, 4, 1, Direction::SOUTH);
-    // changePlayerPos(1, 4, 2, Direction::SOUTH);
-    // changePlayerPos(1, 0, 2, Direction::WEST);
-    // changePlayerPos(2, 4, 2, Direction::NORTH);
-    scene.setPlayerInventory(1, 0, 2, 1, 1, 1, 14, 1, 1, 1);
-    scene.setPlayerInventory(3, 0, 0, 10, 10, 10, 10, 10, 10, 10);
-    scene.startIncantation(4, 4, 6, {9});
-    // stopIncantation(4, 4, true);
-    // killPlayer(3);
-    // resourceDroping(3, "linemate");
-    // resourceDroping(3, "sibur");
-    // resourceDroping(3, "phiras");
-    // resourceDroping(3, "thystame");
-    scene.broadcast(1, "Hello from player 1!");
-    scene.broadcast(2, "Hello from player 2!");
-    scene.createEntities(4);
-    scene.createEntities(5);
-    scene.createEntities(1);
-    scene.createEntities(6);
-    scene.createEntities(7);
-    scene.createEntities(8);
-    scene.expulsion(1);
+    // scene.createEntities(2, 4, 32, 32, 32, 32, 32, 32, 32);
+    // scene.createEntities(4, 4, 32, 32, 32, 32, 32, 32, 32);
+    // scene.changePlayerPos(4, 1, 0, Direction::WEST, Direction::WEST);
+    // scene.changePlayerPos(5, 1, 1, Direction::WEST, Direction::WEST);
+    // scene.changePlayerPos(6, 1, 2, Direction::WEST, Direction::WEST);
+    // scene.changePlayerPos(7, 1, 3, Direction::WEST, Direction::WEST);
+    // scene.changePlayerPos(8, 1, 4, Direction::WEST, Direction::WEST);
+    // scene.changePlayerPos(1, 2, 3, Direction::WEST, Direction::WEST);
+    // // changePlayerPos(1, 2, 2, Direction::NORTH);
+    // // changePlayerPos(1, 2, 1, Direction::NORTH);
+    // // changePlayerPos(1, 2, 0, Direction::NORTH);
+    // // changePlayerPos(1, 2, 4, Direction::NORTH);
+    // // changePlayerPos(1, 1, 4, Direction::EAST);
+    // // changePlayerPos(1, 0, 4, Direction::EAST);
+    // // changePlayerPos(1, 4, 4, Direction::EAST);
+    // // changePlayerPos(1, 4, 0, Direction::SOUTH);
+    // // changePlayerPos(1, 4, 1, Direction::SOUTH);
+    // // changePlayerPos(1, 4, 2, Direction::SOUTH);
+    // // changePlayerPos(1, 0, 2, Direction::WEST);
+    // // changePlayerPos(2, 4, 2, Direction::NORTH);
+    // scene.setPlayerInventory(1, 0, 2, 1, 1, 1, 14, 1, 1, 1);
+    // scene.setPlayerInventory(3, 0, 0, 10, 10, 10, 10, 10, 10, 10);
+    // scene.startIncantation(4, 4, 6, {9});
+    // // stopIncantation(4, 4, true);
+    // // killPlayer(3);
+    // // resourceDroping(3, "linemate");
+    // // resourceDroping(3, "sibur");
+    // // resourceDroping(3, "phiras");
+    // // resourceDroping(3, "thystame");
+    // scene.broadcast(1, "Hello from player 1!");
+    // scene.broadcast(2, "Hello from player 2!");
+    // scene.createEntities(4);
+    // scene.createEntities(5);
+    // scene.createEntities(1);
+    // scene.createEntities(6);
+    // scene.createEntities(7);
+    // scene.createEntities(8);
+    // scene.expulsion(1);
 
     // resourceDroping(3, "mendiane");
     // resourceDroping(3, "deraumere");
