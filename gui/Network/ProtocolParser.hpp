@@ -30,7 +30,7 @@ namespace Zappy {
          * @param worldScene Reference to the world scene to update
          */
         ProtocolParser(WorldScene& worldScene);
-        
+
         /**
          * @brief Default destructor
          */
@@ -90,15 +90,7 @@ namespace Zappy {
          * @return true if parsing was successful, false otherwise
          */
         bool parseMapSize(const std::vector<std::string>& args);           // msz X Y
-        
-        /**
-         * @brief Parses map content command (mct - multiple bct)
-         * 
-         * @param args Tokenized command arguments
-         * @return true if parsing was successful, false otherwise
-         */
-        bool parseMapContent(const std::vector<std::string>& args);        // mct (multiple bct)
-        
+
         /**
          * @brief Parses tile content command (bct X Y q0 q1 q2 q3 q4 q5 q6)
          * 
