@@ -28,6 +28,7 @@ void cmd_forward(player_t *player, server_t *server)
             move_player(player, player->x - 1, player->y, server->map);
             break;
     }
+    send_ppo(server, player);
     zn_send_message(server->connection->zn_server, "ok");
 }
 
@@ -38,6 +39,7 @@ void cmd_right(player_t *player, server_t *server)
         return;
     }
     player->orientation = (player->orientation + 1) % 4;
+    send_ppo(server, player);
     zn_send_message(server->connection->zn_server, "ok");
 }
 
@@ -48,6 +50,7 @@ void cmd_left(player_t *player, server_t *server)
         return;
     }
     player->orientation = (player->orientation + 3) % 4;
+    send_ppo(server, player);
     zn_send_message(server->connection->zn_server, "ok");
 }
 
