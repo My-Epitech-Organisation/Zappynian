@@ -229,6 +229,7 @@ help:
 	@echo "  tests_run         - Build and run all tests"
 	@echo "  coverage          - Generate basic coverage report"
 	@echo "  coverage-summary  - Generate coverage summary table"
+	@echo "  coverage-all      - Comprehensive coverage for ALL GUI files"
 	@echo "  coverage-detailed - Generate detailed line-by-line coverage"
 	@echo "  clean             - Remove object files and coverage data"
 	@echo "  fclean            - Remove all generated files"
@@ -257,3 +258,237 @@ coverage-gcovr:
 	@echo -e "Génération du rapport de couverture..."
 	cd .. && gcovr --exclude tests/gui/ --branches
 	cd .. && gcovr --exclude tests/gui/
+
+coverage-all: tests_run
+	@echo "========================================="
+	@echo "    COMPREHENSIVE GUI COVERAGE ANALYSIS"
+	@echo "========================================="
+	@total_files=0; \
+	covered_files=0; \
+	total_lines=0; \
+	covered_lines=0; \
+	echo "| File | Coverage | Lines Covered/Total |"; \
+	echo "|------|----------|---------------------|"; \
+	\
+	echo "--- Core Components ---"; \
+	for cpp_file in $(GUI_DIR)/Core/*.cpp; do \
+		if [ -f "$$cpp_file" ]; then \
+			base_file=$$(basename $$cpp_file); \
+			obj_subdir=$$(echo $$cpp_file | sed 's|$(GUI_DIR)/||' | sed 's|\.cpp$$||'); \
+			total_files=$$((total_files + 1)); \
+			if [ -f "obj/gui_$$obj_subdir.gcda" ]; then \
+				coverage_output=$$(gcov -o obj/gui_$$(dirname $$obj_subdir)/ $$cpp_file 2>/dev/null); \
+				coverage_line=$$(echo "$$coverage_output" | grep "Lignes exécutées:" | head -1); \
+				if [ -n "$$coverage_line" ]; then \
+					percentage=$$(echo "$$coverage_line" | sed -n 's/.*Lignes exécutées: \([0-9.]*\)%.*/\1/p'); \
+					lines_total=$$(echo "$$coverage_line" | sed -n 's/.*sur \([0-9]*\).*/\1/p'); \
+					lines_covered=$$(echo "scale=0; $$lines_total * $$percentage / 100" | bc -l 2>/dev/null || echo "0"); \
+					if [ -n "$$percentage" ] && [ -n "$$lines_total" ]; then \
+						echo "| $$base_file | $$percentage% | $$lines_covered/$$lines_total |"; \
+						covered_files=$$((covered_files + 1)); \
+						covered_lines=$$((covered_lines + lines_covered)); \
+						total_lines=$$((total_lines + lines_total)); \
+					else \
+						echo "| $$base_file | No coverage data | - |"; \
+					fi; \
+				else \
+					echo "| $$base_file | No coverage data | - |"; \
+				fi; \
+			else \
+				echo "| $$base_file | Not tested | - |"; \
+			fi; \
+		fi; \
+	done; \
+	for hpp_file in $(GUI_DIR)/Core/*.hpp; do \
+		if [ -f "$$hpp_file" ]; then \
+			base_file=$$(basename $$hpp_file); \
+			echo "| $$base_file | Header only | - |"; \
+		fi; \
+	done; \
+	\
+	echo "--- Entity Components ---"; \
+	for cpp_file in $(GUI_DIR)/Entities/*.cpp; do \
+		if [ -f "$$cpp_file" ]; then \
+			base_file=$$(basename $$cpp_file); \
+			obj_subdir=$$(echo $$cpp_file | sed 's|$(GUI_DIR)/||' | sed 's|\.cpp$$||'); \
+			total_files=$$((total_files + 1)); \
+			if [ -f "obj/gui_$$obj_subdir.gcda" ]; then \
+				coverage_output=$$(gcov -o obj/gui_$$(dirname $$obj_subdir)/ $$cpp_file 2>/dev/null); \
+				coverage_line=$$(echo "$$coverage_output" | grep "Lignes exécutées:" | head -1); \
+				if [ -n "$$coverage_line" ]; then \
+					percentage=$$(echo "$$coverage_line" | sed -n 's/.*Lignes exécutées: \([0-9.]*\)%.*/\1/p'); \
+					lines_total=$$(echo "$$coverage_line" | sed -n 's/.*sur \([0-9]*\).*/\1/p'); \
+					lines_covered=$$(echo "scale=0; $$lines_total * $$percentage / 100" | bc -l 2>/dev/null || echo "0"); \
+					if [ -n "$$percentage" ] && [ -n "$$lines_total" ]; then \
+						echo "| $$base_file | $$percentage% | $$lines_covered/$$lines_total |"; \
+						covered_files=$$((covered_files + 1)); \
+						covered_lines=$$((covered_lines + lines_covered)); \
+						total_lines=$$((total_lines + lines_total)); \
+					else \
+						echo "| $$base_file | No coverage data | - |"; \
+					fi; \
+				else \
+					echo "| $$base_file | No coverage data | - |"; \
+				fi; \
+			else \
+				echo "| $$base_file | Not tested | - |"; \
+			fi; \
+		fi; \
+	done; \
+	for hpp_file in $(GUI_DIR)/Entities/*.hpp; do \
+		if [ -f "$$hpp_file" ]; then \
+			base_file=$$(basename $$hpp_file); \
+			echo "| $$base_file | Header only | - |"; \
+		fi; \
+	done; \
+	\
+	echo "--- Event Components ---"; \
+	for cpp_file in $(GUI_DIR)/Event/*.cpp; do \
+		if [ -f "$$cpp_file" ]; then \
+			base_file=$$(basename $$cpp_file); \
+			obj_subdir=$$(echo $$cpp_file | sed 's|$(GUI_DIR)/||' | sed 's|\.cpp$$||'); \
+			total_files=$$((total_files + 1)); \
+			if [ -f "obj/gui_$$obj_subdir.gcda" ]; then \
+				coverage_output=$$(gcov -o obj/gui_$$(dirname $$obj_subdir)/ $$cpp_file 2>/dev/null); \
+				coverage_line=$$(echo "$$coverage_output" | grep "Lignes exécutées:" | head -1); \
+				if [ -n "$$coverage_line" ]; then \
+					percentage=$$(echo "$$coverage_line" | sed -n 's/.*Lignes exécutées: \([0-9.]*\)%.*/\1/p'); \
+					lines_total=$$(echo "$$coverage_line" | sed -n 's/.*sur \([0-9]*\).*/\1/p'); \
+					lines_covered=$$(echo "scale=0; $$lines_total * $$percentage / 100" | bc -l 2>/dev/null || echo "0"); \
+					if [ -n "$$percentage" ] && [ -n "$$lines_total" ]; then \
+						echo "| $$base_file | $$percentage% | $$lines_covered/$$lines_total |"; \
+						covered_files=$$((covered_files + 1)); \
+						covered_lines=$$((covered_lines + lines_covered)); \
+						total_lines=$$((total_lines + lines_total)); \
+					else \
+						echo "| $$base_file | No coverage data | - |"; \
+					fi; \
+				else \
+					echo "| $$base_file | No coverage data | - |"; \
+				fi; \
+			else \
+				echo "| $$base_file | Not tested | - |"; \
+			fi; \
+		fi; \
+	done; \
+	for hpp_file in $(GUI_DIR)/Event/*.hpp; do \
+		if [ -f "$$hpp_file" ]; then \
+			base_file=$$(basename $$hpp_file); \
+			echo "| $$base_file | Header only | - |"; \
+		fi; \
+	done; \
+	\
+	echo "--- Network Components ---"; \
+	for cpp_file in $(GUI_DIR)/Network/*.cpp; do \
+		if [ -f "$$cpp_file" ]; then \
+			base_file=$$(basename $$cpp_file); \
+			obj_subdir=$$(echo $$cpp_file | sed 's|$(GUI_DIR)/||' | sed 's|\.cpp$$||'); \
+			total_files=$$((total_files + 1)); \
+			if [ -f "obj/gui_$$obj_subdir.gcda" ]; then \
+				coverage_output=$$(gcov -o obj/gui_$$(dirname $$obj_subdir)/ $$cpp_file 2>/dev/null); \
+				coverage_line=$$(echo "$$coverage_output" | grep "Lignes exécutées:" | head -1); \
+				if [ -n "$$coverage_line" ]; then \
+					percentage=$$(echo "$$coverage_line" | sed -n 's/.*Lignes exécutées: \([0-9.]*\)%.*/\1/p'); \
+					lines_total=$$(echo "$$coverage_line" | sed -n 's/.*sur \([0-9]*\).*/\1/p'); \
+					lines_covered=$$(echo "scale=0; $$lines_total * $$percentage / 100" | bc -l 2>/dev/null || echo "0"); \
+					if [ -n "$$percentage" ] && [ -n "$$lines_total" ]; then \
+						echo "| $$base_file | $$percentage% | $$lines_covered/$$lines_total |"; \
+						covered_files=$$((covered_files + 1)); \
+						covered_lines=$$((covered_lines + lines_covered)); \
+						total_lines=$$((total_lines + lines_total)); \
+					else \
+						echo "| $$base_file | No coverage data | - |"; \
+					fi; \
+				else \
+					echo "| $$base_file | No coverage data | - |"; \
+				fi; \
+			else \
+				echo "| $$base_file | Not tested | - |"; \
+			fi; \
+		fi; \
+	done; \
+	for hpp_file in $(GUI_DIR)/Network/*.hpp; do \
+		if [ -f "$$hpp_file" ]; then \
+			base_file=$$(basename $$hpp_file); \
+			echo "| $$base_file | Header only | - |"; \
+		fi; \
+	done; \
+	\
+	echo "--- App Components ---"; \
+	for cpp_file in $(GUI_DIR)/App/*.cpp; do \
+		if [ -f "$$cpp_file" ]; then \
+			base_file=$$(basename $$cpp_file); \
+			obj_subdir=$$(echo $$cpp_file | sed 's|$(GUI_DIR)/||' | sed 's|\.cpp$$||'); \
+			total_files=$$((total_files + 1)); \
+			if [ -f "obj/gui_$$obj_subdir.gcda" ]; then \
+				coverage_output=$$(gcov -o obj/gui_$$(dirname $$obj_subdir)/ $$cpp_file 2>/dev/null); \
+				coverage_line=$$(echo "$$coverage_output" | grep "Lignes exécutées:" | head -1); \
+				if [ -n "$$coverage_line" ]; then \
+					percentage=$$(echo "$$coverage_line" | sed -n 's/.*Lignes exécutées: \([0-9.]*\)%.*/\1/p'); \
+					lines_total=$$(echo "$$coverage_line" | sed -n 's/.*sur \([0-9]*\).*/\1/p'); \
+					lines_covered=$$(echo "scale=0; $$lines_total * $$percentage / 100" | bc -l 2>/dev/null || echo "0"); \
+					if [ -n "$$percentage" ] && [ -n "$$lines_total" ]; then \
+						echo "| $$base_file | $$percentage% | $$lines_covered/$$lines_total |"; \
+						covered_files=$$((covered_files + 1)); \
+						covered_lines=$$((covered_lines + lines_covered)); \
+						total_lines=$$((total_lines + lines_total)); \
+					else \
+						echo "| $$base_file | No coverage data | - |"; \
+					fi; \
+				else \
+					echo "| $$base_file | No coverage data | - |"; \
+				fi; \
+			else \
+				echo "| $$base_file | Not tested | - |"; \
+			fi; \
+		fi; \
+	done; \
+	for hpp_file in $(GUI_DIR)/App/*.hpp; do \
+		if [ -f "$$hpp_file" ]; then \
+			base_file=$$(basename $$hpp_file); \
+			echo "| $$base_file | Header only | - |"; \
+		fi; \
+	done; \
+	\
+	echo "--- Main Source ---"; \
+	for cpp_file in $(GUI_DIR)/src/*.cpp; do \
+		if [ -f "$$cpp_file" ]; then \
+			base_file=$$(basename $$cpp_file); \
+			obj_subdir=$$(echo $$cpp_file | sed 's|$(GUI_DIR)/||' | sed 's|\.cpp$$||'); \
+			total_files=$$((total_files + 1)); \
+			if [ -f "obj/gui_$$obj_subdir.gcda" ]; then \
+				coverage_output=$$(gcov -o obj/gui_$$(dirname $$obj_subdir)/ $$cpp_file 2>/dev/null); \
+				coverage_line=$$(echo "$$coverage_output" | grep "Lignes exécutées:" | head -1); \
+				if [ -n "$$coverage_line" ]; then \
+					percentage=$$(echo "$$coverage_line" | sed -n 's/.*Lignes exécutées: \([0-9.]*\)%.*/\1/p'); \
+					lines_total=$$(echo "$$coverage_line" | sed -n 's/.*sur \([0-9]*\).*/\1/p'); \
+					lines_covered=$$(echo "scale=0; $$lines_total * $$percentage / 100" | bc -l 2>/dev/null || echo "0"); \
+					if [ -n "$$percentage" ] && [ -n "$$lines_total" ]; then \
+						echo "| $$base_file | $$percentage% | $$lines_covered/$$lines_total |"; \
+						covered_files=$$((covered_files + 1)); \
+						covered_lines=$$((covered_lines + lines_covered)); \
+						total_lines=$$((total_lines + lines_total)); \
+					else \
+						echo "| $$base_file | No coverage data | - |"; \
+					fi; \
+				else \
+					echo "| $$base_file | No coverage data | - |"; \
+				fi; \
+			else \
+				echo "| $$base_file | Not tested | - |"; \
+			fi; \
+		fi; \
+	done; \
+	\
+	echo "|------|----------|---------------------|"; \
+	if [ $$total_lines -gt 0 ]; then \
+		overall_percentage=$$(echo "scale=2; $$covered_lines * 100 / $$total_lines" | bc -l 2>/dev/null || echo "N/A"); \
+		echo "| TOTAL | $$overall_percentage% | $$covered_lines/$$total_lines |"; \
+	else \
+		echo "| TOTAL | No data | 0/0 |"; \
+	fi; \
+	echo "========================================="; \
+	echo "Files analyzed: $$total_files"; \
+	echo "Files with coverage: $$covered_files"; \
+	echo "========================================="
+	@rm -f *.gcov 2>/dev/null || true
