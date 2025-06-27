@@ -59,7 +59,16 @@ static void finalize_client_connection(server_connection_t *connection,
     if (slot >= connection->client_count) {
         connection->client_count = slot + 1;
     }
-    assign_client_type(new_client, connection, slot);
+}
+
+static int send_welcome_to_client(client_t *client,
+    server_connection_t *connection, int slot)
+{
+    if (zn_send_welcome(client->zn_sock) != 0) {
+        disconnect_client(connection, slot);
+        return -1;
+    }
+    return 0;
 }
 
 void accept_client(server_connection_t *connection, server_args_t *unused)
@@ -69,17 +78,16 @@ void accept_client(server_connection_t *connection, server_args_t *unused)
     client_t *new_client = NULL;
 
     (void)unused;
-    if (slot == -1) {
+    if (slot == -1)
         return;
-    }
     new_sock = zn_accept(connection->zn_server, NULL, NULL);
-    if (new_sock == NULL) {
+    if (new_sock == NULL)
         return;
-    }
     new_client = create_new_client(new_sock);
     if (new_client == NULL) {
         zn_close(new_sock);
         return;
     }
     finalize_client_connection(connection, slot, new_client);
+    send_welcome_to_client(new_client, connection, slot);
 }

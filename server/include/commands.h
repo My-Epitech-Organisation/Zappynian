@@ -61,4 +61,11 @@ int make_player_array(tile_t *current_tile, player_t *player,
 client_t *find_client_by_player(server_t *server, player_t *player);
 size_t get_nb_player(tile_t *tile, player_t *player);
 
+void manage_food(server_t *server, player_t *player, client_t *client,
+    int resource_type);
+void manage_stones(server_t *server, player_t *player, client_t *client,
+    int resource_type);
+void add_resources(player_t *player, int resource_type, server_t *server,
+    client_t *client);
+
 #endif // COMMANDS_H

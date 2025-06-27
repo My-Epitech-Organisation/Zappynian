@@ -81,27 +81,35 @@ size_t get_nb_player(tile_t *tile, player_t *player)
     return count;
 }
 
+void send_message_ejection(client_t *ejected_client,
+    int direction)
+{
+    char msg[64];
+
+    snprintf(msg, sizeof(msg), "eject: %d", direction);
+    zn_send_message(ejected_client->zn_sock, msg);
+}
+
 static void ejection(player_t *player, server_t *server,
     player_t **players_to_eject, tile_t *current_tile)
 {
-    char msg[64];
     tile_t *new_tile;
     player_t *ejected;
     client_t *ejected_client;
+    int direction;
 
     for (size_t i = 0; i < get_nb_player(current_tile, player); i++) {
         ejected = players_to_eject[i];
         ejected_client = find_client_by_player(server, ejected);
-        if (ejected_client) {
-            snprintf(msg, sizeof(msg), "eject: %d", get_dir(ejected, player));
-            zn_send_message(ejected_client->zn_sock, msg);
-        }
+        direction = get_dir(player, ejected);
         remove_player_from_tile(current_tile, ejected);
-        move_player_in_direction(ejected, player->orientation,
-            server->map);
+        move_player_in_direction(ejected, player->orientation, server->map);
         new_tile = get_tile(server->map, ejected->x, ejected->y);
         if (new_tile)
             add_player_to_tile(new_tile, ejected);
+        send_ppo(server, ejected);
+        if (ejected_client)
+            send_message_ejection(ejected_client, direction);
     }
 }
 
@@ -124,6 +132,7 @@ int make_player_array(tile_t *current_tile, player_t *player, server_t *server,
     ejection(player, server, players_to_eject, current_tile);
     destroy_eggs_at_position(player->x, player->y, server);
     zn_send_message(ejecting_client->zn_sock, "ok");
+    send_pex(server, player);
     free(players_to_eject);
     return 0;
 }

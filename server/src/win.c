@@ -36,6 +36,7 @@ void check_victory(server_t *server)
         if (win_check(server->args->teams[i].name, server->players,
             server->player_count)) {
             server->game_running = false;
+            send_seg(server, server->args->teams[i].name);
             return;
         }
     }

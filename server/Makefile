@@ -22,6 +22,9 @@ SRCS	=	src/main.c							\
 			src/error_handling.c 				\
 			src/handle_client.c 				\
 			src/client_manager.c 				\
+			src/client_handshake.c 				\
+			src/client_handshake_response.c 	\
+			src/graphic_client_list.c 			\
 			src/commands_movement.c				\
 			src/commands_actions.c 				\
 			src/commands_communication.c 		\
@@ -43,12 +46,28 @@ SRCS	=	src/main.c							\
 			src/client_adapters.c 				\
 			src/write_to_client.c 				\
 			src/server_loop.c 					\
+			src/server_player_manager.c 		\
+			src/server_event_handler.c 		\
 			src/catch_commands_from_clients.c 	\
 			src/egg.c 							\
+			src/init_eggs.c 					\
 			src/world_utils.c 					\
 			src/eject_cmd.c 					\
 			src/check_elevation.c 				\
 			src/send_state_msg_to_players.c 	\
+			src/send_init_gui.c 				\
+			src/send_gui_egg_info.c 			\
+			src/send_gui_player_info.c 			\
+			src/send_gui_map_info.c 			\
+			src/send_gui_team_info.c 			\
+			src/send_gui_time_info.c 			\
+			src/send_gui_broadcast_info.c 		\
+			src/send_gui_resources_info.c 		\
+			src/send_gui_status_info.c 			\
+			src/send_gui_incantation_info.c 	\
+			src/check_min_eggs.c 				\
+			src/send_to_graphic_client.c 		\
+			src/set_resources.c 				\
 
 OBJS	=	$(SRCS:.c=.o)
 

@@ -47,13 +47,16 @@ void check_and_send_elevation_status(server_t *server, player_t *player,
 {
     char msg[256];
 
+    send_pic(server, current_tile, player);
     if (can_start_incantation(current_tile, player, requirements)) {
-        apply_elevation(current_tile, player->level, requirements);
+        apply_elevation(current_tile, player->level, requirements, server);
+        send_pie(server, current_tile, true);
         snprintf(msg, sizeof(msg), "Current level: %d", player->level);
         for (size_t i = 0; i < current_tile->player_count; i++)
             send_stat_to_all_players(server, current_tile, i, msg);
     } else {
         cancel_incantation(current_tile, player->level);
+        send_pie(server, current_tile, false);
         zn_send_message(server->connection->zn_server, "ko");
     }
 }
