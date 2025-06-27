@@ -28,11 +28,11 @@ void death_check(player_t **players, int player_count, map_t *map,
     for (int i = 0; i < player_count; i++) {
         if (players[i] && players[i]->food <= 0) {
             printf("Player %d died of hunger!\n", players[i]->id);
-            zn_send_message(server->connection->zn_server,
-                "dead");
             players[i]->dead = true;
+            send_pdi(server, players[i]);
             death_handle(players[i], map, server);
             players[i] = NULL;
+            zn_send_message(server->connection->zn_server, "dead");
         }
     }
 }

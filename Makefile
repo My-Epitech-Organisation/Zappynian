@@ -75,7 +75,7 @@ fclean: clean \
 
 re: fclean all
 
-tests_run:
+tests_run: libzappy_net
 	$(MAKE) -C server tests_run
 
 coverage:

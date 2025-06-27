@@ -18,6 +18,9 @@ typedef struct tile_s {
     int resources[RESOURCE_COUNT];
     player_t **players;
     size_t player_count;
+    size_t x;
+    size_t y;
+    bool is_incantation_in_progress;
 } tile_t;
 
 typedef struct map_s {

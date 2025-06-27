@@ -7,6 +7,7 @@
 
 #include "../include/elevation.h"
 #include "../include/world.h"
+#include "../include/server.h"
 #include <stdio.h>
 
 void elevation_init_requirements(elevation_requirement_t *requirements)
@@ -29,11 +30,12 @@ void start_incantation(tile_t *tile)
 }
 
 void apply_elevation(tile_t *tile, int player_level,
-    const elevation_requirement_t *requirements)
+    const elevation_requirement_t *requirements, server_t *server)
 {
     for (size_t i = 0; i < tile->player_count; i++) {
         tile->players[i]->level++;
         tile->players[i]->in_elevation = false;
+        send_plv(server, tile->players[i]);
     }
     for (int i = 0; i < NB_RESOURCE_TYPES; i++) {
         tile->resources[i] -=

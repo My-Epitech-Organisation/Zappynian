@@ -20,6 +20,7 @@ void cmd_inventory(player_t *player, server_t *server)
     }
     inventory_result = get_player_inventory(player);
     if (inventory_result != NULL) {
+        send_pin(server, player);
         zn_send_message(server->connection->zn_server, inventory_result);
         free(inventory_result);
     } else
@@ -40,6 +41,7 @@ void cmd_broadcast(player_t *player, server_t *server)
         return;
     }
     broadcast_to_all_players(player, server, broadcast_message);
+    send_pbc(server, player, broadcast_message);
     free(broadcast_message);
     zn_send_message(server->connection->zn_server, "ok");
 }
@@ -65,11 +67,13 @@ void cmd_fork(player_t *player, server_t *server)
         zn_send_message(server->connection->zn_server, "ko");
         return;
     }
+    send_pfk(server, player->id);
     new_egg = create_egg(player->x, player->y, player->team_name);
     if (new_egg == NULL) {
         zn_send_message(server->connection->zn_server, "ko");
         return;
     }
     add_egg_to_server(server, new_egg);
+    send_ewn(server);
     zn_send_message(server->connection->zn_server, "ok");
 }

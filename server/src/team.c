@@ -9,8 +9,12 @@
 
 team_t *get_team_by_name(server_args_t *server, const char *name)
 {
+    if (server == NULL || server->teams == NULL || name == NULL) {
+        return NULL;
+    }
     for (int i = 0; i < server->team_count; i++) {
-        if (strcmp(server->teams[i].name, name) == 0) {
+        if (server->teams[i].name != NULL &&
+            strcmp(server->teams[i].name, name) == 0) {
             return &server->teams[i];
         }
     }
@@ -28,25 +32,45 @@ void team_free_slot(server_args_t *server, const char *team_name)
     }
 }
 
-int init_teams(server_args_t *server)
+static int allocate_teams_array(server_args_t *server)
 {
     server->teams = calloc(server->team_count, sizeof(team_t));
     if (server->teams == NULL) {
         fprintf(stderr, "Memory allocation failed for teams.\n");
-        for (int i = 0; i < server->team_count; i++) {
+        for (int i = 0; i < server->team_count; i++)
             free(server->team_names[i]);
-        }
         free(server->team_names);
         return 84;
     }
+    return 0;
+}
+
+static int init_single_team(server_args_t *server, int i)
+{
+    server->teams[i].name = strdup(server->team_names[i]);
+    if (server->teams[i].name == NULL) {
+        fprintf(stderr, "Memory allocation failed for team name.\n");
+        return 84;
+    }
+    server->teams[i].max_slots = server->clients_per_team;
+    server->teams[i].remaining_slots = server->clients_per_team;
+    server->teams[i].current_players = 0;
+    server->teams[i].players = calloc(server->clients_per_team,
+        sizeof(player_t *));
+    if (server->teams[i].players == NULL) {
+        fprintf(stderr, "Memory allocation failed for team players.\n");
+        return 84;
+    }
+    return 0;
+}
+
+int init_teams(server_args_t *server)
+{
+    if (allocate_teams_array(server) != 0)
+        return 84;
     for (int i = 0; i < server->team_count; i++) {
-        server->teams[i].name = strdup(server->team_names[i]);
-        if (server->teams[i].name == NULL) {
-            fprintf(stderr, "Memory allocation failed for team name.\n");
+        if (init_single_team(server, i) != 0)
             return 84;
-        }
-        server->teams[i].max_slots = server->clients_per_team;
-        server->teams[i].current_players = 0;
     }
     return 0;
 }
@@ -56,7 +80,7 @@ bool is_team_full(server_args_t *server, const char *name)
     team_t *team = get_team_by_name(server, name);
 
     if (team == NULL) {
-        fprintf(stderr, "Team '%s' not found.\n", name);
+        fprintf(stderr, "Team '%s' is not found.\n", name);
         return true;
     }
     return team->current_players >= team->max_slots;
