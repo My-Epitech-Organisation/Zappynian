@@ -20,10 +20,6 @@ SRC = src/main.cpp \
 	Network/NetworkManager.cpp \
 	Network/NetworkManagerImpl.cpp \
 	Network/ProtocolParser.cpp \
-	Renderer/IrrlichtContext.cpp \
-	Renderer/TextureManager.cpp \
-	UI/HUD.cpp \
-	UI/Menu.cpp
 
 OBJDIR = build
 OBJ = $(SRC:%.cpp=$(OBJDIR)/%.o)
