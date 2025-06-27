@@ -8,6 +8,8 @@
 #include <criterion/criterion.h>
 #include "Entities/Inventory.hpp"
 
+#include <cstdint>
+
 TestSuite(inventory);
 
 Test(inventory, default_initialization) {
