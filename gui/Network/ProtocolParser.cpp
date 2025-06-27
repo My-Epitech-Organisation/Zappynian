@@ -308,7 +308,7 @@ namespace Zappy {
 
         try {
             int id = parseId(args[0]);
-            // worldScene_.createEntities(id);
+            worldScene_.createEntities(id);
             return true;
         } catch (const std::exception& e) {
             std::cerr << "ERROR: Failed to parse pfk: " << e.what() << std::endl;
@@ -359,10 +359,6 @@ namespace Zappy {
         try {
             int id = parseId(args[0]);
             worldScene_.killPlayer(id);
-
-            // if (onPlayerDisconnected_) {
-            //     onPlayerDisconnected_("Player " + std::to_string(id) + " died");
-            // }
 
             return true;
         } catch (const std::exception& e) {
