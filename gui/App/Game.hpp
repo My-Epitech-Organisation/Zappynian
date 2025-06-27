@@ -160,7 +160,7 @@ public:
     // changePlayerPos(2, 4, 2, Direction::NORTH);
     scene.setPlayerInventory(1, 1, 1, 1, 14, 1, 1, 1);
     scene.setPlayerInventory(3, 10, 10, 10, 10, 10, 10, 10);
-    scene.startIncantation(4, 4, 6, {9});
+    scene.startIncantation(4, 4, {9});
     // stopIncantation(4, 4, true);
     // killPlayer(3);
     // resourceDroping(3, "linemate");
