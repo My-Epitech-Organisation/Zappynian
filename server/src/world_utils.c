@@ -41,7 +41,8 @@ bool set_resource_on_tile(tile_t *tile, int resource_type)
     return true;
 }
 
-void normalize_coordinates_toroidal(int *x, int *y, size_t width, size_t height)
+void normalize_coordinates_toroidal(int *x, int *y, size_t width,
+    size_t height)
 {
     if (!x || !y)
         return;
