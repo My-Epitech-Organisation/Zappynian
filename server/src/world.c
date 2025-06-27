@@ -69,19 +69,6 @@ map_t *create_map(size_t width, size_t height)
     return map;
 }
 
-void destroy_map(map_t *map)
-{
-    if (!map)
-        return;
-    for (size_t y = 0; y < map->height; y++) {
-        for (size_t x = 0; x < map->width; x++)
-            free(map->tiles[y][x].players);
-        free(map->tiles[y]);
-    }
-    free(map->tiles);
-    free(map);
-}
-
 tile_t *get_tile(map_t *map, size_t x, size_t y)
 {
     if (!map || x >= map->width || y >= map->height) {
