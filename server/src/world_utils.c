@@ -40,3 +40,29 @@ bool set_resource_on_tile(tile_t *tile, int resource_type)
     tile->resources[resource_type]++;
     return true;
 }
+
+void normalize_coordinates_toroidal(int *x, int *y, size_t width,
+    size_t height)
+{
+    if (!x || !y)
+        return;
+    while (*x < 0)
+        *x += width;
+    while (*y < 0)
+        *y += height;
+    while ((size_t)*x >= width)
+        *x -= width;
+    while ((size_t)*y >= height)
+        *y -= height;
+}
+
+int calculate_toroidal_distance(int x1, int y1, int x2, int y2,
+    size_t width, size_t height)
+{
+    int dx = abs(x2 - x1);
+    int dy = abs(y2 - y1);
+
+    dx = (dx < (int)width - dx) ? dx : (int)width - dx;
+    dy = (dy < (int)height - dy) ? dy : (int)height - dy;
+    return dx + dy;
+}

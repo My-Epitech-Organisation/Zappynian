@@ -36,16 +36,16 @@ static void move_player_in_direction(player_t *player, int direction,
 
     switch (direction) {
         case NORTH:
-            new_y = (new_y - 1 + (int)map->height) % (int)map->height;
+            new_y--;
             break;
         case EAST:
-            new_x = (new_x + 1) % (int)map->width;
+            new_x++;
             break;
         case SOUTH:
-            new_y = (new_y + 1) % (int)map->height;
+            new_y++;
             break;
         case WEST:
-            new_x = (new_x - 1 + (int)map->width) % (int)map->width;
+            new_x--;
             break;
     }
     move_player(player, new_x, new_y, map);
