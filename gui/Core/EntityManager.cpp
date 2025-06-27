@@ -266,3 +266,33 @@ void EntityManager::createDroppedResource(int x, int y,
   placeStoneEntities(position, quantities, stoneTextures, qB3D, stoneNames,
                      qScale);
 }
+
+void EntityManager::updateMapText(irr::gui::IGUIStaticText *textMap) {
+  if (!textMap)
+    return;
+  irr::core::stringw mapText = L"Map Info:\n";
+  std::map<std::string, int> resourceCount;
+  std::vector<std::string> resources = {
+      "food", "linemate", "deraumere", "sibur", "mendiane", "phiras", "thystame", "egg"};
+  for (const auto &entity : tiles_) {
+    for (const auto &resource : resources) {
+      resourceCount[resource] += entity->getInventory().getItemQuantity(resource);
+    }
+  }
+  for (const auto &entity : entity_) {
+    if (entity->getName() == "Egg") {
+      resourceCount["egg"] += 1;
+    }
+  }
+  std::vector<std::pair<std::string, int>> sortedResources;
+  for (const auto &resource : resources) {
+    sortedResources.emplace_back(resource, resourceCount[resource]);
+  }
+  for (const auto &pair : sortedResources) {
+    mapText += irr::core::stringw(pair.first.c_str());
+    mapText += L": ";
+    mapText += irr::core::stringw(std::to_wstring(pair.second).c_str());
+    mapText += L"\n";
+  }
+  textMap->setText(mapText.c_str());
+}

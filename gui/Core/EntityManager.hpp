@@ -64,6 +64,8 @@ public:
 
   void createDroppedResource(int x, int y, const std::string &item);
 
+  void updateMapText(irr::gui::IGUIStaticText *textMap);
+
 protected:
   std::vector<std::shared_ptr<IEntity>> entity_;
   irr::scene::ISceneManager *smgr_;
