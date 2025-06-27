@@ -33,10 +33,13 @@ public:
 
   Direction getDirection() const { return direction_; }
   std::string getTeam() const { return team_; }
+  int getLevel() const { return level_; }
+  void setLevel(int level) { level_ = level; }
+  void setDirection(Direction direction) { direction_ = direction; }
 
 private:
   Direction direction_;
   std::string team_;
 
-  int level_ = 1;
+  int level_;
 };
