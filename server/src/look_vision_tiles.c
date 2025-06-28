@@ -10,7 +10,7 @@
 
 void add_tile_contents(char *result, int x, int y, map_t *map)
 {
-    tile_t *tile = get_tile(map, x, y);
+    tile_t *tile = get_tile_toroidal(map, x, y);
 
     if (!tile)
         return;
@@ -50,8 +50,8 @@ void add_other_tiles(char *result, player_t *player, map_t *map,
     for (int distance = 1; distance <= vision_range; distance++) {
         for (int offset = -distance; offset <= distance; offset++) {
             calculate_vision_coordinates(player, distance, offset, pos);
-            pos[0] = (pos[0] + map->width) % map->width;
-            pos[1] = (pos[1] + map->height) % map->height;
+            normalize_coordinates_toroidal(&pos[0], &pos[1], map->width,
+                map->height);
             strcat(result, ",");
             add_tile_contents(result, pos[0], pos[1], map);
         }
