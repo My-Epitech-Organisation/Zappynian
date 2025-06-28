@@ -9,6 +9,12 @@
 #include "../include/player.h"
 #include "../include/death.h"
 #include "../include/game_loop.h"
+#include <signal.h>
+
+static void setup_signal_handling(void)
+{
+    signal(SIGPIPE, SIG_IGN);
+}
 
 static server_t *init_server(void)
 {
@@ -71,6 +77,7 @@ int main(int argc, char **argv)
     server_t *server = init_server();
     int args_result = 0;
 
+    setup_signal_handling();
     if (server == NULL) {
         return 84;
     }
