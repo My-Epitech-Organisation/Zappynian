@@ -10,16 +10,29 @@
 #include "../include/commands.h"
 #include "../include/egg.h"
 
-player_t *create_player(int id, const char *team_name, int x, int y)
+static void init_player_resources(player_t *player)
 {
-    player_t *player = malloc(sizeof(player_t));
+    int i;
 
-    if (player == NULL) {
-        fprintf(stderr, "Memory allocation failed for player.\n");
-        return NULL;
+    for (i = 0; i < RESOURCE_COUNT; i++)
+        player->resources[i] = 0;
+}
+
+static void init_player_commands(player_t *player)
+{
+    int i;
+
+    player->command_count = 0;
+    player->current_command_line = NULL;
+    for (i = 0; i < MAX_PLAYER_COMMANDS; i++) {
+        player->commands[i] = NULL;
+        player->command_timers[i] = 0;
     }
+}
+
+static void set_player_defaults(player_t *player, int id, int x, int y)
+{
     player->id = id;
-    player->team_name = strdup(team_name);
     player->x = x;
     player->y = y;
     player->level = 1;
@@ -28,14 +41,20 @@ player_t *create_player(int id, const char *team_name, int x, int y)
     player->dead = false;
     player->in_elevation = false;
     player->slot_id = -1;
-    for (int i = 0; i < RESOURCE_COUNT; i++)
-        player->resources[i] = 0;
-    player->command_count = 0;
-    player->current_command_line = NULL;
-    for (int i = 0; i < MAX_PLAYER_COMMANDS; i++) {
-        player->commands[i] = NULL;
-        player->command_timers[i] = 0;
+}
+
+player_t *create_player(int id, const char *team_name, int x, int y)
+{
+    player_t *player = malloc(sizeof(player_t));
+
+    if (player == NULL) {
+        fprintf(stderr, "Memory allocation failed for player.\n");
+        return NULL;
     }
+    player->team_name = strdup(team_name);
+    set_player_defaults(player, id, x, y);
+    init_player_resources(player);
+    init_player_commands(player);
     return player;
 }
 
