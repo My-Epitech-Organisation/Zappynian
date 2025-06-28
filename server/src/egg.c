@@ -44,7 +44,7 @@ egg_t *create_egg(int x, int y, char *team_name)
     return new_egg;
 }
 
-void free_egg(egg_t *egg)
+static void free_egg(egg_t *egg)
 {
     if (egg == NULL)
         return;

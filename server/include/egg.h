@@ -28,7 +28,6 @@ typedef struct egg_s {
 } egg_t;
 
 egg_t *create_egg(int x, int y, char *team_name);
-void free_egg(egg_t *egg);
 void hatch_egg(egg_t *egg);
 void add_egg_to_server(server_t *server, egg_t *egg);
 void destroy_eggs_at_position(int x, int y, server_t *server);
