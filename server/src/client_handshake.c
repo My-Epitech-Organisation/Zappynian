@@ -32,7 +32,7 @@ static int receive_team_name_async(client_t *client, char *team_name,
 }
 
 client_event_t setup_client_handshake(client_t *client,
-    server_connection_t *connection, int idx, char *team_name)
+    server_t *server, int idx, char *team_name)
 {
     int role;
 
@@ -40,7 +40,7 @@ client_event_t setup_client_handshake(client_t *client,
     if (role == -1)
         return CLIENT_EVENT_PENDING;
     if (role == -2) {
-        disconnect_client(connection, idx);
+        disconnect_client(server, idx);
         return CLIENT_EVENT_ERROR;
     }
     client->type = (client_type_t)role;

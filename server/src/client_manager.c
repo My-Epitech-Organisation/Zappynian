@@ -14,7 +14,7 @@ client_event_t assign_client_type(client_t *client,
     char team_name[256];
     client_event_t event;
 
-    event = setup_client_handshake(client, server->connection, idx, team_name);
+    event = setup_client_handshake(client, server, idx, team_name);
     if (event == CLIENT_EVENT_PENDING || event == CLIENT_EVENT_ERROR)
         return event;
     if (validate_and_respond(client, server, idx, team_name) == -1)
