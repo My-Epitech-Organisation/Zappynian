@@ -120,7 +120,7 @@ void Game::updatePlayerMovement(irr::u32 currentTime, WorldScene &scene) {
     return;
   }
 
-  if (elapsedTime >= 0.4f) {
+  if (elapsedTime >= 0.3f) {
     irr::core::vector3df pos;
     float angle = receiver_.getCurrentRotationY() * M_PI / 180.0f;
     pos.X = receiver_.getMoveStartX() - 20.0f * sin(angle);
@@ -138,7 +138,7 @@ void Game::updatePlayerMovement(irr::u32 currentTime, WorldScene &scene) {
       animatedNode->setAnimationSpeed(0.0f);
     scene.updateMovements();
   } else {
-    float progress = elapsedTime / 0.4f;
+    float progress = elapsedTime / 0.3f;
     irr::core::vector3df pos;
     float angle = receiver_.getCurrentRotationY() * M_PI / 180.0f;
     pos.X = receiver_.getMoveStartX() - (20.0f * progress * sin(angle));
