@@ -7,6 +7,7 @@
 
 #include "AEntity.hpp"
 #include "irrlicht/irrlicht.h"
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -45,7 +46,7 @@ public:
    */
   ~Egg() override = default;
 
-  std::string getTeamFromPlayerId(int playerId, const std::vector<std::shared_ptr<IEntity>> &entity_) const {
+  static std::string getTeamFromPlayerId(int playerId, const std::vector<std::shared_ptr<IEntity>> &entity_) {
     for (const auto& entity : entity_) {
       if (entity && entity->getId() == playerId) {
         return entity->getTeam();
