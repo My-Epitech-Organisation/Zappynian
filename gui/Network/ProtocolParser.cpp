@@ -44,12 +44,14 @@ namespace Zappy {
         else if (command == "pgt") return parsePlayerResourceTake(args);
         else if (command == "pdi") return parsePlayerDeath(args);
         else if (command == "enw") return parseEggLaid(args);
-        else if (command == "eht") return parseEggConnection(args);
+        else if (command == "ebo") return parseEggConnection(args);
         else if (command == "edi") return parseEggDeath(args);
         else if (command == "sgt") return parseServerTime(args);
         else if (command == "sst") return parseServerTimeSet(args);
-        else if (command == "smg") return parseServerMessage(args);
         else if (command == "seg") return parseServerEnd(args);
+        else if (command == "smg") return parseServerMessage(args);
+        else if (command == "suc") return parseUnknown(args);
+        else if (command == "sbp") return parseCommandParameter(args);
         else {
             std::cout << "WARNING: Unknown command '" << command << "'" << std::endl;
             return false;
@@ -308,7 +310,7 @@ namespace Zappy {
 
         try {
             int id = parseId(args[0]);
-            worldScene_.createEntities(id);
+            std::cout << "Player " << id << " forked a new player." << std::endl;
             return true;
         } catch (const std::exception& e) {
             std::cerr << "ERROR: Failed to parse pfk: " << e.what() << std::endl;
@@ -374,37 +376,12 @@ namespace Zappy {
         }
 
         try {
-            std::string eggIdStr = args[0];
-            int eggId;
-            if (eggIdStr.front() == '#') {
-                eggId = std::stoi(eggIdStr.substr(1));
-            } else {
-                eggId = std::stoi(eggIdStr);
-            }
+            int eggId = parseId(args[0]);
+            int playerId = parseId(args[1]);
+            int x = std::stoi(args[2]);
+            int y = std::stoi(args[3]);
 
-            std::string playerIdStr = args[1];
-            // int playerId = -1;
-            // if (playerIdStr.front() == '#') {
-            //     std::string idStr = playerIdStr.substr(1);
-            //     if (idStr != "-1") {
-            //         playerId = std::stoi(idStr);
-            //     }
-            // } else {
-            //     playerId = std::stoi(playerIdStr);
-            // }
-
-            // int x = std::stoi(args[2]);
-            // int y = std::stoi(args[3]);
-
-            // std::string team = "unknown";
-            // if (playerId >= 0) {
-            //     const PlayerEntity* player = worldScene_.getPlayer(playerId);
-            //     if (player) {
-            //         team = player->getTeam();
-            //     }
-            // }
-
-            // worldScene_.addEgg(eggId, irr::core::vector3df(x, y, 0), team);
+            worldScene_.createEntities(eggId, playerId, x, y);
             return true;
         } catch (const std::exception& e) {
             std::cerr << "ERROR: Failed to parse enw: " << e.what() << std::endl;
@@ -419,15 +396,10 @@ namespace Zappy {
         }
 
         try {
-            std::string eggIdStr = args[0];
-            int eggId;
-            if (eggIdStr.front() == '#') {
-                eggId = std::stoi(eggIdStr.substr(1));
-            } else {
-                eggId = std::stoi(eggIdStr);
-            }
+            int eggId = parseId(args[0]);
 
-            // gameState_.setEggHatching(eggId, true);
+            worldScene_.createEntities(eggId);
+            worldScene_.killEgg(eggId);
             return true;
         } catch (const std::exception& e) {
             std::cerr << "ERROR: Failed to parse eht: " << e.what() << std::endl;
@@ -442,15 +414,9 @@ namespace Zappy {
         }
 
         try {
-            std::string eggIdStr = args[0];
-            int eggId;
-            if (eggIdStr.front() == '#') {
-                eggId = std::stoi(eggIdStr.substr(1));
-            } else {
-                eggId = std::stoi(eggIdStr);
-            }
+            int eggid = parseId(args[0]);
 
-            worldScene_.killEgg(eggId);
+            worldScene_.killEgg(eggid);
             return true;
         } catch (const std::exception& e) {
             std::cerr << "ERROR: Failed to parse edi: " << e.what() << std::endl;
@@ -466,7 +432,8 @@ namespace Zappy {
 
         try {
             int timeUnit = std::stoi(args[0]);
-            // gameState_.setTimeUnit(timeUnit);
+
+            std::cout << "Server time unit is: " << timeUnit << std::endl;
             return true;
         } catch (const std::exception& e) {
             std::cerr << "ERROR: Failed to parse sgt: " << e.what() << std::endl;
@@ -482,7 +449,8 @@ namespace Zappy {
 
         try {
             int timeUnit = std::stoi(args[0]);
-            // gameState_.setTimeUnit(timeUnit);
+
+            std::cout << "Server time unit set to: " << timeUnit << std::endl;
             return true;
         } catch (const std::exception& e) {
             std::cerr << "ERROR: Failed to parse sst: " << e.what() << std::endl;
@@ -501,6 +469,17 @@ namespace Zappy {
         return true;
     }
 
+    bool ProtocolParser::parseCommandParameter(const std::vector<std::string>& args) {
+        if (args.size() != 2) {
+            std::cerr << "ERROR: Invalid sbp arguments count: " << args.size() << std::endl;
+            return false;
+        }
+
+        std::cout << "GUI can receive the following commands:" << std::endl;
+        std::cout << "msz, bct, tna, pnw, ppo, plv, pin, pex, pbc, pic, pie, pfk, pdr, pgt, pdi, enw, ebo, edi, sgt, sst, seg, smg, suc, sbp" << std::endl;
+        return true;
+    }
+
     bool ProtocolParser::parseServerEnd(const std::vector<std::string>& args) {
         if (args.size() != 1) {
             std::cerr << "ERROR: Invalid seg arguments count: " << args.size() << std::endl;
@@ -510,10 +489,49 @@ namespace Zappy {
         std::string winningTeam = args[0];
         std::cout << "GAME ENDED: Team '" << winningTeam << "' won!" << std::endl;
 
-        // if (onGameEnd_) {
-        //     onGameEnd_("Game ended - Team " + winningTeam + " won!");
-        // }
 
+        return true;
+    }
+
+    bool ProtocolParser::parseUnknown(const std::vector<std::string>& args) {
+        for (const auto& arg : args) {
+            std::cerr << "Unknown command argument: " << arg << " ";
+        }
+        std::cerr << std::endl;
+        return false;
+    }
+
+    bool parseCommandParameter(const std::vector<std::string>& args) {
+        if (args.size() != 2) {
+            std::cerr << "ERROR: Invalid sbp arguments count: " << args.size() << std::endl;
+            return false;
+        }
+
+        std::cout << "GUI can receive the following commands:" << std::endl;
+        std::cout << "msz: Get map size" << std::endl;
+        std::cout << "bct: Get tile content" << std::endl;
+        std::cout << "tna: Get team names" << std::endl;
+        std::cout << "pnw: New player connection" << std::endl;
+        std::cout << "ppo: Player position" << std::endl;
+        std::cout << "plv: Player level" << std::endl;
+        std::cout << "pin: Player inventory" << std::endl;
+        std::cout << "pex: Player expulsion" << std::endl;
+        std::cout << "pbc: Player broadcast" << std::endl;
+        std::cout << "pic: Player incantation start" << std::endl;
+        std::cout << "pie: Player incantation end" << std::endl;
+        std::cout << "pfk: Player fork" << std::endl;
+        std::cout << "pdr: Player resource drop" << std::endl;
+        std::cout << "pgt: Player resource take" << std::endl;
+        std::cout << "pdi: Player death" << std::endl;
+        std::cout << "enw: Egg laid" << std::endl;
+        std::cout << "ebo: Egg connection" << std::endl;
+        std::cout << "edi: Egg death" << std::endl;
+        std::cout << "sgt: Server game time" << std::endl;
+        std::cout << "sst: Set server game time" << std::endl;
+        std::cout << "seg: Server end of game" << std::endl;
+        std::cout << "smg: Server message" << std::endl;
+        std::cout << "suc: Unknown command" << std::endl;
+        std::cout << "sbp: Command parameter" << std::endl;
         return true;
     }
 
