@@ -50,10 +50,6 @@ bool NetworkManager::isConnected() const {
     return impl_->isConnected();
 }
 
-const Zappy::GameState& NetworkManager::getGameState() const {
-    return impl_->getGameState();
-}
-
 void NetworkManager::updateFromServer() {
     impl_->updateFromServer();
 }

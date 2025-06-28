@@ -89,11 +89,6 @@ bool EventReceiver::handleNodeSelection(const irr::SEvent::SMouseInput &mouseInp
     return false;
 }
 
-bool EventReceiver::handleCharacterMovement(irr::EKEY_CODE key) {
-    (void)key;
-    return false;
-}
-
 bool EventReceiver::moveCamera(irr::EKEY_CODE key, irr::scene::ICameraSceneNode *camera) {
     (void)key; (void)camera;
     return false;

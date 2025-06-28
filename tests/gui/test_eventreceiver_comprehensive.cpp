@@ -181,27 +181,6 @@ Test(EventReceiver, handle_mouse_wheel) {
     cr_assert(true);
 }
 
-Test(EventReceiver, handle_character_movement) {
-    EventReceiver receiver;
-    
-    // Test character movement with various keys
-    bool result1 = receiver.handleCharacterMovement(irr::KEY_UP);
-    bool result2 = receiver.handleCharacterMovement(irr::KEY_DOWN);
-    bool result3 = receiver.handleCharacterMovement(irr::KEY_LEFT);
-    bool result4 = receiver.handleCharacterMovement(irr::KEY_RIGHT);
-    bool result5 = receiver.handleCharacterMovement(irr::KEY_SPACE);
-    
-    // Suppress unused variable warnings
-    (void)result1;
-    (void)result2;
-    (void)result3;
-    (void)result4;
-    (void)result5;
-    
-    // Methods should complete without crashing
-    cr_assert(true);
-}
-
 Test(EventReceiver, handle_mouse_input_direct) {
     EventReceiver receiver;
     

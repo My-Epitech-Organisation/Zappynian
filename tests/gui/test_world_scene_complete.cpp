@@ -209,9 +209,9 @@ Test(world_scene_complete, set_player_inventory_all_resources) {
     scene.createEntities(1, 0, 0, Direction::NORTH, 1, "team1");
     
     // Test setting inventory with all resources
-    scene.setPlayerInventory(1, 0, 0, 10, 5, 3, 2, 1, 4, 6);
-    scene.setPlayerInventory(1, 0, 0, 0, 0, 0, 0, 0, 0, 0);  // Empty inventory
-    scene.setPlayerInventory(1, 0, 0, 100, 100, 100, 100, 100, 100, 100);  // Large quantities
+    scene.setPlayerInventory(1, 10, 5, 3, 2, 1, 4, 6);
+    scene.setPlayerInventory(1, 0, 0, 0, 0, 0, 0, 0);  // Empty inventory
+    scene.setPlayerInventory(1, 100, 100, 100, 100, 100, 100, 100);  // Large quantities
     
     cr_assert(true, "Setting player inventory with all resources should work");
 }
@@ -224,8 +224,8 @@ Test(world_scene_complete, set_player_inventory_edge_cases) {
     scene.createEntities(1, 5, 5, Direction::NORTH, 1, "team1");
     
     // Test setting inventory at different positions
-    scene.setPlayerInventory(1, -1, -1, 1, 1, 1, 1, 1, 1, 1);  // Negative position
-    scene.setPlayerInventory(1, 1000, 1000, 2, 2, 2, 2, 2, 2, 2);  // Large position
+    scene.setPlayerInventory(1, 1, 1, 1, 1, 1, 1, 1);  // Negative position
+    scene.setPlayerInventory(1, 2, 2, 2, 2, 2, 2, 2);  // Large position
     
     cr_assert(true, "Setting player inventory edge cases should work");
 }
@@ -235,7 +235,7 @@ Test(world_scene_complete, set_nonexistent_player_inventory) {
     WorldScene scene(eventReceiver);
     
     // Try to set inventory of non-existent player
-    scene.setPlayerInventory(999, 0, 0, 1, 1, 1, 1, 1, 1, 1);
+    scene.setPlayerInventory(999, 1, 1, 1, 1, 1, 1, 1);
     
     cr_assert(true, "Setting non-existent player inventory should handle gracefully");
 }
@@ -315,7 +315,7 @@ Test(world_scene_complete, mixed_operations_stress_test) {
     
     // Set player inventories
     for (int i = 1; i <= 10; i++) {
-        scene.setPlayerInventory(i, i % 5, i / 5, i % 10, (i + 1) % 10, 
+        scene.setPlayerInventory(i, i % 10, (i + 1) % 10, 
                                (i + 2) % 10, (i + 3) % 10, (i + 4) % 10, 
                                (i + 5) % 10, (i + 6) % 10);
     }

@@ -43,7 +43,7 @@ void WorldScene::createEntities(int id, int x, int y, Direction direction,
   teamStates_[team].first++;
 }
 
-void WorldScene::setPlayerInventory(int id, int x, int y, int q0, int q1,
+void WorldScene::setPlayerInventory(int id, int q0, int q1,
                                     int q2, int q3, int q4, int q5, int q6) {
   for (auto &entity : entity_) {
     if (entity->getId() == id) {
@@ -282,7 +282,7 @@ void WorldScene::changeHeadLevel(std::shared_ptr<IEntity> &entity, int level) {
       0, driver_->getTexture(texturesHead[level]));
 }
 
-void WorldScene::startIncantation(int x, int y, int level,
+void WorldScene::startIncantation(int x, int y,
                                   std::vector<int> ids) {
   for (int id : ids) {
     for (auto &entity : entity_) {

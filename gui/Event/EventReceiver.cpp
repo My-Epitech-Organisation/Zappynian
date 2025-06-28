@@ -36,11 +36,6 @@ bool EventReceiver::OnEvent(const irr::SEvent &event) {
 }
 
 bool EventReceiver::handleKeyInput(const irr::SEvent::SKeyInput &keyInput) {
-  if (keyInput.PressedDown && animatedNode && !isMoving) {
-    if (handleCharacterMovement(keyInput.Key))
-      return true;
-  }
-
   if (keyInput.Key == irr::KEY_ESCAPE && !keyInput.PressedDown) {
     device->closeDevice();
     return true;
@@ -97,47 +92,9 @@ bool EventReceiver::moveCamera(irr::EKEY_CODE key,
   return true;
 }
 
-bool EventReceiver::handleCharacterMovement(irr::EKEY_CODE key) {
-  switch (key) {
-  case irr::KEY_KEY_Z:
-    setCurrentRotationY(180.0f);
-    animatedNode->setRotation(
-        irr::core::vector3df(0, getCurrentRotationY(), 0));
-    return true;
-  case irr::KEY_KEY_S:
-    setCurrentRotationY(0.0f);
-    animatedNode->setRotation(
-        irr::core::vector3df(0, getCurrentRotationY(), 0));
-    return true;
-  case irr::KEY_KEY_Q:
-    setCurrentRotationY(90.0f);
-    animatedNode->setRotation(
-        irr::core::vector3df(0, getCurrentRotationY(), 0));
-    return true;
-  case irr::KEY_KEY_D:
-    setCurrentRotationY(270.0f);
-    animatedNode->setRotation(
-        irr::core::vector3df(0, getCurrentRotationY(), 0));
-    return true;
-  case irr::KEY_SPACE:
-    if (!isMoving) {
-      setIsMoving(true);
-      setMoveStartTime(device->getTimer()->getTime());
-      irr::core::vector3df pos = animatedNode->getPosition();
-      setMoveStartX(pos.X);
-      setMoveStartZ(pos.Z);
-      animatedNode->setAnimationSpeed(26.0f);
-      return true;
-    }
-    break;
-  }
-  return false;
-}
-
 bool EventReceiver::handleMouseInput(
     const irr::SEvent::SMouseInput &mouseInput) {
-  switch (mouseInput.Event) {
-  case irr::EMIE_MOUSE_MOVED:
+  if (mouseInput.Event == irr::EMIE_MOUSE_MOVED) {
     if (isMouseDown && smgr) {
       int deltaX = mouseInput.X - mouseX;
       int deltaY = mouseInput.Y - mouseY;
@@ -150,18 +107,15 @@ bool EventReceiver::handleMouseInput(
     mouseX = mouseInput.X;
     mouseY = mouseInput.Y;
     return true;
-
-  case irr::EMIE_LMOUSE_PRESSED_DOWN:
+  } else if (mouseInput.Event == irr::EMIE_LMOUSE_PRESSED_DOWN) {
     isMouseDown = true;
     mouseX = mouseInput.X;
     mouseY = mouseInput.Y;
     return true;
-
-  case irr::EMIE_LMOUSE_LEFT_UP:
+  } else if (mouseInput.Event == irr::EMIE_LMOUSE_LEFT_UP) {
     isMouseDown = false;
     return handleNodeSelection(mouseInput) || handlePlayerSelection(mouseInput);
-
-  case irr::EMIE_MOUSE_WHEEL:
+  } else if (mouseInput.Event == irr::EMIE_MOUSE_WHEEL) {
     return handleMouseWheelMovement(mouseInput.Wheel);
   }
   return false;

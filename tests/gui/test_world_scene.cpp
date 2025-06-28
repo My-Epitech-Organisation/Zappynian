@@ -155,9 +155,9 @@ Test(world_scene, set_player_inventory) {
     scene.createEntities(1, 5, 5, Direction::NORTH, 1, "TeamRed");
     
     // Set inventory
-    scene.setPlayerInventory(1, 5, 5, 1, 2, 3, 4, 5, 6, 7);
-    scene.setPlayerInventory(1, 5, 5, 0, 0, 0, 0, 0, 0, 0);  // Empty inventory
-    scene.setPlayerInventory(1, 5, 5, 99, 99, 99, 99, 99, 99, 99);  // Full inventory
+    scene.setPlayerInventory(1, 1, 2, 3, 4, 5, 6, 7);
+    scene.setPlayerInventory(1, 0, 0, 0, 0, 0, 0, 0);  // Empty inventory
+    scene.setPlayerInventory(1, 99, 99, 99, 99, 99, 99, 99);  // Full inventory
     
     cr_assert(true, "setPlayerInventory should work");
 }
@@ -167,7 +167,7 @@ Test(world_scene, set_inventory_nonexistent_player) {
     WorldScene scene(nullptr, nullptr, receiver, "");
     
     // Try to set inventory for non-existent player
-    scene.setPlayerInventory(999, 0, 0, 1, 2, 3, 4, 5, 6, 7);
+    scene.setPlayerInventory(999, 1, 2, 3, 4, 5, 6, 7);
     
     cr_assert(true, "setPlayerInventory should handle non-existent player gracefully");
 }
@@ -277,9 +277,9 @@ Test(world_scene, complex_scenario) {
     scene.setPlayerLevel(3, 4);
     
     // Set inventories
-    scene.setPlayerInventory(1, 1, 1, 1, 0, 0, 0, 0, 0, 0);
-    scene.setPlayerInventory(2, 6, 6, 0, 1, 0, 0, 0, 0, 0);
-    scene.setPlayerInventory(3, 9, 9, 0, 0, 1, 0, 0, 0, 0);
+    scene.setPlayerInventory(1, 1, 0, 0, 0, 0, 0, 0);
+    scene.setPlayerInventory(2, 0, 1, 0, 0, 0, 0, 0);
+    scene.setPlayerInventory(3, 0, 0, 1, 0, 0, 0, 0);
     
     // Broadcast messages
     scene.broadcast(1, "Hello from player 1!");
