@@ -50,9 +50,9 @@ static void handle_socket_events(server_t *server,
         handle_client_event(server, event, client_idx);
     }
     if (result->writable & (1ULL << i))
-        handle_client_write(server->connection, client_idx);
+        handle_client_write(server, client_idx);
     if (result->error & (1ULL << i)) {
-        disconnect_client(server->connection, client_idx);
+        disconnect_client(server, client_idx);
         handle_client_event(server, CLIENT_EVENT_DISCONNECTED, client_idx);
     }
 }
@@ -63,7 +63,7 @@ static void handle_ready_sockets(server_t *server,
     int client_idx;
 
     if (result->readable & 1)
-        accept_client(server->connection, NULL);
+        accept_client(server, NULL);
     for (int i = 1; i < count; i++) {
         client_idx = find_client_by_socket(server->connection, sockets[i]);
         if (client_idx == -1)
@@ -104,8 +104,6 @@ void check_min_eggs(server_t *server)
 static void process_game_tick(server_t *server)
 {
     game_loop_tick(server);
-    process_commands(server);
-    decrement_food_for_all_players(server);
     death_check(server->players, server->player_count, server->map, server);
     check_victory(server);
     check_min_eggs(server);

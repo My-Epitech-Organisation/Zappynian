@@ -30,6 +30,8 @@ void catch_command(char *line, client_t *client,
     if (client->type == CLIENT_IA && line[0] != '\0') {
         player = find_player_by_client(connection, client);
         if (player != NULL) {
+            if (player->command_count >= MAX_PLAYER_COMMANDS)
+                return;
             player_found(player, line, client);
         }
     }
@@ -48,7 +50,7 @@ client_event_t handle_client_read(server_t *server, int idx)
     line = zn_receive_message(client->zn_sock);
     if (line == NULL) {
         if (errno != EAGAIN && errno != EWOULDBLOCK) {
-            disconnect_client(server->connection, idx);
+            disconnect_client(server, idx);
             return CLIENT_EVENT_DISCONNECTED;
         }
         return CLIENT_EVENT_NONE;
@@ -58,26 +60,49 @@ client_event_t handle_client_read(server_t *server, int idx)
     return CLIENT_EVENT_NONE;
 }
 
-void disconnect_client(server_connection_t *connection, int client_idx)
+void disconnect_client(server_t *server, int client_idx)
 {
+    server_connection_t *connection = connection;
     client_t *client = connection->clients[client_idx];
     server_args_t *args = connection->args;
     team_t *team = NULL;
+    player_t *player = NULL;
+    tile_t *tile = NULL;
 
-    if (client->type == CLIENT_IA && client->team_name) {
-        team = get_team_by_name(args, client->team_name);
-        if (team && team->current_players > 0) {
-            team->current_players--;
-            printf("Client disconnected from team %s.\n", team->name);
+    if (!client)
+        return;
+    if (client->type == CLIENT_IA) {
+        player = find_player_by_client(connection, client);
+        if (player) {
+            tile = get_tile_toroidal(server->map, player->x, player->y);
+            if (tile)
+                remove_player_from_tile(tile, player);
+            for (size_t i = 0; i < server->player_count; i++) {
+                if (server->players[i] == player) {
+                    server->players[i] = NULL;
+                    break;
+                }
+            }
+            team = get_team_by_name(args, client->team_name);
+            if (team) {
+                for (int i = 0; i < team->max_slots; i++) {
+                    if (team->players[i] == player) {
+                        team->players[i] = NULL;
+                        break;
+                    }
+                }
+                if (team->current_players > 0)
+                    team->current_players--;
+            }
+            send_pdi(server, player);
+            destroy_player(player);
         }
     }
-    if (client->zn_sock != NULL) {
+    if (client->zn_sock != NULL)
         zn_close(client->zn_sock);
-    }
     free(client->team_name);
     free(client);
     connection->clients[client_idx] = NULL;
-    if (client_idx == connection->client_count - 1) {
+    if (client_idx == connection->client_count - 1)
         connection->client_count--;
-    }
 }

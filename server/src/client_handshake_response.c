@@ -53,12 +53,12 @@ int validate_and_respond(client_t *client, server_t *server,
 
     if (client->type == CLIENT_IA) {
         if (validate_team_assignment(args, team_name) == -1) {
-            disconnect_client(server->connection, idx);
+            disconnect_client(server, idx);
             return -1;
         }
     }
     if (send_handshake_response(client, server, team_name) != 0) {
-        disconnect_client(server->connection, idx);
+        disconnect_client(server, idx);
         return -1;
     }
     return 0;

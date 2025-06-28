@@ -62,17 +62,18 @@ static void finalize_client_connection(server_connection_t *connection,
 }
 
 static int send_welcome_to_client(client_t *client,
-    server_connection_t *connection, int slot)
+    server_t *server, int slot)
 {
     if (zn_send_welcome(client->zn_sock) != 0) {
-        disconnect_client(connection, slot);
+        disconnect_client(server, slot);
         return -1;
     }
     return 0;
 }
 
-void accept_client(server_connection_t *connection, server_args_t *unused)
+void accept_client(server_t *server, server_args_t *unused)
 {
+    server_connection_t *connection = server->connection;
     int slot = find_free_client_slot(connection->clients, MAX_CLIENTS);
     zn_socket_t new_sock = NULL;
     client_t *new_client = NULL;
@@ -89,5 +90,5 @@ void accept_client(server_connection_t *connection, server_args_t *unused)
         return;
     }
     finalize_client_connection(connection, slot, new_client);
-    send_welcome_to_client(new_client, connection, slot);
+    send_welcome_to_client(new_client, server, slot);
 }
