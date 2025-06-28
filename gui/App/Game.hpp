@@ -70,11 +70,7 @@ public:
    * 
    * @param scene Reference to the world scene to initialize
    */
-  void createWorldScene(WorldScene &scene) {
-    scene.createLights();
-    scene.createCamera();
-    scene.createText();
-  }
+  void createWorldScene(WorldScene &scene);
 
 private:
   irr::IrrlichtDevice *device_;
