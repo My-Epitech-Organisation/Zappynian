@@ -120,24 +120,18 @@ void remove_player_from_tile(tile_t *tile, player_t *player)
     fprintf(stderr, "Player not found in tile\n");
 }
 
-static void normalize_coordinates(int *x, int *y, map_t *map)
+void destroy_map(map_t *map)
 {
-    if (!map || !x || !y)
+    if (!map) {
+        fprintf(stderr, "Invalid map\n");
         return;
-    while (*x < 0)
-        *x += map->width;
-    while (*y < 0)
-        *y += map->height;
-    while ((size_t)*x >= map->width)
-        *x -= map->width;
-    while ((size_t)*y >= map->height)
-        *y -= map->height;
-}
-
-tile_t *get_tile_toroidal(map_t *map, int x, int y)
-{
-    if (!map)
-        return NULL;
-    normalize_coordinates(&x, &y, map);
-    return &map->tiles[y][x];
+    }
+    for (size_t y = 0; y < map->height; y++) {
+        for (size_t x = 0; x < map->width; x++) {
+            free(map->tiles[y][x].players);
+        }
+        free(map->tiles[y]);
+    }
+    free(map->tiles);
+    free(map);
 }

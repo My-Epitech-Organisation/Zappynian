@@ -30,6 +30,7 @@ typedef struct map_s {
 } map_t;
 
 map_t *create_map(size_t width, size_t height);
+void destroy_map(map_t *map);
 tile_t *get_tile(map_t *map, size_t x, size_t y);
 tile_t *get_tile_toroidal(map_t *map, int x, int y);
 void add_player_to_tile(tile_t *tile, player_t *player);
