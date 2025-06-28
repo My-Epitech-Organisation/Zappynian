@@ -41,16 +41,17 @@ int initialize_server_players(server_t *server)
 }
 
 player_t *create_player_for_client(server_t *server, client_t *client,
-    team_t *team)
+    team_t *team, int client_id)
 {
     player_t *player = NULL;
     int x = rand() % (int)server->args->width;
     int y = rand() % (int)server->args->height;
+    int slot_assigned = 0;
 
-    player = create_player(client->id, client->team_name, x, y);
+    player = create_player(client_id, client->team_name, x, y);
     if (player == NULL)
         return NULL;
-    player->slot_id = client->id;
+    player->slot_id = client_id;
     if (add_player_to_server(server, player) == -1) {
         destroy_player(player);
         return NULL;
@@ -58,8 +59,14 @@ player_t *create_player_for_client(server_t *server, client_t *client,
     for (int i = 0; i < team->max_slots; i++) {
         if (team->players[i] == NULL) {
             team->players[i] = player;
+            slot_assigned = 1;
             break;
         }
+    }
+    if (!slot_assigned) {
+        remove_player_from_server(server, player);
+        destroy_player(player);
+        return NULL;
     }
     team->current_players++;
     return player;

@@ -132,7 +132,7 @@ void handle_client_event(server_t *server, client_event_t event,
     int client_idx);
 int initialize_server_players(server_t *server);
 player_t *create_player_for_client(server_t *server, client_t *client,
-    team_t *team);
+    team_t *team, int client_id);
 
 /* Network integration functions */
 int init_network_integration(void);

@@ -15,6 +15,7 @@ static void handle_ia_connection(server_t *server, int client_idx)
     team_t *team = NULL;
     player_t *player = NULL;
     char response[256];
+    int slot_assigned = 0;
 
     if (client == NULL || client->team_name == NULL)
         return;
@@ -23,7 +24,21 @@ static void handle_ia_connection(server_t *server, int client_idx)
         return;
     player = hatch_egg_for_client(server, client);
     if (player == NULL)
-        player = create_player_for_client(server, client, team);
+        player = create_player_for_client(server, client, team, client->id);
+    else {
+        player->slot_id = client->id;
+        slot_assigned = 0;
+        for (int i = 0; i < team->max_slots; i++) {
+            if (team->players[i] == NULL) {
+                team->players[i] = player;
+                slot_assigned = 1;
+                break;
+            }
+        }
+        if (!slot_assigned)
+            return;
+        team->current_players++;
+    }
     if (player == NULL)
         return;
     snprintf(response, sizeof(response), "%d", team->remaining_slots);
