@@ -138,7 +138,7 @@ EntityManager::createPaperPlane(irr::core::vector3df position) {
   return paperPlane;
 }
 
-void EntityManager::createEgg(int id) {
+void EntityManager::createEgg(int eggid, int id, int x, int y) {
   for (const auto &entities : entity_) {
     auto player = std::dynamic_pointer_cast<PlayerEntity>(entities);
     if (player && player->getId() == id) {
