@@ -84,6 +84,13 @@ void EntityManager::createStones(int x, int y, int q0, int q1, int q2, int q3,
   for (auto &tile : tiles_) {
     if (tile->getName() == oss.str()) {
       position.set(x * 20.0f, 5.0f, y * 20.0f);
+      std::vector<std::string> items = {"food", "linemate", "deraumere", "sibur", "mendiane", "phiras", "thystame"};
+      for (const auto &item : items) {
+        size_t currentQuantity = tile->getInventory().getItemQuantity(item);
+        if (currentQuantity > 0) {
+          tile->getInventory().removeItem(item, currentQuantity);
+        }
+      }
       tile->getInventory().addItem("food", q0);
       tile->getInventory().addItem("linemate", q1);
       tile->getInventory().addItem("deraumere", q2);
@@ -94,6 +101,26 @@ void EntityManager::createStones(int x, int y, int q0, int q1, int q2, int q3,
       break;
     }
   }
+
+  float radius = 6.0f;
+  auto it = entity_.begin();
+  while (it != entity_.end()) {
+    if ((*it)->getName() != "Stone") {
+      ++it;
+      continue;
+    }
+    float distance =
+        std::sqrt(std::pow((*it)->getPosition().X - position.X, 2) +
+                  std::pow((*it)->getPosition().Z - position.Z, 2));
+    if (distance <= radius + 0.01f) {
+      if ((*it)->getNode())
+        (*it)->getNode()->remove();
+      it = entity_.erase(it);
+    } else {
+      ++it;
+    }
+  }
+
   std::vector<int> quantities = {q0, q1, q2, q3, q4, q5, q6};
   placeStoneEntities(position, quantities, stoneTextures, qB3D, stoneNames,
                      qScale);
