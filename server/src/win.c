@@ -15,8 +15,8 @@ bool win_check(const char *team_name, player_t **players, int player_count)
         return false;
     for (int i = 0; i < player_count; i++) {
         if (players[i] && players[i]->team_name &&
-            strcmp(players[i]->team_name, team_name) &&
-            (players[i]->level == 8) == 0) {
+            strcmp(players[i]->team_name, team_name) == 0 &&
+            players[i]->level == 8) {
             team_score++;
         }
     }
