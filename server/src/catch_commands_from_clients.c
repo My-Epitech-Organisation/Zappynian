@@ -63,6 +63,7 @@ void player_found(player_t *player, const char *line, client_t *client)
     if (!commands_add(player, line))
         zn_send_message(client->zn_sock, "ko");
     else
-        printf("[DEBUG] Command received: %s\n", line);
+        printf("[DEBUG] Command received: %s from player %d of team %s\n",
+            line, player->id, player->team_name);
     free(newline);
 }
