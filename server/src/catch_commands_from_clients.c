@@ -26,9 +26,10 @@ static player_t *search_player_in_team(team_t *team, client_t *client,
 {
     player_t *player = NULL;
 
+    if (args == NULL || team == NULL || client == NULL)
+        return NULL;
     for (int i = 0; i < args->clients_per_team; i++) {
-        if (team->players[i] != NULL && team->players[i]->slot_id ==
-            client->id) {
+        if (team->players[i]->slot_id == client->id) {
             player = team->players[i];
             break;
         }
@@ -61,4 +62,7 @@ void player_found(player_t *player, const char *line, client_t *client)
         *newline = '\0';
     if (!commands_add(player, line))
         zn_send_message(client->zn_sock, "ko");
+    else
+        printf("[DEBUG] Command received: %s\n", line);
+    free(newline);
 }
