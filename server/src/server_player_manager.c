@@ -18,10 +18,14 @@ static int find_free_player_slot(server_t *server)
     return -1;
 }
 
-static int add_player_to_server(server_t *server, player_t *player)
+int add_player_to_server(server_t *server, player_t *player)
 {
-    int slot = find_free_player_slot(server);
+    int slot = 0;
 
+    if (player == NULL || server == NULL || server->players == NULL) {
+        return -1;
+    }
+    slot = find_free_player_slot(server);
     if (slot == -1)
         return -1;
     server->players[slot] = player;
