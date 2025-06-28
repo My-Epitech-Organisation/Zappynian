@@ -83,10 +83,10 @@ void WorldScene::createEntities(int x, int y, int q0, int q1, int q2, int q3,
   entity_ = entityManager_.getEntities();
 }
 
-void WorldScene::createEntities(int id) {
+void WorldScene::createEntities(int eggid, int id, int x, int y) {
   if (!smgr_ || !driver_ || !device_)
     return;
-  entityManager_.createEgg(id);
+  entityManager_.createEgg(eggid, id, x, y);
   entity_ = entityManager_.getEntities();
 }
 

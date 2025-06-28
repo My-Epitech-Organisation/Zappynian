@@ -141,7 +141,7 @@ public:
    * 
    * @param id Egg identifier
    */
-  void createEntities(int id);
+  void createEntities(int eggid, int id, int x, int y);
 
   /**
    * @brief Changes a player's position and direction
