@@ -101,6 +101,8 @@ static char *extract_and_format_command(const char *command_name,
 
     free(player->current_command_line);
     player->current_command_line = strdup(command_name);
+    if (!player->current_command_line)
+        return NULL;
     command_only = strdup(command_name);
     if (!command_only)
         return NULL;
