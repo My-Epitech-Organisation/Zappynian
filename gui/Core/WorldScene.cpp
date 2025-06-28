@@ -92,20 +92,6 @@ void WorldScene::createEntities(int id) {
 
 void WorldScene::changePlayerPos(int id, int x, int y, Direction direction,
                                  Direction directionBefore) {
-  for (auto &entity : entity_) {
-    if (entity->getId() == id) {
-      auto *node = entity->getNode();
-      if (node) {
-        irr::core::vector3df currentPos = node->getPosition();
-        int currentLogicalX = static_cast<int>(currentPos.X / 20.0f);
-        int currentLogicalY = static_cast<int>(currentPos.Z / 20.0f);
-        currentLogicalX = std::max(0, std::min(currentLogicalX, planeSize_.first - 1));
-        currentLogicalY = std::max(0, std::min(currentLogicalY, planeSize_.second - 1));
-      }
-      break;
-    }
-  }
-  
   Movement movement = {id, x, y, direction, directionBefore};
   movementQueue_.push(movement);
   if (!receiver_.getIsMoving()) {
@@ -174,13 +160,6 @@ void WorldScene::updateMovements() {
 
       currentLogicalX = std::max(0, std::min(currentLogicalX, planeSize_.first - 1));
       currentLogicalY = std::max(0, std::min(currentLogicalY, planeSize_.second - 1));
-      std::string dirName = "";
-      switch(movement.direction) {
-        case Direction::NORTH: dirName = "NORTH"; break;
-        case Direction::EAST: dirName = "EAST"; break;
-        case Direction::SOUTH: dirName = "SOUTH"; break;
-        case Direction::WEST: dirName = "WEST"; break;
-      }
       int deltaX = movement.x - currentLogicalX;
       int deltaY = movement.y - currentLogicalY;
       Direction actualMovementDirection = movement.direction; // Default to server direction
@@ -201,13 +180,6 @@ void WorldScene::updateMovements() {
         actualMovementDirection = Direction::NORTH;
       } else if (deltaX == 0 && deltaY == -(planeSize_.second - 1)) {
         actualMovementDirection = Direction::SOUTH;
-      }
-      std::string actualDirName = "";
-      switch(actualMovementDirection) {
-        case Direction::NORTH: actualDirName = "NORTH"; break;
-        case Direction::EAST: actualDirName = "EAST"; break;
-        case Direction::SOUTH: actualDirName = "SOUTH"; break;
-        case Direction::WEST: actualDirName = "WEST"; break;
       }
       bool isNotMoving = (deltaX == 0 && deltaY == 0);
       if (isNotMoving) {
