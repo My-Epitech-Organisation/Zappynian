@@ -8,6 +8,7 @@
 #include "../include/server.h"
 #include "../include/game_loop.h"
 #include "../include/egg.h"
+#include "../include/timing_integration.h"
 
 static void handle_socket_events(server_t *server,
     zn_poll_result_t *result, int i, int client_idx)
@@ -64,7 +65,7 @@ static void process_game_tick(server_t *server)
 {
     game_loop_tick(server);
     process_commands(server);
-    decrement_food_for_all_players(server);
+    server_timing_tick(server);
     death_check(server->players, server->player_count, server->map, server);
     check_victory(server);
     check_min_eggs(server);
@@ -81,20 +82,24 @@ void server_loop(server_t *server)
     short events[ZN_POLL_MAX_SOCKETS];
     int count = 0;
     zn_poll_result_t poll_result;
+    int timeout;
 
     if (init_client_array(server) == -1)
         return;
     if (initialize_server_players(server) == -1)
         return;
+    if (server_timing_init(server) == -1)
+        return;
     while (server->server_running && server->game_running) {
         setup_socket_array(server->connection, sockets, &count);
-        setup_poll_events(events, sockets, server->connection,
-            count);
-        poll_result = zn_poll(sockets, events, count, 100);
+        setup_poll_events(events, sockets, server->connection, count);
+        timeout = server_get_poll_timeout(server);
+        poll_result = zn_poll(sockets, events, count, timeout);
         if (poll_result.ready_count > 0) {
-            handle_ready_sockets(server, &poll_result, sockets,
-                count);
+            handle_ready_sockets(server, &poll_result, sockets, count);
         }
-        process_game_tick(server);
+        if (server_should_tick(server))
+            process_game_tick(server);
     }
+    server_timing_destroy(server);
 }
