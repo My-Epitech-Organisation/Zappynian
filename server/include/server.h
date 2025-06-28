@@ -127,6 +127,14 @@ void finalize_client_assignment(client_t *client,
 void server_loop(server_t *server);
 void stop_server_loop(server_t *server);
 
+/* Server polling functions */
+void setup_socket_array(server_connection_t *connection,
+    zn_socket_t *sockets, int *count);
+int find_client_by_socket(server_connection_t *connection,
+    zn_socket_t socket);
+void setup_poll_events(short *events, zn_socket_t *sockets,
+    server_connection_t *connection, int count);
+
 /* Server player management functions */
 void handle_client_event(server_t *server, client_event_t event,
     int client_idx);
