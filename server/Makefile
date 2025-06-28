@@ -79,7 +79,7 @@ LIBZAPPY_NET_DIR = ../libzappy_net
 LIBZAPPY_NET_LIB = $(LIBZAPPY_NET_DIR)/libzappy_net.so
 
 LDFLAGS_PROD = -L$(LIBZAPPY_NET_DIR) -lzappy_net \
-			   -Wl,-rpath='$$ORIGIN/libzappy_net'
+			   -Wl,-rpath='$$ORIGIN/libzappy_net' -lm
 
 CFLAGS_DEBUG = $(CFLAGS) -g
 LDFLAGS_DEBUG = $(LDFLAGS_PROD) -g
