@@ -8,6 +8,7 @@
 #include "../include/player.h"
 #include "../include/server.h"
 #include "../include/commands.h"
+#include "../include/egg.h"
 
 player_t *create_player(int id, const char *team_name, int x, int y)
 {
@@ -64,7 +65,7 @@ void move_player(player_t *player, int x, int y, map_t *map)
         add_player_to_tile(new_tile, player);
 }
 
-bool player_decrement_food(player_t *player)
+static bool player_decrement_food(player_t *player)
 {
     if (player == NULL)
         return false;
@@ -91,4 +92,27 @@ bool decrement_food_for_all_players(server_t *server)
         }
     }
     return result;
+}
+
+player_t *hatch_egg_for_client(server_t *server, client_t *client)
+{
+    egg_t *egg = find_team_egg(server, client->team_name);
+    player_t *player = NULL;
+    tile_t *tile = NULL;
+
+    if (!egg)
+        return NULL;
+    egg->is_hatched = true;
+    player = create_player(client->id, client->team_name,
+        egg->x, egg->y);
+    if (player) {
+        player->orientation = rand() % 4;
+        egg->player_id = player->id;
+        tile = get_tile_toroidal(server->map, egg->x, egg->y);
+        if (tile)
+            add_player_to_tile(tile, player);
+        send_ebo(server, egg->id);
+        send_pnw(server, player);
+    }
+    return player;
 }
