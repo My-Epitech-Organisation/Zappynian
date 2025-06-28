@@ -31,9 +31,19 @@ class CommandQueue:
     def send_and_wait(self, command: str) -> str:
         self.push(command)
         self.flush()
+
         while True:
             line = self.connection.read_line()
             if not line:
                 continue
+            if line.startswith("message"):
+                continue
             self.handle_response(line)
+            if command == "Incantation":
+                if line == "Elevation underway":
+                    continue
+                elif line.startswith("Current level:") or line == "ko":
+                    return line
+                else:
+                    continue
             return line

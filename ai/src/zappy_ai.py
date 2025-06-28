@@ -7,7 +7,7 @@ from ai.src.connection import Connection
 from ai.src.command_queue import CommandQueue
 from ai.src.inventory_parser import WorldState
 from ai.src.vision_parser import Vision
-from ai.src.roles.scout import Scout
+from ai.src.roles.survivor import Survivor
 from ai.src.roles.role_selector import select_role
 
 
@@ -20,13 +20,14 @@ class ZappyAI:
         self.conn = Connection(host, port, team_name)
         self.queue = None
         self.world = WorldState()
+        self.world.team_name = team_name
+        self.world.leader = False
         self.vision = Vision()
-        self.role = Scout()
+        self.role = Survivor()
 
     def spawn_player(self):
         pid = os.fork()
         if pid == 0:
-            print("[INFO] Spawning new player...")
             os.execv(sys.executable, [
                 sys.executable, __file__,
                 "-p", str(self.port),
@@ -52,19 +53,16 @@ class ZappyAI:
 
         while True:
             inv_line = self.queue.send_and_wait("Inventory")
-            if inv_line.startswith("[") and any(char.isdigit() for char in inv_line):
-                self.world.parse_inventory(inv_line)
+            self.world.parse_inventory(inv_line)
             look_line = self.queue.send_and_wait("Look")
-            if look_line.startswith("[") and not any(char.isdigit() for char in look_line):
-                self.vision.parse_look(look_line)
-            self.read_passive_messages()
-            self.role = select_role(self.world, self.vision)
+            self.vision.parse_look(look_line)
             connect_nbr = self.queue.send_and_wait("Connect_nbr")
             nbr = int(connect_nbr.split()[0])
             if nbr > 0:
                 self.spawn_player()
+            self.read_passive_messages()
+            self.role = select_role(self.world, self.vision)
             self.role.decide(self.queue, self.world, self.vision)
-            self.queue.flush()
 
 
 def parse_args():

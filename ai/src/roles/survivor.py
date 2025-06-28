@@ -1,19 +1,18 @@
 from ai.src.roles.base_role import Role
-from ai.src.utils.route_factory import route_to
+from ai.src.utils.route_factory import *
 
 class Survivor(Role):
     def __init__(self):
         super().__init__("Survivor")
-        self.target_direction = None
+        self.target_path = None
 
     def decide(self, queue, world, vision):
-        print("Survivor")
-        if self.target_direction is not None:
-            path = route_to(self.target_direction)
-            for cmd in path:
+        if self.target_path:
+            for cmd in self.target_path:
                 queue.send_and_wait(cmd)
             queue.send_and_wait("Look")
-            self.target_direction = None
+            self.target_path = None
+            return
         food_tile = vision.find_nearest("food")
         if food_tile != -1:
             path = route_to(food_tile)
@@ -27,10 +26,27 @@ class Survivor(Role):
             queue.send_and_wait("Forward")
 
     def on_broadcast(self, message, queue, world, vision):
+        print(f"[SRVIVVORMESS] {message}")
         parts = message.split(",", 1)
         if len(parts) != 2:
             return
-        direction = int(parts[0].split()[1])
-        content = parts[1].strip()
-        if "incantation" in content.lower():
-            self.target_direction = direction
+        if parts[1] == f"leader_{world.level}":
+            world.leader = True
+            return
+        elif parts[1] == "notleader":
+            world.leader = False
+            return
+        elif parts[1].startswith("incantation"):
+            try:
+                msg = parts[1].strip().split("_", 2)
+                if msg[1] != world.team_name or msg[2] != str(world.level):
+                    return
+                direction_str, content = parts
+                tokens = direction_str.strip().split()
+                if len(tokens) < 2:
+                    return
+                direction = int(tokens[1])
+                content = content.strip().lower()
+                self.target_path = goal_to(direction)
+            except Exception as e:
+                print(f"[WARN] Failed to parse broadcast: {e}")
