@@ -131,6 +131,7 @@ void stop_server_loop(server_t *server);
 void handle_client_event(server_t *server, client_event_t event,
     int client_idx);
 int initialize_server_players(server_t *server);
+int add_player_to_server(server_t *server, player_t *player);
 player_t *create_player_for_client(server_t *server, client_t *client,
     team_t *team, int client_id);
 
