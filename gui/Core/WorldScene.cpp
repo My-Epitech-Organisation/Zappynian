@@ -103,13 +103,18 @@ EdgePositionResult
 WorldScene::isEdgePosition(const irr::core::vector3df &position,
                            Direction direction, int nextX, int nextY) {
   EdgePositionResult result = {false, 0.0f, 0.0f, irr::core::vector3df()};
-
-  result.isEdge =
-      (position.Z == 0 && direction == Direction::NORTH) ||
-      (position.X == 0 && direction == Direction::EAST) ||
-      (position.Z == planeSize_.second - 1 && direction == Direction::SOUTH) ||
-      (position.X == planeSize_.first - 1 && direction == Direction::WEST);
-
+  int currentX = static_cast<int>(position.X / 20.0f);
+  int currentZ = static_cast<int>(position.Z / 20.0f);
+  bool crossingEdge = false;
+  if ((currentX == 0 && nextX == planeSize_.first - 1) ||
+      (currentX == planeSize_.first - 1 && nextX == 0)) {
+    crossingEdge = true;
+  }
+  if ((currentZ == 0 && nextY == planeSize_.second - 1) ||
+      (currentZ == planeSize_.second - 1 && nextY == 0)) {
+    crossingEdge = true;
+  }
+  result.isEdge = crossingEdge;
   if (result.isEdge) {
     auto nextTile =
         entityManager_.getTileByName("Cube info: row " + std::to_string(nextX) +
@@ -149,31 +154,104 @@ void WorldScene::updateMovements() {
       auto *node = entity->getNode();
       receiver_.setCurrentEntityId(movement.id);
 
-      auto edgeResult = isEdgePosition(actualPos_, movement.direction,
+      irr::core::vector3df oldPos = node->getPosition();
+      int currentLogicalX = static_cast<int>(oldPos.X / 20.0f);
+      int currentLogicalY = static_cast<int>(oldPos.Z / 20.0f);
+
+      currentLogicalX = std::max(0, std::min(currentLogicalX, planeSize_.first - 1));
+      currentLogicalY = std::max(0, std::min(currentLogicalY, planeSize_.second - 1));
+      int deltaX = movement.x - currentLogicalX;
+      int deltaY = movement.y - currentLogicalY;
+      Direction actualMovementDirection = movement.direction; // Default to server direction
+      if (deltaX == 1 && deltaY == 0) {
+        actualMovementDirection = Direction::EAST;
+      } else if (deltaX == -1 && deltaY == 0) {
+        actualMovementDirection = Direction::WEST;
+      } else if (deltaX == 0 && deltaY == 1) {
+        actualMovementDirection = Direction::SOUTH;
+      } else if (deltaX == 0 && deltaY == -1) {
+        actualMovementDirection = Direction::NORTH;
+      }
+      else if (deltaX == (planeSize_.first - 1) && deltaY == 0) {
+        actualMovementDirection = Direction::WEST;
+      } else if (deltaX == -(planeSize_.first - 1) && deltaY == 0) {
+        actualMovementDirection = Direction::EAST;
+      } else if (deltaX == 0 && deltaY == (planeSize_.second - 1)) {
+        actualMovementDirection = Direction::NORTH;
+      } else if (deltaX == 0 && deltaY == -(planeSize_.second - 1)) {
+        actualMovementDirection = Direction::SOUTH;
+      }
+      bool isNotMoving = (deltaX == 0 && deltaY == 0);
+      if (isNotMoving) {
+        float rotationY;
+        switch(movement.direction) {
+          case Direction::NORTH:
+            rotationY = 0.0f;
+            break;
+          case Direction::EAST:
+            rotationY = 270.0f;
+            break;
+          case Direction::SOUTH:
+            rotationY = 180.0f;
+            break;
+          case Direction::WEST:
+            rotationY = 90.0f;
+            break;
+        }
+        node->setRotation(irr::core::vector3df(0, rotationY, 0));
+        actualPos_ = irr::core::vector3df(currentLogicalX, 0, currentLogicalY);
+        return;
+      }
+
+      irr::core::vector3df actualLogicalPos(currentLogicalX, 0, currentLogicalY);
+      auto edgeResult = isEdgePosition(actualLogicalPos, movement.direction,
                                        movement.x, movement.y);
+      
       if (edgeResult.isEdge) {
         node->setPosition(irr::core::vector3df(
             edgeResult.nextPosition.X + edgeResult.offsetX,
             node->getPosition().Y,
             edgeResult.nextPosition.Z + edgeResult.offsetZ));
+      } else {
+        auto targetTile = entityManager_.getTileByName("Cube info: row " + std::to_string(movement.x) + " col " + std::to_string(movement.y));
+        if (targetTile) {
+          irr::core::vector3df targetPos = targetTile->getPosition();
+          node->setPosition(irr::core::vector3df(targetPos.X, node->getPosition().Y, targetPos.Z));
+        }
       }
-
       actualPos_ = irr::core::vector3df(movement.x, 0, movement.y);
-      node->setRotation(irr::core::vector3df(
-          0, static_cast<float>(movement.direction) * 90.0f, 0));
+      float rotationY;
+      switch(actualMovementDirection) {
+        case Direction::NORTH:
+          rotationY = 0.0f;
+          break;
+        case Direction::EAST:
+          rotationY = 270.0f;
+          break;
+        case Direction::SOUTH:
+          rotationY = 180.0f;
+          break;
+        case Direction::WEST:
+          rotationY = 90.0f;
+          break;
+      }
+      node->setRotation(irr::core::vector3df(0, rotationY, 0));
       if (auto *animatedNode =
               dynamic_cast<irr::scene::IAnimatedMeshSceneNode *>(node)) {
         animatedNode->setFrameLoop(1, 13);
         animatedNode->setAnimationSpeed(30.0f);
         receiver_.setMoveStartX(node->getPosition().X);
         receiver_.setMoveStartZ(node->getPosition().Z);
-        receiver_.setCurrentRotationY(static_cast<float>(movement.direction) *
-                                      90.0f);
+        receiver_.setCurrentRotationY(rotationY);  // Use adjusted rotation here too
         receiver_.setIsMoving(true);
         receiver_.setMoveStartTime(device_->getTimer()->getTime());
       }
-      node->setRotation(irr::core::vector3df(
-          0, static_cast<float>(movement.directionBefore) * 90.0f, 0));
+      
+      irr::core::vector3df newPos = node->getPosition();
+      int newLogicalX = static_cast<int>(newPos.X / 20.0f);
+      int newLogicalY = static_cast<int>(newPos.Z / 20.0f);
+      newLogicalX = std::max(0, std::min(newLogicalX, planeSize_.first - 1));
+      newLogicalY = std::max(0, std::min(newLogicalY, planeSize_.second - 1));
       return;
     }
   }
