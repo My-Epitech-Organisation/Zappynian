@@ -40,14 +40,34 @@ int initialize_server_players(server_t *server)
     return 0;
 }
 
+static void get_random_position(server_t *server, int *x, int *y)
+{
+    *x = rand() % (int)server->args->width;
+    *y = rand() % (int)server->args->height;
+}
+
+static int assign_player_to_team_slot(team_t *team, player_t *player)
+{
+    int i = 0;
+
+    for (i = 0; i < team->max_slots; i++) {
+        if (team->players[i] == NULL) {
+            team->players[i] = player;
+            team->current_players++;
+            return 1;
+        }
+    }
+    return 0;
+}
+
 player_t *create_player_for_client(server_t *server, client_t *client,
     team_t *team, int client_id)
 {
     player_t *player = NULL;
-    int x = rand() % (int)server->args->width;
-    int y = rand() % (int)server->args->height;
-    int slot_assigned = 0;
+    int x = 0;
+    int y = 0;
 
+    get_random_position(server, &x, &y);
     player = create_player(client_id, client->team_name, x, y);
     if (player == NULL)
         return NULL;
@@ -56,19 +76,11 @@ player_t *create_player_for_client(server_t *server, client_t *client,
         destroy_player(player);
         return NULL;
     }
-    for (int i = 0; i < team->max_slots; i++) {
-        if (team->players[i] == NULL) {
-            team->players[i] = player;
-            slot_assigned = 1;
-            break;
-        }
-    }
-    if (!slot_assigned) {
+    if (!assign_player_to_team_slot(team, player)) {
         remove_player_from_server(server, player);
         destroy_player(player);
         return NULL;
     }
-    team->current_players++;
     return player;
 }
 
