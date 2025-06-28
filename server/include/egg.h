@@ -33,4 +33,7 @@ void hatch_egg(egg_t *egg);
 void add_egg_to_server(server_t *server, egg_t *egg);
 void destroy_eggs_at_position(int x, int y, server_t *server);
 
+egg_t *find_team_egg(server_t *server, const char *team_name);
+player_t *hatch_egg_for_client(server_t *server, client_t *client);
+
 #endif // EGG_H

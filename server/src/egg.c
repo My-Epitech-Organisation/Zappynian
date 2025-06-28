@@ -71,15 +71,49 @@ void add_egg_to_server(server_t *server, egg_t *egg)
     }
 }
 
+egg_t *find_team_egg(server_t *server, const char *team_name)
+{
+    egg_t *current = server->eggs;
+
+    while (current) {
+        if (current->team_name && strcmp(current->team_name, team_name) == 0 
+            && !current->is_hatched) {
+            return current;
+        }
+        current = current->next;
+    }
+    return NULL;
+}
+
+player_t *hatch_egg_for_client(server_t *server, client_t *client)
+{
+    egg_t *egg = find_team_egg(server, client->team_name);
+    player_t *player = NULL;
+    tile_t *tile = NULL;
+
+    if (!egg)
+        return NULL;
+    egg->is_hatched = true;
+    player = create_player(client->id, client->team_name, 
+        egg->x, egg->y);
+    if (player) {
+        player->orientation = rand() % 4;
+        egg->player_id = player->id;
+        tile = get_tile_toroidal(server->map, egg->x, egg->y);
+        if (tile)
+            add_player_to_tile(tile, player);
+        send_ebo(server, egg->id);
+        send_pnw(server, player);
+    }
+    return player;
+}
+
 void destroy_eggs_at_position(int x, int y, server_t *server)
 {
-    egg_t **current;
-    egg_t *to_delete;
+    egg_t **current = &server->eggs;
+    egg_t *to_delete = NULL;
 
-    if (server == NULL)
-        return;
-    current = &server->eggs;
-    while (*current != NULL) {
+    while (*current) {
         if ((*current)->x == x && (*current)->y == y) {
             to_delete = *current;
             send_edi(server, to_delete->id);
