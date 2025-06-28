@@ -29,6 +29,8 @@ static player_t *search_player_in_team(team_t *team, client_t *client,
     if (args == NULL || team == NULL || client == NULL)
         return NULL;
     for (int i = 0; i < args->clients_per_team; i++) {
+        if (team->players[i] == NULL)
+            continue;
         if (team->players[i]->slot_id == client->id) {
             player = team->players[i];
             break;
