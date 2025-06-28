@@ -110,10 +110,10 @@ void set_server(server_connection_t *connection);
 
 // Client handling functions
 client_event_t handle_client_read(server_t *server, int idx);
-void handle_client_write(server_connection_t *connection, int client_idx);
-void disconnect_client(server_connection_t *connection, int client_idx);
+void handle_client_write(server_t *server, int client_idx);
+void disconnect_client(server_t *server, int client_idx);
 client_event_t assign_client_type(client_t *client, server_t *server, int idx);
-void accept_client(server_connection_t *connection, server_args_t *args);
+void accept_client(server_t *server, server_args_t *args);
 
 /* Client handshake functions */
 client_event_t setup_client_handshake(client_t *client,
