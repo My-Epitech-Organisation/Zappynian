@@ -20,6 +20,7 @@
     #include "player.h"
     #include "resource.h"
     #include "commands.h"
+    #include "timing_manager.h"
     #include "../../libzappy_net/include/zappy_net.h"
 
 typedef struct team_s team_t;
@@ -88,6 +89,7 @@ typedef struct server_s {
     volatile bool server_running;
     egg_t *eggs;
     graphic_client_list_t *graphic_clients;
+    timing_manager_t *timing_manager;
 } server_t;
 
 int handle_args(int argc, char **argv, server_t *server);
