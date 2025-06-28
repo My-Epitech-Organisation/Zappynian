@@ -27,6 +27,14 @@ player_t *create_player(int id, const char *team_name, int x, int y)
     player->dead = false;
     player->in_elevation = false;
     player->slot_id = -1;
+    for (int i = 0; i < RESOURCE_COUNT; i++)
+        player->resources[i] = 0;
+    player->command_count = 0;
+    player->current_command_line = NULL;
+    for (int i = 0; i < MAX_PLAYER_COMMANDS; i++) {
+        player->commands[i] = NULL;
+        player->command_timers[i] = 0;
+    }
     return player;
 }
 
