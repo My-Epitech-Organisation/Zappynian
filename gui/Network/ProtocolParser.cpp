@@ -398,7 +398,7 @@ namespace Zappy {
         try {
             int eggId = parseId(args[0]);
 
-            worldScene_.createEntities(eggId);
+            // worldScene_.createEntities(eggId);
             worldScene_.killEgg(eggId);
             return true;
         } catch (const std::exception& e) {
