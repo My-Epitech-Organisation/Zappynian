@@ -45,6 +45,8 @@ void game_loop_run(server_t *server)
         return;
     }
     game_loop_init(server);
+    if (initialize_server_players(server) == -1)
+        return;
     if (!server->game_running)
         return;
     server_loop(server);

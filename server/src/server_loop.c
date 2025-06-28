@@ -123,16 +123,12 @@ void server_loop(server_t *server)
 
     if (init_client_array(server) == -1)
         return;
-    if (initialize_server_players(server) == -1)
-        return;
     while (server->server_running && server->game_running) {
         setup_socket_array(server->connection, sockets, &count);
         setup_poll_events(events, count);
         poll_result = zn_poll(sockets, events, count, 100);
-        if (poll_result.ready_count > 0) {
-            handle_ready_sockets(server, &poll_result, sockets,
-                count);
-        }
+        if (poll_result.ready_count > 0)
+            handle_ready_sockets(server, &poll_result, sockets, count);
         process_game_tick(server);
     }
 }
