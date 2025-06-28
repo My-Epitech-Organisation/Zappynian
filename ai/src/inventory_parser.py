@@ -7,6 +7,8 @@ class WorldState:
         self.level = 1
         self.team_name = ""
         self.leader = False
+        self.following_leader = False
+        self.leader_direction = -1
 
     def parse_inventory(self, line: str):
         if not line.startswith("[") or not line.endswith("]"):
