@@ -92,9 +92,6 @@ void WorldScene::createEntities(int id) {
 
 void WorldScene::changePlayerPos(int id, int x, int y, Direction direction,
                                  Direction directionBefore) {
-  std::cout << "DEBUG CHANGE_POS: Player " << id << " requested move to (" << x << "," << y << ") dir=" << static_cast<int>(direction) << " from server (PPO command)" << std::endl;
-  
-  // Find current player position for debugging
   for (auto &entity : entity_) {
     if (entity->getId() == id) {
       auto *node = entity->getNode();
@@ -102,12 +99,8 @@ void WorldScene::changePlayerPos(int id, int x, int y, Direction direction,
         irr::core::vector3df currentPos = node->getPosition();
         int currentLogicalX = static_cast<int>(currentPos.X / 20.0f);
         int currentLogicalY = static_cast<int>(currentPos.Z / 20.0f);
-        
-        // Clamp logical coordinates to prevent negative values or out-of-bounds
         currentLogicalX = std::max(0, std::min(currentLogicalX, planeSize_.first - 1));
         currentLogicalY = std::max(0, std::min(currentLogicalY, planeSize_.second - 1));
-        
-        std::cout << "DEBUG BEFORE_MOVE: Player " << id << " current logical position (" << currentLogicalX << "," << currentLogicalY << ") world position (" << currentPos.X << "," << currentPos.Z << ")" << std::endl;
       }
       break;
     }
@@ -124,57 +117,36 @@ EdgePositionResult
 WorldScene::isEdgePosition(const irr::core::vector3df &position,
                            Direction direction, int nextX, int nextY) {
   EdgePositionResult result = {false, 0.0f, 0.0f, irr::core::vector3df()};
-
-  // Convert 3D position back to logical coordinates (divide by 20 for tile size)
   int currentX = static_cast<int>(position.X / 20.0f);
   int currentZ = static_cast<int>(position.Z / 20.0f);
-  
-  std::cout << "DEBUG IS_EDGE_INPUT: currentLogical=(" << currentX << "," << currentZ << ") nextLogical=(" << nextX << "," << nextY << ") map_size=(" << planeSize_.first << "," << planeSize_.second << ") direction=" << static_cast<int>(direction) << std::endl;
-  
-  // Check if we're crossing an edge (wrap-around case)
   bool crossingEdge = false;
-  
-  // Check for wrap-around in X direction (EAST/WEST)
   if ((currentX == 0 && nextX == planeSize_.first - 1) ||
       (currentX == planeSize_.first - 1 && nextX == 0)) {
     crossingEdge = true;
-    std::cout << "DEBUG IS_EDGE_X_WRAP: X wrap detected - currentX=" << currentX << " nextX=" << nextX << " map_width=" << planeSize_.first << std::endl;
   }
-  
-  // Check for wrap-around in Z direction (NORTH/SOUTH)  
   if ((currentZ == 0 && nextY == planeSize_.second - 1) ||
       (currentZ == planeSize_.second - 1 && nextY == 0)) {
     crossingEdge = true;
-    std::cout << "DEBUG IS_EDGE_Y_WRAP: Y wrap detected - currentZ=" << currentZ << " nextY=" << nextY << " map_height=" << planeSize_.second << std::endl;
   }
-  
   result.isEdge = crossingEdge;
-  
-  std::cout << "DEBUG IS_EDGE_OUTPUT: isEdge=" << crossingEdge << std::endl;
-
   if (result.isEdge) {
     auto nextTile =
         entityManager_.getTileByName("Cube info: row " + std::to_string(nextX) +
                                      " col " + std::to_string(nextY));
     if (nextTile) {
       result.nextPosition = nextTile->getPosition();
-      // For wrap-around, we need to offset the visual position to simulate teleportation
       switch (direction) {
-      case Direction::NORTH: // Going from bottom edge to top edge
+      case Direction::NORTH:
         result.offsetZ = 20.0f;
-        std::cout << "DEBUG IS_EDGE_OFFSET: NORTH wrap - offsetZ=20.0f" << std::endl;
         break;
-      case Direction::EAST: // Going from left edge to right edge  
+      case Direction::EAST:
         result.offsetX = 20.0f;
-        std::cout << "DEBUG IS_EDGE_OFFSET: EAST wrap - offsetX=20.0f" << std::endl;
         break;
-      case Direction::SOUTH: // Going from top edge to bottom edge
+      case Direction::SOUTH:
         result.offsetZ = -20.0f;
-        std::cout << "DEBUG IS_EDGE_OFFSET: SOUTH wrap - offsetZ=-20.0f" << std::endl;
         break;
-      case Direction::WEST: // Going from right edge to left edge
+      case Direction::WEST:
         result.offsetX = -20.0f;
-        std::cout << "DEBUG IS_EDGE_OFFSET: WEST wrap - offsetX=-20.0f" << std::endl;
         break;
       default:
         break;
@@ -202,60 +174,112 @@ void WorldScene::updateMovements() {
 
       currentLogicalX = std::max(0, std::min(currentLogicalX, planeSize_.first - 1));
       currentLogicalY = std::max(0, std::min(currentLogicalY, planeSize_.second - 1));
-      
-      std::cout << "DEBUG UPDATE_MOVEMENT: Player " << movement.id << " current pos (" << oldPos.X << "," << oldPos.Z << ") moving to (" << movement.x << "," << movement.y << ") map_size=(" << planeSize_.first << "," << planeSize_.second << ")" << std::endl;
-      std::cout << "DEBUG UPDATE_MOVEMENT: Player " << movement.id << " current logical (" << currentLogicalX << "," << currentLogicalY << ") target logical (" << movement.x << "," << movement.y << ")" << std::endl;
+      std::string dirName = "";
+      switch(movement.direction) {
+        case Direction::NORTH: dirName = "NORTH"; break;
+        case Direction::EAST: dirName = "EAST"; break;
+        case Direction::SOUTH: dirName = "SOUTH"; break;
+        case Direction::WEST: dirName = "WEST"; break;
+      }
+      int deltaX = movement.x - currentLogicalX;
+      int deltaY = movement.y - currentLogicalY;
+      Direction actualMovementDirection = movement.direction; // Default to server direction
+      if (deltaX == 1 && deltaY == 0) {
+        actualMovementDirection = Direction::EAST;
+      } else if (deltaX == -1 && deltaY == 0) {
+        actualMovementDirection = Direction::WEST;
+      } else if (deltaX == 0 && deltaY == 1) {
+        actualMovementDirection = Direction::SOUTH;
+      } else if (deltaX == 0 && deltaY == -1) {
+        actualMovementDirection = Direction::NORTH;
+      }
+      else if (deltaX == (planeSize_.first - 1) && deltaY == 0) {
+        actualMovementDirection = Direction::WEST;
+      } else if (deltaX == -(planeSize_.first - 1) && deltaY == 0) {
+        actualMovementDirection = Direction::EAST;
+      } else if (deltaX == 0 && deltaY == (planeSize_.second - 1)) {
+        actualMovementDirection = Direction::NORTH;
+      } else if (deltaX == 0 && deltaY == -(planeSize_.second - 1)) {
+        actualMovementDirection = Direction::SOUTH;
+      }
+      std::string actualDirName = "";
+      switch(actualMovementDirection) {
+        case Direction::NORTH: actualDirName = "NORTH"; break;
+        case Direction::EAST: actualDirName = "EAST"; break;
+        case Direction::SOUTH: actualDirName = "SOUTH"; break;
+        case Direction::WEST: actualDirName = "WEST"; break;
+      }
+      bool isNotMoving = (deltaX == 0 && deltaY == 0);
+      if (isNotMoving) {
+        float rotationY;
+        switch(movement.direction) {
+          case Direction::NORTH:
+            rotationY = 0.0f;
+            break;
+          case Direction::EAST:
+            rotationY = 270.0f;
+            break;
+          case Direction::SOUTH:
+            rotationY = 180.0f;
+            break;
+          case Direction::WEST:
+            rotationY = 90.0f;
+            break;
+        }
+        node->setRotation(irr::core::vector3df(0, rotationY, 0));
+        actualPos_ = irr::core::vector3df(currentLogicalX, 0, currentLogicalY);
+        return;
+      }
 
-      // Use actual logical position instead of actualPos_ which is never updated correctly
       irr::core::vector3df actualLogicalPos(currentLogicalX, 0, currentLogicalY);
       auto edgeResult = isEdgePosition(actualLogicalPos, movement.direction,
                                        movement.x, movement.y);
-      std::cout << "DEBUG IS_EDGE: currentLogical=(" << currentLogicalX << "," << currentLogicalY << ") direction=" << static_cast<int>(movement.direction) << " nextPos=(" << movement.x << "," << movement.y << ") isEdge=" << edgeResult.isEdge << std::endl;
       
       if (edgeResult.isEdge) {
-        std::cout << "DEBUG EDGE_TELEPORT: Player " << movement.id << " teleporting from (" << oldPos.X << "," << oldPos.Z << ") to (" << (edgeResult.nextPosition.X + edgeResult.offsetX) << "," << (edgeResult.nextPosition.Z + edgeResult.offsetZ) << ")" << std::endl;
         node->setPosition(irr::core::vector3df(
             edgeResult.nextPosition.X + edgeResult.offsetX,
             node->getPosition().Y,
             edgeResult.nextPosition.Z + edgeResult.offsetZ));
       } else {
-        // Normal movement - just move to the target tile
         auto targetTile = entityManager_.getTileByName("Cube info: row " + std::to_string(movement.x) + " col " + std::to_string(movement.y));
         if (targetTile) {
           irr::core::vector3df targetPos = targetTile->getPosition();
-          std::cout << "DEBUG NORMAL_MOVE: Player " << movement.id << " moving to tile position (" << targetPos.X << "," << targetPos.Z << ")" << std::endl;
           node->setPosition(irr::core::vector3df(targetPos.X, node->getPosition().Y, targetPos.Z));
         }
       }
-
-      // Update actualPos_ with the logical coordinates (not world coordinates)
       actualPos_ = irr::core::vector3df(movement.x, 0, movement.y);
-      
-      node->setRotation(irr::core::vector3df(
-          0, static_cast<float>(movement.direction) * 90.0f, 0));
+      float rotationY;
+      switch(actualMovementDirection) {
+        case Direction::NORTH:
+          rotationY = 0.0f;
+          break;
+        case Direction::EAST:
+          rotationY = 270.0f;
+          break;
+        case Direction::SOUTH:
+          rotationY = 180.0f;
+          break;
+        case Direction::WEST:
+          rotationY = 90.0f;
+          break;
+      }
+      node->setRotation(irr::core::vector3df(0, rotationY, 0));
       if (auto *animatedNode =
               dynamic_cast<irr::scene::IAnimatedMeshSceneNode *>(node)) {
         animatedNode->setFrameLoop(1, 13);
         animatedNode->setAnimationSpeed(30.0f);
         receiver_.setMoveStartX(node->getPosition().X);
         receiver_.setMoveStartZ(node->getPosition().Z);
-        receiver_.setCurrentRotationY(static_cast<float>(movement.direction) *
-                                      90.0f);
+        receiver_.setCurrentRotationY(rotationY);  // Use adjusted rotation here too
         receiver_.setIsMoving(true);
         receiver_.setMoveStartTime(device_->getTimer()->getTime());
       }
-      node->setRotation(irr::core::vector3df(
-          0, static_cast<float>(movement.directionBefore) * 90.0f, 0));
       
       irr::core::vector3df newPos = node->getPosition();
       int newLogicalX = static_cast<int>(newPos.X / 20.0f);
       int newLogicalY = static_cast<int>(newPos.Z / 20.0f);
-      
-      // Ensure final position is within bounds
       newLogicalX = std::max(0, std::min(newLogicalX, planeSize_.first - 1));
       newLogicalY = std::max(0, std::min(newLogicalY, planeSize_.second - 1));
-      
-      std::cout << "DEBUG FINAL_POS: Player " << movement.id << " final logical position (" << newLogicalX << "," << newLogicalY << ") world position (" << newPos.X << "," << newPos.Z << ")" << std::endl;
       return;
     }
   }
