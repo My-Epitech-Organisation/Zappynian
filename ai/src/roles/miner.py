@@ -5,7 +5,6 @@ from ai.src.utils.incantation_data import INCANTATION_REQUIREMENTS
 class Miner(Role):
     def __init__(self):
         super().__init__("Miner")
-        self.target_direction = None
         self.target_path = None
 
     def decide(self, queue, world, vision):
@@ -15,7 +14,6 @@ class Miner(Role):
             queue.send_and_wait("Look")
             self.target_path = None
             return
-        queue.send_and_wait("Fork")
         level = world.level
         goals = INCANTATION_REQUIREMENTS.get(level, {})
         for stone, goal in goals.items():
@@ -41,16 +39,20 @@ class Miner(Role):
             queue.send_and_wait("Forward")
 
     def on_broadcast(self, message, queue, world, vision):
+        print(f"[MINERMESS] {message}")
         parts = message.split(",", 1)
         if len(parts) != 2:
             return
-        if parts[1] == "i_m_leader":
+        if parts[1] == f"leader_{world.level}":
             world.leader = True
             return
-        else:
+        elif parts[1] == "notleader":
+            world.leader = False
+            return
+        elif parts[1].startswith("incantation"):
             try:
-                other = parts[1].split("_", 3)
-                if other[0] != world.team_name:
+                msg = parts[1].strip().split("_", 2)
+                if msg[1] != world.team_name or msg[2] != str(world.level):
                     return
                 direction_str, content = parts
                 tokens = direction_str.strip().split()
@@ -58,7 +60,6 @@ class Miner(Role):
                     return
                 direction = int(tokens[1])
                 content = content.strip().lower()
-                if "incantation" in content:
-                    self.target_path = goal_to(direction)
+                self.target_path = goal_to(direction)
             except Exception as e:
                 print(f"[WARN] Failed to parse broadcast: {e}")
