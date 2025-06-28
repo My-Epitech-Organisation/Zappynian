@@ -286,41 +286,55 @@ void WorldScene::createPlane(int x, int y) {
 void WorldScene::createText() {
   if (!smgr_ || !driver_)
     return;
+  
+  irr::core::dimension2du screenSize = smgr_->getVideoDriver()->getScreenSize();
+  int screenWidth = screenSize.Width;
+  int screenHeight = screenSize.Height;
+  
+  // Tile Info Up at Left
   irr::gui::IGUIStaticText *text = smgr_->getGUIEnvironment()->addStaticText(
-      L"Tile Info:", irr::core::rect<irr::s32>(10, 10, 220, 150), false);
+      L"Tile Info:", irr::core::rect<irr::s32>(10, 10, screenWidth / 3 - 10, screenHeight / 4.5f - 10), false);
   text->setDrawBorder(true);
 
+  // Player Info Up at Right
   irr::gui::IGUIStaticText *playerText =
       smgr_->getGUIEnvironment()->addStaticText(
           L"Player Info:",
           irr::core::rect<irr::s32>(
-              smgr_->getVideoDriver()->getScreenSize().Width - 120, 10,
-              smgr_->getVideoDriver()->getScreenSize().Width - 10, 180),
+              screenWidth * 2.5f / 3 + 10,
+              10,
+              screenWidth - 10,
+              screenHeight / 4 - 10),
           false);
   playerText->setDrawBorder(true);
 
+  // Map Info Down at Right
   textMap_ = smgr_->getGUIEnvironment()->addStaticText(
-      L"Map Info:\n", irr::core::rect<irr::s32>(10, 220, 220, 640), false);
+      L"Map Info:\n", irr::core::rect<irr::s32>(
+              screenWidth * 2 / 3 + 10,
+              screenHeight * 1.85f / 3 + 10,
+              screenWidth - 10,
+              screenHeight - 10), false);
   textMap_->setDrawBorder(true);
 
-  irr::core::dimension2du screenSize = smgr_->getVideoDriver()->getScreenSize();
+  // Chat Down at Left
   textChat_ = smgr_->getGUIEnvironment()->addStaticText(
       L"Chat:\n",
-      irr::core::rect<irr::s32>(10, 700, 400, screenSize.Height - 10), false);
+      irr::core::rect<irr::s32>(10, screenHeight * 2 / 3 + 10, screenWidth / 3 - 10, screenHeight - 10), false);
   textChat_->setDrawBorder(true);
 
   irr::gui::IGUIFont *font = smgr_->getGUIEnvironment()->getFont(
-      mediaPath_ + "fonthaettenschweiler.bmp");
+      mediaPath_ + "font/myfont.xml");
   if (font) {
     text->setOverrideColor(irr::video::SColor(255, 0, 0, 0));
     playerText->setOverrideColor(irr::video::SColor(255, 0, 0, 0));
     textChat_->setOverrideColor(irr::video::SColor(255, 0, 0, 0));
     textMap_->setOverrideColor(irr::video::SColor(255, 0, 0, 0));
 
-    text->setBackgroundColor(irr::video::SColor(120, 211, 211, 211));
-    playerText->setBackgroundColor(irr::video::SColor(120, 211, 211, 211));
-    textChat_->setBackgroundColor(irr::video::SColor(120, 211, 211, 211));
-    textMap_->setBackgroundColor(irr::video::SColor(120, 211, 211, 211));
+    text->setBackgroundColor(irr::video::SColor(70, 211, 211, 211));
+    playerText->setBackgroundColor(irr::video::SColor(70, 211, 211, 211));
+    textChat_->setBackgroundColor(irr::video::SColor(70, 211, 211, 211));
+    textMap_->setBackgroundColor(irr::video::SColor(70, 211, 211, 211));
 
     text->setOverrideFont(font);
     playerText->setOverrideFont(font);
