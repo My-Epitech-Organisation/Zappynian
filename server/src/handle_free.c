@@ -30,7 +30,6 @@ int handle_free_args(server_args_t *server)
         free_team_names(server);
     if (server->teams != NULL)
         free_teams(server);
-    free(server);
     return 0;
 }
 
@@ -40,7 +39,6 @@ static void free_single_client(client_t *client)
         zn_close(client->zn_sock);
     if (client->team_name)
         free(client->team_name);
-    free(client);
 }
 
 static void free_clients_array(server_connection_t *connection)
@@ -51,7 +49,6 @@ static void free_clients_array(server_connection_t *connection)
         if (connection->clients[i])
             free_single_client(connection->clients[i]);
     }
-    free(connection->clients);
 }
 
 int handle_free(server_t *server)
@@ -60,10 +57,8 @@ int handle_free(server_t *server)
         return 0;
     if (server->args != NULL)
         handle_free_args(server->args);
-    if (server->connection != NULL) {
+    if (server->connection != NULL)
         free_clients_array(server->connection);
-        free(server->connection);
-    }
     if (server->graphic_clients != NULL)
         destroy_graphic_client_list(server->graphic_clients);
     if (server->map != NULL)
