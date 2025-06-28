@@ -118,6 +118,9 @@ public:
    */
   int getLevel() const override { return level_; }
 
+
+  void setTeam(const std::string &team) override { teams_ = team; }
+  std::string getTeam() const override { return teams_; }
   /**
    * @brief Sets the entity's facing direction
    * 
@@ -160,6 +163,7 @@ public:
 protected:
   int id_;
   std::string name_;
+  std::string teams_;
   irr::core::vector3df pos_;
   irr::core::vector3df scale_;
   irr::scene::IAnimatedMeshSceneNode *node_;
