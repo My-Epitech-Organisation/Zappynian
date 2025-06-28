@@ -9,37 +9,6 @@
 #include "../include/game_loop.h"
 #include "../include/egg.h"
 
-static void setup_socket_array(server_connection_t *connection,
-    zn_socket_t *sockets, int *count)
-{
-    *count = 0;
-    sockets[0] = connection->zn_server;
-    *count = 1;
-    for (int i = 0; i < connection->client_count &&
-        *count < ZN_POLL_MAX_SOCKETS;
-        i++) {
-        if (connection->clients[i] != NULL &&
-            connection->clients[i]->zn_sock != NULL) {
-            sockets[*count] = connection->clients[i]->zn_sock;
-            (*count)++;
-        }
-    }
-}
-
-static int find_client_by_socket(server_connection_t *connection,
-    zn_socket_t socket)
-{
-    int j;
-
-    for (j = 0; j < connection->client_count; j++) {
-        if (connection->clients[j] != NULL &&
-            connection->clients[j]->zn_sock == socket) {
-            return j;
-        }
-    }
-    return -1;
-}
-
 static void handle_socket_events(server_t *server,
     zn_poll_result_t *result, int i, int client_idx)
 {
@@ -84,16 +53,6 @@ static int init_client_array(server_t *server)
     return 0;
 }
 
-static void setup_poll_events(short *events, int count)
-{
-    for (int i = 0; i < count; i++) {
-        events[i] = POLLIN;
-        if (i > 0) {
-            events[i] |= POLLOUT;
-        }
-    }
-}
-
 void check_min_eggs(server_t *server)
 {
     for (int i = 0; i < server->args->team_count; i++) {
@@ -129,7 +88,8 @@ void server_loop(server_t *server)
         return;
     while (server->server_running && server->game_running) {
         setup_socket_array(server->connection, sockets, &count);
-        setup_poll_events(events, count);
+        setup_poll_events(events, sockets, server->connection,
+            count);
         poll_result = zn_poll(sockets, events, count, 100);
         if (poll_result.ready_count > 0) {
             handle_ready_sockets(server, &poll_result, sockets,
