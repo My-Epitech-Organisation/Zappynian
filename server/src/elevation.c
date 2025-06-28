@@ -57,7 +57,42 @@ void start_incantation(tile_t *tile)
     }
 }
 
-bool complete_incantation(tile_t *tile, player_t *player, 
+static void reset_incantation_state(tile_t *tile)
+{
+    size_t i;
+
+    tile->is_incantation_in_progress = false;
+    for (i = 0; i < tile->player_count; i++) {
+        if (tile->players[i])
+            tile->players[i]->in_elevation = false;
+    }
+}
+
+static void consume_resources(tile_t *tile, elevation_requirement_t req)
+{
+    int i;
+
+    for (i = 0; i < RESOURCE_COUNT; i++) {
+        tile->resources[i] -= req.required_resources[i];
+        if (tile->resources[i] < 0)
+            tile->resources[i] = 0;
+    }
+}
+
+static void elevate_players(tile_t *tile, player_t *player, server_t *server)
+{
+    size_t i;
+
+    for (i = 0; i < tile->player_count; i++) {
+        if (tile->players[i] && tile->players[i]->level == player->level) {
+            tile->players[i]->level++;
+            tile->players[i]->in_elevation = false;
+            send_plv(server, tile->players[i]);
+        }
+    }
+}
+
+bool complete_incantation(tile_t *tile, player_t *player,
     elevation_requirement_t requirements[], server_t *server)
 {
     elevation_requirement_t req;
@@ -66,25 +101,11 @@ bool complete_incantation(tile_t *tile, player_t *player,
         return false;
     req = requirements[player->level - 1];
     if (!can_start_incantation(tile, player, requirements)) {
-        tile->is_incantation_in_progress = false;
-        for (size_t i = 0; i < tile->player_count; i++) {
-            if (tile->players[i])
-                tile->players[i]->in_elevation = false;
-        }
+        reset_incantation_state(tile);
         return false;
     }
-    for (int i = 0; i < RESOURCE_COUNT; i++) {
-        tile->resources[i] -= req.required_resources[i];
-        if (tile->resources[i] < 0)
-            tile->resources[i] = 0;
-    }
-    for (size_t i = 0; i < tile->player_count; i++) {
-        if (tile->players[i] && tile->players[i]->level == player->level) {
-            tile->players[i]->level++;
-            tile->players[i]->in_elevation = false;
-            send_plv(server, tile->players[i]);
-        }
-    }
+    consume_resources(tile, req);
+    elevate_players(tile, player, server);
     tile->is_incantation_in_progress = false;
     send_bct(server, tile);
     return true;
