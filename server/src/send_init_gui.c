@@ -18,6 +18,6 @@ int send_graphic_initial_state(client_t *client, server_t *server)
     send_sgt(server, server->args->frequency);
     send_mct(server, server->map);
     send_tna(server, server->args->teams, server->args->team_count);
-    send_ewn(server);
+    send_enw(server);
     return 0;
 }

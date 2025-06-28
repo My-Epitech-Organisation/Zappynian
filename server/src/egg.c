@@ -71,7 +71,7 @@ void add_egg_to_server(server_t *server, egg_t *egg)
     }
 }
 
-static egg_t *find_team_egg(server_t *server, const char *team_name)
+egg_t *find_team_egg(server_t *server, const char *team_name)
 {
     egg_t *current = server->eggs;
 

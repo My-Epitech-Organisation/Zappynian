@@ -7,6 +7,7 @@
 
 #include "../include/server.h"
 #include "../include/team.h"
+#include "../include/egg.h"
 
 static void handle_ia_connection(server_t *server, int client_idx)
 {

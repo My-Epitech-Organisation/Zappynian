@@ -24,7 +24,7 @@ static void send_egg_recursively(graphic_client_list_t *list, egg_t *egg)
     send_to_all_graphic_clients(list, ewn_command);
 }
 
-void send_ewn(server_t *server)
+void send_enw(server_t *server)
 {
     if (server->graphic_clients == NULL || server == NULL)
         return;

@@ -74,6 +74,6 @@ void cmd_fork(player_t *player, server_t *server)
         return;
     }
     add_egg_to_server(server, new_egg);
-    send_ewn(server);
+    send_enw(server);
     zn_send_message(server->connection->zn_server, "ok");
 }
