@@ -20,10 +20,11 @@ static void handle_ia_connection(server_t *server, int client_idx)
     team = get_team_by_name(server->args, client->team_name);
     if (team == NULL)
         return;
-    player = create_player_for_client(server, client, team);
+    player = hatch_egg_for_client(server, client);
+    if (player == NULL)
+        player = create_player_for_client(server, client, team);
     if (player == NULL)
         return;
-    send_pnw(server, player);
     snprintf(response, sizeof(response), "%d", team->remaining_slots);
     zn_send_message(client->zn_sock, response);
     snprintf(response, sizeof(response), "%d %d",
