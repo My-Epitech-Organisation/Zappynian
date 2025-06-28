@@ -64,3 +64,27 @@ player_t *create_player_for_client(server_t *server, client_t *client,
     team->current_players++;
     return player;
 }
+
+void remove_player_from_server(server_t *server, player_t *player)
+{
+    for (size_t i = 0; i < server->player_count; i++) {
+        if (server->players[i] == player) {
+            server->players[i] = NULL;
+            break;
+        }
+    }
+}
+
+void remove_player_from_team(team_t *team, player_t *player)
+{
+    if (!team)
+        return;
+    for (int i = 0; i < team->max_slots; i++) {
+        if (team->players[i] == player) {
+            team->players[i] = NULL;
+            break;
+        }
+    }
+    if (team->current_players > 0)
+        team->current_players--;
+}

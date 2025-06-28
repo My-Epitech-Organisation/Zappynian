@@ -191,4 +191,7 @@ graphic_client_node_t *find_graphic_client(graphic_client_list_t *list,
 void send_to_all_graphic_clients(graphic_client_list_t *list,
     const char *message);
 
+void remove_player_from_server(server_t *server, player_t *player);
+void remove_player_from_team(team_t *team, player_t *player);
+
 #endif /* SERVER_H */
