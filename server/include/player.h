@@ -42,7 +42,6 @@ typedef struct player_s {
 player_t *create_player(int id, const char *team_name, int x, int y);
 void destroy_player(player_t *player);
 void move_player(player_t *player, int new_x, int new_y, map_t *map);
-bool player_decrement_food(player_t *player);
 bool decrement_food_for_all_players(server_t *server);
 
 #endif // PLAYER_H
