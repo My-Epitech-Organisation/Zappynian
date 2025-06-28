@@ -22,29 +22,6 @@ void elevation_init_requirements(elevation_requirement_t *requirements)
     requirements[6] = (elevation_requirement_t) {6, {2, 2, 2, 2, 2, 1, 0}};
 }
 
-bool can_start_incantation(tile_t *tile, player_t *player,
-    elevation_requirement_t requirements[])
-{
-    elevation_requirement_t req;
-    int same_level_players = 0;
-
-    if (!tile || !player || player->level >= MAX_LEVEL)
-        return false;
-    req = requirements[player->level - 1];
-    same_level_players = 0;
-    for (size_t i = 0; i < tile->player_count; i++) {
-        if (tile->players[i] && tile->players[i]->level == player->level)
-            same_level_players++;
-    }
-    if (same_level_players < req.required_players)
-        return false;
-    for (int i = 0; i < RESOURCE_COUNT; i++) {
-        if (tile->resources[i] < req.required_resources[i])
-            return false;
-    }
-    return true;
-}
-
 void start_incantation(tile_t *tile)
 {
     if (!tile)
@@ -109,4 +86,13 @@ bool complete_incantation(tile_t *tile, player_t *player,
     tile->is_incantation_in_progress = false;
     send_bct(server, tile);
     return true;
+}
+
+void cancel_incantation(tile_t *tile, server_t *server)
+{
+    if (!tile || !tile->is_incantation_in_progress)
+        return;
+    reset_incantation_state(tile);
+    send_pie(server, tile, false);
+    send_bct(server, tile);
 }
