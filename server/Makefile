@@ -46,6 +46,7 @@ SRCS	=	src/main.c							\
 			src/client_adapters.c 				\
 			src/write_to_client.c 				\
 			src/server_loop.c 					\
+			src/server_poll.c 					\
 			src/server_player_manager.c 		\
 			src/server_event_handler.c 		\
 			src/catch_commands_from_clients.c 	\
