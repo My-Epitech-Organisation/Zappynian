@@ -5,7 +5,6 @@
 ** Game
 */
 #include "../Core/EntityManager.hpp"
-#include "../Core/GameState.hpp"
 #include "../Core/WorldScene.hpp"
 #include "../Entities/PlayerEntity.hpp"
 #include "../Entities/Stone.hpp"

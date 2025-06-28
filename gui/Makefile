@@ -12,7 +12,6 @@ SRC = src/main.cpp \
 	App/Game.cpp \
 	Core/EntityManager.cpp \
 	Core/WorldScene.cpp \
-	Core/GameState.cpp \
 	Entities/AEntity.cpp \
 	Entities/PlayerEntity.cpp \
 	Entities/TileEntity.cpp \

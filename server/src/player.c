@@ -40,15 +40,20 @@ void destroy_player(player_t *player)
 
 void move_player(player_t *player, int x, int y, map_t *map)
 {
+    tile_t *old_tile = NULL;
+    tile_t *new_tile = NULL;
+
     if (player == NULL || map == NULL)
         return;
-    if (x < 0 || (size_t)x >= map->width || y < 0 ||
-        (size_t)y >= map->height) {
-        fprintf(stderr, "Move out of bounds: (%d, %d)\n", x, y);
-        return;
-    }
+    old_tile = get_tile(map, player->x, player->y);
+    if (old_tile)
+        remove_player_from_tile(old_tile, player);
+    normalize_coordinates_toroidal(&x, &y, map->width, map->height);
     player->x = x;
     player->y = y;
+    new_tile = get_tile_toroidal(map, player->x, player->y);
+    if (new_tile)
+        add_player_to_tile(new_tile, player);
 }
 
 bool player_decrement_food(player_t *player)

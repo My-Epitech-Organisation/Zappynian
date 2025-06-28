@@ -29,7 +29,6 @@ namespace Zappy {
         std::vector<std::string> args(tokens.begin() + 1, tokens.end());
 
         if (command == "msz") return parseMapSize(args);
-        else if (command == "mct") return parseMapContent(args);
         else if (command == "bct") return parseTileContent(args);
         else if (command == "tna") return parseTeamName(args);
         else if (command == "pnw") return parsePlayerNew(args);
@@ -78,10 +77,6 @@ namespace Zappy {
             std::cerr << "ERROR: Failed to parse msz: " << e.what() << std::endl;
             return false;
         }
-    }
-
-    bool ProtocolParser::parseMapContent(const std::vector<std::string>& args) {
-        return true;
     }
 
     bool ProtocolParser::parseTileContent(const std::vector<std::string>& args) {
@@ -200,11 +195,13 @@ namespace Zappy {
 
         try {
             int id = parseId(args[0]);
-            int x = std::stoi(args[1]);
-            int y = std::stoi(args[2]);
+            if (args[1].empty() || args[2].empty()) {
+                std::cerr << "ERROR: pin arguments x or y is empty" << std::endl;
+                return false;
+            }
 
             Inventory inventory = parseInventoryArgs(args, 3);
-            worldScene_.setPlayerInventory(id, x, y, inventory.getItemQuantity("food"),
+            worldScene_.setPlayerInventory(id, inventory.getItemQuantity("food"),
                                            inventory.getItemQuantity("linemate"),
                                            inventory.getItemQuantity("deraumere"),
                                            inventory.getItemQuantity("sibur"),
@@ -267,13 +264,16 @@ namespace Zappy {
         try {
             int x = std::stoi(args[0]);
             int y = std::stoi(args[1]);
-            int level = std::stoi(args[2]);
+            if (args[2].empty()) {
+                std::cerr << "ERROR: pic arguments x or y is empty" << std::endl;
+                return false;
+            }
 
             std::vector<int> playerIds;
             for (size_t i = 3; i < args.size(); ++i) {
                 playerIds.push_back(parseId(args[i]));
             }
-            worldScene_.startIncantation(x, y, level, playerIds);
+            worldScene_.startIncantation(x, y, playerIds);
             return true;
         } catch (const std::exception& e) {
             std::cerr << "ERROR: Failed to parse pic: " << e.what() << std::endl;
@@ -308,7 +308,7 @@ namespace Zappy {
 
         try {
             int id = parseId(args[0]);
-            // worldScene_.createEntities(id);
+            worldScene_.createEntities(id);
             return true;
         } catch (const std::exception& e) {
             std::cerr << "ERROR: Failed to parse pfk: " << e.what() << std::endl;
@@ -359,10 +359,6 @@ namespace Zappy {
         try {
             int id = parseId(args[0]);
             worldScene_.killPlayer(id);
-
-            // if (onPlayerDisconnected_) {
-            //     onPlayerDisconnected_("Player " + std::to_string(id) + " died");
-            // }
 
             return true;
         } catch (const std::exception& e) {

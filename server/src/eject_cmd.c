@@ -36,16 +36,16 @@ static void move_player_in_direction(player_t *player, int direction,
 
     switch (direction) {
         case NORTH:
-            new_y = (new_y - 1 + (int)map->height) % (int)map->height;
+            new_y--;
             break;
         case EAST:
-            new_x = (new_x + 1) % (int)map->width;
+            new_x++;
             break;
         case SOUTH:
-            new_y = (new_y + 1) % (int)map->height;
+            new_y++;
             break;
         case WEST:
-            new_x = (new_x - 1 + (int)map->width) % (int)map->width;
+            new_x--;
             break;
     }
     move_player(player, new_x, new_y, map);
@@ -104,7 +104,7 @@ static void ejection(player_t *player, server_t *server,
         direction = get_dir(player, ejected);
         remove_player_from_tile(current_tile, ejected);
         move_player_in_direction(ejected, player->orientation, server->map);
-        new_tile = get_tile(server->map, ejected->x, ejected->y);
+        new_tile = get_tile_toroidal(server->map, ejected->x, ejected->y);
         if (new_tile)
             add_player_to_tile(new_tile, ejected);
         send_ppo(server, ejected);

@@ -76,8 +76,6 @@ public:
    * @brief Sets a player's inventory contents
    * 
    * @param id Player identifier
-   * @param x Player's X position
-   * @param y Player's Y position
    * @param q0 Food quantity
    * @param q1 Linemate quantity
    * @param q2 Deraumere quantity
@@ -86,7 +84,7 @@ public:
    * @param q5 Phiras quantity
    * @param q6 Thystame quantity
    */
-  void setPlayerInventory(int id, int x, int y, int q0, int q1, int q2, int q3,
+  void setPlayerInventory(int id, int q0, int q1, int q2, int q3,
                           int q4, int q5, int q6);
 
   /**
@@ -210,7 +208,7 @@ public:
    * @param level Required level for incantation
    * @param ids Vector of player IDs participating
    */
-  void startIncantation(int x, int y, int level, std::vector<int> ids);
+  void startIncantation(int x, int y, std::vector<int> ids);
   
   /**
    * @brief Stops an ongoing incantation

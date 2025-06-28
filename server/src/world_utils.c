@@ -40,3 +40,40 @@ bool set_resource_on_tile(tile_t *tile, int resource_type)
     tile->resources[resource_type]++;
     return true;
 }
+
+void normalize_coordinates_toroidal(int *x, int *y, size_t width,
+    size_t height)
+{
+    if (!x || !y || width == 0 || height == 0)
+        return;
+    while (*x < 0)
+        *x += width;
+    while (*y < 0)
+        *y += height;
+    while ((size_t)*x >= width)
+        *x -= width;
+    while ((size_t)*y >= height)
+        *y -= height;
+}
+
+static void normalize_coordinates(int *x, int *y, map_t *map)
+{
+    if (!map || !x || !y)
+        return;
+    while (*x < 0)
+        *x += map->width;
+    while (*y < 0)
+        *y += map->height;
+    while ((size_t)*x >= map->width)
+        *x -= map->width;
+    while ((size_t)*y >= map->height)
+        *y -= map->height;
+}
+
+tile_t *get_tile_toroidal(map_t *map, int x, int y)
+{
+    if (!map)
+        return NULL;
+    normalize_coordinates(&x, &y, map);
+    return &map->tiles[y][x];
+}

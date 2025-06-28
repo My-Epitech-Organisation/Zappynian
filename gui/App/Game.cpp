@@ -63,8 +63,6 @@ void Game::processNetworkMessages() {
 
   networkManager_->updateFromServer();
 
-  const auto& gameState = networkManager_->getGameState();
-
   static bool firstSync = true;
   if (networkManager_->isGameStateSynchronized() && firstSync) {
     firstSync = false;

@@ -58,16 +58,16 @@ int handle_free(server_t *server)
 {
     if (server == NULL)
         return 0;
-    if (server->args != NULL) {
+    if (server->args != NULL)
         handle_free_args(server->args);
-    }
     if (server->connection != NULL) {
         free_clients_array(server->connection);
         free(server->connection);
     }
-    if (server->graphic_clients != NULL) {
+    if (server->graphic_clients != NULL)
         destroy_graphic_client_list(server->graphic_clients);
-    }
+    if (server->map != NULL)
+        destroy_map(server->map);
     free(server);
     return 0;
 }
