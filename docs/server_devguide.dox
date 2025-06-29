@@ -1,0 +1,683 @@
+/*!
+\page server_devguide Server Developer Guide 🛠️
+
+\tableofcontents
+
+\section server_dev_intro Welcome, Developer! 👨‍💻
+
+This guide will help you understand the internal architecture of the Zappynian server, its core components, and how to extend or modify its functionality. Get ready to dive deep into the code! 🏊‍♂️
+
+\section server_architecture Architecture Overview 🏗️
+
+The Zappynian server follows a modular architecture with clear separation of concerns:
+
+```
+Server Core
+├── Network Layer (libzappy_net) 🌐
+├── Game Logic Layer 🎮
+├── World Management 🌍
+├── Player Management 👤
+├── Command Processing ⚡
+├── Timing System ⏰
+└── GUI Integration 🖥️
+```
+
+\section server_core_structures Core Data Structures 📊
+
+\subsection server_struct Main Server Structure 🏢
+
+```c
+typedef struct server_s {
+    server_args_t *args;                    // Server configuration 🔧
+    server_connection_t *connection;        // Network connections 🔗
+    map_t *map;                            // Game world 🗺️
+    player_t **players;                    // Active players 👥
+    size_t player_count;                   // Player count 📈
+    int tick_count;                        // Game ticks ⏱️
+    bool game_running;                     // Game state 🟢
+    volatile bool server_running;          // Server state 🚦
+    egg_t *eggs;                          // Egg entities 🥚
+    graphic_client_list_t *graphic_clients; // GUI clients 🖥️
+    timing_manager_t *timing_manager;      // Command timing ⚙️
+    void *food_timer;                      // Food management 🍖
+} server_t;
+```
+
+\subsection server_player_struct Player Structure 👤
+
+```c
+typedef struct player_s {
+    int id;                                    // Unique identifier 🏷️
+    char *team_name;                          // Team affiliation 🏳️
+    int x, y;                                 // World position 📍
+    int level;                                // Player level 📊
+    int orientation;                          // Facing direction 🧭
+    int food;                                 // Food units 🍖
+    int resources[RESOURCE_COUNT];            // Inventory 🎒
+    bool dead;                                // Alive status 💀
+    bool in_elevation;                        // Elevation state 🏔️
+    int slot_id;                             // Connection slot 🔗
+    const command_t *commands[MAX_PLAYER_COMMANDS]; // Command queue 📝
+    int command_timers[MAX_PLAYER_COMMANDS];  // Command timing ⏲️
+    int command_count;                        // Active commands 📊
+    char *current_command_line;               // Current command text 💬
+} player_t;
+```
+
+\subsection server_world_struct World Structure 🌍
+
+```c
+typedef struct map_s {
+    tile_t **tiles;          // 2D tile array 🗺️
+    size_t width, height;    // World dimensions 📏
+} map_t;
+
+typedef struct tile_s {
+    int resources[RESOURCE_COUNT];    // Resources on tile 💎
+    player_t **players;              // Players on tile 👥
+    size_t player_count;             // Player count 📊
+    size_t x, y;                     // Tile coordinates 📍
+    bool is_incantation_in_progress; // Elevation status 🪄
+} tile_t;
+```
+
+\section server_initialization Server Initialization 🚀
+
+\subsection server_init_flow Initialization Flow 🔄
+
+The server initialization follows this sequence:
+
+1. **Signal Setup** 📡
+   ```c
+   static void setup_signal_handling(void)
+   {
+       signal(SIGPIPE, SIG_IGN);  // Ignore broken pipe signals
+   }
+   ```
+
+2. **Memory Allocation** 💾
+   ```c
+   server_t *server = malloc(sizeof(server_t));
+   memset(server, 0, sizeof(server_t));
+   ```
+
+3. **Network Initialization** 🌐
+   ```c
+   if (init_network_integration() == -1) {
+       // Handle network setup failure
+   }
+   ```
+
+4. **Argument Processing** ⚙️
+   ```c
+   int handle_args(int argc, char **argv, server_t *server);
+   ```
+
+5. **World Creation** 🌍
+   ```c
+   server->map = create_map(width, height);
+   ```
+
+\subsection server_arg_parsing Argument Parsing 📋
+
+Key parsing functions:
+- `fill_port()`: Validates and sets network port 🔌
+- `fill_width()` / `fill_height()`: Sets world dimensions 📐
+- `handle_team_names()`: Processes team configuration 👥
+- `validate_args()`: Ensures configuration validity ✅
+
+\section server_game_loop Game Loop Architecture 🔄
+
+\subsection server_main_loop Main Game Loop 🎮
+
+```c
+void game_loop_run(server_t *server)
+{
+    game_loop_init(server);           // Initialize game state 🚀
+    if (!server->game_running)
+        return;
+    server_loop(server);              // Enter main loop 🔁
+}
+```
+
+\subsection server_tick_processing Tick Processing ⏱️
+
+Each game tick processes:
+
+1. **Network Events** 📡
+   ```c
+   handle_client_connections(server);
+   process_client_messages(server);
+   ```
+
+2. **Command Execution** ⚡
+   ```c
+   process_commands(server);  // Execute queued commands
+   ```
+
+3. **World Updates** 🌍
+   ```c
+   handle_resource_spawn(server);    // Spawn resources
+   handle_food_timers(server);       // Process food consumption
+   check_player_deaths(server);      // Handle player deaths
+   ```
+
+4. **Game State Checks** 🏆
+   ```c
+   check_win_conditions(server);     // Check for victory
+   ```
+
+5. **GUI Updates** 🖥️
+   ```c
+   send_gui_updates(server);         // Update graphic clients
+   ```
+
+\section server_command_system Command System ⚡
+
+\subsection server_command_structure Command Architecture 🏗️
+
+Commands are implemented using a function pointer system:
+
+```c
+typedef struct command_s {
+    char *name;                           // Command name 🏷️
+    int duration;                         // Execution time (ticks) ⏰
+    void (*execute)(player_t *, server_t *); // Execution function 🎯
+} command_t;
+```
+
+\subsection server_command_processing Command Processing Flow 🔄
+
+1. **Command Reception** 📨
+   ```c
+   bool commands_add(player_t *player, const char *command_name);
+   ```
+
+2. **Queue Management** 📝
+   - Commands are stored in player's command queue
+   - Maximum `MAX_PLAYER_COMMANDS` (10) concurrent commands
+   - Each command has an associated timer
+
+3. **Execution** 🎯
+   ```c
+   void process_commands(server_t *server)
+   {
+       // For each player
+       // For each queued command
+       // Decrement timer
+       // Execute if timer reaches 0
+   }
+   ```
+
+\subsection server_command_implementations Command Implementations 🛠️
+
+\subsubsection server_movement_impl Movement Commands 🚶‍♂️
+
+```c
+void cmd_forward(player_t *player, server_t *server)
+{
+    int new_x = player->x;
+    int new_y = player->y;
+    
+    // Calculate new position based on orientation
+    switch (player->orientation) {
+        case NORTH: new_y--; break;
+        case EAST:  new_x++; break;
+        case SOUTH: new_y++; break;
+        case WEST:  new_x--; break;
+    }
+    
+    // Handle toroidal world wrapping
+    normalize_coordinates_toroidal(&new_x, &new_y, 
+                                   server->map->width, 
+                                   server->map->height);
+    
+    move_player(player, new_x, new_y, server->map);
+}
+```
+
+\subsubsection server_vision_impl Vision Implementation 👁️
+
+The `look` command implements a sophisticated vision system:
+
+```c
+char *get_player_vision(player_t *player, map_t *map)
+{
+    // Vision extends based on player level
+    // Returns formatted string of visible tiles
+    // Includes players, resources, and eggs
+}
+```
+
+**Vision Pattern** 🔍:
+- Level 1: 3 tiles (current + 2 ahead)
+- Level 2: 8 tiles (pyramid pattern)
+- Higher levels: Expanded pyramid
+
+\subsubsection server_elevation_impl Elevation Implementation 🏔️
+
+```c
+void cmd_incantation(player_t *player, server_t *server)
+{
+    // 1. Check elevation requirements
+    if (!check_elevation_requirements(player, server)) {
+        send_ko(player);
+        return;
+    }
+    
+    // 2. Gather required players
+    player_t **participants = gather_elevation_participants(player, server);
+    
+    // 3. Consume resources
+    consume_elevation_resources(player, server);
+    
+    // 4. Perform elevation
+    elevate_players(participants, server);
+    
+    // 5. Notify GUI clients
+    send_gui_incantation_info(server, player);
+}
+```
+
+\section server_network_layer Network Layer 🌐
+
+\subsection server_libzappy_net libzappy_net Integration 🔗
+
+The server uses the custom `libzappy_net` library for networking:
+
+```c
+typedef struct server_connection_s {
+    zn_socket_t zn_server;    // Server socket 🔌
+    client_t **clients;       // Connected clients 👥
+    int client_count;         // Active connections 📊
+    int port;                 // Listen port 🚪
+    server_args_t *args;      // Configuration 🔧
+} server_connection_t;
+```
+
+\subsection server_client_management Client Management 👥
+
+\subsubsection server_client_types Client Types 🏷️
+
+```c
+typedef enum {
+    CLIENT_UNKNOWN = ZN_ROLE_UNKNOWN,
+    CLIENT_IA = ZN_ROLE_AI,      // AI player client 🤖
+    CLIENT_GUI = ZN_ROLE_GUI     // Graphical viewer 🖥️
+} client_type_t;
+```
+
+\subsubsection server_handshake_process Handshake Process 🤝
+
+1. **Connection Acceptance** 📞
+2. **Role Determination** 🎭
+3. **Team Assignment** (for AI clients) 👥
+4. **Player Creation** 👤
+5. **World Synchronization** 🌍
+
+\subsection server_protocol_handling Protocol Handling 📋
+
+Key protocol functions:
+- `handle_client_message()`: Process incoming messages 📨
+- `send_to_client()`: Send responses 📤
+- `broadcast_to_team()`: Team-wide messaging 📢
+- `send_gui_updates()`: GUI synchronization 🖥️
+
+\section server_resource_system Resource System 💎
+
+\subsection server_resource_types Resource Types 🏷️
+
+```c
+enum resource_type {
+    FOOD = 0,       // 🍖
+    LINEMATE,       // 💎
+    DERAUMERE,      // 🔷
+    SIBUR,          // 🔸
+    MENDIANE,       // 🔶
+    PHIRAS,         // 🔴
+    THYSTAME        // 🟣
+};
+```
+
+\subsection server_resource_management Resource Management 🔄
+
+\subsubsection server_resource_spawning Resource Spawning Algorithm 🌱
+
+```c
+void resource_spawn_periodic(map_t *map)
+{
+    // Calculate spawn probability based on current density
+    for (int i = 0; i < RESOURCE_COUNT; i++) {
+        float current_density = calculate_resource_density(map, i);
+        float target_density = get_target_density(i);
+        
+        if (current_density < target_density) {
+            spawn_resource_randomly(map, i);
+        }
+    }
+}
+```
+
+\subsubsection server_resource_density Density Management 📊
+
+The server maintains optimal resource distribution:
+- **Food**: Most abundant (survival critical) 🍖
+- **Linemate**: Common (needed for all elevations) 💎
+- **Rare gems**: Limited availability (strategic value) 💍
+
+\section server_timing_system Timing System ⏰
+
+\subsection server_timing_manager Timing Manager 🎛️
+
+```c
+typedef struct timing_manager_s {
+    int frequency;              // Server frequency (Hz) 📈
+    double tick_duration;       // Duration per tick (ms) ⏱️
+    struct timespec last_tick;  // Last tick timestamp 📅
+    struct timespec next_tick;  // Next tick target 🎯
+} timing_manager_t;
+```
+
+\subsection server_command_timing Command Timing ⚙️
+
+Each command has precise timing:
+- **Movement**: 7 ticks 🚶‍♂️
+- **Vision/Interaction**: 7 ticks 👁️
+- **Inventory**: 1 tick 🎒
+- **Fork**: 42 ticks 🥚
+- **Incantation**: 300 ticks 🪄
+
+\section server_gui_protocol GUI Protocol 🖥️
+
+\subsection server_gui_commands GUI Command Set 📋
+
+The server implements a comprehensive GUI protocol:
+
+```c
+// Map information
+void send_msz(client_t *client, server_t *server);  // Map size
+void send_bct(client_t *client, server_t *server, int x, int y);  // Tile content
+void send_mct(client_t *client, server_t *server);  // Full map
+
+// Player information  
+void send_ppo(client_t *client, player_t *player);  // Player position
+void send_plv(client_t *client, player_t *player);  // Player level
+void send_pin(client_t *client, player_t *player);  // Player inventory
+
+// Game state
+void send_sgt(client_t *client, server_t *server);  // Time frequency
+void send_tna(client_t *client, server_t *server);  // Team names
+```
+
+\subsection server_real_time_updates Real-time Updates 📡
+
+The server maintains real-time synchronization:
+- **Player movements** 🏃‍♂️
+- **Resource changes** ♻️
+- **Incantation events** 🪄
+- **Player deaths/births** 💀🐣
+- **Game state changes** 🎮
+
+\section server_memory_management Memory Management 💾
+
+\subsection server_memory_allocation Memory Allocation Strategy 🧮
+
+The server implements careful memory management:
+
+```c
+// Server cleanup
+void destroy_server(server_t *server)
+{
+    if (!server) return;
+    
+    // Clean up players
+    for (size_t i = 0; i < server->player_count; i++) {
+        destroy_player(server->players[i]);
+    }
+    free(server->players);
+    
+    // Clean up world
+    destroy_map(server->map);
+    
+    // Clean up connections
+    destroy_server_connection(server->connection);
+    
+    // Clean up GUI clients
+    destroy_graphic_client_list(server->graphic_clients);
+    
+    // Free server structure
+    free(server);
+}
+```
+
+\subsection server_leak_prevention Leak Prevention 🚰
+
+Key principles:
+- **RAII pattern**: Every allocation has corresponding deallocation 🔄
+- **Null checks**: Defensive programming throughout 🛡️
+- **Error handling**: Clean up on failure paths 🧹
+- **Valgrind testing**: Regular memory leak detection 🔍
+
+\section server_error_handling Error Handling 🚨
+
+\subsection server_error_categories Error Categories 📊
+
+1. **Network Errors** 🌐
+   - Connection failures
+   - Protocol violations
+   - Client disconnections
+
+2. **Game Logic Errors** 🎮
+   - Invalid commands
+   - Rule violations
+   - State inconsistencies
+
+3. **System Errors** 💻
+   - Memory allocation failures
+   - File system errors
+   - Signal handling
+
+\subsection server_error_recovery Error Recovery 🔄
+
+```c
+typedef enum {
+    ERROR_RECOVERABLE,    // Continue operation 🟢
+    ERROR_CLIENT_KICK,    // Disconnect client 🔴
+    ERROR_FATAL          // Shutdown server 💀
+} error_severity_t;
+
+void handle_error(server_t *server, error_severity_t severity, 
+                  const char *message)
+{
+    log_error(message);
+    
+    switch (severity) {
+        case ERROR_RECOVERABLE:
+            // Log and continue
+            break;
+        case ERROR_CLIENT_KICK:
+            // Disconnect problematic client
+            break;
+        case ERROR_FATAL:
+            // Graceful server shutdown
+            server->server_running = false;
+            break;
+    }
+}
+```
+
+\section server_performance Performance Optimization 🚀
+
+\subsection server_performance_tips Performance Considerations 📈
+
+1. **Efficient Data Structures** 🏗️
+   - Use arrays for frequent access
+   - Linked lists for dynamic collections
+   - Hash tables for lookups (where applicable)
+
+2. **Memory Locality** 🧠
+   - Keep related data together
+   - Minimize pointer chasing
+   - Use structure packing where beneficial
+
+3. **Algorithm Complexity** 🔍
+   - O(1) tile access via 2D array
+   - O(n) player operations (where n = player count)
+   - O(1) resource management per tile
+
+\subsection server_scaling_considerations Scaling Considerations 📊
+
+For high-performance servers:
+- **Multi-threading**: Consider parallel command processing 🧵
+- **Load balancing**: Distribute world updates ⚖️
+- **Memory pools**: Reduce allocation overhead 🏊‍♂️
+- **Network optimization**: Batch GUI updates 📦
+
+\section server_debugging_tools Debugging Tools 🔍
+
+\subsection server_logging Logging System 📝
+
+Implement comprehensive logging:
+```c
+#define LOG_DEBUG(fmt, ...) log_message(LOG_LEVEL_DEBUG, fmt, ##__VA_ARGS__)
+#define LOG_INFO(fmt, ...)  log_message(LOG_LEVEL_INFO, fmt, ##__VA_ARGS__)
+#define LOG_WARN(fmt, ...)  log_message(LOG_LEVEL_WARN, fmt, ##__VA_ARGS__)
+#define LOG_ERROR(fmt, ...) log_message(LOG_LEVEL_ERROR, fmt, ##__VA_ARGS__)
+```
+
+\subsection server_debugging_techniques Debugging Techniques 🛠️
+
+1. **GDB Integration** 🐛
+   ```bash
+   gdb ./zappy_server
+   (gdb) run -p 4242 -x 10 -y 10 -n Team1 Team2
+   ```
+
+2. **Valgrind Memory Checking** 🔍
+   ```bash
+   valgrind --leak-check=full ./zappy_server <args>
+   ```
+
+3. **Network Debugging** 📡
+   ```bash
+   netstat -tulpn | grep :4242
+   tcpdump -i lo port 4242
+   ```
+
+\section server_extending Extending the Server 🔧
+
+\subsection server_new_commands Adding New Commands ➕
+
+1. **Define Command Structure** 📝
+   ```c
+   void cmd_new_action(player_t *player, server_t *server);
+   ```
+
+2. **Register Command** 📋
+   ```c
+   static const command_t commands[] = {
+       // ... existing commands ...
+       {"new_action", 10, cmd_new_action},
+   };
+   ```
+
+3. **Implement Logic** 🎯
+   ```c
+   void cmd_new_action(player_t *player, server_t *server)
+   {
+       // Your custom logic here
+       // Remember to send appropriate responses
+   }
+   ```
+
+\subsection server_new_features Adding New Features 🌟
+
+When adding features:
+1. **Plan the API** 📐: Define interfaces first
+2. **Update Protocol** 📋: Extend GUI communication if needed
+3. **Test Thoroughly** 🧪: Unit tests + integration tests
+4. **Document Changes** 📚: Update both user and dev guides
+
+\section server_testing Testing Strategy 🧪
+
+\subsection server_test_categories Test Categories 📊
+
+1. **Unit Tests** 🔬
+   - Individual function testing
+   - Mock dependencies
+   - Edge case validation
+
+2. **Integration Tests** 🔗
+   - Component interaction testing
+   - Protocol compliance
+   - End-to-end scenarios
+
+3. **Load Tests** 📈
+   - Multiple client connections
+   - High-frequency operations
+   - Memory usage under load
+
+\subsection server_test_automation Test Automation 🤖
+
+```bash
+# Run automated tests
+make test
+
+# Run with coverage
+make test-coverage
+
+# Performance benchmarks
+make benchmark
+```
+
+\section server_best_practices Best Practices 🏆
+
+\subsection server_code_style Code Style Guidelines 📝
+
+1. **Naming Conventions** 🏷️
+   - Functions: `snake_case`
+   - Structures: `snake_case_t`
+   - Constants: `UPPER_CASE`
+   - Enums: `ENUM_VALUE`
+
+2. **Error Handling** 🚨
+   - Always check return values
+   - Use meaningful error messages
+   - Clean up resources on error
+
+3. **Documentation** 📚
+   - Document all public functions
+   - Explain complex algorithms
+   - Keep docs updated with code
+
+\subsection server_security_considerations Security Considerations 🔒
+
+1. **Input Validation** ✅
+   - Sanitize all client input
+   - Validate command arguments
+   - Check bounds on all operations
+
+2. **Resource Limits** ⚖️
+   - Limit client connections
+   - Prevent command flooding
+   - Monitor resource usage
+
+3. **Network Security** 🛡️
+   - Handle malformed packets gracefully
+   - Implement connection timeouts
+   - Log suspicious activity
+
+\section server_conclusion Happy Coding! 🎉
+
+You now have a comprehensive understanding of the Zappynian server architecture! The modular design makes it easy to extend and maintain. Remember:
+
+- **Keep it simple** 🎯: Prefer clear code over clever tricks
+- **Test everything** 🧪: Good tests prevent bugs
+- **Document changes** 📝: Help future developers (including yourself!)
+- **Performance matters** 🚀: But readability comes first
+
+The server is the foundation of the entire Zappynian experience. Build it well, and players will have endless fun competing in your digital world! 🌍✨
+
+---
+*May your code compile clean and your servers run fast!* 💻⚡
+*/

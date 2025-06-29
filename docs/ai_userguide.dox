@@ -64,4 +64,14 @@
  * ## Known Limitations
  * - AI relies on perfect synchronization between sent commands and received responses: spontaneous Look messages can still desynchronize the queue if not handled explicitly.
  * - The current leader election strategy is basic and can fail if multiple AIs designate themselves as leaders simultaneously.
+ *
+ *
+ * ## 🔗 Navigation
+ *
+ * - 🏠 [Main Page](index.html)
+ * - 📖 \ref user_guide "User Guide" - Complete setup and gameplay instructions
+ * - ❓ \ref faq "FAQ" - Frequently asked questions and troubleshooting
+ * - 📡 \ref protocol "Network Protocol" - Technical communication specifications
+ * - 🛠️ [GitHub](https://github.com/My-Epitech-Organisation/Raytracer)
+ *
  */
