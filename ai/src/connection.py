@@ -31,7 +31,7 @@ class Connection:
         if not self.socket:
             return None
         try:
-            ready_to_read, _, _ = select.select([self.socket], [], [], 0.01)
+            ready_to_read, _, _ = select.select([self.socket], [], [], 0.001)
             if self.socket in ready_to_read:
                 data = self.socket.recv(4096)
                 if not data:
