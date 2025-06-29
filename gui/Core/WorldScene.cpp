@@ -94,6 +94,7 @@ void WorldScene::changePlayerPos(int id, int x, int y, Direction direction,
                                  Direction directionBefore) {
   Movement movement = {id, x, y, direction, directionBefore};
   movementQueue_.push(movement);
+  
   if (!receiver_.getIsMoving()) {
     updateMovements();
   }
@@ -150,18 +151,33 @@ void WorldScene::updateMovements() {
   movementQueue_.pop();
 
   for (auto &entity : entity_) {
+    if (!entity) {
+      continue;
+    }
+    
     if (entity->getId() == movement.id) {
       auto *node = entity->getNode();
+      
+      if (!node) {
+        return;
+      }
+      
       receiver_.setCurrentEntityId(movement.id);
 
       irr::core::vector3df oldPos = node->getPosition();
       int currentLogicalX = static_cast<int>(oldPos.X / 20.0f);
       int currentLogicalY = static_cast<int>(oldPos.Z / 20.0f);
 
+      if (movement.x < 0 || movement.x >= planeSize_.first || 
+          movement.y < 0 || movement.y >= planeSize_.second) {
+        return;
+      }
+
       currentLogicalX = std::max(0, std::min(currentLogicalX, planeSize_.first - 1));
       currentLogicalY = std::max(0, std::min(currentLogicalY, planeSize_.second - 1));
       int deltaX = movement.x - currentLogicalX;
       int deltaY = movement.y - currentLogicalY;
+
       Direction actualMovementDirection = movement.direction; // Default to server direction
       if (deltaX == 1 && deltaY == 0) {
         actualMovementDirection = Direction::EAST;
@@ -181,6 +197,7 @@ void WorldScene::updateMovements() {
       } else if (deltaX == 0 && deltaY == -(planeSize_.second - 1)) {
         actualMovementDirection = Direction::SOUTH;
       }
+
       bool isNotMoving = (deltaX == 0 && deltaY == 0);
       if (isNotMoving) {
         float rotationY;
@@ -208,10 +225,11 @@ void WorldScene::updateMovements() {
                                        movement.x, movement.y);
       
       if (edgeResult.isEdge) {
-        node->setPosition(irr::core::vector3df(
+        irr::core::vector3df newWorldPos(
             edgeResult.nextPosition.X + edgeResult.offsetX,
             node->getPosition().Y,
-            edgeResult.nextPosition.Z + edgeResult.offsetZ));
+            edgeResult.nextPosition.Z + edgeResult.offsetZ);
+        node->setPosition(newWorldPos);
       } else {
         auto targetTile = entityManager_.getTileByName("Cube info: row " + std::to_string(movement.x) + " col " + std::to_string(movement.y));
         if (targetTile) {
@@ -245,13 +263,14 @@ void WorldScene::updateMovements() {
         receiver_.setCurrentRotationY(rotationY);  // Use adjusted rotation here too
         receiver_.setIsMoving(true);
         receiver_.setMoveStartTime(device_->getTimer()->getTime());
+        std::cout << "[DEBUG][updateMovements] Animation started for entity " << movement.id << std::endl;
       }
-      
       irr::core::vector3df newPos = node->getPosition();
       int newLogicalX = static_cast<int>(newPos.X / 20.0f);
       int newLogicalY = static_cast<int>(newPos.Z / 20.0f);
       newLogicalX = std::max(0, std::min(newLogicalX, planeSize_.first - 1));
       newLogicalY = std::max(0, std::min(newLogicalY, planeSize_.second - 1));
+      
       return;
     }
   }
@@ -419,6 +438,19 @@ void WorldScene::stopIncantation(int x, int y, bool result) {
 }
 
 void WorldScene::killPlayer(int id) {
+  std::queue<Movement> cleanQueue;
+  int removedMovements = 0;
+  while (!movementQueue_.empty()) {
+    Movement mov = movementQueue_.front();
+    movementQueue_.pop();
+    if (mov.id != id) {
+      cleanQueue.push(mov);
+    } else {
+      removedMovements++;
+    }
+  }
+  movementQueue_ = cleanQueue;
+
   for (auto it = entity_.begin(); it != entity_.end();) {
     if ((*it)->getId() == id) {
       auto player = std::dynamic_pointer_cast<PlayerEntity>(*it);
