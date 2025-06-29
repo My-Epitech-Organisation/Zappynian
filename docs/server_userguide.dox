@@ -1,0 +1,209 @@
+/*!
+\page server_userguide Server User Guide 🚀
+
+\tableofcontents
+
+\section server_intro Welcome to Zappynian Server! 🎮
+
+The Zappynian server is the heart of your multiplayer game experience! It manages the game world, handles player interactions, and coordinates between AI clients and GUI viewers. Think of it as the ultimate game master! 🎲
+
+\section server_getting_started Getting Started 🌟
+
+\subsection server_compilation Compilation 🔨
+
+To build the server, navigate to the server directory and run:
+```bash
+make
+```
+
+This will create the `zappy_server` executable ready to host your epic battles! ⚔️
+
+\subsection server_launch_options Launch Options 🚀
+
+The server accepts several command-line arguments to customize your game:
+
+```bash
+./zappy_server -p <port> -x <width> -y <height> -n <team1> <team2> ... -c <clients_per_team> -f <frequency>
+```
+
+\subsubsection server_args_detail Argument Details 📝
+
+- **-p port**: Network port for connections (default: 4242) 🌐
+- **-x width**: Map width in tiles (minimum: 5) 📏
+- **-y height**: Map height in tiles (minimum: 5) 📐
+- **-n team1 team2...**: Team names (minimum: 2 teams) 👥
+- **-c clients_per_team**: Maximum AI clients per team (default: 1) 🤖
+- **-f frequency**: Game tick frequency in Hz (default: 100) ⏰
+
+\subsubsection server_example_launch Example Launch 🎯
+
+```bash
+./zappy_server -p 4444 -x 10 -y 10 -n Team1 Team2 Team3 -c 3 -f 50
+```
+
+This creates a 10x10 world with 3 teams, allowing up to 3 AI clients per team at 50 ticks per second! 🏆
+
+\section server_game_mechanics Game Mechanics 🎮
+
+\subsection server_world_overview World Overview 🌍
+
+The server manages a **toroidal world** (wraparound edges) filled with resources and inhabited by AI players. Each tile can contain:
+
+- **Food** 🍖: Essential for survival (players die without it!)
+- **Linemate** 💎: Required for elevation
+- **Deraumere** 🔷: Crystal for higher levels
+- **Sibur** 🔸: Blue gem for advancement
+- **Mendiane** 🔶: Orange stone for elevation
+- **Phiras** 🔴: Red crystal for rituals
+- **Thystame** 🟣: Purple gem for the highest levels
+
+\subsection server_player_lifecycle Player Lifecycle 👤
+
+\subsubsection server_spawning Spawning 🐣
+
+New players spawn randomly on the map with:
+- **Level 1** 📊
+- **10 food units** 🍖
+- **Random orientation** (North, East, South, West) 🧭
+- **Empty inventory** 🎒
+
+\subsubsection server_survival Survival 🏃‍♂️
+
+Players must manage their food carefully:
+- **Food decreases every 126 ticks** ⏱️
+- **Death occurs at 0 food** ☠️
+- **New eggs spawn when players die** 🥚
+
+\subsection server_commands Player Commands 🎯
+
+The server processes these AI commands with specific durations:
+
+\subsubsection server_movement_commands Movement Commands 🚶‍♂️
+
+- **forward**: Move one tile ahead (7 ticks) ➡️
+- **right**: Turn 90° clockwise (7 ticks) ↪️
+- **left**: Turn 90° counter-clockwise (7 ticks) ↩️
+
+\subsubsection server_interaction_commands Interaction Commands 🤝
+
+- **look**: Get vision of surrounding tiles (7 ticks) 👀
+- **inventory**: Check personal resources (1 tick) 🎒
+- **take <object>**: Pick up resource from current tile (7 ticks) 🤏
+- **set <object>**: Drop resource on current tile (7 ticks) 📦
+- **eject**: Push other players from current tile (7 ticks) 💨
+
+\subsubsection server_communication_commands Communication Commands 📢
+
+- **broadcast <text>**: Send message to all players (7 ticks) 📻
+- **connect_nbr**: Get remaining team connection slots (0 ticks) 🔗
+
+\subsubsection server_special_commands Special Commands ✨
+
+- **fork**: Create a new egg (42 ticks) 🥚
+- **incantation**: Attempt level elevation (300 ticks) 🪄
+
+\section server_elevation_system Elevation System 🏔️
+
+Level advancement requires specific conditions:
+
+| Level | Players Needed | Linemate | Deraumere | Sibur | Mendiane | Phiras | Thystame |
+|-------|----------------|----------|-----------|-------|----------|--------|----------|
+| 1→2   | 1              | 1        | 0         | 0     | 0        | 0      | 0        |
+| 2→3   | 2              | 1        | 1         | 1     | 0        | 0      | 0        |
+| 3→4   | 2              | 2        | 0         | 1     | 0        | 2      | 0        |
+| 4→5   | 4              | 1        | 1         | 2     | 0        | 1      | 0        |
+| 5→6   | 4              | 1        | 2         | 1     | 3        | 0      | 0        |
+| 6→7   | 6              | 1        | 2         | 3     | 0        | 1      | 0        |
+| 7→8   | 6              | 2        | 2         | 2     | 2        | 2      | 1        |
+
+**Level 8 = Victory!** 🏆 The first team to get 6 players to level 8 wins!
+
+\section server_gui_integration GUI Integration 🖥️
+
+The server supports graphical clients for real-time game visualization:
+
+\subsection server_gui_connection GUI Connection 🔌
+
+Graphic clients connect separately and receive:
+- **Real-time map updates** 🗺️
+- **Player movements and actions** 🏃‍♂️
+- **Resource spawning events** 💎
+- **Incantation ceremonies** 🪄
+- **Game statistics** 📊
+
+\subsection server_gui_commands GUI Commands 📋
+
+- **msz**: Map size information
+- **bct**: Tile content details  
+- **mct**: Complete map content
+- **tna**: Team names list
+- **ppo**: Player position data
+- **plv**: Player level information
+- **pin**: Player inventory status
+- **sgt**: Game time frequency
+- **sst**: Set time frequency
+
+\section server_resource_management Resource Management 💰
+
+\subsection server_resource_spawning Resource Spawning 🌱
+
+Resources spawn automatically:
+- **Every 20 ticks**: Periodic resource generation 🔄
+- **Every 10 ticks**: Minimum resource check ✅
+- **Random distribution**: Balanced across the map 🎲
+
+\subsection server_resource_density Resource Density 📈
+
+The server maintains optimal resource distribution to ensure fair gameplay and strategic depth!
+
+\section server_troubleshooting Troubleshooting 🔧
+
+\subsection server_common_issues Common Issues 🐛
+
+**Server won't start?** 🚫
+- Check if port is already in use
+- Verify all required arguments are provided
+- Ensure minimum map size (5x5)
+
+**Players disconnecting?** 📡
+- Check network connectivity
+- Verify client compatibility
+- Monitor server logs for errors
+
+**Game feels slow/fast?** ⏰
+- Adjust frequency parameter (-f)
+- Balance between responsiveness and server load
+
+\subsection server_performance_tips Performance Tips 🚀
+
+- **Larger maps**: Better for more players, more strategic depth
+- **Higher frequency**: More responsive but CPU intensive
+- **More teams**: Increases complexity and fun! 🎉
+- **Monitor resources**: Keep an eye on server CPU/memory usage
+
+\section server_advanced_features Advanced Features 🎓
+
+\subsection server_timing_system Timing System ⚙️
+
+The server uses a sophisticated timing manager that handles:
+- **Command queuing** 📝: Players can queue multiple commands
+- **Precise timing** ⏱️: Each command has exact duration
+- **Concurrent execution** 🔄: Multiple players act simultaneously
+
+\subsection server_network_architecture Network Architecture 🌐
+
+Built on the robust **libzappy_net** library providing:
+- **Reliable TCP connections** 🔗
+- **Efficient client management** 👥
+- **Protocol parsing** 📋
+- **Error handling** 🛡️
+
+\section server_conclusion Ready to Rule the World! 👑
+
+Your Zappynian server is now ready to host epic battles! Watch as AI teams compete for resources, form alliances, and race to achieve the ultimate goal of level 8 mastery. 
+
+May the best team win! 🏆✨
+
+---
+*Happy Gaming!* 🎮💫
+*/
