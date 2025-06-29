@@ -30,6 +30,7 @@ void catch_command(char *line, client_t *client,
     if (client->type == CLIENT_IA && line[0] != '\0') {
         player = find_player_by_client(connection, client);
         if (player != NULL) {
+            printf("[DEBUG] Command from player %d: %s\n", player->id, line);
             player_found(player, line, client);
         }
     }
@@ -58,26 +59,37 @@ client_event_t handle_client_read(server_t *server, int idx)
     return CLIENT_EVENT_NONE;
 }
 
-void disconnect_client(server_connection_t *connection, int client_idx)
+void disconnect(client_t *client, server_args_t *args)
 {
-    client_t *client = connection->clients[client_idx];
-    server_args_t *args = connection->args;
     team_t *team = NULL;
 
-    if (client->type == CLIENT_IA && client->team_name) {
-        team = get_team_by_name(args, client->team_name);
-        if (team && team->current_players > 0) {
-            team->current_players--;
-            printf("Client disconnected from team %s.\n", team->name);
-        }
+    team = get_team_by_name(args, client->team_name);
+    if (team && team->current_players > 0) {
+        team->current_players--;
+        printf("Client disconnected from team %s.\n", team->name);
     }
-    if (client->zn_sock != NULL) {
+}
+
+void disconnect_client(server_connection_t *connection, int client_idx)
+{
+    client_t *client = NULL;
+    server_args_t *args = NULL;
+
+    if (connection == NULL)
+        return;
+    client = connection->clients[client_idx];
+    if (client == NULL)
+        return;
+    args = connection->args;
+    if (args == NULL)
+        return;
+    if (client->type == CLIENT_IA && client->team_name)
+        disconnect(client, args);
+    if (client->zn_sock != NULL)
         zn_close(client->zn_sock);
-    }
     free(client->team_name);
     free(client);
     connection->clients[client_idx] = NULL;
-    if (client_idx == connection->client_count - 1) {
+    if (client_idx == connection->client_count - 1)
         connection->client_count--;
-    }
 }

@@ -462,8 +462,10 @@ void WorldScene::addChatMessage(const std::string &message) {
 }
 
 void WorldScene::broadcast(int id, const std::string &message) {
-  if (!device_)
+  if (!device_) {
     return;
+  }
+  
   std::shared_ptr<IEntity> broadcaster = nullptr;
   for (const auto &entity : entity_) {
     if (entity->getId() == id) {
@@ -471,33 +473,70 @@ void WorldScene::broadcast(int id, const std::string &message) {
       break;
     }
   }
-  if (!broadcaster)
+  
+  if (!broadcaster) {
     return;
+  }
 
   std::string fullMessage = "Player " + std::to_string(id) + ": " + message;
+  
   addChatMessage(fullMessage);
 
   irr::core::vector3df broadcasterPos = broadcaster->getNode()->getPosition();
+  
   irr::u32 currentTime = device_->getTimer()->getTime();
 
+  int targetCount = 0;
   for (const auto &entity : entity_) {
-    if (entity->getId() == id || entity->getId() < 0)
+    if (!entity) {
       continue;
+    }
+    
+    if (entity->getId() == id) {
+      continue;
+    }
+    
+    if (entity->getId() < 0) {
+      continue;
+    }
 
     auto paperPlane = entityManager_.createPaperPlane(broadcasterPos);
+    
     if (paperPlane) {
-      irr::core::vector3df targetPos = entity->getNode()->getPosition();
+      if (!entity->getNode()) {
+        continue;
+      } else {
+        std::cout << "[DEBUG] broadcast: Entity node is valid" << std::endl;
+      }
+      auto targetNode = entity->getNode();
+      if (!targetNode) {
+        continue;
+      } else {
+        std::cout << "[DEBUG] broadcast: Target node is valid" << std::endl;
+      }
+      
+      irr::core::vector3df targetPos = {0.0f, 0.0f, 0.0f};
+      try {
+        targetPos = entity->getPosition();
+      } catch (const std::exception& e) {
+        continue;
+      } catch (...) {
+        continue;
+      }
+      
       PaperPlaneMovement movement;
       movement.paperPlane = paperPlane;
       movement.targetPlayerId = entity->getId();
       movement.startPosition = broadcasterPos;
       movement.targetPosition = targetPos;
       movement.startTime = currentTime;
-      movement.duration = 1.7f;
+      movement.duration = 0.5f;
       movement.isActive = true;
       paperPlaneMovements_.push_back(movement);
+      targetCount++;
     }
   }
+
   entity_ = entityManager_.getEntities();
 }
 
@@ -563,7 +602,9 @@ void WorldScene::updatePaperPlaneMovements() {
     return;
   if (paperPlaneMovements_.empty())
     return;
+
   irr::u32 currentTime = device_->getTimer()->getTime();
+  
   for (auto it = paperPlaneMovements_.begin();
        it != paperPlaneMovements_.end();) {
     if (!it->isActive) {
@@ -715,6 +756,12 @@ void WorldScene::expulsion(int id) {
 }
 
 void WorldScene::updateMapText() {
+  entity_.erase(
+      std::remove_if(entity_.begin(), entity_.end(),
+                      [](const std::shared_ptr<IEntity>& entity) {
+                          return entity && entity->getId() == -5;
+                      }),
+      entity_.end());
   entityManager_.updateMapText(textMap_);
   irr::core::stringw mapText = textMap_->getText();
   int playerCount = 0;

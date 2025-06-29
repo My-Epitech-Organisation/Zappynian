@@ -46,8 +46,14 @@ SRCS	=	src/main.c							\
 			src/client_adapters.c 				\
 			src/write_to_client.c 				\
 			src/server_loop.c 					\
+			src/server_poll.c 					\
+			src/timing_manager.c 				\
+			src/timing_integration.c 			\
+			src/command_timer.c 				\
+			src/food_timer.c 					\
+			src/time_utils.c 					\
 			src/server_player_manager.c 		\
-			src/server_event_handler.c 		\
+			src/server_event_handler.c 			\
 			src/catch_commands_from_clients.c 	\
 			src/egg.c 							\
 			src/init_eggs.c 					\

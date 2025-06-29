@@ -7,8 +7,7 @@ from ai.src.connection import Connection
 from ai.src.command_queue import CommandQueue
 from ai.src.inventory_parser import WorldState
 from ai.src.vision_parser import Vision
-from ai.src.roles.survivor import Survivor
-from ai.src.roles.role_selector import select_role
+from ai.src.roles.game_logic import *
 
 
 class ZappyAI:
@@ -23,7 +22,10 @@ class ZappyAI:
         self.world.team_name = team_name
         self.world.leader = False
         self.vision = Vision()
-        self.role = Survivor()
+        self.target_path = None
+        self.is_incanting = False
+        self.last_role = None
+        self.brodcast_timer = 0
 
     def spawn_player(self):
         pid = os.fork()
@@ -42,8 +44,7 @@ class ZappyAI:
             if not line:
                 break
             if line.startswith("message"):
-                if hasattr(self.role, "on_broadcast"):
-                    self.role.on_broadcast(line, self.queue, self.world, self.vision)
+                parse_broadcast(self.queue, line, self.world)
 
     def run(self):
         print(f"[INFO] Starting AI for team '{self.team_name}' on {self.host}:{self.port}")
@@ -53,16 +54,18 @@ class ZappyAI:
 
         while True:
             inv_line = self.queue.send_and_wait("Inventory")
+            print(f"[DEBUG] Received Inventory response: {inv_line}")
             self.world.parse_inventory(inv_line)
             look_line = self.queue.send_and_wait("Look")
+            print(f"[DEBUG] Received Look response: {look_line}")
             self.vision.parse_look(look_line)
             connect_nbr = self.queue.send_and_wait("Connect_nbr")
+            print(f"[DEBUG] Received Connect_nbr response: {connect_nbr}")
             nbr = int(connect_nbr.split()[0])
             if nbr > 0:
                 self.spawn_player()
             self.read_passive_messages()
-            self.role = select_role(self.world, self.vision)
-            self.role.decide(self.queue, self.world, self.vision)
+            select_role(self, self.queue, self.world, self.vision)
 
 
 def parse_args():

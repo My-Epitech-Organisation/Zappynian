@@ -1,5 +1,5 @@
 import unittest
-from ai.src.roles.role_selector import select_role
+from ai.src.roles.game_logic import select_role
 from ai.src.inventory_parser import WorldState
 from ai.src.vision_parser import Vision
 

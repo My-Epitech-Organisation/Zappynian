@@ -44,11 +44,28 @@ void cmd_set(player_t *player, server_t *server);
 void cmd_incantation(player_t *player, server_t *server);
 
 char *get_player_vision(player_t *player, map_t *map);
-void add_current_tile(char *result, player_t *player, map_t *map);
-void add_other_tiles(char *result, player_t *player, map_t *map,
-    int vision_range);
-void add_resource_type(char *result, tile_t *tile, int resource_type,
-    bool first);
+void add_single_player(char *result, bool *first_item);
+void add_current_tile_content(char *result, tile_t *tile, player_t *self,
+    bool *first_item);
+void add_vision_tile_content(char *result, tile_t *tile, player_t *self,
+    bool *first_item);
+void add_all_vision_tiles(char *result, player_t *player, map_t *map,
+    bool *first_tile);
+void add_tile(char *result, tile_t *tile, player_t *self, bool *first_tile);
+void add_vision_tile(char *result, tile_t *tile, player_t *self,
+    bool *first_tile);
+void calculate_vision_coordinates(player_t *player, int distance,
+    int offset, int *pos);
+void add_current_tile_to_vision(char *result, player_t *player,
+    map_t *map, bool *first_tile);
+void add_all_vision_tiles(char *result, player_t *player, map_t *map,
+    bool *first_tile);
+void add_separator(char *result, bool *first_tile);
+void add_resources_to_result(char *result, tile_t *tile,
+    bool *first_item);
+void add_single_player(char *result, bool *first_item);
+void add_vision_tile_players(char *result, tile_t *tile,
+    player_t *self, bool *first_item);
 
 char *get_player_inventory(player_t *player);
 
@@ -67,5 +84,7 @@ void manage_stones(server_t *server, player_t *player, client_t *client,
     int resource_type);
 void add_resources(player_t *player, int resource_type, server_t *server,
     client_t *client);
+void calculate_vision_coordinates(player_t *player, int distance, int offset,
+    int *pos);
 
 #endif // COMMANDS_H
