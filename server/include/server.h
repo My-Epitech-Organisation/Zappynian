@@ -180,7 +180,7 @@ void send_pfk(server_t *server, int player_id);
 void send_pdr(server_t *server, int player_id, int resource_type);
 void send_pgt(server_t *server, int player_id, int resource_type);
 void send_pdi(server_t *server, player_t *player);
-void send_ewn(server_t *server);
+void send_enw(server_t *server);
 void send_ebo(server_t *server, int egg_id);
 void send_edi(server_t *server, int egg_id);
 void send_sgt(server_t *server, int frequency);

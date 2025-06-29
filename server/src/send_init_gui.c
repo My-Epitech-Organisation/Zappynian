@@ -86,27 +86,27 @@ static void send_tna_to_client(client_t *client, team_t *teams, int team_count)
     }
 }
 
-static void send_ewn_to_client_recursive(client_t *client, egg_t *egg)
+static void send_enw_to_client_recursive(client_t *client, egg_t *egg)
 {
-    char ewn_command[256];
+    char enw_command[256];
     int ret;
 
     if (egg == NULL)
         return;
-    send_ewn_to_client_recursive(client, egg->next);
-    ret = snprintf(ewn_command, sizeof(ewn_command),
-        "ewn #%d #%d %d %d", egg->id, egg->player_id,
+    send_enw_to_client_recursive(client, egg->next);
+    ret = snprintf(enw_command, sizeof(enw_command),
+        "enw #%d #%d %d %d", egg->id, egg->player_id,
         egg->x, egg->y);
-    if (ret < 0 || (size_t)ret >= sizeof(ewn_command))
+    if (ret < 0 || (size_t)ret >= sizeof(enw_command))
         return;
-    zn_send_message(client->zn_sock, ewn_command);
+    zn_send_message(client->zn_sock, enw_command);
 }
 
-static void send_ewn_to_client(client_t *client, server_t *server)
+static void send_enw_to_client(client_t *client, server_t *server)
 {
     if (client == NULL || client->zn_sock == NULL || server == NULL)
         return;
-    send_ewn_to_client_recursive(client, server->eggs);
+    send_enw_to_client_recursive(client, server->eggs);
 }
 
 int send_graphic_initial_state(client_t *client, server_t *server)
@@ -118,6 +118,6 @@ int send_graphic_initial_state(client_t *client, server_t *server)
     send_sgt_to_client(client, server->args->frequency);
     send_mct_to_client(client, server->map);
     send_tna_to_client(client, server->args->teams, server->args->team_count);
-    send_ewn_to_client(client, server);
+    send_enw_to_client(client, server);
     return 0;
 }
