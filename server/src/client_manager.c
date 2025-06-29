@@ -80,10 +80,11 @@ void disconnect(client_t *client, server_args_t *args)
     }
 }
 
-void disconnect_client(server_connection_t *connection, int client_idx)
+void disconnect_client(server_t *server, int client_idx)
 {
     client_t *client = NULL;
     server_args_t *args = NULL;
+    server_connection_t *connection = server->connection;
 
     if (connection == NULL)
         return;
