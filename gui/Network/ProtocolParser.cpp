@@ -398,6 +398,7 @@ namespace Zappy {
     }
 
     bool ProtocolParser::parseEggConnection(const std::vector<std::string>& args) {
+        return false;
         if (args.size() != 1) {
             std::cerr << "ERROR: Invalid eht arguments count: " << args.size() << std::endl;
             return false;
