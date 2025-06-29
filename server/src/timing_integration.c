@@ -10,8 +10,6 @@
 #include "../include/command_timer.h"
 #include <stdlib.h>
 
-static food_timer_t g_food_timer = {0};
-
 int server_timing_init(server_t *server)
 {
     if (!server || !server->args)
@@ -25,7 +23,13 @@ int server_timing_init(server_t *server)
         server->timing_manager = NULL;
         return -1;
     }
-    return food_timer_init(&g_food_timer);
+    server->food_timer = malloc(sizeof(food_timer_t));
+    if (!server->food_timer) {
+        free(server->timing_manager);
+        server->timing_manager = NULL;
+        return -1;
+    }
+    return food_timer_init((food_timer_t *)server->food_timer);
 }
 
 void server_timing_destroy(server_t *server)
@@ -37,22 +41,26 @@ void server_timing_destroy(server_t *server)
         free(server->timing_manager);
         server->timing_manager = NULL;
     }
-    food_timer_destroy(&g_food_timer);
+    if (server->food_timer) {
+        food_timer_destroy((food_timer_t *)server->food_timer);
+        free(server->food_timer);
+        server->food_timer = NULL;
+    }
 }
 
 void server_timing_tick(server_t *server)
 {
     size_t i;
 
-    if (!server || !server->timing_manager)
+    if (!server || !server->timing_manager || !server->food_timer)
         return;
     timing_manager_mark_tick(server->timing_manager);
-    food_timer_tick(&g_food_timer);
+    food_timer_tick((food_timer_t *)server->food_timer);
     for (i = 0; i < server->player_count; i++) {
         if (server->players[i])
             command_timer_tick(server->players[i]);
     }
-    process_food_consumption(server, &g_food_timer);
+    process_food_consumption(server, server->food_timer);
 }
 
 int server_get_poll_timeout(server_t *server)
