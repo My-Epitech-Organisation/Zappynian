@@ -28,6 +28,5 @@ bool food_timer_should_consume(food_timer_t *ft);
 void food_timer_reset(food_timer_t *ft);
 
 /* Player food management */
-void process_food_consumption(server_t *server, food_timer_t *ft);
 
 #endif /* FOOD_TIMER_H */
