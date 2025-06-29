@@ -40,6 +40,7 @@ SRCS	=	src/main.c							\
 			src/look_cmd.c 						\
 			src/look_vision_tiles.c 			\
 			src/look_current_tile.c 			\
+			src/string_utils.c 					\
 			src/inventory_cmd.c 				\
 			src/broadcast_cmd.c 				\
 			src/network_integration.c 			\

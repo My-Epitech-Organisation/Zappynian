@@ -1,0 +1,60 @@
+/**
+ * @page DeveloperManual Zappy AI - Developer Documentation
+ *
+ * # 🔧 Zappy AI - Developer Guide
+ *
+ * This section describes important functions and their purpose.
+ *
+ * ## Main Loop (zappy_ai.py)
+ * - Connects to the server and performs handshake.
+ * - In each cycle, sends a batch of commands:
+ *   - `Inventory`, `Look`, `Connect_nbr`.
+ * - Waits for and processes the expected responses (managed by expected_responses queue).
+ * - Handles broadcasts with `parse_broadcast()`.
+ * - Calls `select_role()` at the end of each cycle to determine the AI's next action.
+ * - Spawns new players if `Connect_nbr` allows.
+ *
+ * ## Command Queue (command_queue.py)
+ * - Manages a queue (`queue`) of commands to send.
+ * - Tracks expected responses with `expected_responses`.
+ * - Key functions:
+ *   - `push(command)`: adds a command to the queue.
+ *   - `flush()`: sends all commands in the queue to the server.
+ *   - `handle_response(world, line)`: decrements `pending` and updates level on \"Current level\".
+ *
+ * ## Network Communication (connection.py)
+ * - Manages the TCP connection with the server.
+ * - Uses poll for non-blocking reads.
+ * - Key functions:
+ *   - `send_command(cmd)`: sends a command.
+ *   - `read_line()`: reads a line from the server.
+ *
+ * ## Response Parsing
+ * - **Inventory Parser (inventory_parser.py)**:
+ *   - Parses `[ food 5, linemate 1, ...]` responses.
+ *   - Updates WorldState with remaining food and resources.
+ * - **Vision Parser (vision_parser.py)**:
+ *   - Parses `[player, food linemate, ...]` responses.
+ *   - Updates the vision of the current surroundings.
+ *
+ * ## Roles (roles/)
+ * - Defined in `roles/` directory.
+ * - `game_logic.py` decides which role to execute each cycle, depending on AI state.
+ * - Available roles:
+ *   - `survivor`: prioritize food collection.
+ *   - `miner`: gather resources for future incantations.
+ *   - `leader`: plan and initiate incantations.
+ *   - `breeder`: reproduce by forking new players.
+ *   - `attack`: optional offensive behavior.
+ *
+ * ## Broadcast Coordination
+ * - AIs communicate using `Broadcast text`.
+ * - When an AI becomes a leader, it sends \"i_m_leader\".
+ * - Other AIs listen via `parse_broadcast()` and plan a path to join the leader.
+ *
+ * ## Level Up Management
+ * - Incantations are handled in two steps:
+ *   - Wait for \"Elevation underway\".
+ *   - Then wait for either \"Current level: X\" or \"ko\".
+ * - Upon success, the AI updates its level and broadcasts a notification to teammates.
+ */

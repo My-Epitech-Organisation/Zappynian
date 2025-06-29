@@ -10,14 +10,19 @@
 void death_handle(player_t *player, map_t *map, server_t *server)
 {
     tile_t *tile = NULL;
+    team_t *team = NULL;
 
     if (!player)
         return;
     tile = get_tile(map, player->x, player->y);
     if (tile)
         remove_player_from_tile(tile, player);
-    if (player->team_name)
+    if (player->team_name) {
+        team = get_team_by_name(server->args, player->team_name);
+        if (team && team->current_players > 0)
+            team->current_players--;
         team_free_slot(server->args, player->team_name);
+    }
     free(player->team_name);
     free(player);
 }

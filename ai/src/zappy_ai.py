@@ -9,7 +9,6 @@ from ai.src.inventory_parser import WorldState
 from ai.src.vision_parser import Vision
 from ai.src.roles.game_logic import *
 
-
 class ZappyAI:
 
     def __init__(self, host: str, port: int, team_name: str):
@@ -25,7 +24,7 @@ class ZappyAI:
         self.target_path = None
         self.is_incanting = False
         self.last_role = None
-        self.brodcast_timer = 0
+        self.broadcast_timer = 0
 
     def spawn_player(self):
         pid = os.fork()
@@ -38,33 +37,56 @@ class ZappyAI:
             ])
             sys.exit(1)
 
-    def read_passive_messages(self):
-        while True:
-            line = self.conn.read_line()
-            if not line:
-                break
-            if line.startswith("message"):
-                parse_broadcast(self.queue, line, self.world)
-
     def run(self):
         print(f"[INFO] Starting AI for team '{self.team_name}' on {self.host}:{self.port}")
         self.conn.connect()
         self.conn.handshake()
         self.queue = CommandQueue(self.conn)
+        connect_nbr = 0
 
         while True:
-            inv_line = self.queue.send_and_wait("Inventory")
-            print(f"[DEBUG] Received Inventory response: {inv_line}")
-            self.world.parse_inventory(inv_line)
-            look_line = self.queue.send_and_wait("Look")
-            print(f"[DEBUG] Received Look response: {look_line}")
-            self.vision.parse_look(look_line)
-            connect_nbr = self.queue.send_and_wait("Connect_nbr")
-            print(f"[DEBUG] Received Connect_nbr response: {connect_nbr}")
-            nbr = int(connect_nbr.split()[0])
-            if nbr > 0:
+            self.queue.push("Inventory")
+            self.queue.push("Look")
+            self.queue.push("Connect_nbr")
+            self.queue.flush()
+            waiting_incantation = False
+
+            while self.queue.pending > 0:
+                line = self.conn.read_line()
+                if not line:
+                    continue
+                print(f"[DEBUG] Received line: {line}")
+                if line.startswith("message"):
+                    parse_broadcast(self.queue, line, self.world)
+                    continue
+                if waiting_incantation:
+                    if line.startswith("Current level:") or line == "ko":
+                        self.queue.handle_response(self.world, line)
+                        waiting_incantation = False
+                    continue
+                if line == "Elevation underway":
+                    waiting_incantation = True
+                    continue
+                if not self.queue.expected_responses:
+                    continue
+                current_expected = self.queue.expected_responses.pop(0)
+                if current_expected == "Inventory":
+                    if line.startswith("[") and any(char.isdigit() for char in line):
+                        self.world.parse_inventory(line)
+                    else:
+                        print(f"[WARNING] Expected Inventory, but got: {line}")
+
+                elif current_expected == "Look":
+                    if line.startswith("[") and not any(char.isdigit() for char in line):
+                        self.vision.parse_look(line)
+                    else:
+                        print(f"[WARNING] Expected Look, but got: {line}")
+                elif current_expected == "Connect_nbr" and line.strip().isdigit():
+                    connect_nbr = int(line.strip())
+                self.queue.handle_response(self.world, line)
+            self.queue.reset()
+            if connect_nbr > 1:
                 self.spawn_player()
-            self.read_passive_messages()
             select_role(self, self.queue, self.world, self.vision)
 
 
@@ -94,7 +116,6 @@ def main():
     except Exception as error:
         print(f"[ERROR] Unexpected exception: {error}", file=sys.stderr)
         sys.exit(1)
-
 
 if __name__ == "__main__":
     main()

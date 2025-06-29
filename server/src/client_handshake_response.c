@@ -11,16 +11,11 @@
 static int get_available_slots(server_args_t *args, const char *team_name)
 {
     team_t *team = get_team_by_name(args, team_name);
-    int slots_to_return;
 
     if (team == NULL) {
         return 0;
     }
-    slots_to_return = team->remaining_slots;
-    if (team->remaining_slots > 0) {
-        team->remaining_slots--;
-    }
-    return slots_to_return;
+    return team->remaining_slots;
 }
 
 static int send_handshake_response(client_t *client, server_t *server,
@@ -43,7 +38,11 @@ static int validate_team_assignment(server_args_t *args, const char *team_name)
 {
     team_t *team = get_team_by_name(args, team_name);
 
-    if (team == NULL || team->current_players >= team->max_slots) {
+    if (team == NULL || team->remaining_slots <= 0) {
+        if (team) {
+            printf("[ERROR] Team %s is full (remaining slots: %d)\n",
+                team_name, team->remaining_slots);
+        }
         return -1;
     }
     return 0;
@@ -65,4 +64,10 @@ int validate_and_respond(client_t *client, server_t *server,
         return -1;
     }
     return 0;
+}
+
+int send_handshake_response_only(client_t *client, server_t *server,
+    const char *team_name)
+{
+    return send_handshake_response(client, server, team_name);
 }

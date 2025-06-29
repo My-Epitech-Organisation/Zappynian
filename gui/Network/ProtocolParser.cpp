@@ -274,10 +274,8 @@ namespace Zappy {
         try {
             int x = std::stoi(args[0]);
             int y = std::stoi(args[1]);
-            if (args[2].empty()) {
-                std::cerr << "ERROR: pic arguments x or y is empty" << std::endl;
-                return false;
-            }
+            int level = std::stoi(args[2]);
+            (void)level;
 
             std::vector<int> playerIds;
             for (size_t i = 3; i < args.size(); ++i) {
@@ -556,10 +554,10 @@ namespace Zappy {
     }
 
     Direction ProtocolParser::parseDirection(const std::string& dirStr) const {
-        if (dirStr == "NORTH" || dirStr == "1") return Direction::NORTH;
-        if (dirStr == "EAST" || dirStr == "2") return Direction::EAST;
-        if (dirStr == "SOUTH" || dirStr == "3") return Direction::SOUTH;
-        if (dirStr == "WEST" || dirStr == "4") return Direction::WEST;
+        if (dirStr == "NORTH" || dirStr == "0") return Direction::NORTH;
+        if (dirStr == "EAST" || dirStr == "1") return Direction::EAST;
+        if (dirStr == "SOUTH" || dirStr == "2") return Direction::SOUTH;
+        if (dirStr == "WEST" || dirStr == "3") return Direction::WEST;
 
         std::cerr << "WARNING: Unknown direction '" << dirStr << "', defaulting to NORTH" << std::endl;
         return Direction::NORTH;

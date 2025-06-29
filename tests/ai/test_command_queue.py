@@ -1,4 +1,5 @@
 import unittest
+from unittest.mock import patch
 from collections import deque
 from ai.src.command_queue import CommandQueue
 from ai.src.inventory_parser import WorldState
@@ -32,10 +33,11 @@ class TestCommandQueue(unittest.TestCase):
     def test_handle_response(self):
         conn = FakeConnection()
         queue = CommandQueue(conn)
+        world = WorldState()
         queue.pending = 2
-        queue.handle_response("ok")
+        queue.handle_response(world, "ok")
         self.assertEqual(queue.pending, 1)
-        queue.handle_response("message 1,1,hello")
+        queue.handle_response(world, "message 1,1,hello")
         self.assertEqual(queue.pending, 0)
 
     def test_reset(self):
@@ -47,12 +49,88 @@ class TestCommandQueue(unittest.TestCase):
         self.assertEqual(len(queue.queue), 0)
         self.assertEqual(queue.pending, 0)
 
-    def test_send_and_wait(self):
+    def test_push_valid_command(self):
         conn = FakeConnection()
         queue = CommandQueue(conn)
-        response = queue.send_and_wait("Inventory")
-        self.assertEqual(response, "ok")
-        self.assertIn("Inventory", conn.commands_sent)
+        queue.push("Inventory")
+        self.assertEqual(len(queue.queue), 1)
+        self.assertEqual(queue.queue[0], "Inventory")
+        self.assertEqual(queue.expected_responses[0], "Inventory")
+
+    def test_push_invalid_command_type(self):
+        conn = FakeConnection()
+        queue = CommandQueue(conn)
+        with self.assertRaises(TypeError) as context:
+            queue.push(123)
+        self.assertIn("Command must be a string", str(context.exception))
+
+    def test_handle_response_level_update(self):
+        conn = FakeConnection()
+        queue = CommandQueue(conn)
+        world = WorldState()
+        world.level = 1
+        
+        queue.pending = 1
+        queue.handle_response(world, "Current level: 2")
+        
+        self.assertEqual(world.level, 2)
+        self.assertEqual(queue.pending, 0)
+        # Should add broadcast command
+        self.assertEqual(len(queue.queue), 1)
+        self.assertEqual(queue.queue[0], "Broadcast notleader")
+
+    def test_handle_response_invalid_level_format(self):
+        conn = FakeConnection()
+        queue = CommandQueue(conn)
+        world = WorldState()
+        world.level = 1
+        
+        queue.pending = 1
+        with patch('builtins.print') as mock_print:
+            queue.handle_response(world, "Current level: invalid")
+            # Level should remain unchanged
+            self.assertEqual(world.level, 1)
+            self.assertEqual(queue.pending, 1)
+            # Should print error message
+            mock_print.assert_called()
+
+    def test_handle_response_standard_responses(self):
+        conn = FakeConnection()
+        queue = CommandQueue(conn)
+        world = WorldState()
+        
+        # Test different standard responses
+        for response in ["ok", "ko", "dead"]:
+            queue.pending = 1
+            queue.handle_response(world, response)
+            self.assertEqual(queue.pending, 0)
+
+    def test_handle_response_message_format(self):
+        conn = FakeConnection()
+        queue = CommandQueue(conn)
+        world = WorldState()
+        
+        queue.pending = 1
+        queue.handle_response(world, "message 1,2,hello")
+        self.assertEqual(queue.pending, 0)
+
+    def test_handle_response_inventory_format(self):
+        conn = FakeConnection()
+        queue = CommandQueue(conn)
+        world = WorldState()
+        
+        queue.pending = 1
+        queue.handle_response(world, "[ food 5, linemate 2 ]")
+        self.assertEqual(queue.pending, 0)
+
+    def test_handle_response_numeric_format(self):
+        conn = FakeConnection()
+        queue = CommandQueue(conn)
+        world = WorldState()
+        
+        queue.pending = 1
+        queue.handle_response(world, "5")
+        self.assertEqual(queue.pending, 0)
 
 
 class TestWorldState(unittest.TestCase):

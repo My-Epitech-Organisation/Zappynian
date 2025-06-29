@@ -1,3 +1,3 @@
 def breeder(queue) -> int:
-    queue.send_and_wait("Fork")
+    queue.push("Fork")
     return 0

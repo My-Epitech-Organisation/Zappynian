@@ -41,8 +41,21 @@ int initialize_server_players(server_t *server)
     return 0;
 }
 
-player_t *create_player_for_client(server_t *server, client_t *client,
-    team_t *team)
+static void assign_player_to_team(team_t *team, player_t *player)
+{
+    int i;
+
+    for (i = 0; i < team->max_slots; i++) {
+        if (team->players[i] == NULL) {
+            team->players[i] = player;
+            team->current_players++;
+            team->remaining_slots--;
+            break;
+        }
+    }
+}
+
+static player_t *setup_player_for_client(server_t *server, client_t *client)
 {
     player_t *player = NULL;
     int x = rand() % (int)server->args->width;
@@ -56,13 +69,20 @@ player_t *create_player_for_client(server_t *server, client_t *client,
         destroy_player(player);
         return NULL;
     }
-    for (int i = 0; i < team->max_slots; i++) {
-        if (team->players[i] == NULL) {
-            team->players[i] = player;
-            break;
-        }
-    }
-    team->current_players++;
+    return player;
+}
+
+player_t *create_player_for_client(server_t *server, client_t *client,
+    team_t *team)
+{
+    player_t *player = NULL;
+
+    if (team->remaining_slots <= 0)
+        return NULL;
+    player = setup_player_for_client(server, client);
+    if (player == NULL)
+        return NULL;
+    assign_player_to_team(team, player);
     return player;
 }
 

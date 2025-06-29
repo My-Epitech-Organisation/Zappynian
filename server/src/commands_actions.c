@@ -86,11 +86,11 @@ void cmd_incantation(player_t *player, server_t *server)
 
     if (!player || !server)
         return;
-    if (player->dead || player->in_elevation)
-        return (void)zn_send_message(server->connection->zn_server, "ko");
     player_client = find_client_by_player(server, player);
     if (!player_client)
         return;
+    if (player->dead || player->in_elevation)
+        return (void)zn_send_message(player_client->zn_sock, "ko");
     current_tile = get_tile(server->map, player->x, player->y);
     if (!current_tile)
         return (void)zn_send_message(player_client->zn_sock, "ko");
