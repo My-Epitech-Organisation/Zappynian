@@ -59,11 +59,13 @@ void catch_command(char *line, client_t *client,
 {
     player_t *player = NULL;
 
+    printf("[DEBUG] Received command: %s\n", line);
     if (client->type == CLIENT_IA && line[0] != '\0') {
         player = find_player_by_client(connection, client);
         if (player != NULL) {
             printf("[DEBUG] Command from player %d (%s): %s\n",
                 player->slot_id, player->team_name, line);
+            printf("[DEBUG] Command: %s\n", line);
             player_found(player, line, client);
         }
     }
@@ -80,6 +82,7 @@ client_event_t handle_client_read(server_t *server, int idx)
         return event;
     }
     line = zn_receive_message(client->zn_sock);
+    printf("[DEBUG] Received line: %s\n", line ? line : "NULL");
     if (line == NULL) {
         if (errno != EAGAIN && errno != EWOULDBLOCK) {
             disconnect_client(server->connection, idx);

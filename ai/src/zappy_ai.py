@@ -48,13 +48,17 @@ class ZappyAI:
             self.queue.push("Inventory")
             self.queue.push("Look")
             self.queue.push("Connect_nbr")
+            print(f"[DEBUG] {self.queue.queue}")
             self.queue.flush()
             waiting_incantation = False
 
             while self.queue.pending > 0:
                 line = self.conn.read_line()
+                print(f"[DEBUG] Read line: {line}")
+                print(f"[DEBUG] Pending commands: {self.queue.pending}")
                 if not line:
                     continue
+                print(f"[DEBUG] Received line: {line}")
                 if line.startswith("message"):
                     parse_broadcast(self.queue, line, self.world)
                     continue

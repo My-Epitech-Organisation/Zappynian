@@ -15,6 +15,7 @@ void cmd_inventory(player_t *player, server_t *server)
     char *inventory_result = NULL;
     client_t *client = NULL;
 
+    printf("[DEBUG] cmd_inventory called for player %d\n", player->id);
     client = find_client_by_player(server, player);
     if (client == NULL) {
         return;
@@ -25,6 +26,7 @@ void cmd_inventory(player_t *player, server_t *server)
     }
     inventory_result = get_player_inventory(player);
     if (inventory_result != NULL) {
+        printf("[DEBUG] Inventory for player %d: %s\n", player->id, inventory_result);
         send_pin(server, player);
         zn_send_message(client->zn_sock, inventory_result);
         free(inventory_result);

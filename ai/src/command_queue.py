@@ -19,6 +19,7 @@ class CommandQueue:
     def flush(self):
         while self.queue:
             cmd = self.queue.popleft()
+            print(f"[DEBUG] Sending command: {cmd}")
             self.connection.send_command(cmd)
             self.pending += 1
 
