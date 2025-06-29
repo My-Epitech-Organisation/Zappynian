@@ -84,7 +84,7 @@ void move_player(player_t *player, int x, int y, map_t *map)
         add_player_to_tile(new_tile, player);
 }
 
-static bool player_decrement_food(player_t *player)
+bool player_decrement_food(player_t *player)
 {
     if (player == NULL)
         return false;
