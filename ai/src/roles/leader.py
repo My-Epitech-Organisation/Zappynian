@@ -1,7 +1,6 @@
 from ai.src.utils.incantation_data import INCANTATION_REQUIREMENTS
 
-
-max_broadcast_attempts = 20
+max_broadcast_attempts = 50
 
 def leader(self, queue, world, vision) -> int:
     level = world.level
@@ -26,5 +25,4 @@ def leader(self, queue, world, vision) -> int:
         drop_count = min(inv_amount, amount)
         for _ in range(drop_count):
             queue.push(f"Set {res}")
-    print("[START] Incantation")
     queue.push("Incantation")
