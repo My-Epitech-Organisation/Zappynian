@@ -11,12 +11,11 @@
 static void handle_ia_connection(server_t *server, int client_idx)
 {
     client_t *client = server->connection->clients[client_idx];
-    
-    // Player is already created in assign_client_type, just log the event
+
     if (client == NULL || client->team_name == NULL)
         return;
-    
-    printf("[DEBUG] IA client %d connected to team %s\n", client->id, client->team_name);
+    printf("[DEBUG] IA client %d connected to team %s\n",
+        client->id, client->team_name);
 }
 
 static void handle_gui_connection(server_t *server, int client_idx)

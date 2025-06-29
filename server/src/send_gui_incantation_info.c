@@ -23,7 +23,6 @@ static char *resize_teams_buffer(char *teams, size_t new_size)
 static char *process_player_team(char *teams, player_t *player,
     size_t *total_len)
 {
-    size_t player_id_len;
     size_t prefix_len;
     size_t new_total;
     int written;
@@ -33,9 +32,8 @@ static char *process_player_team(char *teams, player_t *player,
     if (player == NULL)
         return teams;
     snprintf(player_id_str, sizeof(player_id_str), "%d", player->id);
-    player_id_len = strlen(player_id_str);
     prefix_len = (*total_len > 0) ? 2 : 1;
-    new_total = *total_len + player_id_len + prefix_len + 1;
+    new_total = *total_len + strlen(player_id_str) + prefix_len + 1;
     teams = resize_teams_buffer(teams, new_total);
     if (teams == NULL)
         return NULL;
