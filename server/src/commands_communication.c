@@ -25,6 +25,7 @@ void cmd_inventory(player_t *player, server_t *server)
     inventory_result = get_player_inventory(player);
     if (inventory_result != NULL) {
         send_pin(server, player);
+        printf("Inventory result: %s\n", inventory_result);
         zn_send_message(client->zn_sock, inventory_result);
         free(inventory_result);
     } else
