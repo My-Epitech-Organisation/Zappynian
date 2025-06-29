@@ -9,9 +9,9 @@ INCANTATION_REQUIREMENTS = {
 }
 
 MINIMUM_FOOD_REQUIREMENTS = {
-    1: 30,
+    1: 40,
     2: 40,
-    3: 40,
+    3: 45,
     4: 55,
     5: 55,
     6: 60,
