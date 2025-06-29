@@ -27,7 +27,7 @@ player_t *create_player(int id, const char *team_name, int x, int y)
     player->dead = false;
     player->in_elevation = false;
     player->slot_id = -1;
-    player->command_count = 0; // Initialize command_count
+    player->command_count = 0;
     return player;
 }
 
