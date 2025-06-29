@@ -1,0 +1,67 @@
+/**
+ * @page UserManual Zappy AI - User Guide
+ *
+ * # 📘 Zappy AI - User Documentation
+ *
+ * ## Overview
+ * This project implements an AI client for the Zappy game. The AI controls a Trantorian drone that must:
+ * - survive by collecting food,
+ * - gather resources,
+ * - coordinate incantations to level up,
+ * - reproduce to increase the team population.
+ *
+ * The AI communicates with the server via TCP, following the official Zappy protocol.
+ *
+ * ## Architecture
+ * The project is organized as follows:
+ * @code
+ * ai/
+ * ├── README.md
+ * ├── Makefile
+ * └── src/
+ *     ├── zappy_ai.py
+ *     ├── command_queue.py
+ *     ├── connection.py
+ *     ├── inventory_parser.py
+ *     ├── vision_parser.py
+ *     ├── roles/
+ *     │   ├── attack.py
+ *     │   ├── breeder.py
+ *     │   ├── game_logic.py
+ *     │   ├── leader.py
+ *     │   ├── miner.py
+ *     │   └── survivor.py
+ *     └── utils/
+ *         ├── incantation_data.py
+ *         └── route_factory.py
+ * @endcode
+ *
+ * ## Communication Protocol
+ * - After connecting, the server sends \"WELCOME\".
+ * - The AI responds with \"TEAM <team_name>\".
+ * - The server returns:
+ *   - the number of available slots for the team,
+ *   - the map dimensions.
+ * - Commands sent must end with a newline. Each command has a specific execution time depending on the server frequency (f).
+ * - The AI can send up to 10 commands without waiting for responses.
+ * - Main commands include: Forward, Right, Left, Look, Inventory, Broadcast, Connect_nbr, Fork, Eject, Take, Set, Incantation.
+ * - Possible responses: ok, ko, dead, Elevation underway, Current level, and lists for Inventory or Look.
+ *
+ * ## Usage
+ * - Make sure the Zappy server is running with the correct parameters (`-p port -x width -y height -n team -c clientsNb -f freq`).
+ * - Run the AI client with:
+ *   @code
+ *   ./zappy_ai -p <port> -n <team_name> -h <host>
+ *   @endcode
+ * - To spawn multiple AIs, adjust Connect_nbr or launch multiple processes.
+ *
+ * ## Key Features
+ * ✔️ Modular architecture.
+ * ✔️ Clean handling of cycles and server responses.
+ * ✔️ Robust command queue management.
+ * ✔️ Useful debug logs.
+ *
+ * ## Known Limitations
+ * - AI relies on perfect synchronization between sent commands and received responses: spontaneous Look messages can still desynchronize the queue if not handled explicitly.
+ * - The current leader election strategy is basic and can fail if multiple AIs designate themselves as leaders simultaneously.
+ */

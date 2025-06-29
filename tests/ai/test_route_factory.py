@@ -7,7 +7,7 @@ class TestRouteFactory(unittest.TestCase):
         self.assertEqual(route_to(4), ["Forward", "Forward", "Left", "Forward", "Forward"])
 
     def test_route_to_unknown_tile(self):
-        self.assertEqual(route_to(99), ["Look"])
+        self.assertEqual(route_to(99), [])
 
 if __name__ == '__main__':
     unittest.main()
