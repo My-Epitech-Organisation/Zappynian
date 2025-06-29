@@ -80,25 +80,19 @@ client_event_t handle_client_read(server_t *server, int idx)
 
     if (client->type == CLIENT_UNKNOWN) {
         event = assign_client_type(client, server, idx);
-        if (event == CLIENT_EVENT_ERROR || event == CLIENT_EVENT_PENDING) {
+        if (event == CLIENT_EVENT_ERROR || event == CLIENT_EVENT_PENDING)
             return event;
-        }
-        // Handshake réussi, continuer à lire les commandes disponibles
     }
-    
-    // Lire toutes les commandes disponibles dans le buffer
-    while ((line = zn_receive_message(client->zn_sock)) != NULL) {
-        printf("[DEBUG] Received line: %s\n", line);
+    line = zn_receive_message(client->zn_sock);
+    while (line != NULL) {
         catch_command(line, client, server->connection);
         free(line);
+        line = zn_receive_message(client->zn_sock);
     }
-    
-    // Vérifier si la déconnexion est due à une erreur réelle
     if (errno != EAGAIN && errno != EWOULDBLOCK) {
         disconnect_client(server->connection, idx);
         return CLIENT_EVENT_DISCONNECTED;
     }
-    
     return event;
 }
 
