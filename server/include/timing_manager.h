@@ -27,8 +27,4 @@ bool timing_manager_should_tick(timing_manager_t *tm);
 void timing_manager_mark_tick(timing_manager_t *tm);
 int timing_manager_get_poll_timeout(timing_manager_t *tm);
 
-/* Time utility functions */
-uint64_t get_current_time_us(void);
-uint64_t calculate_tick_interval(int frequency);
-
 #endif /* TIMING_MANAGER_H */
