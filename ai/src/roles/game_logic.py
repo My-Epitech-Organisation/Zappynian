@@ -3,12 +3,12 @@ from ai.src.utils.route_factory import goal_to
 from ai.src.roles.miner import miner
 from ai.src.roles.breeder import breeder
 from ai.src.roles.leader import leader
+from ai.src.roles.attack import eject
 from ai.src.utils.incantation_data import INCANTATION_REQUIREMENTS, MINIMUM_FOOD_REQUIREMENTS
 
 r_value = 0
 
 def move_to_target(queue, target_path):
-    print(f"[INFO] Moving to target path: {target_path}")
     if target_path:
         for cmd in target_path:
             queue.push(cmd)
@@ -79,9 +79,14 @@ def select_role(self, queue, world, vision):
             security_move(queue)
         return
 
-    if food > min_food - 1:
+    if food > min_food - 3:
         self.last_role = "Breeder"
         breeder(queue)
+        return
+
+    if vision.get_tile(2).count("player") >= 1:
+        self.last_role = "Attacker"
+        eject(queue)
         return
 
     if self.last_role == "leader" and self.is_incanting:
