@@ -56,29 +56,21 @@ void add_vision_tile(char *result, tile_t *tile, player_t *self,
     add_vision_tile_content(result, tile, self, &first_item);
 }
 
-void add_vision_tiles_for_distance(char *result, player_t *player,
-    map_t *map, int distance, bool *first_tile)
-{
-    int pos[2];
-    tile_t *tile = NULL;
-    int offset;
-
-    for (offset = -distance; offset <= distance; offset++) {
-        calculate_vision_coordinates(player, distance, offset, pos);
-        normalize_coordinates_toroidal(&pos[0], &pos[1], map->width,
-            map->height);
-        tile = get_tile(map, pos[0], pos[1]);
-        add_vision_tile(result, tile, player, first_tile);
-    }
-}
-
 void add_all_vision_tiles(char *result, player_t *player, map_t *map,
     bool *first_tile)
 {
     int distance;
+    int offset;
+    int pos[2];
+    tile_t *tile = NULL;
 
     for (distance = 1; distance <= player->level; distance++) {
-        add_vision_tiles_for_distance(result, player, map, distance,
-            first_tile);
+        for (offset = -distance; offset <= distance; offset++) {
+            calculate_vision_coordinates(player, distance, offset, pos);
+            normalize_coordinates_toroidal(&pos[0], &pos[1], map->width,
+                map->height);
+            tile = get_tile(map, pos[0], pos[1]);
+            add_vision_tile(result, tile, player, first_tile);
+        }
     }
 }
