@@ -35,9 +35,14 @@ static void process_ia_command(char *line, client_t *client,
 void catch_command(char *line, client_t *client,
     server_connection_t *connection)
 {
+    player_t *player = NULL;
+
     if (client->type == CLIENT_IA && line[0] != '\0') {
-        process_ia_command(line, client, connection);
-        return;
+        player = find_player_by_client(connection, client);
+        if (player != NULL) {
+            printf("[DEBUG] Command from player %d: %s\n", player->id, line);
+            player_found(player, line, client);
+        }
     }
 }
 
@@ -64,29 +69,32 @@ client_event_t handle_client_read(server_t *server, int idx)
     return CLIENT_EVENT_NONE;
 }
 
-static void cleanup_ia_player(server_t *server, client_t *client)
+void disconnect(client_t *client, server_args_t *args)
 {
-    player_t *player = find_player_by_client(server->connection, client);
-    tile_t *tile;
-    team_t *team;
+    team_t *team = NULL;
 
-    if (!player)
-        return;
-    tile = get_tile_toroidal(server->map, player->x, player->y);
-    if (tile)
-        remove_player_from_tile(tile, player);
-    remove_player_from_server(server, player);
-    team = get_team_by_name(server->connection->args, client->team_name);
-    remove_player_from_team(team, player);
-    send_pdi(server, player);
-    destroy_player(player);
+    team = get_team_by_name(args, client->team_name);
+    if (team && team->current_players > 0) {
+        team->current_players--;
+        printf("Client disconnected from team %s.\n", team->name);
+    }
 }
 
-static void cleanup_client_resources(server_connection_t *connection,
-    int client_idx)
+void disconnect_client(server_connection_t *connection, int client_idx)
 {
-    client_t *client = connection->clients[client_idx];
+    client_t *client = NULL;
+    server_args_t *args = NULL;
 
+    if (connection == NULL)
+        return;
+    client = connection->clients[client_idx];
+    if (client == NULL)
+        return;
+    args = connection->args;
+    if (args == NULL)
+        return;
+    if (client->type == CLIENT_IA && client->team_name)
+        disconnect(client, args);
     if (client->zn_sock != NULL)
         zn_close(client->zn_sock);
     free(client->team_name);
@@ -94,15 +102,4 @@ static void cleanup_client_resources(server_connection_t *connection,
     connection->clients[client_idx] = NULL;
     if (client_idx == connection->client_count - 1)
         connection->client_count--;
-}
-
-void disconnect_client(server_t *server, int client_idx)
-{
-    client_t *client = server->connection->clients[client_idx];
-
-    if (!client)
-        return;
-    if (client->type == CLIENT_IA)
-        cleanup_ia_player(server, client);
-    cleanup_client_resources(server->connection, client_idx);
 }

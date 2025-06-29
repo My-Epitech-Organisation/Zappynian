@@ -48,21 +48,8 @@ static void handle_ia_connection(server_t *server, int client_idx)
         return;
     player = hatch_egg_for_client(server, client);
     if (player == NULL)
-        player = create_player_for_client(server, client, team, client->id);
-    else {
-        player->slot_id = client->id;
-        if (add_player_to_server(server, player) == -1) {
-            destroy_player(player);
-            return;
-        }
-        if (!assign_player_to_team(team, player)) {
-            remove_player_from_server(server, player);
-            destroy_player(player);
-            return;
-        }
-    }
-    if (player != NULL)
-        send_connection_responses(client, team, server);
+        return;
+    send_pnw(server, player);
 }
 
 static void handle_gui_connection(server_t *server, int client_idx)

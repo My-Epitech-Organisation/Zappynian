@@ -54,10 +54,13 @@ class ZappyAI:
 
         while True:
             inv_line = self.queue.send_and_wait("Inventory")
+            print(f"[DEBUG] Received Inventory response: {inv_line}")
             self.world.parse_inventory(inv_line)
             look_line = self.queue.send_and_wait("Look")
+            print(f"[DEBUG] Received Look response: {look_line}")
             self.vision.parse_look(look_line)
             connect_nbr = self.queue.send_and_wait("Connect_nbr")
+            print(f"[DEBUG] Received Connect_nbr response: {connect_nbr}")
             nbr = int(connect_nbr.split()[0])
             if nbr > 0:
                 self.spawn_player()

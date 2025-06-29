@@ -13,11 +13,12 @@
 void cmd_inventory(player_t *player, server_t *server)
 {
     char *inventory_result = NULL;
-    client_t *client;
+    client_t *client = NULL;
 
     client = find_client_by_player(server, player);
-    if (!client)
+    if (client == NULL) {
         return;
+    }
     if (player->dead || player->in_elevation) {
         zn_send_message(client->zn_sock, "ko");
         return;
@@ -35,11 +36,12 @@ void cmd_inventory(player_t *player, server_t *server)
 void cmd_broadcast(player_t *player, server_t *server)
 {
     char *broadcast_message = NULL;
-    client_t *client;
+    client_t *client = NULL;
 
     client = find_client_by_player(server, player);
-    if (!client)
+    if (client == NULL) {
         return;
+    }
     if (player->dead || player->in_elevation) {
         zn_send_message(client->zn_sock, "ko");
         return;
@@ -58,11 +60,12 @@ void cmd_broadcast(player_t *player, server_t *server)
 void cmd_connect_nbr(player_t *player, server_t *server)
 {
     char response[20];
-    client_t *client;
+    client_t *client = NULL;
 
     client = find_client_by_player(server, player);
-    if (!client)
+    if (client == NULL) {
         return;
+    }
     if (player->dead || player->in_elevation) {
         zn_send_message(client->zn_sock, "ko");
         return;
@@ -75,11 +78,12 @@ void cmd_connect_nbr(player_t *player, server_t *server)
 void cmd_fork(player_t *player, server_t *server)
 {
     egg_t *new_egg = NULL;
-    client_t *client;
+    client_t *client = NULL;
 
     client = find_client_by_player(server, player);
-    if (!client)
+    if (client == NULL) {
         return;
+    }
     if (player->dead || player->in_elevation) {
         zn_send_message(client->zn_sock, "ko");
         return;

@@ -22,18 +22,12 @@ const char **get_resource_names(void)
 void add_inventory_items(char *result, player_t *player)
 {
     char buffer[256];
-    bool first = true;
     const char **resource_names = get_resource_names();
 
     sprintf(result, "[ food %d", player->food);
-    strcat(result, buffer);
-    first = false;
     for (int i = 1; i < RESOURCE_COUNT; i++) {
-        if (!first)
-            strcat(result, ", ");
-        sprintf(buffer, "%s %d", resource_names[i], player->resources[i]);
+        sprintf(buffer, ", %s %d", resource_names[i], player->resources[i]);
         strcat(result, buffer);
-        first = false;
     }
 }
 
@@ -41,6 +35,9 @@ char *get_player_inventory(player_t *player)
 {
     char *inventory_result = malloc(4096);
 
+    if (inventory_result == NULL)
+        return NULL;
+    inventory_result[0] = '\0';
     add_inventory_items(inventory_result, player);
     strcat(inventory_result, " ]");
     return inventory_result;
