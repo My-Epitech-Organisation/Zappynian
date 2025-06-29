@@ -25,7 +25,7 @@ class WorldState:
                 try:
                     self.inventory[name] = int(count)
                 except ValueError:
-                    print(f"[WARN] Invalid count in inventory: '{count}' for '{name}'")
+                    print(f"[WARN] Invalid count in inventory: '{count}' for '{name}' -- {line}")
                     continue
 
 

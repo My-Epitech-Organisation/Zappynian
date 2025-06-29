@@ -5,8 +5,8 @@ def survivor(queue, vision) -> int:
     if food_tile != -1:
         path = route_to(food_tile)
         for cmd in path:
-            queue.send_and_wait(cmd)
-        queue.send_and_wait("Take food")
+            queue.push(cmd)
+        queue.push("Take food")
         return 0
     else:
         return 1

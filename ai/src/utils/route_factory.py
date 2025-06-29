@@ -11,7 +11,7 @@ DIRECTION_MAP = {
 }
 
 def route_to(tile_index: int) -> list[str]:
-    return DIRECTION_MAP.get(tile_index, ["Look"])
+    return DIRECTION_MAP.get(tile_index, [])
 
 GOAL_MAP = {
     0: [],
@@ -26,4 +26,4 @@ GOAL_MAP = {
 }
 
 def goal_to(tile_index: int) -> list[str]:
-    return GOAL_MAP.get(tile_index, ["Look"])
+    return GOAL_MAP.get(tile_index, [])
