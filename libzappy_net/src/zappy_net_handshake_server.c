@@ -17,6 +17,7 @@ static int send_client_number(zn_socket_t sock, int client_num)
     if (ret < 0 || (size_t)ret >= sizeof(response)) {
         return -1;
     }
+    printf("[DEBUG] Sending client number: %s\n", response);
     return zn_send_message(sock, response);
 }
 
@@ -29,6 +30,7 @@ static int send_world_dimensions(zn_socket_t sock, int world_x, int world_y)
     if (ret < 0 || (size_t)ret >= sizeof(response)) {
         return -1;
     }
+    printf("[DEBUG] Sending world dimensions: %s\n", response);
     return zn_send_message(sock, response);
 }
 
