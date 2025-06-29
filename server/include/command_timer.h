@@ -22,6 +22,5 @@ void command_timer_execute_ready(player_t *player, server_t *server);
 
 /* Command timer utilities */
 int get_command_duration(const char *command_name);
-bool has_pending_commands(player_t *player);
 
 #endif /* COMMAND_TIMER_H */
