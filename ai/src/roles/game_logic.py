@@ -3,30 +3,30 @@ from ai.src.utils.route_factory import goal_to
 from ai.src.roles.miner import miner
 from ai.src.roles.breeder import breeder
 from ai.src.roles.leader import leader
-from ai.src.utils.incantation_data import INCANTATION_REQUIREMENTS
+from ai.src.utils.incantation_data import INCANTATION_REQUIREMENTS, MINIMUM_FOOD_REQUIREMENTS
 
 r_value = 0
 
 def move_to_target(queue, target_path):
+    print(f"[INFO] Moving to target path: {target_path}")
     if target_path:
         for cmd in target_path:
-            queue.send_and_wait(cmd)
-        queue.send_and_wait("Look")
+            queue.push(cmd)
         return True
     return False
 
 def parse_broadcast(queue, message, world):
-    print(f"[BROADCAST] {message}")
     parts = message.split(",", 1)
     if len(parts) != 2:
         return
-    if parts[1] == f"leader_{world.level}":
+    if parts[1] == f" leader_{world.level}":
         world.leader = True
         return
-    elif parts[1] == "notleader":
+    elif parts[1] == " notleader":
         world.leader = False
+        world.leader_direction = -69
         return
-    elif parts[1].startswith("incantation"):
+    elif parts[1].startswith(" incantation"):
         try:
             msg = parts[1].strip().split("_", 2)
             if msg[1] != world.team_name or msg[2] != str(world.level):
@@ -35,27 +35,26 @@ def parse_broadcast(queue, message, world):
             tokens = direction_str.strip().split()
             if len(tokens) < 2:
                 return
-            direction = int(tokens[1])
+            world.leader_direction = int(tokens[1])
             content = content.strip().lower()
-            world.target_path = goal_to(direction)
+            world.target_path = goal_to(world.leader_direction)
             if world.target_path:
-                print("[INFO] Moving towards leader for incantation")
                 world.following_leader = True
-                world.leader_direction = direction
                 move_to_target(queue, world.target_path)
                 world.target_path = None
         except Exception as e:
             print(f"[WARN] Failed to parse broadcast: {e}")
 
 def security_move(queue):
-    queue.send_and_wait("Right")
-    queue.send_and_wait("Forward")
-    queue.send_and_wait("Left")
-    queue.send_and_wait("Forward")
-    queue.send_and_wait("Forward")
+    queue.push("Right")
+    queue.push("Forward")
+    queue.push("Left")
+    queue.push("Forward")
+    queue.push("Forward")
 
 def select_role(self, queue, world, vision):
     food = world.get_food_count()
+    min_food = MINIMUM_FOOD_REQUIREMENTS.get(world.level, 25)
 
     if food < 15:
         self.last_role = "Survivor"
@@ -66,22 +65,21 @@ def select_role(self, queue, world, vision):
 
     if world.following_leader:
         if world.leader_direction == 0:
-            print("[INFO] Arrived at incantation site, resuming normal roles")
+            print("[INFO] Leader is at the same POSITION, not moving.")
+        elif world.leader_direction == -69:
             world.following_leader = False
             world.leader_direction = -1
         else:
-            print(f"[INFO] Following leader, current leader_direction: {world.leader_direction}")
-            security_move(queue)
-            queue.send_and_wait("Look")
+            return
         return
 
-    if self.last_role == "Survivor" and food < 65:
+    if self.last_role == "Survivor" and food < min_food:
         r_value = survivor(queue, vision)
         if r_value == 1:
             security_move(queue)
         return
 
-    if food > 62:
+    if food > min_food - 1:
         self.last_role = "Breeder"
         breeder(queue)
         return
@@ -93,7 +91,6 @@ def select_role(self, queue, world, vision):
         return
 
     reqs = INCANTATION_REQUIREMENTS.get(world.level)
-    print(f"[ROLESELCTOR] {world.leader}")
     if reqs and not world.leader:
         has_enough = all(
             world.inventory.get(res, 0) >= amt
