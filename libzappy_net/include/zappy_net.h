@@ -284,6 +284,18 @@
     int zn_send_message(zn_socket_t sock, const char *message);
 
     /**
+    * @brief Check if socket has pending write data
+    *
+    * Checks if the socket's write buffer contains data that needs to be
+    * sent to the network. This is useful for conditional POLLOUT monitoring
+    * to avoid unnecessary polling on sockets with empty write buffers.
+    *
+    * @param sock The socket handle
+    * @return 1 if has pending writes, 0 if empty or on error
+    */
+    int zn_has_pending_writes(zn_socket_t sock);
+
+    /**
     * @brief Receive a complete message line from socket
     *
     * Receives a complete newline-terminated message from the socket.
