@@ -60,10 +60,3 @@ void command_timer_execute_ready(player_t *player, server_t *server)
     }
     player->command_count--;
 }
-
-bool has_pending_commands(player_t *player)
-{
-    if (!player)
-        return false;
-    return player->command_count > 0;
-}
