@@ -47,10 +47,10 @@ class TestCommandQueue(unittest.TestCase):
         self.assertEqual(len(queue.queue), 0)
         self.assertEqual(queue.pending, 0)
 
-    def test_send_and_wait(self):
+    def test_push(self):
         conn = FakeConnection()
         queue = CommandQueue(conn)
-        response = queue.send_and_wait("Inventory")
+        response = queue.push("Inventory")
         self.assertEqual(response, "ok")
         self.assertIn("Inventory", conn.commands_sent)
 
