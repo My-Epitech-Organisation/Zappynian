@@ -76,7 +76,18 @@ void stop_server_loop(server_t *server)
     server->server_running = false;
 }
 
-void server_loop(server_t *server)
+static int init_server_loop(server_t *server)
+{
+    if (init_client_array(server) == -1)
+        return -1;
+    if (initialize_server_players(server) == -1)
+        return -1;
+    if (server_timing_init(server) == -1)
+        return -1;
+    return 0;
+}
+
+static void run_server_tick(server_t *server)
 {
     zn_socket_t sockets[ZN_POLL_MAX_SOCKETS];
     short events[ZN_POLL_MAX_SOCKETS];
@@ -84,22 +95,23 @@ void server_loop(server_t *server)
     zn_poll_result_t poll_result;
     int timeout;
 
-    if (init_client_array(server) == -1)
-        return;
-    if (initialize_server_players(server) == -1)
-        return;
-    if (server_timing_init(server) == -1)
+    setup_socket_array(server->connection, sockets, &count);
+    setup_poll_events(events, sockets, server->connection, count);
+    timeout = server_get_poll_timeout(server);
+    poll_result = zn_poll(sockets, events, count, timeout);
+    if (poll_result.ready_count > 0) {
+        handle_ready_sockets(server, &poll_result, sockets, count);
+    }
+    if (server_should_tick(server))
+        process_game_tick(server);
+}
+
+void server_loop(server_t *server)
+{
+    if (init_server_loop(server) == -1)
         return;
     while (server->server_running && server->game_running) {
-        setup_socket_array(server->connection, sockets, &count);
-        setup_poll_events(events, sockets, server->connection, count);
-        timeout = server_get_poll_timeout(server);
-        poll_result = zn_poll(sockets, events, count, timeout);
-        if (poll_result.ready_count > 0) {
-            handle_ready_sockets(server, &poll_result, sockets, count);
-        }
-        if (server_should_tick(server))
-            process_game_tick(server);
+        run_server_tick(server);
     }
     server_timing_destroy(server);
 }
