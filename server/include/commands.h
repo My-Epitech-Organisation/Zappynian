@@ -69,4 +69,7 @@ void manage_stones(server_t *server, player_t *player, client_t *client,
 void add_resources(player_t *player, int resource_type, server_t *server,
     client_t *client);
 
+void calculate_vision_coordinates(player_t *player, int distance, int offset,
+    int *pos);
+
 #endif // COMMANDS_H
