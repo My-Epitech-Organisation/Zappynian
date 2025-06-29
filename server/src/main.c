@@ -49,7 +49,6 @@ static int handle_args_with_cleanup(int argc, char **argv, server_t *server)
         free(server->args);
         free(server->connection);
         cleanup_network_integration();
-        handle_free(server);
         return 84;
     }
     if (args_result == 1) {
