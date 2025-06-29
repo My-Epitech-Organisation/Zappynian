@@ -21,6 +21,7 @@ void cmd_inventory(player_t *player, server_t *server)
     inventory_result = get_player_inventory(player);
     if (inventory_result != NULL) {
         send_pin(server, player);
+        printf("Inventory for player %d: %s\n", player->id, inventory_result);
         zn_send_message(server->connection->zn_server, inventory_result);
         free(inventory_result);
     } else
@@ -56,6 +57,7 @@ void cmd_connect_nbr(player_t *player, server_t *server)
     }
     snprintf(response, sizeof(response), "%d",
         server->args->clients_per_team - player->slot_id);
+    printf("Connect nbr for player %d: %s\n", player->id, response);
     zn_send_message(server->connection->zn_server, response);
 }
 
