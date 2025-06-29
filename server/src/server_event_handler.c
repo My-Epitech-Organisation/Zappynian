@@ -11,18 +11,11 @@
 static void handle_ia_connection(server_t *server, int client_idx)
 {
     client_t *client = server->connection->clients[client_idx];
-    team_t *team = NULL;
-    player_t *player = NULL;
 
     if (client == NULL || client->team_name == NULL)
         return;
-    team = get_team_by_name(server->args, client->team_name);
-    if (team == NULL)
-        return;
-    player = create_player_for_client(server, client, team);
-    if (player == NULL)
-        return;
-    send_pnw(server, player);
+    printf("[DEBUG] IA client %d connected to team %s\n",
+        client->id, client->team_name);
 }
 
 static void handle_gui_connection(server_t *server, int client_idx)

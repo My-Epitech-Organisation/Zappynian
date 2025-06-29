@@ -123,6 +123,8 @@ client_event_t setup_client_handshake(client_t *client,
     server_connection_t *connection, int idx, char *team_name);
 int validate_and_respond(client_t *client, server_t *server, int idx,
     const char *team_name);
+int send_handshake_response_only(client_t *client, server_t *server,
+    const char *team_name);
 void finalize_client_assignment(client_t *client,
     server_connection_t *connection, const char *team_name);
 

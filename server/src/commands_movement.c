@@ -93,7 +93,6 @@ void cmd_look(player_t *player, server_t *server)
     look_result = get_player_vision(player, server->map);
     if (look_result != NULL) {
         zn_send_message(client->zn_sock, look_result);
-        free(look_result);
     } else
         zn_send_message(client->zn_sock, "ko");
 }

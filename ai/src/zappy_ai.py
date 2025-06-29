@@ -55,6 +55,7 @@ class ZappyAI:
                 line = self.conn.read_line()
                 if not line:
                     continue
+                print(f"[DEBUG] Received line: {line}")
                 if line.startswith("message"):
                     parse_broadcast(self.queue, line, self.world)
                     continue

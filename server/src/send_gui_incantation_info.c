@@ -23,29 +23,29 @@ static char *resize_teams_buffer(char *teams, size_t new_size)
 static char *process_player_team(char *teams, player_t *player,
     size_t *total_len)
 {
-    size_t team_name_len;
     size_t prefix_len;
     size_t new_total;
     int written;
     char *prefix;
+    char player_id_str[16];
 
-    if (player == NULL || player->team_name == NULL)
+    if (player == NULL)
         return teams;
-    team_name_len = strlen(player->team_name);
+    snprintf(player_id_str, sizeof(player_id_str), "%d", player->id);
     prefix_len = (*total_len > 0) ? 2 : 1;
-    new_total = *total_len + team_name_len + prefix_len + 1;
+    new_total = *total_len + strlen(player_id_str) + prefix_len + 1;
     teams = resize_teams_buffer(teams, new_total);
     if (teams == NULL)
         return NULL;
     prefix = (*total_len == 0) ? "#" : " #";
     written = snprintf(teams + *total_len, new_total - *total_len,
-        "%s%s", prefix, player->team_name);
+        "%s%s", prefix, player_id_str);
     if (written > 0)
         *total_len += written;
     return teams;
 }
 
-static char *get_teams_in_tile(tile_t *tile)
+static char *get_player_ids_in_tile(tile_t *tile)
 {
     char *teams = malloc(1);
     size_t total_len = 0;
@@ -69,13 +69,16 @@ void send_pic(server_t *server, tile_t *tile, player_t *player)
 
     if (server->graphic_clients == NULL || tile == NULL || player == NULL)
         return;
-    teams = get_teams_in_tile(tile);
+    teams = get_player_ids_in_tile(tile);
     ret = snprintf(pic_command, sizeof(pic_command),
         "pic %zu %zu %d %s",
-        tile->x, tile->y, player->level, teams);
-    if (ret < 0 || (size_t)ret >= sizeof(pic_command))
+        tile->x, tile->y, player->level, teams ? teams : "");
+    if (ret < 0 || (size_t)ret >= sizeof(pic_command)) {
+        free(teams);
         return;
+    }
     send_to_all_graphic_clients(server->graphic_clients, pic_command);
+    free(teams);
 }
 
 void send_pie(server_t *server, tile_t *tile, bool result)

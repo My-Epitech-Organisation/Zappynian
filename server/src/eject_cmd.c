@@ -51,8 +51,8 @@ static void move_player_in_direction(player_t *player, int direction,
     move_player(player, new_x, new_y, map);
 }
 
-static int get_dir(player_t *ejected_player,
-    player_t *ejector_player)
+static int get_dir(player_t *ejector_player,
+    player_t *ejected_player)
 {
     int dx = ejected_player->x - ejector_player->x;
     int dy = ejected_player->y - ejector_player->y;
@@ -90,26 +90,50 @@ void send_message_ejection(client_t *ejected_client,
     zn_send_message(ejected_client->zn_sock, msg);
 }
 
+static int get_movement_direction(int direction, int player_orientation)
+{
+    if (direction == 1)
+        return EAST;
+    if (direction == 3)
+        return SOUTH;
+    if (direction == 5)
+        return WEST;
+    if (direction == 7)
+        return NORTH;
+    return player_orientation;
+}
+
+static void process_single_ejection(player_t *player, server_t *server,
+    player_t *ejected, tile_t *current_tile)
+{
+    tile_t *new_tile;
+    client_t *ejected_client;
+    int direction;
+    int movement_direction;
+
+    ejected_client = find_client_by_player(server, ejected);
+    direction = get_dir(player, ejected);
+    remove_player_from_tile(current_tile, ejected);
+    movement_direction = get_movement_direction(direction,
+        player->orientation);
+    move_player_in_direction(ejected, movement_direction, server->map);
+    new_tile = get_tile_toroidal(server->map, ejected->x, ejected->y);
+    if (new_tile)
+        add_player_to_tile(new_tile, ejected);
+    send_ppo(server, ejected);
+    if (ejected_client)
+        send_message_ejection(ejected_client, direction);
+}
+
 static void ejection(player_t *player, server_t *server,
     player_t **players_to_eject, tile_t *current_tile)
 {
-    tile_t *new_tile;
-    player_t *ejected;
-    client_t *ejected_client;
-    int direction;
+    size_t i;
+    size_t count = get_nb_player(current_tile, player);
 
-    for (size_t i = 0; i < get_nb_player(current_tile, player); i++) {
-        ejected = players_to_eject[i];
-        ejected_client = find_client_by_player(server, ejected);
-        direction = get_dir(player, ejected);
-        remove_player_from_tile(current_tile, ejected);
-        move_player_in_direction(ejected, player->orientation, server->map);
-        new_tile = get_tile_toroidal(server->map, ejected->x, ejected->y);
-        if (new_tile)
-            add_player_to_tile(new_tile, ejected);
-        send_ppo(server, ejected);
-        if (ejected_client)
-            send_message_ejection(ejected_client, direction);
+    for (i = 0; i < count; i++) {
+        process_single_ejection(player, server, players_to_eject[i],
+            current_tile);
     }
 }
 
