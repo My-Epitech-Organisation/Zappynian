@@ -36,6 +36,7 @@ class CommandQueue:
             line = self.connection.read_line()
             if not line:
                 continue
+            print(f"[DEBUG] Received line: {line}")
             if line.startswith("message"):
                 continue
             self.handle_response(line)
