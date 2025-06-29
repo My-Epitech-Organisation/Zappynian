@@ -34,6 +34,7 @@ class CommandQueue:
 
         while True:
             line = self.connection.read_line()
+            print(f"[DEBUG] Waiting for response to command: {command}")
             if not line:
                 continue
             print(f"[DEBUG] Received line: {line}")
