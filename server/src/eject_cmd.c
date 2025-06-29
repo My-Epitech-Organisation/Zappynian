@@ -51,8 +51,8 @@ static void move_player_in_direction(player_t *player, int direction,
     move_player(player, new_x, new_y, map);
 }
 
-static int get_dir(player_t *ejected_player,
-    player_t *ejector_player)
+static int get_dir(player_t *ejector_player,
+    player_t *ejected_player)
 {
     int dx = ejected_player->x - ejector_player->x;
     int dy = ejected_player->y - ejector_player->y;
@@ -97,13 +97,24 @@ static void ejection(player_t *player, server_t *server,
     player_t *ejected;
     client_t *ejected_client;
     int direction;
+    int movement_direction;
 
     for (size_t i = 0; i < get_nb_player(current_tile, player); i++) {
         ejected = players_to_eject[i];
         ejected_client = find_client_by_player(server, ejected);
         direction = get_dir(player, ejected);
         remove_player_from_tile(current_tile, ejected);
-        move_player_in_direction(ejected, player->orientation, server->map);
+        if (direction == 1)
+            movement_direction = EAST;
+        else if (direction == 3)  
+            movement_direction = SOUTH;
+        else if (direction == 5)
+            movement_direction = WEST;
+        else if (direction == 7)
+            movement_direction = NORTH;
+        else
+            movement_direction = player->orientation;
+        move_player_in_direction(ejected, movement_direction, server->map);
         new_tile = get_tile_toroidal(server->map, ejected->x, ejected->y);
         if (new_tile)
             add_player_to_tile(new_tile, ejected);
