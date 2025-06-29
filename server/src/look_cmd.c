@@ -42,44 +42,49 @@ void add_resources_to_result(char *result, tile_t *tile,
     }
 }
 
-char *get_player_vision(player_t *player, map_t *map)
+static char *allocate_vision_buffer(void)
 {
     char *result = malloc(MAX_VISION_BUFFER);
-    bool first_tile = true;
-    size_t current_len = 0;
 
     if (!result)
         return NULL;
-    
-    // Check parameters
-    if (!player || !map) {
-        free(result);
-        return NULL;
-    }
-    
-    // Initialize with opening bracket
     result[0] = '[';
     result[1] = '\0';
-    current_len = 1;
-    
-    // Check if we have enough space before calling helper functions
-    if (current_len >= MAX_VISION_BUFFER - 2) { // Reserve space for ']' and '\0'
-        free(result);
-        return NULL;
-    }
-    
-    add_current_tile_to_vision(result, player, map, &first_tile);
-    add_all_vision_tiles(result, player, map, &first_tile);
-    
-    // Add closing bracket with bounds checking
-    current_len = strlen(result);
-    if (current_len >= MAX_VISION_BUFFER - 2) {
-        free(result);
-        return NULL;
-    }
-    
+    return result;
+}
+
+static bool finalize_vision_buffer(char *result)
+{
+    size_t current_len = strlen(result);
+
+    if (current_len >= MAX_VISION_BUFFER - 2)
+        return false;
     result[current_len] = ']';
     result[current_len + 1] = '\0';
-    
+    return true;
+}
+
+static bool build_vision_content(char *result, player_t *player, map_t *map)
+{
+    bool first_tile = true;
+
+    add_current_tile_to_vision(result, player, map, &first_tile);
+    add_all_vision_tiles(result, player, map, &first_tile);
+    return finalize_vision_buffer(result);
+}
+
+char *get_player_vision(player_t *player, map_t *map)
+{
+    char *result;
+
+    if (!player || !map)
+        return NULL;
+    result = allocate_vision_buffer();
+    if (!result)
+        return NULL;
+    if (!build_vision_content(result, player, map)) {
+        free(result);
+        return NULL;
+    }
     return result;
 }
