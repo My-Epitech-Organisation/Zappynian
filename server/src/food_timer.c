@@ -49,16 +49,3 @@ void food_timer_reset(food_timer_t *ft)
         return;
     ft->ticks_since_last_consumption = 0;
 }
-
-void process_food_consumption(server_t *server, food_timer_t *ft)
-{
-    size_t i;
-
-    if (!server || !ft || !food_timer_should_consume(ft))
-        return;
-    for (i = 0; i < server->player_count; i++) {
-        if (server->players[i] && !server->players[i]->dead)
-            player_decrement_food(server->players[i]);
-    }
-    food_timer_reset(ft);
-}
