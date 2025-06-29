@@ -8,6 +8,7 @@
 #include "../include/server.h"
 #include "../include/player.h"
 #include "../include/team.h"
+#include "../include/food_timer.h"
 
 static int find_free_player_slot(server_t *server)
 {
@@ -110,4 +111,18 @@ void remove_player_from_team(team_t *team, player_t *player)
     }
     if (team->current_players > 0)
         team->current_players--;
+}
+
+void process_food_consumption(server_t *server, void *food_timer)
+{
+    size_t i;
+    food_timer_t *ft = (food_timer_t *)food_timer;
+
+    if (!server || !ft || !food_timer_should_consume(ft))
+        return;
+    for (i = 0; i < server->player_count; i++) {
+        if (server->players[i] && !server->players[i]->dead)
+            player_decrement_food(server->players[i]);
+    }
+    food_timer_reset(ft);
 }

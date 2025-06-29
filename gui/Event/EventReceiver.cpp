@@ -197,7 +197,7 @@ bool EventReceiver::handleNodeSelection(
           "food",     "linemate", "deraumere", "sibur",
           "mendiane", "phiras",   "thystame",  "egg"};
       for (std::size_t i = 0; i < stoneNames.size(); ++i) {
-        selectedText += L"\n: ";
+        selectedText += L"\n->";
         selectedText += irr::core::stringw(stoneNames[i].c_str());
         selectedText += L" (";
         selectedText += irr::core::stringw(
@@ -238,7 +238,7 @@ bool EventReceiver::handlePlayerSelection(
                                              "sibur",   "mendiane", "phiras",
                                              "thystame"};
       for (std::size_t i = 0; i < stoneNames.size(); ++i) {
-        selectedText += L"\n: ";
+        selectedText += L"\n->";
         selectedText += irr::core::stringw(stoneNames[i].c_str());
         selectedText += L" (";
         selectedText += irr::core::stringw(

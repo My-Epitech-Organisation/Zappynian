@@ -81,3 +81,26 @@ ssize_t zn_flush(zn_socket_t sock)
     }
     return zn_ringbuf_flush_to_fd(&sock->write_buffer, sock->fd);
 }
+
+static int is_broken_pipe_error(void)
+{
+    return (errno == EPIPE || errno == ECONNRESET || errno == ENOTCONN);
+}
+
+/**
+ * @brief Check if there are pending writes in the socket's send buffer
+ *
+ * This function checks if there is any data pending in the socket's
+ * send buffer that has not yet been sent over the network.
+ *
+ * @param sock The socket handle
+ * @return 1 if there are pending writes, 0 if not, -1 on error with errno set
+ */
+int zn_has_pending_writes(zn_socket_t sock)
+{
+    if (sock == NULL || !sock->initialized)
+        return 0;
+    if (!sock->buffer_initialized)
+        return 0;
+    return !zn_ringbuf_is_empty(&sock->write_buffer);
+}

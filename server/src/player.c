@@ -97,20 +97,11 @@ static bool player_decrement_food(player_t *player)
     }
 }
 
-bool decrement_food_for_all_players(server_t *server)
+bool has_pending_commands(player_t *player)
 {
-    player_t *player = NULL;
-    bool result = true;
-
-    if (server == NULL || server->players == NULL)
+    if (!player)
         return false;
-    for (size_t i = 0; i < server->player_count; i++) {
-        player = server->players[i];
-        if (player != NULL && !player->dead) {
-            result = player_decrement_food(player);
-        }
-    }
-    return result;
+    return player->command_count > 0;
 }
 
 player_t *hatch_egg_for_client(server_t *server, client_t *client)

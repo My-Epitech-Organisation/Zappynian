@@ -238,3 +238,9 @@ void Game::gameLoop() {
   }
   device_->drop();
 }
+
+void Game::createWorldScene(WorldScene &scene) {
+    scene.createLights();
+    scene.createCamera();
+    scene.createText();
+}
