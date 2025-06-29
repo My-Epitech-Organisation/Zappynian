@@ -11,13 +11,16 @@
 static int get_available_slots(server_args_t *args, const char *team_name)
 {
     team_t *team = get_team_by_name(args, team_name);
+    int slots_to_return;
 
     if (team == NULL) {
         return 0;
     }
-    if (team->remaining_slots > 0)
+    slots_to_return = team->remaining_slots;
+    if (team->remaining_slots > 0) {
         team->remaining_slots--;
-    return team->max_slots - team->current_players;
+    }
+    return slots_to_return;
 }
 
 static int send_handshake_response(client_t *client, server_t *server,
