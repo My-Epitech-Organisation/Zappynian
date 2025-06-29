@@ -13,8 +13,8 @@ def miner(queue, world, vision) -> int:
                 return 1
             path = route_to(tile)
             for cmd in path:
-                queue.send_and_wait(cmd)
-            queue.send_and_wait(f"Take {stone}")
+                queue.push(cmd)
+            queue.push(f"Take {stone}")
             return 0
     else:
         return 1
