@@ -90,6 +90,7 @@ typedef struct server_s {
     egg_t *eggs;
     graphic_client_list_t *graphic_clients;
     timing_manager_t *timing_manager;
+    void *food_timer;
 } server_t;
 
 int handle_args(int argc, char **argv, server_t *server);
@@ -143,6 +144,7 @@ void handle_client_event(server_t *server, client_event_t event,
 int initialize_server_players(server_t *server);
 player_t *create_player_for_client(server_t *server, client_t *client,
     team_t *team);
+void process_food_consumption(server_t *server, void *food_timer);
 
 /* Network integration functions */
 int init_network_integration(void);
