@@ -30,6 +30,7 @@ class CommandQueue:
                 new_level = int(line.split(":")[1].strip())
                 world.level = new_level
                 self.pending = max(0, self.pending - 1)
+                print(f"[INFO] Current level updated to: {new_level}")
                 self.push("Broadcast notleader")
             except (ValueError, IndexError) as e:
                 print(f"[ERROR] Failed to parse new level from line: {line} - {e}")
