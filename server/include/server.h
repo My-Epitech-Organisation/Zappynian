@@ -20,6 +20,7 @@
     #include "player.h"
     #include "resource.h"
     #include "commands.h"
+    #include "timing_manager.h"
     #include "../../libzappy_net/include/zappy_net.h"
 
 typedef struct team_s team_t;
@@ -88,6 +89,8 @@ typedef struct server_s {
     volatile bool server_running;
     egg_t *eggs;
     graphic_client_list_t *graphic_clients;
+    timing_manager_t *timing_manager;
+    void *food_timer;
 } server_t;
 
 int handle_args(int argc, char **argv, server_t *server);
@@ -127,12 +130,21 @@ void finalize_client_assignment(client_t *client,
 void server_loop(server_t *server);
 void stop_server_loop(server_t *server);
 
+/* Server polling functions */
+void setup_socket_array(server_connection_t *connection,
+    zn_socket_t *sockets, int *count);
+int find_client_by_socket(server_connection_t *connection,
+    zn_socket_t socket);
+void setup_poll_events(short *events, zn_socket_t *sockets,
+    server_connection_t *connection, int count);
+
 /* Server player management functions */
 void handle_client_event(server_t *server, client_event_t event,
     int client_idx);
 int initialize_server_players(server_t *server);
 player_t *create_player_for_client(server_t *server, client_t *client,
     team_t *team);
+void process_food_consumption(server_t *server, void *food_timer);
 
 /* Network integration functions */
 int init_network_integration(void);
@@ -168,7 +180,7 @@ void send_pfk(server_t *server, int player_id);
 void send_pdr(server_t *server, int player_id, int resource_type);
 void send_pgt(server_t *server, int player_id, int resource_type);
 void send_pdi(server_t *server, player_t *player);
-void send_ewn(server_t *server);
+void send_enw(server_t *server);
 void send_ebo(server_t *server, int egg_id);
 void send_edi(server_t *server, int egg_id);
 void send_sgt(server_t *server, int frequency);

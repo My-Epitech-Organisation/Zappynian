@@ -10,21 +10,21 @@
 
 static void send_egg_recursively(graphic_client_list_t *list, egg_t *egg)
 {
-    char ewn_command[256];
+    char enw_command[256];
     int ret;
 
     if (egg == NULL)
         return;
     send_egg_recursively(list, egg->next);
-    ret = snprintf(ewn_command, sizeof(ewn_command),
-        "ewn #%d #%d %d %d", egg->id, egg->player_id,
+    ret = snprintf(enw_command, sizeof(enw_command),
+        "enw #%d #%d %d %d", egg->id, egg->player_id,
         egg->x, egg->y);
-    if (ret < 0 || (size_t)ret >= sizeof(ewn_command))
+    if (ret < 0 || (size_t)ret >= sizeof(enw_command))
         return;
-    send_to_all_graphic_clients(list, ewn_command);
+    send_to_all_graphic_clients(list, enw_command);
 }
 
-void send_ewn(server_t *server)
+void send_enw(server_t *server)
 {
     if (server->graphic_clients == NULL || server == NULL)
         return;

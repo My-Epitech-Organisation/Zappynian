@@ -51,16 +51,22 @@ class Connection:
             if line == "WELCOME":
                 break
         self.send_command(self.team_name)
-        while self.client_slots == 0 or self.map_size == (0, 0):
+        handshake_complete = False
+        while not handshake_complete:
             line = self.read_line()
             if line is None:
                 continue
+            print(f"[DEBUG] Handshake received line: {line}")
             if line.isdigit():
-                self.client_slots = int(line)
+                if self.client_slots == 0:
+                    self.client_slots = int(line)
             elif " " in line:
                 parts = line.split()
                 if len(parts) == 2 and all(p.isdigit() for p in parts):
-                    self.map_size = (int(parts[0]), int(parts[1]))
+                    if self.map_size == (0, 0):
+                        self.map_size = (int(parts[0]), int(parts[1]))
+            if self.client_slots > 0 and self.map_size != (0, 0):
+                handshake_complete = True
 
     def close(self):
         if self.socket:

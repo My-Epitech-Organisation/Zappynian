@@ -349,7 +349,7 @@ protected:
   irr::gui::IGUIStaticText *textChat_;
   irr::gui::IGUIStaticText *textMap_;
   std::vector<std::string> chatMessages_;
-  static const size_t MAX_CHAT_MESSAGES = 20;
+  static const size_t MAX_CHAT_MESSAGES = 8;
   std::vector<std::string> teams_;
   std::map<std::string, std::pair<int, int>> teamStates_; // team name, (alive, death)
 

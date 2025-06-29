@@ -1,4 +1,4 @@
-# 🧠 Zappy - Epitech Year 3 Project
+# 🧠 Zappy - Epitech Year 2 Project
 
 Zappy is a real-time multiplayer network game where multiple AI teams compete to achieve a single goal: **have 6 players of the same team reach level 8**. The project is composed of **three independent modules**:
 
