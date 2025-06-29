@@ -25,7 +25,7 @@ class ZappyAI:
         self.target_path = None
         self.is_incanting = False
         self.last_role = None
-        self.brodcast_timer = 0
+        self.broadcast_timer = 0
 
     def spawn_player(self):
         pid = os.fork()
@@ -70,10 +70,17 @@ class ZappyAI:
                 if not self.queue.expected_responses:
                     continue
                 current_expected = self.queue.expected_responses.pop(0)
-                if current_expected == "Inventory" and line.startswith("["):
-                    self.world.parse_inventory(line)
-                elif current_expected == "Look" and line.startswith("["):
-                    self.vision.parse_look(line)
+                if current_expected == "Inventory":
+                    if line.startswith("[") and any(char.isdigit() for char in line):
+                        self.world.parse_inventory(line)
+                    else:
+                        print(f"[WARNING] Expected Inventory, but got: {line}")
+
+                elif current_expected == "Look":
+                    if line.startswith("[") and not any(char.isdigit() for char in line):
+                        self.vision.parse_look(line)
+                    else:
+                        print(f"[WARNING] Expected Look, but got: {line}")
                 elif current_expected == "Connect_nbr" and line.strip().isdigit():
                     connect_nbr = int(line.strip())
                 self.queue.handle_response(self.world, line)
