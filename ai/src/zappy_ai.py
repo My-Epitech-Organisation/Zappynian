@@ -9,7 +9,6 @@ from ai.src.inventory_parser import WorldState
 from ai.src.vision_parser import Vision
 from ai.src.roles.game_logic import *
 
-
 class ZappyAI:
 
     def __init__(self, host: str, port: int, team_name: str):
@@ -116,7 +115,6 @@ def main():
     except Exception as error:
         print(f"[ERROR] Unexpected exception: {error}", file=sys.stderr)
         sys.exit(1)
-
 
 if __name__ == "__main__":
     main()
