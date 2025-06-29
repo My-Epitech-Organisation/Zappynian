@@ -9,6 +9,7 @@
 #include "../Entities/IEntity.hpp"
 #include <memory>
 #include <iostream>
+#include <algorithm>
 
 struct TileInfo {
     int x, y;
@@ -57,14 +58,21 @@ bool Game::initNetwork() {
 }
 
 void Game::processNetworkMessages() {
-  if (!networkManager_ || !networkManager_->isConnected()) {
+  if (!networkManager_) {
+    return;
+  }
+  bool isConnected = networkManager_->isConnected();
+  if (!isConnected) {
     return;
   }
 
   networkManager_->updateFromServer();
 
   static bool firstSync = true;
-  if (networkManager_->isGameStateSynchronized() && firstSync) {
+  
+  bool isGameStateSynchronized = networkManager_->isGameStateSynchronized();
+  
+  if (isGameStateSynchronized && firstSync) {
     firstSync = false;
   }
 }
@@ -104,47 +112,72 @@ void Game::initWindow() {
 }
 
 void Game::updatePlayerMovement(irr::u32 currentTime, WorldScene &scene) {
-  if (!receiver_.getIsMoving())
+  bool isMoving = receiver_.getIsMoving();
+  if (!isMoving) {
     return;
+  }
 
-  auto currentEntity = findEntityById(receiver_.getCurrentEntityId());
+  int currentEntityId = receiver_.getCurrentEntityId();
+  auto currentEntity = findEntityById(currentEntityId);
+  
   if (!currentEntity) {
     receiver_.setIsMoving(false);
     return;
   }
 
-  float elapsedTime = (currentTime - receiver_.getMoveStartTime()) / 1000.0f;
+  irr::u32 moveStartTime = receiver_.getMoveStartTime();
+  float elapsedTime = (currentTime - moveStartTime) / 1000.0f;
+  
   auto *node = currentEntity->getNode();
-  if (!node || !node->getParent()) {
+  
+  if (!node) {
+    receiver_.setIsMoving(false);
+    return;
+  }
+  
+  auto *parent = node->getParent();
+  
+  if (!parent) {
     receiver_.setIsMoving(false);
     return;
   }
 
-  if (elapsedTime >= 0.3f) {
+  if (elapsedTime >= 0.00005f) {
     irr::core::vector3df pos;
-    float angle = receiver_.getCurrentRotationY() * M_PI / 180.0f;
-    pos.X = receiver_.getMoveStartX() - 20.0f * sin(angle);
-    pos.Z = receiver_.getMoveStartZ() - 20.0f * cos(angle);
+    float rotationY = receiver_.getCurrentRotationY();
+    float angle = rotationY * M_PI / 180.0f;
+    float moveStartX = receiver_.getMoveStartX();
+    float moveStartZ = receiver_.getMoveStartZ();
+    pos.X = moveStartX - 20.0f * sin(angle);
+    pos.Z = moveStartZ - 20.0f * cos(angle);
     try {
-      pos.Y = node->getPosition().Y;
+      irr::core::vector3df currentPos = node->getPosition();
+      pos.Y = currentPos.Y;
     } catch (...) {
       receiver_.setIsMoving(false);
       return;
     }
     node->setPosition(pos);
     receiver_.setIsMoving(false);
-    if (auto *animatedNode =
-            dynamic_cast<irr::scene::IAnimatedMeshSceneNode *>(node))
+    if (auto *animatedNode = dynamic_cast<irr::scene::IAnimatedMeshSceneNode *>(node)) {
       animatedNode->setAnimationSpeed(0.0f);
+    } else {
+      std::cout << "[ERROR] Node is not an animated mesh scene node" << std::endl;
+    }
+    
     scene.updateMovements();
   } else {
-    float progress = elapsedTime / 0.3f;
+    float progress = elapsedTime / 0.00005f;
     irr::core::vector3df pos;
-    float angle = receiver_.getCurrentRotationY() * M_PI / 180.0f;
-    pos.X = receiver_.getMoveStartX() - (20.0f * progress * sin(angle));
-    pos.Z = receiver_.getMoveStartZ() - (20.0f * progress * cos(angle));
+    float rotationY = receiver_.getCurrentRotationY();
+    float angle = rotationY * M_PI / 180.0f;
+    float moveStartX = receiver_.getMoveStartX();
+    float moveStartZ = receiver_.getMoveStartZ();
+    pos.X = moveStartX - (20.0f * progress * sin(angle));
+    pos.Z = moveStartZ - (20.0f * progress * cos(angle));
     try {
-      pos.Y = node->getPosition().Y;
+      irr::core::vector3df currentPos = node->getPosition();
+      pos.Y = currentPos.Y;
       node->setPosition(pos);
     } catch (...) {
       receiver_.setIsMoving(false);
@@ -183,11 +216,12 @@ void Game::gameLoop() {
   bool mapInitialized = false;
   bool resourcesInitialized = false;
 
+  entity_ = scene.getEntities();
   while (device_->run()) {
     irr::u32 currentTime = device_->getTimer()->getTime();
-
     processNetworkMessages();
     scene.updateMapText();
+    entity_ = scene.getEntities();
 
     if (!mapInitialized && mapWidth > 0 && mapHeight > 0) {
         scene.createPlane(mapWidth, mapHeight);
@@ -213,11 +247,13 @@ void Game::gameLoop() {
     }
 
     entity_ = scene.getEntities();
-
     if (!entity_.empty()) {
       updatePlayerMovement(currentTime, scene);
       updateIncantingPlayers(scene);
       scene.updatePaperPlaneMovements();
+      entity_ = scene.getEntities();
+    } else {
+      std::cout << "[DEBUG] No entities to update" << std::endl;
     }
 
     driver_->beginScene(true, true, irr::video::SColor(255, 255, 128, 0));

@@ -93,6 +93,8 @@ public:
    */
   virtual irr::scene::IAnimatedMeshSceneNode *getNode() const = 0;
 
+  virtual void setTeam(const std::string &team) = 0;
+  virtual std::string getTeam() const = 0;
   /**
    * @brief Sets the entity's level
    * 

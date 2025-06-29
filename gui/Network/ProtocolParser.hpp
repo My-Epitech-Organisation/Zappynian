@@ -108,6 +108,20 @@ namespace Zappy {
         bool parseTeamName(const std::vector<std::string>& args);          // tna team_name
         
         /**
+         * @brief Parses player connection command (pnw id X Y dir level team)
+         * 
+         * @param args Tokenized command arguments
+         * @return true if parsing was successful, false otherwise
+         */
+        bool parseCommandParameter(const std::vector<std::string>& args); // sbp param_name param_value
+        /**
+         * @brief Parses server message command (smg message)
+         * 
+         * @param args Tokenized command arguments
+         * @return true if parsing was successful, false otherwise
+         */
+        bool parseUnknown(const std::vector<std::string>& args);                // suc
+        /**
          * @brief Parses player new command (pnw id X Y dir level team)
          * 
          * @param args Tokenized command arguments

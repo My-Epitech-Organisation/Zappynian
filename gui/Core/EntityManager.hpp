@@ -89,7 +89,7 @@ public:
    * 
    * @param id Egg identifier
    */
-  void createEgg(int id);
+  void createEgg(int eggid, int id, int x, int y);
 
   /**
    * @brief Gets all entities managed by this manager

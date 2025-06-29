@@ -227,9 +227,10 @@ void NetworkManagerImpl::processIncomingMessages() {
     while (!initialMessages_.empty()) {
         std::string message = initialMessages_.front();
         initialMessages_.pop_front();
-
         if (!message.empty()) {
             parser_->parseMessage(message);
+        } else {
+            std::cout << "[DEBUG] processIncomingMessages: Message was empty, skipping parse" << std::endl;
         }
     }
 

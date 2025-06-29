@@ -83,10 +83,10 @@ void WorldScene::createEntities(int x, int y, int q0, int q1, int q2, int q3,
   entity_ = entityManager_.getEntities();
 }
 
-void WorldScene::createEntities(int id) {
+void WorldScene::createEntities(int eggid, int id, int x, int y) {
   if (!smgr_ || !driver_ || !device_)
     return;
-  entityManager_.createEgg(id);
+  entityManager_.createEgg(eggid, id, x, y);
   entity_ = entityManager_.getEntities();
 }
 
@@ -94,6 +94,7 @@ void WorldScene::changePlayerPos(int id, int x, int y, Direction direction,
                                  Direction directionBefore) {
   Movement movement = {id, x, y, direction, directionBefore};
   movementQueue_.push(movement);
+  
   if (!receiver_.getIsMoving()) {
     updateMovements();
   }
@@ -150,18 +151,33 @@ void WorldScene::updateMovements() {
   movementQueue_.pop();
 
   for (auto &entity : entity_) {
+    if (!entity) {
+      continue;
+    }
+    
     if (entity->getId() == movement.id) {
       auto *node = entity->getNode();
+      
+      if (!node) {
+        return;
+      }
+      
       receiver_.setCurrentEntityId(movement.id);
 
       irr::core::vector3df oldPos = node->getPosition();
       int currentLogicalX = static_cast<int>(oldPos.X / 20.0f);
       int currentLogicalY = static_cast<int>(oldPos.Z / 20.0f);
 
+      if (movement.x < 0 || movement.x >= planeSize_.first || 
+          movement.y < 0 || movement.y >= planeSize_.second) {
+        return;
+      }
+
       currentLogicalX = std::max(0, std::min(currentLogicalX, planeSize_.first - 1));
       currentLogicalY = std::max(0, std::min(currentLogicalY, planeSize_.second - 1));
       int deltaX = movement.x - currentLogicalX;
       int deltaY = movement.y - currentLogicalY;
+
       Direction actualMovementDirection = movement.direction; // Default to server direction
       if (deltaX == 1 && deltaY == 0) {
         actualMovementDirection = Direction::EAST;
@@ -181,6 +197,7 @@ void WorldScene::updateMovements() {
       } else if (deltaX == 0 && deltaY == -(planeSize_.second - 1)) {
         actualMovementDirection = Direction::SOUTH;
       }
+
       bool isNotMoving = (deltaX == 0 && deltaY == 0);
       if (isNotMoving) {
         float rotationY;
@@ -208,10 +225,11 @@ void WorldScene::updateMovements() {
                                        movement.x, movement.y);
       
       if (edgeResult.isEdge) {
-        node->setPosition(irr::core::vector3df(
+        irr::core::vector3df newWorldPos(
             edgeResult.nextPosition.X + edgeResult.offsetX,
             node->getPosition().Y,
-            edgeResult.nextPosition.Z + edgeResult.offsetZ));
+            edgeResult.nextPosition.Z + edgeResult.offsetZ);
+        node->setPosition(newWorldPos);
       } else {
         auto targetTile = entityManager_.getTileByName("Cube info: row " + std::to_string(movement.x) + " col " + std::to_string(movement.y));
         if (targetTile) {
@@ -245,13 +263,14 @@ void WorldScene::updateMovements() {
         receiver_.setCurrentRotationY(rotationY);  // Use adjusted rotation here too
         receiver_.setIsMoving(true);
         receiver_.setMoveStartTime(device_->getTimer()->getTime());
+        std::cout << "[DEBUG][updateMovements] Animation started for entity " << movement.id << std::endl;
       }
-      
       irr::core::vector3df newPos = node->getPosition();
       int newLogicalX = static_cast<int>(newPos.X / 20.0f);
       int newLogicalY = static_cast<int>(newPos.Z / 20.0f);
       newLogicalX = std::max(0, std::min(newLogicalX, planeSize_.first - 1));
       newLogicalY = std::max(0, std::min(newLogicalY, planeSize_.second - 1));
+      
       return;
     }
   }
@@ -419,6 +438,19 @@ void WorldScene::stopIncantation(int x, int y, bool result) {
 }
 
 void WorldScene::killPlayer(int id) {
+  std::queue<Movement> cleanQueue;
+  int removedMovements = 0;
+  while (!movementQueue_.empty()) {
+    Movement mov = movementQueue_.front();
+    movementQueue_.pop();
+    if (mov.id != id) {
+      cleanQueue.push(mov);
+    } else {
+      removedMovements++;
+    }
+  }
+  movementQueue_ = cleanQueue;
+
   for (auto it = entity_.begin(); it != entity_.end();) {
     if ((*it)->getId() == id) {
       auto player = std::dynamic_pointer_cast<PlayerEntity>(*it);
@@ -462,8 +494,10 @@ void WorldScene::addChatMessage(const std::string &message) {
 }
 
 void WorldScene::broadcast(int id, const std::string &message) {
-  if (!device_)
+  if (!device_) {
     return;
+  }
+  
   std::shared_ptr<IEntity> broadcaster = nullptr;
   for (const auto &entity : entity_) {
     if (entity->getId() == id) {
@@ -471,33 +505,70 @@ void WorldScene::broadcast(int id, const std::string &message) {
       break;
     }
   }
-  if (!broadcaster)
+  
+  if (!broadcaster) {
     return;
+  }
 
   std::string fullMessage = "Player " + std::to_string(id) + ": " + message;
+  
   addChatMessage(fullMessage);
 
   irr::core::vector3df broadcasterPos = broadcaster->getNode()->getPosition();
+  
   irr::u32 currentTime = device_->getTimer()->getTime();
 
+  int targetCount = 0;
   for (const auto &entity : entity_) {
-    if (entity->getId() == id || entity->getId() < 0)
+    if (!entity) {
       continue;
+    }
+    
+    if (entity->getId() == id) {
+      continue;
+    }
+    
+    if (entity->getId() < 0) {
+      continue;
+    }
 
     auto paperPlane = entityManager_.createPaperPlane(broadcasterPos);
+    
     if (paperPlane) {
-      irr::core::vector3df targetPos = entity->getNode()->getPosition();
+      if (!entity->getNode()) {
+        continue;
+      } else {
+        std::cout << "[DEBUG] broadcast: Entity node is valid" << std::endl;
+      }
+      auto targetNode = entity->getNode();
+      if (!targetNode) {
+        continue;
+      } else {
+        std::cout << "[DEBUG] broadcast: Target node is valid" << std::endl;
+      }
+      
+      irr::core::vector3df targetPos = {0.0f, 0.0f, 0.0f};
+      try {
+        targetPos = entity->getPosition();
+      } catch (const std::exception& e) {
+        continue;
+      } catch (...) {
+        continue;
+      }
+      
       PaperPlaneMovement movement;
       movement.paperPlane = paperPlane;
       movement.targetPlayerId = entity->getId();
       movement.startPosition = broadcasterPos;
       movement.targetPosition = targetPos;
       movement.startTime = currentTime;
-      movement.duration = 1.7f;
+      movement.duration = 0.5f;
       movement.isActive = true;
       paperPlaneMovements_.push_back(movement);
+      targetCount++;
     }
   }
+
   entity_ = entityManager_.getEntities();
 }
 
@@ -563,7 +634,9 @@ void WorldScene::updatePaperPlaneMovements() {
     return;
   if (paperPlaneMovements_.empty())
     return;
+
   irr::u32 currentTime = device_->getTimer()->getTime();
+  
   for (auto it = paperPlaneMovements_.begin();
        it != paperPlaneMovements_.end();) {
     if (!it->isActive) {
@@ -715,6 +788,12 @@ void WorldScene::expulsion(int id) {
 }
 
 void WorldScene::updateMapText() {
+  entity_.erase(
+      std::remove_if(entity_.begin(), entity_.end(),
+                      [](const std::shared_ptr<IEntity>& entity) {
+                          return entity && entity->getId() == -5;
+                      }),
+      entity_.end());
   entityManager_.updateMapText(textMap_);
   irr::core::stringw mapText = textMap_->getText();
   int playerCount = 0;
