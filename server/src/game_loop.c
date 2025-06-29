@@ -33,8 +33,6 @@ void game_loop_tick(server_t *server)
     if (!server || !server->game_running)
         return;
     server->tick_count++;
-    if (server->tick_count % 126 == 0)
-        decrement_food_for_all_players(server);
     handle_resource_spawn(server);
     process_commands(server);
 }
