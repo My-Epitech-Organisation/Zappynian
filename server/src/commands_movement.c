@@ -10,8 +10,14 @@
 
 void cmd_forward(player_t *player, server_t *server)
 {
+    client_t *client = NULL;
+
+    client = find_client_by_player(server, player);
+    if (client == NULL) {
+        return;
+    }
     if (player->dead || player->in_elevation) {
-        zn_send_message(server->connection->zn_server, "ko");
+        zn_send_message(client->zn_sock, "ko");
         return;
     }
     switch (player->orientation) {
@@ -29,43 +35,60 @@ void cmd_forward(player_t *player, server_t *server)
             break;
     }
     send_ppo(server, player);
-    zn_send_message(server->connection->zn_server, "ok");
+    zn_send_message(client->zn_sock, "ok");
 }
 
 void cmd_right(player_t *player, server_t *server)
 {
+    client_t *client = NULL;
+
+    client = find_client_by_player(server, player);
+    if (client == NULL) {
+        return;
+    }
     if (player->dead || player->in_elevation) {
-        zn_send_message(server->connection->zn_server, "ko");
+        zn_send_message(client->zn_sock, "ko");
         return;
     }
     player->orientation = (player->orientation + 1) % 4;
     send_ppo(server, player);
-    zn_send_message(server->connection->zn_server, "ok");
+    zn_send_message(client->zn_sock, "ok");
 }
 
 void cmd_left(player_t *player, server_t *server)
 {
+    client_t *client = NULL;
+
+    client = find_client_by_player(server, player);
+    if (client == NULL) {
+        return;
+    }
     if (player->dead || player->in_elevation) {
-        zn_send_message(server->connection->zn_server, "ko");
+        zn_send_message(client->zn_sock, "ko");
         return;
     }
     player->orientation = (player->orientation + 3) % 4;
     send_ppo(server, player);
-    zn_send_message(server->connection->zn_server, "ok");
+    zn_send_message(client->zn_sock, "ok");
 }
 
 void cmd_look(player_t *player, server_t *server)
 {
     char *look_result = NULL;
+    client_t *client = NULL;
 
+    client = find_client_by_player(server, player);
+    if (client == NULL) {
+        return;
+    }
     if (player->dead || player->in_elevation) {
-        zn_send_message(server->connection->zn_server, "ko");
+        zn_send_message(client->zn_sock, "ko");
         return;
     }
     look_result = get_player_vision(player, server->map);
     if (look_result != NULL) {
-        zn_send_message(server->connection->zn_server, look_result);
+        zn_send_message(client->zn_sock, look_result);
         free(look_result);
     } else
-        zn_send_message(server->connection->zn_server, "ko");
+        zn_send_message(client->zn_sock, "ko");
 }
