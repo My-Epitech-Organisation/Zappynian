@@ -31,5 +31,5 @@ void handle_client_write(server_t *server, int client_idx)
         return;
     bytes = zn_flush(client->zn_sock);
     if (should_disconnect_client(bytes))
-        disconnect_client(connection, client_idx);
+        disconnect_client(server, client_idx);
 }
