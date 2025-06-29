@@ -51,7 +51,8 @@ void catch_command(char *line, client_t *client,
     if (client->type == CLIENT_IA && line[0] != '\0') {
         player = find_player_by_client(connection, client);
         if (player != NULL) {
-            printf("[DEBUG] Command from player %d: %s\n", player->id, line);
+            printf("[DEBUG] Command from player %d (%s): %s\n",
+                player->slot_id, player->team_name, line);
             player_found(player, line, client);
         }
     }
