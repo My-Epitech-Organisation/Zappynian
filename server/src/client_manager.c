@@ -22,16 +22,6 @@ client_event_t assign_client_type(client_t *client,
     return event;
 }
 
-// static void process_ia_command(char *line, client_t *client,
-//     server_connection_t *connection)
-// {
-//     player_t *player = find_player_by_client(connection, client);
-
-//     if (player == NULL || player->command_count >= MAX_PLAYER_COMMANDS)
-//         return;
-//     player_found(player, line, client);
-// }
-
 void catch_command(char *line, client_t *client,
     server_connection_t *connection)
 {
