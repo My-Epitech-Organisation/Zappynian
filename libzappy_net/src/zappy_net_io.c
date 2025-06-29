@@ -82,11 +82,6 @@ ssize_t zn_flush(zn_socket_t sock)
     return zn_ringbuf_flush_to_fd(&sock->write_buffer, sock->fd);
 }
 
-static int is_broken_pipe_error(void)
-{
-    return (errno == EPIPE || errno == ECONNRESET || errno == ENOTCONN);
-}
-
 /**
  * @brief Check if there are pending writes in the socket's send buffer
  *

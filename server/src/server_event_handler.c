@@ -13,7 +13,6 @@ static void handle_ia_connection(server_t *server, int client_idx)
     client_t *client = server->connection->clients[client_idx];
     team_t *team = NULL;
     player_t *player = NULL;
-    char response[256];
 
     if (client == NULL || client->team_name == NULL)
         return;
@@ -24,11 +23,6 @@ static void handle_ia_connection(server_t *server, int client_idx)
     if (player == NULL)
         return;
     send_pnw(server, player);
-    snprintf(response, sizeof(response), "%d", team->remaining_slots);
-    zn_send_message(client->zn_sock, response);
-    snprintf(response, sizeof(response), "%d %d",
-        (int)server->args->width, (int)server->args->height);
-    zn_send_message(client->zn_sock, response);
 }
 
 static void handle_gui_connection(server_t *server, int client_idx)

@@ -8,52 +8,69 @@
 #include "../include/commands.h"
 #include "../include/world.h"
 
-void add_tile_contents(char *result, int x, int y, map_t *map)
-{
-    tile_t *tile = get_tile_toroidal(map, x, y);
-
-    if (!tile)
-        return;
-    for (int i = 0; i < RESOURCE_COUNT; i++) {
-        add_resource_type(result, tile, i, true);
-    }
-}
-
 void calculate_vision_coordinates(player_t *player, int distance, int offset,
     int *pos)
 {
     switch (player->orientation) {
-        case NORTH:
+        case 0:
             pos[0] = player->x + offset;
             pos[1] = player->y - distance;
             break;
-        case EAST:
+        case 1:
             pos[0] = player->x + distance;
             pos[1] = player->y + offset;
             break;
-        case SOUTH:
+        case 2:
             pos[0] = player->x - offset;
             pos[1] = player->y + distance;
             break;
-        case WEST:
+        case 3:
             pos[0] = player->x - distance;
             pos[1] = player->y - offset;
             break;
     }
 }
 
-void add_other_tiles(char *result, player_t *player, map_t *map,
-    int vision_range)
+void add_vision_tile_players(char *result, tile_t *tile,
+    player_t *self, bool *first_item)
 {
-    int pos[2] = {0, 0};
+    for (size_t i = 0; i < tile->player_count; i++) {
+        if (tile->players[i] != self)
+            add_single_player(result, first_item);
+    }
+}
 
-    for (int distance = 1; distance <= vision_range; distance++) {
-        for (int offset = -distance; offset <= distance; offset++) {
+void add_vision_tile_content(char *result, tile_t *tile, player_t *self,
+    bool *first_item)
+{
+    add_vision_tile_players(result, tile, self, first_item);
+    add_resources_to_result(result, tile, first_item);
+}
+
+void add_vision_tile(char *result, tile_t *tile, player_t *self,
+    bool *first_tile)
+{
+    bool first_item = true;
+
+    add_separator(result, first_tile);
+    add_vision_tile_content(result, tile, self, &first_item);
+}
+
+void add_all_vision_tiles(char *result, player_t *player, map_t *map,
+    bool *first_tile)
+{
+    int distance;
+    int offset;
+    int pos[2];
+    tile_t *tile = NULL;
+
+    for (distance = 1; distance <= player->level; distance++) {
+        for (offset = -distance; offset <= distance; offset++) {
             calculate_vision_coordinates(player, distance, offset, pos);
             normalize_coordinates_toroidal(&pos[0], &pos[1], map->width,
                 map->height);
-            strcat(result, ",");
-            add_tile_contents(result, pos[0], pos[1], map);
+            tile = get_tile(map, pos[0], pos[1]);
+            add_vision_tile(result, tile, player, first_tile);
         }
     }
 }
