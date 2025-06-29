@@ -82,6 +82,11 @@ namespace Zappy {
     }
 
     bool ProtocolParser::parseTileContent(const std::vector<std::string>& args) {
+        for (size_t i = 0; i < args.size(); ++i) {
+            std::cout << " [" << i << "]='" << args[i] << "'";
+        }
+        std::cout << std::endl;
+
         if (args.size() != 9) {
             return false;
         }
@@ -98,6 +103,7 @@ namespace Zappy {
             resources.addItem("mendiane", std::stoi(args[6]));
             resources.addItem("phiras", std::stoi(args[7]));
             resources.addItem("thystame", std::stoi(args[8]));
+
             worldScene_.createEntities(x, y, resources.getItemQuantity("food"),
                                        resources.getItemQuantity("linemate"),
                                        resources.getItemQuantity("deraumere"),
@@ -152,8 +158,12 @@ namespace Zappy {
     }
 
     bool ProtocolParser::parsePlayerPosition(const std::vector<std::string>& args) {
+        for (size_t i = 0; i < args.size(); ++i) {
+            std::cout << " [" << i << "]='" << args[i] << "'";
+        }
+        std::cout << std::endl;
+
         if (args.size() != 4) {
-            std::cerr << "ERROR: Invalid ppo arguments count: " << args.size() << std::endl;
             return false;
         }
 
@@ -164,6 +174,7 @@ namespace Zappy {
             Direction dir = parseDirection(args[3]);
 
             worldScene_.changePlayerPos(id, x, y, dir, dir);
+
             return true;
         } catch (const std::exception& e) {
             std::cerr << "ERROR: Failed to parse ppo: " << e.what() << std::endl;
