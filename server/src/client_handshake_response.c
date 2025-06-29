@@ -38,7 +38,11 @@ static int validate_team_assignment(server_args_t *args, const char *team_name)
 {
     team_t *team = get_team_by_name(args, team_name);
 
-    if (team == NULL || team->current_players >= team->max_slots) {
+    if (team == NULL || team->remaining_slots <= 0) {
+        if (team) {
+            printf("[ERROR] Team %s is full (remaining slots: %d, current players: %d)\n", team_name, team->remaining_slots,
+                team->current_players);
+        }
         return -1;
     }
     return 0;

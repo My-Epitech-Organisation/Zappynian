@@ -13,21 +13,21 @@ client_event_t assign_client_type(client_t *client,
 {
     char team_name[256];
     client_event_t event;
+    team_t *team = NULL;
+    player_t *player = NULL;
 
     event = setup_client_handshake(client, server->connection, idx, team_name);
     if (event == CLIENT_EVENT_PENDING || event == CLIENT_EVENT_ERROR)
         return event;
-    
-    // Validate team assignment BEFORE creating player for IA clients
     if (event == CLIENT_EVENT_IA_CONNECTED) {
-        team_t *team = get_team_by_name(server->args, team_name);
-        player_t *player = NULL;
-        
-        if (team == NULL || team->current_players >= team->max_slots) {
+        team = get_team_by_name(server->args, team_name);
+        player = NULL;
+        if (team == NULL || team->remaining_slots <= 0) {
+            printf("[ERROR] Team %s has no available slots (remaining: %d)\n",
+                team_name, team ? team->remaining_slots : -1);
             disconnect_client(server->connection, idx);
             return CLIENT_EVENT_ERROR;
         }
-        
         player = create_player_for_client(server, client, team);
         if (player == NULL) {
             disconnect_client(server->connection, idx);
@@ -35,7 +35,6 @@ client_event_t assign_client_type(client_t *client,
         }
         send_pnw(server, player);
     }
-    
     if (send_handshake_response_only(client, server, team_name) == -1) {
         disconnect_client(server->connection, idx);
         return CLIENT_EVENT_ERROR;
@@ -88,6 +87,7 @@ void disconnect(client_t *client, server_args_t *args)
     team = get_team_by_name(args, client->team_name);
     if (team && team->current_players > 0) {
         team->current_players--;
+        team->remaining_slots++;
         printf("Client disconnected from team %s.\n", team->name);
     }
 }
