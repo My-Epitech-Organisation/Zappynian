@@ -7,6 +7,7 @@
 
 #ifndef COMMANDS_H
     #define COMMANDS_H
+#define MAX_VISION_BUFFER 8192
 
     #include <stdbool.h>
     #include "player.h"
@@ -86,5 +87,8 @@ void add_resources(player_t *player, int resource_type, server_t *server,
     client_t *client);
 void calculate_vision_coordinates(player_t *player, int distance, int offset,
     int *pos);
+
+// Safe string utilities
+bool safe_strcat(char *dest, const char *src, size_t dest_size);
 
 #endif // COMMANDS_H

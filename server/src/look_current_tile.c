@@ -11,8 +11,8 @@
 void add_current_tile_players(char *result, bool *first_item)
 {
     if (!*first_item)
-        strcat(result, " ");
-    strcat(result, "player");
+        safe_strcat(result, " ", MAX_VISION_BUFFER);
+    safe_strcat(result, "player", MAX_VISION_BUFFER);
     *first_item = false;
 }
 
