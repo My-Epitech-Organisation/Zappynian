@@ -7,6 +7,7 @@
 
 #include "../include/server.h"
 #include "../include/team.h"
+#include <errno.h>
 
 static client_event_t handle_ia_connection(server_t *server,
     client_t *client, char *team_name, int idx)
@@ -75,24 +76,30 @@ client_event_t handle_client_read(server_t *server, int idx)
 {
     client_t *client = server->connection->clients[idx];
     char *line = NULL;
-    client_event_t event;
+    client_event_t event = CLIENT_EVENT_NONE;
 
     if (client->type == CLIENT_UNKNOWN) {
         event = assign_client_type(client, server, idx);
-        return event;
-    }
-    line = zn_receive_message(client->zn_sock);
-    printf("[DEBUG] Received line: %s\n", line ? line : "NULL");
-    if (line == NULL) {
-        if (errno != EAGAIN && errno != EWOULDBLOCK) {
-            disconnect_client(server->connection, idx);
-            return CLIENT_EVENT_DISCONNECTED;
+        if (event == CLIENT_EVENT_ERROR || event == CLIENT_EVENT_PENDING) {
+            return event;
         }
-        return CLIENT_EVENT_NONE;
+        // Handshake réussi, continuer à lire les commandes disponibles
     }
-    catch_command(line, client, server->connection);
-    free(line);
-    return CLIENT_EVENT_NONE;
+    
+    // Lire toutes les commandes disponibles dans le buffer
+    while ((line = zn_receive_message(client->zn_sock)) != NULL) {
+        printf("[DEBUG] Received line: %s\n", line);
+        catch_command(line, client, server->connection);
+        free(line);
+    }
+    
+    // Vérifier si la déconnexion est due à une erreur réelle
+    if (errno != EAGAIN && errno != EWOULDBLOCK) {
+        disconnect_client(server->connection, idx);
+        return CLIENT_EVENT_DISCONNECTED;
+    }
+    
+    return event;
 }
 
 void disconnect(client_t *client, server_args_t *args)
