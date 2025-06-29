@@ -27,6 +27,7 @@ player_t *create_player(int id, const char *team_name, int x, int y)
     player->dead = false;
     player->in_elevation = false;
     player->slot_id = -1;
+    player->command_count = 0; // Initialize command_count
     return player;
 }
 
@@ -67,4 +68,11 @@ bool player_decrement_food(player_t *player)
         player->dead = true;
         return false;
     }
+}
+
+bool has_pending_commands(player_t *player)
+{
+    if (!player)
+        return false;
+    return player->command_count > 0;
 }
