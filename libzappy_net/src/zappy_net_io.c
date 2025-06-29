@@ -82,7 +82,6 @@ ssize_t zn_flush(zn_socket_t sock)
     return zn_ringbuf_flush_to_fd(&sock->write_buffer, sock->fd);
 }
 
-
 /**
  * @brief Check if there are pending writes in the socket's send buffer
  *
