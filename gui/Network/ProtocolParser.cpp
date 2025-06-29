@@ -246,9 +246,6 @@ namespace Zappy {
                 message += " " + args[i];
             }
 
-            // if (onBroadcast_) {
-            //     onBroadcast_("Player " + std::to_string(id) + ": " + message);
-            // }
             worldScene_.broadcast(id, message);
             return true;
         } catch (const std::exception& e) {
