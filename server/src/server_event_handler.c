@@ -9,31 +9,31 @@
 #include "../include/team.h"
 #include "../include/egg.h"
 
-static int assign_player_to_team(team_t *team, player_t *player)
-{
-    int i = 0;
+// static int assign_player_to_team(team_t *team, player_t *player)
+// {
+//     int i = 0;
 
-    for (i = 0; i < team->max_slots; i++) {
-        if (team->players[i] == NULL) {
-            team->players[i] = player;
-            team->current_players++;
-            return 1;
-        }
-    }
-    return 0;
-}
+//     for (i = 0; i < team->max_slots; i++) {
+//         if (team->players[i] == NULL) {
+//             team->players[i] = player;
+//             team->current_players++;
+//             return 1;
+//         }
+//     }
+//     return 0;
+// }
 
-static void send_connection_responses(client_t *client, team_t *team,
-    server_t *server)
-{
-    char response[256];
+// static void send_connection_responses(client_t *client, team_t *team,
+//     server_t *server)
+// {
+//     char response[256];
 
-    snprintf(response, sizeof(response), "%d", team->remaining_slots);
-    zn_send_message(client->zn_sock, response);
-    snprintf(response, sizeof(response), "%d %d",
-        (int)server->args->width, (int)server->args->height);
-    zn_send_message(client->zn_sock, response);
-}
+//     snprintf(response, sizeof(response), "%d", team->remaining_slots);
+//     zn_send_message(client->zn_sock, response);
+//     snprintf(response, sizeof(response), "%d %d",
+//         (int)server->args->width, (int)server->args->height);
+//     zn_send_message(client->zn_sock, response);
+// }
 
 static void handle_ia_connection(server_t *server, int client_idx)
 {
