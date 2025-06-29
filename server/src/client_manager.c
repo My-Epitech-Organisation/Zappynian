@@ -17,8 +17,29 @@ client_event_t assign_client_type(client_t *client,
     event = setup_client_handshake(client, server->connection, idx, team_name);
     if (event == CLIENT_EVENT_PENDING || event == CLIENT_EVENT_ERROR)
         return event;
-    if (validate_and_respond(client, server, idx, team_name) == -1)
+    
+    // Validate team assignment BEFORE creating player for IA clients
+    if (event == CLIENT_EVENT_IA_CONNECTED) {
+        team_t *team = get_team_by_name(server->args, team_name);
+        player_t *player = NULL;
+        
+        if (team == NULL || team->current_players >= team->max_slots) {
+            disconnect_client(server->connection, idx);
+            return CLIENT_EVENT_ERROR;
+        }
+        
+        player = create_player_for_client(server, client, team);
+        if (player == NULL) {
+            disconnect_client(server->connection, idx);
+            return CLIENT_EVENT_ERROR;
+        }
+        send_pnw(server, player);
+    }
+    
+    if (send_handshake_response_only(client, server, team_name) == -1) {
+        disconnect_client(server->connection, idx);
         return CLIENT_EVENT_ERROR;
+    }
     return event;
 }
 

@@ -63,6 +63,7 @@ player_t *create_player_for_client(server_t *server, client_t *client,
         }
     }
     team->current_players++;
+    team->remaining_slots--;
     return player;
 }
 
