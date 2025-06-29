@@ -23,19 +23,19 @@ void calculate_vision_coordinates(player_t *player, int distance, int offset,
     int *pos)
 {
     switch (player->orientation) {
-        case NORTH:
+        case 0:
             pos[0] = player->x + offset;
             pos[1] = player->y - distance;
             break;
-        case EAST:
+        case 1:
             pos[0] = player->x + distance;
             pos[1] = player->y + offset;
             break;
-        case SOUTH:
+        case 2:
             pos[0] = player->x - offset;
             pos[1] = player->y + distance;
             break;
-        case WEST:
+        case 3:
             pos[0] = player->x - distance;
             pos[1] = player->y - offset;
             break;
