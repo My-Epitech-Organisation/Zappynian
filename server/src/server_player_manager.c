@@ -48,11 +48,11 @@ static void assign_player_to_team(team_t *team, player_t *player)
     for (i = 0; i < team->max_slots; i++) {
         if (team->players[i] == NULL) {
             team->players[i] = player;
+            team->current_players++;
+            team->remaining_slots--;
             break;
         }
     }
-    team->current_players++;
-    team->remaining_slots--;
 }
 
 static player_t *setup_player_for_client(server_t *server, client_t *client)
