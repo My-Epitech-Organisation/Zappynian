@@ -8,37 +8,49 @@
 #include "../include/server.h"
 #include "../include/team.h"
 
-client_event_t assign_client_type(client_t *client,
-    server_t *server, int idx)
+static client_event_t handle_ia_connection(server_t *server,
+    client_t *client, char *team_name, int idx)
+{
+    team_t *team = get_team_by_name(server->args, team_name);
+    player_t *player = NULL;
+
+    if (team == NULL || team->remaining_slots <= 0) {
+        printf("[ERROR] Team %s has no available slots (remaining: %d)\n",
+            team_name, team ? team->remaining_slots : -1);
+        disconnect_client(server->connection, idx);
+        return CLIENT_EVENT_ERROR;
+    }
+    player = create_player_for_client(server, client, team);
+    if (player == NULL) {
+        disconnect_client(server->connection, idx);
+        return CLIENT_EVENT_ERROR;
+    }
+    send_pnw(server, player);
+    return CLIENT_EVENT_IA_CONNECTED;
+}
+
+static int finalize_handshake(client_t *client, server_t *server,
+    char *team_name, int idx)
+{
+    if (send_handshake_response_only(client, server, team_name) == -1) {
+        disconnect_client(server->connection, idx);
+        return -1;
+    }
+    return 0;
+}
+
+client_event_t assign_client_type(client_t *client, server_t *server, int idx)
 {
     char team_name[256];
     client_event_t event;
-    team_t *team = NULL;
-    player_t *player = NULL;
 
     event = setup_client_handshake(client, server->connection, idx, team_name);
     if (event == CLIENT_EVENT_PENDING || event == CLIENT_EVENT_ERROR)
         return event;
-    if (event == CLIENT_EVENT_IA_CONNECTED) {
-        team = get_team_by_name(server->args, team_name);
-        player = NULL;
-        if (team == NULL || team->remaining_slots <= 0) {
-            printf("[ERROR] Team %s has no available slots (remaining: %d)\n",
-                team_name, team ? team->remaining_slots : -1);
-            disconnect_client(server->connection, idx);
-            return CLIENT_EVENT_ERROR;
-        }
-        player = create_player_for_client(server, client, team);
-        if (player == NULL) {
-            disconnect_client(server->connection, idx);
-            return CLIENT_EVENT_ERROR;
-        }
-        send_pnw(server, player);
-    }
-    if (send_handshake_response_only(client, server, team_name) == -1) {
-        disconnect_client(server->connection, idx);
+    if (event == CLIENT_EVENT_IA_CONNECTED)
+        event = handle_ia_connection(server, client, team_name, idx);
+    if (finalize_handshake(client, server, team_name, idx) == -1)
         return CLIENT_EVENT_ERROR;
-    }
     return event;
 }
 
