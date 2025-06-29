@@ -48,6 +48,8 @@ player_t *create_player_for_client(server_t *server, client_t *client,
     int x = rand() % (int)server->args->width;
     int y = rand() % (int)server->args->height;
 
+    if (team->remaining_slots <= 0)
+        return NULL;
     player = create_player(client->id, client->team_name, x, y);
     if (player == NULL)
         return NULL;
